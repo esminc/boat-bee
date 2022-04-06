@@ -1,0 +1,7 @@
+*.pyc
+node_modules
+.serverless
+
+.aws
+
+.DS_Store

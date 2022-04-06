@@ -1,0 +1,9 @@
+{
+  "name": "bee",
+  "version": "1.0.0",
+  "description": "boat bee",
+  "author": "",
+  "devDependencies": {
+    "serverless-offline": "8.5.0"
+  }
+}

@@ -1,0 +1,10 @@
+# この設定は、.devcontainer/devcontainer.jsonにも同様のものがあります。
+# VS Codeがpylintrcの設定を認識しないため、重複してこちらにも記述しています。
+
+[MESSAGES CONTROL]
+disable=
+    missing-module-docstring, 
+    missing-class-docstring, 
+    missing-function-docstring, 
+    line-too-long,
+    fixme,

@@ -1,0 +1,28 @@
+service: bee
+
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  ecr:
+    images:
+      appimage:
+        path: ./
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - secretsmanager:GetSecretValue
+      Resource:
+        - "*"
+
+functions:
+  app:
+    image:
+      name: appimage
+    events:
+      - http:
+          method: post
+          path: /slack/events
+
+plugins:
+  - serverless-offline
