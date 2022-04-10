@@ -19,6 +19,7 @@ functions:
   app:
     image:
       name: appimage
+    url: true
     events:
       - http:
           method: post
