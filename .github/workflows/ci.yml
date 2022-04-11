@@ -40,7 +40,6 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: check-code
-    if: contains(github.event_name, 'push')
     permissions:
       id-token: write
       contents: read
@@ -61,4 +60,9 @@ jobs:
           path: ~/.local/share/virtualenvs
           key: ${{ runner.os }}-pipenv-${{ hashFiles('./Pipfile.lock') }}
       - run: make init
-      - run: make deploy
+      - name: Deploy for PR
+        run: sls deploy --stage pr$(jq --raw-output .number "$GITHUB_EVENT_PATH")
+        if: contains(github.event_name, 'pull_request')
+      - name: Deploy for main
+        run: make deploy
+        if: contains(github.event_name, 'push')
