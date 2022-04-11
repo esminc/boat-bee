@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  check-code:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-python@v3
+        with:
+          python-version: "3.9.11"
+      - uses: actions/setup-node@v2
+      - run: npm install -g prettier@2.6.2
+      - uses: actions/checkout@v2.4.0
+      - run: pip install pipenv
+      - uses: actions/cache@v3.0.1
+        with:
+          path: ~/.local/share/virtualenvs
+          key: ${{ runner.os }}-pipenv-${{ hashFiles('./Pipfile.lock') }}
+      - run: make init
+      - run: make format-check
+      - run: make lint-check
+      - run: make type-check
+      - run: make test
+      - name: Notify Action Failure to Slack
+        uses: 8398a7/action-slack@v3.8.0
+        with:
+          text: ${{ github.event.pull_request.html_url }} # push to mainイベントのときは空
+          author_name: GitHub Actions 失敗通知
+          status: ${{ job.status }}
+          fields:
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.PR_MESSAGE_SLACK_WEBHOOK_URL }}
+        if: failure()

@@ -1,0 +1,38 @@
+{
+  "name": "bee",
+  "dockerFile": "Dockerfile",
+  "mounts": [
+    "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind,consistency=cached"
+  ],
+  "containerEnv": {
+    "AWS_ACCESS_KEY_ID": "${localEnv:AWS_ACCESS_KEY_ID}",
+    "AWS_SECRET_ACCESS_KEY": "${localEnv:AWS_SECRET_ACCESS_KEY}",
+    "AWS_DEFAULT_REGION": "${localEnv:AWS_DEFAULT_REGION}"
+  },
+  "postCreateCommand": "make init",
+  "settings": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "python.linting.pylintEnabled": true,
+    "python.linting.enabled": true,
+    "[python]": {
+      "editor.defaultFormatter": "ms-python.python",
+      "editor.formatOnPaste": false,
+      "editor.formatOnSaveMode": "file"
+    },
+    "python.formatting.provider": "black",
+    /*
+        この設定は、pylintrcにも同様のものがあります。
+        VS Codeがpylintrcの設定を認識しないため、重複してこちらにも記述しています。
+      */
+    "python.linting.pylintArgs": [
+      "--disable",
+      "missing-module-docstring, missing-class-docstring, missing-function-docstring, line-too-long, fixme"
+    ]
+  },
+  "extensions": [
+    "redhat.vscode-yaml",
+    "esbenp.prettier-vscode",
+    "ms-python.python"
+  ]
+}

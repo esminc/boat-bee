@@ -1,0 +1,11 @@
+.devcontainer/
+
+package*.json
+serverless.yml
+
+node_modules/
+.serverless/
+
+*.md
+
+.aws/
