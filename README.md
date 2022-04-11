@@ -1,5 +1,13 @@
 # bee
 
+## プロダクトビジョン
+
+**永和社員のフィードバックをもらいながらみんなで育てていくプロダクト**
+
+## サービス名
+
+**Bee(Book Erabu Eiwa)**
+
 ## 環境構築
 
 [VS Code Remote Development](https://code.visualstudio.com/docs/remote/remote-overview)を利用してください。
