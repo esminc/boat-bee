@@ -7,6 +7,6 @@ COPY Pipfile Pipfile.lock ./
 RUN pipenv install --system
 
 COPY app.py ./
-COPY ./src/ ./src/
+COPY ./bee_slack_app/ ./bee_slack_app/
 
 CMD [ "app.lambda_handler" ]

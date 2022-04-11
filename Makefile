@@ -16,7 +16,7 @@ format-check:
 
 lint-check:
 	pipenv run pylint app.py
-	pipenv run pylint src --recursive=y
+	pipenv run pylint bee_slack_app
 
 type-check:
 	pipenv run mypy .
