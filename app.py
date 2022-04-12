@@ -1,11 +1,11 @@
 import json
+import logging
 import os
 
-import logging
-
 import awsgi  # type: ignore
-import app_local
 import boto3  # type: ignore
+
+import app_local
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -18,6 +18,7 @@ os.environ["SLACK_BOT_TOKEN"] = secret["SLACK_BOT_TOKEN"]
 os.environ["SLACK_SIGNING_SECRET"] = secret["SLACK_SIGNING_SECRET"]
 
 flask_app = app_local.flask_app
+
 
 def lambda_handler(event, context):
     return awsgi.response(flask_app, event, context)

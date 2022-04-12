@@ -2,7 +2,6 @@ from slack_bolt import App
 
 from bee_slack_app import ml
 
-
 app = App(process_before_response=True)
 
 
