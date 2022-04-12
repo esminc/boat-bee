@@ -8,10 +8,22 @@ provider:
     images:
       appimage:
         path: ./
+  environment:
+    DYNAMODB_TABLE: ${self:service}-${sls:stage}
   iamRoleStatements:
     - Effect: Allow
       Action:
         - secretsmanager:GetSecretValue
+      Resource:
+        - "*"
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
       Resource:
         - "*"
 
@@ -27,3 +39,19 @@ functions:
 
 plugins:
   - serverless-offline
+
+resources: # CloudFormation template syntax from here on.
+  Resources:
+    BeeTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.DYNAMODB_TABLE}
+        AttributeDefinitions:
+          - AttributeName: userId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: userId
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
