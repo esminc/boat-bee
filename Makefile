@@ -24,5 +24,8 @@ type-check:
 test:
 	pipenv run pytest
 
+train:
+	cd ml && pipenv run python train.py
+
 deploy:
 	sls deploy
