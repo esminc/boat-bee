@@ -2,7 +2,7 @@ all: init format-check lint-check type-check test
 
 init:
 	pipenv install --dev
-	npm install
+	cd app && npm install
 
 format:
 	pipenv run black ./
@@ -15,8 +15,8 @@ format-check:
 	prettier --check ./
 
 lint-check:
-	pipenv run pylint app.py
-	pipenv run pylint bee_slack_app
+	pipenv run pylint app/app.py
+	pipenv run pylint app/bee_slack_app
 
 type-check:
 	pipenv run mypy .
@@ -25,4 +25,4 @@ test:
 	pipenv run pytest
 
 deploy:
-	sls deploy
+	cd app && sls deploy
