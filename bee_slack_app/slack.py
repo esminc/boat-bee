@@ -8,7 +8,7 @@ app = App(process_before_response=True)
 @app.message("hello")
 def message_hello(message, say):
     # say() sends a message to the channel where the event was triggered
-    say(f"Hey there Makefileから起動する！<@{message['user']}>!")
+    say(f"Hey there <@{message['user']}>!")
 
 
 @app.message("predict")
