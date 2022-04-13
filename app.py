@@ -15,7 +15,7 @@ os.environ["SLACK_APP_TOKEN"] = secret["SLACK_APP_TOKEN"]
 os.environ["SLACK_BOT_TOKEN"] = secret["SLACK_BOT_TOKEN"]
 os.environ["SLACK_SIGNING_SECRET"] = secret["SLACK_SIGNING_SECRET"]
 
-from bee_slack_app.flask_app import flask_app
+from bee_slack_app.flask_app import flask_app  # pylint: disable=wrong-import-position
 
 
 def lambda_handler(event, context):
