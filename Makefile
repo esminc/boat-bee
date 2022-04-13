@@ -16,7 +16,6 @@ format-check:
 
 lint-check:
 	pipenv run pylint app.py
-	pipenv run pylint app_local.py
 	pipenv run pylint bee_slack_app
 
 type-check:
@@ -32,4 +31,4 @@ deploy:
 	sls deploy
 
 start-dev:
-	pipenv run gunicorn --bind :3000 --workers 1 --threads 2 --timeout 0 --reload app_local:flask_app
+	pipenv run gunicorn --bind :3000 --workers 1 --threads 2 --timeout 0 --reload bee_slack_app.flask_app:flask_app
