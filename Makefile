@@ -16,6 +16,7 @@ format-check:
 
 lint-check:
 	pipenv run pylint app.py
+	pipenv run pylint app_local.py
 	pipenv run pylint bee_slack_app
 
 type-check:
