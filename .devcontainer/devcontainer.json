@@ -33,6 +33,7 @@
   "extensions": [
     "redhat.vscode-yaml",
     "esbenp.prettier-vscode",
-    "ms-python.python"
+    "ms-python.python",
+    "philnash.ngrok-for-vscode"
   ]
 }
