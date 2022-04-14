@@ -93,6 +93,27 @@ def open_modal(ack, body, client):
                                 "type": "plain_text",
                                 "text": "評価2"
                                 }
+                            },
+                            {
+                                "value": "A3",
+                                "text": {
+                                "type": "plain_text",
+                                "text": "評価3"
+                                }
+                            },
+                            {
+                                "value": "A4",
+                                "text": {
+                                "type": "plain_text",
+                                "text": "評価4"
+                                }
+                            },
+                            {
+                                "value": "A5",
+                                "text": {
+                                "type": "plain_text",
+                                "text": "評価5"
+                                }
                             }
                         ]
                     }
