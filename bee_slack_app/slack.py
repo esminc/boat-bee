@@ -64,14 +64,12 @@ def open_modal(ack, body, client):
                     }
                 },
                 {
-                    "type": "section",
-                    "text": {
-                        "type": "plain_text",
-                        "text": "Check out these rad radio buttons"
-                    },
-                    "accessory": {
+                    "type": "input",
+                    "block_id": "input_score",
+                    "label": {"type": "plain_text", "text":"What is your score?"},
+                    "element": {
                         "type": "radio_buttons",
-                        "action_id": "this_is_an_action_id",
+                        "action_id": "action_id_score",
                         "initial_option": {
                             "value": "A1",
                             "text": {
@@ -128,7 +126,12 @@ def handle_submission(ack, body, client, view, logger):
     print("ビューからのイベント")
     # `input_c`という block_id に `dreamy_input` を持つ input ブロックがある場合
     hopes_and_dreams = view["state"]["values"]["input_c"]["dreamy_input"]
-    print(hopes_and_dreams)
+    print(f"Input Value = {hopes_and_dreams}")
+
+    score = view["state"]["values"]["input_score"]["action_id_score"]["selected_option"]["value"]
+    print(f"Score = {score}")
+
+
     user = body["user"]["id"]
     # 入力値を検証
     errors = {}
@@ -156,7 +159,6 @@ def handle_submission(ack, body, client, view, logger):
         client.chat_postMessage(channel=user, text=msg)
     except e:
         logger.exception(f"Failed to post a message {e}")
-
 
 
 @app.message("predict")
