@@ -67,6 +67,43 @@ def open_modal(ack, body, client):
         }
     )
 
+# view_submission リクエストを処理
+@app.view("view_1")
+def handle_submission(ack, body, client, view, logger):
+    print("ビューからのイベント")
+    # `input_c`という block_id に `dreamy_input` を持つ input ブロックがある場合
+    hopes_and_dreams = view["state"]["values"]["input_c"]["dreamy_input"]
+    print(hopes_and_dreams)
+    user = body["user"]["id"]
+    # 入力値を検証
+    errors = {}
+    if hopes_and_dreams is not None and len(hopes_and_dreams) <= 1:
+        errors["input_c"] = "The value must be longer than 5 characters"
+    if len(errors) > 0:
+        ack(response_action="errors", errors=errors)
+        return
+    # view_submission リクエストの確認を行い、モーダルを閉じる
+    ack()
+    # 入力されたデータを使った処理を実行。このサンプルでは DB に保存する処理を行う
+    # そして入力値の検証結果をユーザーに送信
+
+    # ユーザーに送信するメッセージ
+    msg = ""
+    try:
+        # DB に保存
+        msg = f"Your submission of {hopes_and_dreams} was successful"
+    except Exception as e:
+        # エラーをハンドリング
+        msg = "There was an error with your submission"
+
+    # ユーザーにメッセージを送信
+    try:
+        client.chat_postMessage(channel=user, text=msg)
+    except e:
+        logger.exception(f"Failed to post a message {e}")
+
+
+
 @app.message("predict")
 def message_predict(_, say):
 
