@@ -10,6 +10,7 @@ def message_hello(message, say):
     # say() sends a message to the channel where the event was triggered
     say(f"Hey there <@{message['user']}>!")
 
+
 @app.message("レビュー")
 def message_review(message, say):
     # say() sends a message to the channel where the event was triggered
@@ -20,13 +21,14 @@ def message_review(message, say):
                 "text": {"type": "mrkdwn", "text": f"レビューします <@{message['user']}>!"},
                 "accessory": {
                     "type": "button",
-                    "text": {"type": "plain_text", "text":"Click Me"},
-                    "action_id": "button_click"
-                }
+                    "text": {"type": "plain_text", "text": "Click Me"},
+                    "action_id": "button_click",
+                },
             }
         ],
-        text=f"Hey there <@{message['user']}>!"
+        text=f"Hey there <@{message['user']}>!",
     )
+
 
 @app.action("button_click")
 def open_modal(ack, body, client):
@@ -41,166 +43,138 @@ def open_modal(ack, body, client):
             "type": "modal",
             # ビューの識別子
             "callback_id": "view_1",
-            "title": {"type": "plain_text", "text":"Bee"},
-            "submit": {"type": "plain_text", "text":"送信"},
+            "title": {"type": "plain_text", "text": "Bee"},
+            "submit": {"type": "plain_text", "text": "送信"},
             "blocks": [
                 {
                     "type": "input",
                     "block_id": "input_book_title",
-                    "label": {"type": "plain_text", "text":"タイトル"},
+                    "label": {"type": "plain_text", "text": "タイトル"},
                     "element": {
                         "type": "plain_text_input",
                         "action_id": "action_id_book_title",
-                    }
+                    },
                 },
                 {
                     "type": "input",
                     "block_id": "input_isbn",
-                    "label": {"type": "plain_text", "text":"ISBN Code"},
+                    "label": {"type": "plain_text", "text": "ISBN Code"},
                     "element": {
                         "type": "plain_text_input",
                         "action_id": "action_id_isbn",
-                    }
+                    },
                 },
                 {
                     "type": "input",
                     "block_id": "input_score_for_me",
-                    "label": {"type": "plain_text", "text":"自分にとっての評価"},
+                    "label": {"type": "plain_text", "text": "自分にとっての評価"},
                     "element": {
                         "type": "radio_buttons",
                         "action_id": "action_id_score_for_me",
                         "initial_option": {
                             "value": "3",
-                            "text": {
-                                "type": "plain_text",
-                                "text": "普通"
-                            }
+                            "text": {"type": "plain_text", "text": "普通"},
                         },
                         "options": [
                             {
                                 "value": "5",
-                                "text": {
-                                "type": "plain_text",
-                                "text": "とても良い"
-                                }
+                                "text": {"type": "plain_text", "text": "とても良い"},
                             },
                             {
                                 "value": "4",
-                                "text": {
-                                "type": "plain_text",
-                                "text": "良い"
-                                }
+                                "text": {"type": "plain_text", "text": "良い"},
                             },
                             {
                                 "value": "3",
-                                "text": {
-                                "type": "plain_text",
-                                "text": "普通"
-                                }
+                                "text": {"type": "plain_text", "text": "普通"},
                             },
                             {
                                 "value": "2",
-                                "text": {
-                                "type": "plain_text",
-                                "text": "悪い"
-                                }
+                                "text": {"type": "plain_text", "text": "悪い"},
                             },
                             {
                                 "value": "1",
-                                "text": {
-                                "type": "plain_text",
-                                "text": "とても悪い"
-                                }
-                            }
-                        ]
-                    }
+                                "text": {"type": "plain_text", "text": "とても悪い"},
+                            },
+                        ],
+                    },
                 },
                 {
                     "type": "input",
                     "block_id": "input_score_for_others",
-                    "label": {"type": "plain_text", "text":"他の人へのお勧め度"},
+                    "label": {"type": "plain_text", "text": "他の人へのお勧め度"},
                     "element": {
                         "type": "radio_buttons",
                         "action_id": "action_id_score_for_others",
                         "initial_option": {
                             "value": "3",
-                            "text": {
-                                "type": "plain_text",
-                                "text": "普通"
-                            }
+                            "text": {"type": "plain_text", "text": "普通"},
                         },
                         "options": [
                             {
                                 "value": "5",
-                                "text": {
-                                "type": "plain_text",
-                                "text": "とてもお勧め"
-                                }
+                                "text": {"type": "plain_text", "text": "とてもお勧め"},
                             },
                             {
                                 "value": "4",
-                                "text": {
-                                "type": "plain_text",
-                                "text": "お勧め"
-                                }
+                                "text": {"type": "plain_text", "text": "お勧め"},
                             },
                             {
                                 "value": "3",
-                                "text": {
-                                "type": "plain_text",
-                                "text": "普通"
-                                }
+                                "text": {"type": "plain_text", "text": "普通"},
                             },
                             {
                                 "value": "2",
-                                "text": {
-                                "type": "plain_text",
-                                "text": "お勧めしない"
-                                }
+                                "text": {"type": "plain_text", "text": "お勧めしない"},
                             },
                             {
                                 "value": "1",
-                                "text": {
-                                "type": "plain_text",
-                                "text": "絶対にお勧めしない"
-                                }
-                            }
-                        ]
-                    }
+                                "text": {"type": "plain_text", "text": "絶対にお勧めしない"},
+                            },
+                        ],
+                    },
                 },
                 {
                     "type": "input",
                     "block_id": "input_comment",
-                    "label": {"type": "plain_text", "text":"レビューコメント"},
-                    "optional":True,
+                    "label": {"type": "plain_text", "text": "レビューコメント"},
+                    "optional": True,
                     "element": {
                         "type": "plain_text_input",
                         "action_id": "action_id_comment",
-                        "multiline":True
-                    }
-                }
-            ]
-        }
+                        "multiline": True,
+                    },
+                },
+            ],
+        },
     )
+
 
 # view_submission リクエストを処理
 @app.view("view_1")
 def handle_submission(ack, body, client, view, logger):
     print("ビューからのイベント")
 
-    book_title = view["state"]["values"]["input_book_title"]["action_id_book_title"]["value"]
+    book_title = view["state"]["values"]["input_book_title"]["action_id_book_title"][
+        "value"
+    ]
     print(f"Book title= {book_title}")
     isbn = view["state"]["values"]["input_isbn"]["action_id_isbn"]["value"]
     print(f"ISBN code= {isbn}")
 
-
-    score_for_me = view["state"]["values"]["input_score_for_me"]["action_id_score_for_me"]["selected_option"]["value"]
+    score_for_me = view["state"]["values"]["input_score_for_me"][
+        "action_id_score_for_me"
+    ]["selected_option"]["value"]
     print(f"Score for me= {score_for_me}")
-    score_for_others = view["state"]["values"]["input_score_for_others"]["action_id_score_for_others"]["selected_option"]["value"]
+    score_for_others = view["state"]["values"]["input_score_for_others"][
+        "action_id_score_for_others"
+    ]["selected_option"]["value"]
     print(f"Score for others= {score_for_others}")
 
     # `input_comment`という block_id に `action_id_comment` を持つ input ブロックがある場合
-    review_comment = view["state"]["values"]["input_comment"]["action_id_comment"]["value"]
+    review_comment = view["state"]["values"]["input_comment"]["action_id_comment"][
+        "value"
+    ]
     print(f"Review comment = {review_comment}")
 
     user = body["user"]["id"]
@@ -221,15 +195,16 @@ def handle_submission(ack, body, client, view, logger):
     try:
         # DB に保存
         msg = f"Your submission of {review_comment} was successful"
-    except Exception as e:
+    except Exception as error:  # pylint: disable=broad-except
         # エラーをハンドリング
         msg = "There was an error with your submission"
+        logger.exception(f"Failed to store data {error}")
 
     # ユーザーにメッセージを送信
     try:
         client.chat_postMessage(channel=user, text=msg)
-    except e:
-        logger.exception(f"Failed to post a message {e}")
+    except Exception as error:  # pylint: disable=broad-except
+        logger.exception(f"Failed to post a message {error}")
 
 
 @app.message("predict")
