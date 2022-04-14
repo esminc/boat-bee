@@ -27,6 +27,12 @@ def message_review(message, say):
         ],
         text=f"Hey there <@{message['user']}>!"
     )
+
+@app.action("button_click")
+def action_button_click(body, ack, say):
+    ack()
+    say(f"<@{body['user']['id']}> clicked the button")
+
 @app.message("predict")
 def message_predict(_, say):
 
