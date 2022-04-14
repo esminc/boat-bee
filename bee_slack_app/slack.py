@@ -42,7 +42,7 @@ def open_modal(ack, body, client):
             # ビューの識別子
             "callback_id": "view_1",
             "title": {"type": "plain_text", "text":"My App"},
-            "submit": {"type": "plain_text", "text":"Submit"},
+            "submit": {"type": "plain_text", "text":"送信"},
             "blocks": [
                 {
                     "type": "section",
