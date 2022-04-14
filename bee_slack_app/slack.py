@@ -57,6 +57,7 @@ def open_modal(ack, body, client):
                     "type": "input",
                     "block_id": "input_c",
                     "label": {"type": "plain_text", "text":"What are your hopes and dreams?"},
+                    "optional":True,
                     "element": {
                         "type": "plain_text_input",
                         "action_id": "dreamy_input",
