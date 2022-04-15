@@ -56,7 +56,7 @@ resources: # CloudFormation template syntax from here on.
           - AttributeName: user_id
             KeyType: HASH
           - AttributeName: isbn
-            KeyType: HASH
+            KeyType: RANGE
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
