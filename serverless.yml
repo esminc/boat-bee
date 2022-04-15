@@ -40,6 +40,12 @@ functions:
 
 plugins:
   - serverless-offline
+  - serverless-dynamodb-local
+
+custom:
+  dynamodb:
+    stages:
+      - dev
 
 resources: # CloudFormation template syntax from here on.
   Resources:

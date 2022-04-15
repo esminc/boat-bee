@@ -2,8 +2,8 @@ import os
 
 import boto3  # type: ignore
 
-dynamodb = boto3.resource("dynamodb")
-# dynamodb = boto3.resource('dynamodb',endpoint_url='http://localhost:8000')
+#dynamodb = boto3.resource("dynamodb")
+dynamodb = boto3.resource('dynamodb',endpoint_url='http://localhost:8000')
 
 # This is a sample
 class _BookReview:

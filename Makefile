@@ -3,6 +3,7 @@ all: init format-check lint-check type-check test
 init:
 	pipenv install --dev
 	npm install
+	sls dynamodb install
 
 format:
 	pipenv run black ./
@@ -21,6 +22,10 @@ lint-check:
 type-check:
 	pipenv run mypy .
 
+test: export AWS_ACCESS_KEY_ID := dummy
+test: export AWS_SECRET_ACCESS_KEY := dummy
+test: export AWS_DEFAULT_REGION := localhost
+test: export DYNAMODB_TABLE := bee-dev
 test:
 	pipenv run pytest
 
@@ -34,4 +39,5 @@ start-dev:
 	pipenv run gunicorn --bind :3000 --workers 1 --threads 2 --timeout 0 --reload bee_slack_app.flask_app:flask_app
 
 start-dynamodb:
-	java -Djava.library.path=./dynamodb/DynamoDBLocal_lib -jar dynamodb/DynamoDBLocal.jar -sharedDb
+	sls dynamodb start --migrate
+	#java -Djava.library.path=/dynamodb/DynamoDBLocal_lib -jar /dynamodb/DynamoDBLocal.jar -sharedDb
