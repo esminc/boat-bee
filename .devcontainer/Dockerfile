@@ -25,6 +25,12 @@ RUN apt-get install -y nodejs
 
 RUN npm install -g serverless@3.12.0
 
+# DynamoDB Localをインストール
+
+RUN mkdir dynamodb
+RUN curl https://s3.ap-northeast-1.amazonaws.com/dynamodb-local-tokyo/dynamodb_local_latest.tar.gz -o dynamodb/dynamodb_local_latest.tar.gz
+RUN cd dynamodb && tar -xzvf dynamodb_local_latest.tar.gz 
+
 # その他ツールをインストール
 
 RUN pip install pipenv
