@@ -215,7 +215,7 @@ def handle_submission(ack, body, client, view, logger):
 
     # ユーザーにメッセージを送信
     try:
-        client.chat_postMessage(channel=user, text=msg)
+        client.chat_postMessage(channel=user_id, text=msg)
     except Exception as error:  # pylint: disable=broad-except
         logger.exception(f"Failed to post a message {error}")
 
