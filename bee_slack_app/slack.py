@@ -18,8 +18,6 @@ os.environ["SLACK_SIGNING_SECRET"] = secret["SLACK_SIGNING_SECRET"]
 
 app = App(process_before_response=True)
 
-dynamodb = boto3.resource("dynamodb")
-
 
 @app.message("hello")
 def message_hello(message, say):
