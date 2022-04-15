@@ -29,3 +29,6 @@ train:
 
 deploy:
 	sls deploy
+
+start-dev:
+	pipenv run gunicorn --bind :3000 --workers 1 --threads 2 --timeout 0 --reload bee_slack_app.flask_app:flask_app
