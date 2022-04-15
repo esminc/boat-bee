@@ -50,8 +50,12 @@ resources: # CloudFormation template syntax from here on.
         AttributeDefinitions:
           - AttributeName: user_id
             AttributeType: S
+          - AttributeName: isbn
+            AttributeType: S
         KeySchema:
           - AttributeName: user_id
+            KeyType: HASH
+          - AttributeName: isbn
             KeyType: HASH
         ProvisionedThroughput:
           ReadCapacityUnits: 1
