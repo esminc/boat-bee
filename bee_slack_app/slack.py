@@ -195,6 +195,8 @@ def handle_submission(ack, body, client, view, logger):
     msg = ""
     try:
         # DB に保存
+        bookReview.create({'book_title': book_title, 'isbn': isbn, 'score_for_me': score_for_me,'score_for_others': score_for_others, 'review_comment': review_comment})
+
         msg = f"Your submission of {review_comment} was successful"
     except Exception as error:  # pylint: disable=broad-except
         # エラーをハンドリング

@@ -9,10 +9,14 @@ dynamodb = boto3.resource("dynamodb")
 class _BookReview:
     table = dynamodb.Table(os.environ["DYNAMODB_TABLE"])
 
-    def create(self):
+    def create(self, review):
         item = {
             "userId": "test-id",
-            "review_text": "This is a sample text.",
+            "book_title": review["book_title"],
+            "isbn": review["isbn"],
+            "score_for_me": review["score_for_me"],
+            "score_for_others": review["score_for_others"],
+            "review_comment": review["review_comment"],
         }
 
         self.table.put_item(Item=item)
