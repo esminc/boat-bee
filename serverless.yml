@@ -9,6 +9,7 @@ provider:
       appimage:
         path: ./
   environment:
+    SERVERLESS_STAGE: ${sls:stage}
     DYNAMODB_TABLE: ${self:service}-${sls:stage}
   iamRoleStatements:
     - Effect: Allow
