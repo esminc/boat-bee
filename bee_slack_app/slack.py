@@ -178,7 +178,8 @@ def handle_submission(ack, body, client, view, logger):
     ]
     print(f"Review comment = {review_comment}")
 
-    user = body["user"]["id"]
+    user_id = body["user"]["id"]
+    print("user_id:", user_id)
     # 入力値を検証
     errors = {}
     if review_comment is not None and len(review_comment) <= 1:
@@ -195,7 +196,7 @@ def handle_submission(ack, body, client, view, logger):
     msg = ""
     try:
         # DB に保存
-        bookReview.create({'book_title': book_title, 'isbn': isbn, 'score_for_me': score_for_me,'score_for_others': score_for_others, 'review_comment': review_comment})
+        bookReview.create({'user_id': user_id, 'book_title': book_title, 'isbn': isbn, 'score_for_me': score_for_me,'score_for_others': score_for_others, 'review_comment': review_comment})
 
         msg = f"Your submission of {review_comment} was successful"
     except Exception as error:  # pylint: disable=broad-except

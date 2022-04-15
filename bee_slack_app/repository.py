@@ -11,7 +11,7 @@ class _BookReview:
 
     def create(self, review):
         item = {
-            "userId": "test-id",
+            "user_id": review["user_id"],
             "book_title": review["book_title"],
             "isbn": review["isbn"],
             "score_for_me": review["score_for_me"],
