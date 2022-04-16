@@ -22,9 +22,9 @@ lint-check:
 type-check:
 	pipenv run mypy .
 
-test: export AWS_ACCESS_KEY_ID := dummy
-test: export AWS_SECRET_ACCESS_KEY := dummy
-test: export AWS_DEFAULT_REGION := localhost
+#test: export AWS_ACCESS_KEY_ID := dummy
+#test: export AWS_SECRET_ACCESS_KEY := dummy
+test: export AWS_DEFAULT_REGION := us-east-1
 test: export DYNAMODB_TABLE := bee-dev
 test:
 	pipenv run pytest
