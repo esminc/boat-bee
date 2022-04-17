@@ -13,7 +13,9 @@ class _BookSearch:
     # Google API
     base_url_google = "https://www.googleapis.com/books/v1/volumes"
 
-    def search_by_title(self, target_title: str) -> Tuple[int, List[dict[str, str]]]:
+    def search_rakuten_by_title(
+        self, target_title: str
+    ) -> Tuple[int, List[dict[str, str]]]:
         """
         タイトルから書籍を検索する
 
@@ -56,7 +58,7 @@ class _BookSearch:
 
         return json_result["hits"], list_result
 
-    def search_by_isbn(self, isbn: int) -> Tuple[bool, Optional[str]]:
+    def search_rakuten_by_isbn(self, isbn: int) -> Tuple[bool, Optional[str]]:
         """
         ISBNから書籍を検索する
 
@@ -137,16 +139,16 @@ bookSearch = _BookSearch()
 
 # Usage example
 
-print("===== search by title('仕事ではじめる') =====")
+print("===== search rakuten by title('仕事ではじめる') =====")
 
-hits, items = bookSearch.search_by_title("仕事ではじめる")
+hits, items = bookSearch.search_rakuten_by_title("仕事ではじめる")
 print(f"hits: {hits}")
 for item in items:
     print(f"title: {item['title']}  isbn: {item['isbn']}  author: {item['author']}")
 
-print("===== search by isbn('9784873119472') =====")
+print("===== search rakuten by isbn('9784873119472') =====")
 
-hits, title = bookSearch.search_by_isbn(9784873119472)
+hits, title = bookSearch.search_rakuten_by_isbn(9784873119472)
 
 print(f"hits: {hits}\ntitle: {title}")
 
