@@ -123,10 +123,20 @@ class _BookSearch:
         # 取得結果を1件ずつ取り出す
         for _item in json_result["items"]:
 
+            # ISBN13を取り出す
+            isbn_list = _item["volumeInfo"]["industryIdentifiers"]
+            isbn_13_list = [x for x in isbn_list if x["type"] == "ISBN_13"]
+
+            # ISBN13がない場合は検索結果から除外する
+            if len(isbn_13_list) != 1:
+                continue
+
+            isbn_13 = isbn_13_list[0]["identifier"]
+
             # 必要な情報を辞書に格納する
             dict_item = {
                 "title": _item["volumeInfo"]["title"],
-                "isbn": _item["volumeInfo"]["industryIdentifiers"][0]["identifier"],
+                "isbn": isbn_13,
                 "author": _item["volumeInfo"]["authors"],
             }
             list_result.append(dict_item)
