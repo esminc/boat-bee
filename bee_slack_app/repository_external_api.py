@@ -10,6 +10,9 @@ class _BookSearch:
     url = "https://app.rakuten.co.jp/services/api/BooksTotal/Search/20170404"
     APPLICATION_ID = os.environ["RAKU_APP_ID"]
 
+    # Google API
+    base_url_google = "https://www.googleapis.com/books/v1/volumes"
+
     def search_by_title(self, target_title: str) -> Tuple[int, List[dict[str, str]]]:
         """
         タイトルから書籍を検索する
@@ -84,6 +87,50 @@ class _BookSearch:
 
         return True, json_result["Items"][0]["Item"]["title"]
 
+    def search_google_by_title(
+        self, target_title: str
+    ) -> Tuple[int, List[dict[str, str]]]:
+        """
+        タイトルから書籍を検索する
+
+        Args:
+            title : 検索したい書籍のタイトル（曖昧検索も可能）
+        Returns:
+            hits: 検索でヒットした件数
+            list: ヒットした書籍の辞書形式データをリストで格納する
+        """
+
+        # URLのパラメータ
+        param = {
+            # "isbn": 9784873119472
+            "q": f"intitle:{target_title}",
+            "Country": "JP",
+        }
+
+        # APIを実行して結果を取得する
+        # result = requests.get("https://www.googleapis.com/books/v1/volumes?q=%E4%BB%95%E4%BA%8B")
+        json_result = requests.get(self.base_url_google, param).json()
+
+        _hits = json_result["totalItems"]
+
+        print(f"hits: {_hits}")
+
+        # 整形した結果を格納するリスト型変数を宣言
+        list_result = []
+
+        # 取得結果を1件ずつ取り出す
+        for _item in json_result["items"]:
+
+            # 必要な情報を辞書に格納する
+            dict_item = {
+                "title": _item["volumeInfo"]["title"],
+                "isbn": _item["volumeInfo"]["industryIdentifiers"][0]["identifier"],
+                "author": _item["volumeInfo"]["authors"],
+            }
+            list_result.append(dict_item)
+
+        return _hits, list_result
+
 
 bookSearch = _BookSearch()
 
@@ -102,3 +149,10 @@ print("===== search by isbn('9784873119472') =====")
 hits, title = bookSearch.search_by_isbn(9784873119472)
 
 print(f"hits: {hits}\ntitle: {title}")
+
+print("===== search google by title('仕事ではじめる') =====")
+hits, items = bookSearch.search_google_by_title("仕事ではじめる")
+
+print(f"hits: {hits}")
+for item in items:
+    print(f"title: {item['title']}  isbn: {item['isbn']}  author: {item['author']}")
