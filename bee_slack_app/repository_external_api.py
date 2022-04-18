@@ -58,7 +58,7 @@ class _BookSearch:
 
         return json_result["hits"], list_result
 
-    def search_rakuten_by_isbn(self, isbn: int) -> Tuple[bool, Optional[str]]:
+    def search_rakuten_by_isbn(self, isbn: int) -> Tuple[int, Optional[dict[str, str]]]:
         """
         ISBNから書籍を検索する
 
@@ -66,7 +66,7 @@ class _BookSearch:
             isbn : 検索したい書籍のISBN(13桁の数字、ハイフンなし)
         Returns:
             bool: 検索でヒットした（True）、ヒットしなかった（False）
-            str:  ヒットした書籍のタイトル
+            dict_info:  ヒットした書籍の情報を辞書形式で返す
         """
         # URLのパラメータ
         param = {
@@ -82,12 +82,18 @@ class _BookSearch:
         # jsonにデコードする
         json_result = result.json()
 
-        # print(json_result)
-
         if json_result["hits"] != 1:
             return False, None
 
-        return True, json_result["Items"][0]["Item"]["title"]
+        _item = json_result["Items"][0]["Item"]
+
+        # 必要な情報を辞書に格納する
+        dict_info = {
+            "title": _item["title"],
+            "author": _item["author"],
+        }
+
+        return True, dict_info
 
     def search_google_by_title(
         self, target_title: str
@@ -143,7 +149,7 @@ class _BookSearch:
 
         return _hits, list_result
 
-    def search_google_by_isbn(self, isbn: int) -> Tuple[bool, Optional[str]]:
+    def search_google_by_isbn(self, isbn: int) -> Tuple[bool, Optional[dict[str, str]]]:
         """
         ISBNから書籍を検索する
 
@@ -151,7 +157,7 @@ class _BookSearch:
             isbn : 検索したい書籍のISBN(13桁の数字、ハイフンなし)
         Returns:
             bool: 検索でヒットした（True）、ヒットしなかった（False）
-            str:  ヒットした書籍のタイトル
+            dict_info:  ヒットした書籍の情報を辞書形式で返す
         """
 
         # URLのパラメータ
@@ -166,7 +172,16 @@ class _BookSearch:
         if json_result["totalItems"] != 1:
             return False, None
 
-        return True, json_result["items"][0]["volumeInfo"]["title"]
+        _item = json_result["items"][0]
+
+        # 必要な情報を辞書に格納する
+        dict_info = {
+            "title": _item["volumeInfo"]["title"],
+            "author": _item["volumeInfo"]["authors"],
+        }
+
+        return True, dict_info
+
 
 bookSearch = _BookSearch()
 
@@ -182,9 +197,9 @@ for item in items:
 
 print("===== search rakuten by isbn('9784873119472') =====")
 
-hits, title = bookSearch.search_rakuten_by_isbn(9784873119472)
+hits, informations = bookSearch.search_rakuten_by_isbn(9784873119472)
 
-print(f"hits: {hits}\ntitle: {title}")
+print(f"hits: {hits}\ntitle: {informations}")
 
 print("===== search google by title('仕事ではじめる') =====")
 hits, items = bookSearch.search_google_by_title("仕事ではじめる")
@@ -195,6 +210,6 @@ for item in items:
 
 print("===== search google by isbn('9784873119472') =====")
 
-hits, title = bookSearch.search_google_by_isbn(9784873119472)
+hits, informations = bookSearch.search_google_by_isbn(9784873119472)
 
-print(f"hits: {hits}\ntitle: {title}")
+print(f"hits: {hits}\ntitle: {informations}")
