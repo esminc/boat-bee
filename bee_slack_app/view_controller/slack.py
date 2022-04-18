@@ -1,9 +1,7 @@
-import datetime
-
 from slack_bolt import App
 
 from bee_slack_app import ml
-from bee_slack_app.repository import bookReview
+from bee_slack_app.service.review import post_review  # type: ignore
 
 app = App(process_before_response=True)
 
@@ -11,7 +9,7 @@ app = App(process_before_response=True)
 @app.message("hello")
 def message_hello(message, say):
     # say() sends a message to the channel where the event was triggered
-    say(f"Hey there <@{message['user']}>!")
+    say(f"Hey there!! <@{message['user']}>!")
 
 
 @app.message("レビュー")
@@ -191,38 +189,16 @@ def handle_submission(ack, body, client, view, logger):
         return
     # view_submission リクエストの確認を行い、モーダルを閉じる
     ack()
-    # 入力されたデータを使った処理を実行。このサンプルでは DB に保存する処理を行う
-    # そして入力値の検証結果をユーザーに送信
 
-    # ユーザーに送信するメッセージ
-    msg = ""
-    try:
-        # DB に保存
-        bookReview.create(
-            {
-                "user_id": user_id,
-                "book_title": book_title,
-                "isbn": isbn,
-                "score_for_me": score_for_me,
-                "score_for_others": score_for_others,
-                "review_comment": review_comment,
-                "updated_at": datetime.datetime.now(
-                    datetime.timezone(datetime.timedelta(hours=9))
-                ).isoformat(timespec="seconds"),
-            }
-        )
-
-        msg = f"Your submission of {review_comment} was successful"
-    except Exception as error:  # pylint: disable=broad-except
-        # エラーをハンドリング
-        msg = "There was an error with your submission"
-        logger.exception(f"Failed to store data {error}")
-
-    # ユーザーにメッセージを送信
-    try:
-        client.chat_postMessage(channel=user_id, text=msg)
-    except Exception as error:  # pylint: disable=broad-except
-        logger.exception(f"Failed to post a message {error}")
+    post_review(
+        logger,
+        user_id,
+        book_title,
+        isbn,
+        score_for_me,
+        score_for_others,
+        review_comment,
+    )
 
 
 @app.message("predict")
