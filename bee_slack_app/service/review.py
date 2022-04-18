@@ -1,11 +1,18 @@
 import datetime
+from typing import Any
 
 from bee_slack_app.repository.book_review import book_review_repository  # type: ignore
 
 
 def post_review(
-    logger, user_id, book_title, isbn, score_for_me, score_for_others, review_comment
-):
+    logger: Any,
+    user_id: str,
+    book_title: str,
+    isbn: str,
+    score_for_me: int,
+    score_for_others: int,
+    review_comment: str,
+) -> None:
     # 入力されたデータを使った処理を実行。このサンプルでは DB に保存する処理を行う
 
     try:
