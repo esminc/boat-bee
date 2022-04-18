@@ -1,8 +1,9 @@
+import datetime
+
 from slack_bolt import App
 
 from bee_slack_app import ml
 from bee_slack_app.repository import bookReview
-import datetime
 
 app = App(process_before_response=True)
 
