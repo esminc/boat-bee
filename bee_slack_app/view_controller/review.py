@@ -5,13 +5,12 @@ from bee_slack_app.service.review import post_review  # type: ignore
 
 # app = App(process_before_response=True)
 
-def review_controller(app):
 
+def review_controller(app):
     @app.message("hello")
     def message_hello(message, say):
         # say() sends a message to the channel where the event was triggered
         say(f"Hey there!! <@{message['user']}>!")
-
 
     @app.message("レビュー")
     def message_review(message, say):
@@ -20,7 +19,10 @@ def review_controller(app):
             blocks=[
                 {
                     "type": "section",
-                    "text": {"type": "mrkdwn", "text": f"レビューします <@{message['user']}>!"},
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": f"レビューします <@{message['user']}>!",
+                    },
                     "accessory": {
                         "type": "button",
                         "text": {"type": "plain_text", "text": "Click Me"},
@@ -30,7 +32,6 @@ def review_controller(app):
             ],
             text=f"Hey there <@{message['user']}>!",
         )
-
 
     @app.action("button_click")
     def open_modal(ack, body, client):
@@ -151,15 +152,14 @@ def review_controller(app):
             },
         )
 
-
     # view_submission リクエストを処理
     @app.view("view_1")
     def handle_submission(ack, body, client, view, logger):
         print("ビューからのイベント")
 
-        book_title = view["state"]["values"]["input_book_title"]["action_id_book_title"][
-            "value"
-        ]
+        book_title = view["state"]["values"]["input_book_title"][
+            "action_id_book_title"
+        ]["value"]
         print(f"Book title= {book_title}")
         isbn = view["state"]["values"]["input_isbn"]["action_id_isbn"]["value"]
         print(f"ISBN code= {isbn}")
@@ -200,7 +200,6 @@ def review_controller(app):
             score_for_others,
             review_comment,
         )
-
 
     @app.message("predict")
     def message_predict(_, say):
