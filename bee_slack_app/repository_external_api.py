@@ -143,6 +143,30 @@ class _BookSearch:
 
         return _hits, list_result
 
+    def search_google_by_isbn(self, isbn: int) -> Tuple[bool, Optional[str]]:
+        """
+        ISBNから書籍を検索する
+
+        Args:
+            isbn : 検索したい書籍のISBN(13桁の数字、ハイフンなし)
+        Returns:
+            bool: 検索でヒットした（True）、ヒットしなかった（False）
+            str:  ヒットした書籍のタイトル
+        """
+
+        # URLのパラメータ
+        param = {
+            "q": f"isbn:{isbn}",
+            "Country": "JP",
+        }
+
+        # APIを実行して結果を取得する
+        json_result = requests.get(self.base_url_google, param).json()
+
+        if json_result["totalItems"] != 1:
+            return False, None
+
+        return True, json_result["items"][0]["volumeInfo"]["title"]
 
 bookSearch = _BookSearch()
 
@@ -168,3 +192,9 @@ hits, items = bookSearch.search_google_by_title("仕事ではじめる")
 print(f"hits: {hits}")
 for item in items:
     print(f"title: {item['title']}  isbn: {item['isbn']}  author: {item['author']}")
+
+print("===== search google by isbn('9784873119472') =====")
+
+hits, title = bookSearch.search_google_by_isbn(9784873119472)
+
+print(f"hits: {hits}\ntitle: {title}")
