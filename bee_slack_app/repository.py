@@ -17,6 +17,7 @@ class _BookReview:
             "score_for_me": review["score_for_me"],
             "score_for_others": review["score_for_others"],
             "review_comment": review["review_comment"],
+            "updated_at": review["updated_at"],
         }
 
         self.table.put_item(Item=item)

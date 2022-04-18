@@ -2,6 +2,7 @@ from slack_bolt import App
 
 from bee_slack_app import ml
 from bee_slack_app.repository import bookReview
+import datetime
 
 app = App(process_before_response=True)
 
@@ -204,6 +205,9 @@ def handle_submission(ack, body, client, view, logger):
                 "score_for_me": score_for_me,
                 "score_for_others": score_for_others,
                 "review_comment": review_comment,
+                "updated_at": datetime.datetime.now(
+                    datetime.timezone(datetime.timedelta(hours=9))
+                ).isoformat(timespec="seconds"),
             }
         )
 
