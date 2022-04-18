@@ -1,3 +1,5 @@
+import datetime
+
 from slack_bolt import App
 
 from bee_slack_app import ml
@@ -178,7 +180,8 @@ def handle_submission(ack, body, client, view, logger):
     ]
     print(f"Review comment = {review_comment}")
 
-    user = body["user"]["id"]
+    user_id = body["user"]["id"]
+    print("user_id:", user_id)
     # 入力値を検証
     errors = {}
     if review_comment is not None and len(review_comment) <= 1:
@@ -195,6 +198,20 @@ def handle_submission(ack, body, client, view, logger):
     msg = ""
     try:
         # DB に保存
+        bookReview.create(
+            {
+                "user_id": user_id,
+                "book_title": book_title,
+                "isbn": isbn,
+                "score_for_me": score_for_me,
+                "score_for_others": score_for_others,
+                "review_comment": review_comment,
+                "updated_at": datetime.datetime.now(
+                    datetime.timezone(datetime.timedelta(hours=9))
+                ).isoformat(timespec="seconds"),
+            }
+        )
+
         msg = f"Your submission of {review_comment} was successful"
     except Exception as error:  # pylint: disable=broad-except
         # エラーをハンドリング
@@ -203,7 +220,7 @@ def handle_submission(ack, body, client, view, logger):
 
     # ユーザーにメッセージを送信
     try:
-        client.chat_postMessage(channel=user, text=msg)
+        client.chat_postMessage(channel=user_id, text=msg)
     except Exception as error:  # pylint: disable=broad-except
         logger.exception(f"Failed to post a message {error}")
 
@@ -214,10 +231,3 @@ def message_predict(_, say):
     predicted = ml.predict()
 
     say(f"predicted = {predicted}")
-
-
-@app.message("database-test")
-def db_create(_, say):
-    item = bookReview.create()
-
-    say(f"アイテムの作成が成功しました: {item}")

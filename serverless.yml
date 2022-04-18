@@ -48,11 +48,15 @@ resources: # CloudFormation template syntax from here on.
       Properties:
         TableName: ${self:provider.environment.DYNAMODB_TABLE}
         AttributeDefinitions:
-          - AttributeName: userId
+          - AttributeName: user_id
+            AttributeType: S
+          - AttributeName: isbn
             AttributeType: S
         KeySchema:
-          - AttributeName: userId
+          - AttributeName: user_id
             KeyType: HASH
+          - AttributeName: isbn
+            KeyType: RANGE
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
