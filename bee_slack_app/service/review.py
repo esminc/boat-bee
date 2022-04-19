@@ -1,7 +1,8 @@
 import datetime
-from typing import Any, TypedDict 
+from typing import Any, TypedDict
 
 from bee_slack_app.repository.book_review import book_review_repository  # type: ignore
+
 
 class ReviewContents(TypedDict):
     user_id: str
@@ -11,10 +12,8 @@ class ReviewContents(TypedDict):
     score_for_others: int
     review_comment: str
 
-def post_review(
-    logger: Any,
-    review_contents: ReviewContents
-) -> None:
+
+def post_review(logger: Any, review_contents: ReviewContents) -> None:
     # 入力されたデータを使った処理を実行。このサンプルでは DB に保存する処理を行う
 
     try:

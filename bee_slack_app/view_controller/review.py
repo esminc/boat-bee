@@ -1,4 +1,4 @@
-from bee_slack_app.service.review import post_review  # type: ignore
+from bee_slack_app.service.review import ReviewContents, post_review  # type: ignore
 
 
 def review_controller(app):
@@ -181,12 +181,13 @@ def review_controller(app):
         # view_submission リクエストの確認を行い、モーダルを閉じる
         ack()
 
-        post_review(
-            logger,
-            user_id,
-            book_title,
-            isbn,
-            score_for_me,
-            score_for_others,
-            review_comment,
-        )
+        review_contents: ReviewContents = {
+            "user_id": user_id,
+            "book_title": book_title,
+            "isbn": isbn,
+            "score_for_me": score_for_me,
+            "score_for_others": score_for_others,
+            "review_comment": review_comment,
+        }
+
+        post_review(logger, review_contents)
