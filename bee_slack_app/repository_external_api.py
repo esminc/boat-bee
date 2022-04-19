@@ -1,4 +1,5 @@
 import os
+import sys
 from typing import List, Optional, Tuple
 
 import requests  # type: ignore
@@ -68,6 +69,11 @@ class _BookSearch:
             bool: 検索でヒットした（True）、ヒットしなかった（False）
             dict_info:  ヒットした書籍の情報を辞書形式で返す
         """
+
+        if len(isbn) != 13:
+            print(f"ERROR: isbn should be 13 digits but [{len(isbn)}]")
+            return False, None
+
         # URLのパラメータ
         param = {
             # 取得したアプリIDを設定する
@@ -82,7 +88,7 @@ class _BookSearch:
         # jsonにデコードする
         json_result = result.json()
 
-        if json_result["hits"] != 1:
+        if json_result["count"] != 1:
             return False, None
 
         _item = json_result["Items"][0]["Item"]
@@ -187,29 +193,34 @@ bookSearch = _BookSearch()
 
 
 # Usage example
+args = sys.argv
+title = args[1]
+isbn = args[2]
 
-print("===== search rakuten by title('仕事ではじめる') =====")
+print("----------------------------------------------------------------------------")
+print(f"args: {args}")
+print(f"===== search rakuten by title({title}) =====")
 
-hits, items = bookSearch.search_rakuten_by_title("仕事ではじめる")
+hits, items = bookSearch.search_rakuten_by_title(title)
 print(f"hits: {hits}")
 for item in items:
     print(f"title: {item['title']}  isbn: {item['isbn']}  author: {item['author']}")
 
-print("===== search rakuten by isbn('9784873119472') =====")
+print(f"===== search rakuten by isbn({isbn}) =====")
 
-hits, informations = bookSearch.search_rakuten_by_isbn(9784873119472)
+hits, informations = bookSearch.search_rakuten_by_isbn(isbn)
 
 print(f"hits: {hits}\ntitle: {informations}")
 
-print("===== search google by title('仕事ではじめる') =====")
-hits, items = bookSearch.search_google_by_title("仕事ではじめる")
+print(f"===== search google by title({title}) =====")
+hits, items = bookSearch.search_google_by_title(title)
 
 print(f"hits: {hits}")
 for item in items:
     print(f"title: {item['title']}  isbn: {item['isbn']}  author: {item['author']}")
 
-print("===== search google by isbn('9784873119472') =====")
+print(f"===== search google by isbn({isbn}) =====")
 
-hits, informations = bookSearch.search_google_by_isbn(9784873119472)
+hits, informations = bookSearch.search_google_by_isbn(isbn)
 
 print(f"hits: {hits}\ntitle: {informations}")
