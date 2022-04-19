@@ -103,14 +103,13 @@ class _BookSearch:
 
     def search_google_by_title(
         self, target_title: str
-    ) -> Tuple[int, List[dict[str, str]]]:
+    ) -> List[dict[str, str]]:
         """
         タイトルから書籍を検索する
 
         Args:
             title : 検索したい書籍のタイトル（曖昧検索も可能）
         Returns:
-            hits: 検索でヒットした件数
             list: ヒットした書籍の辞書形式データをリストで格納する
         """
 
@@ -125,12 +124,14 @@ class _BookSearch:
         # result = requests.get("https://www.googleapis.com/books/v1/volumes?q=%E4%BB%95%E4%BA%8B")
         json_result = requests.get(self.base_url_google, param).json()
 
-        _hits = json_result["totalItems"]
-
-        print(f"hits: {_hits}")
 
         # 整形した結果を格納するリスト型変数を宣言
-        list_result = []
+        list_result: List[dict[str, str]] = []
+
+        # ヒットしなかった場合はJSONにItemsが含まれないのですぐに空のListを返す
+        _hits = json_result["totalItems"]
+        if _hits == 0:
+            return list_result
 
         # 取得結果を1件ずつ取り出す
         for _item in json_result["items"]:
@@ -153,17 +154,17 @@ class _BookSearch:
             }
             list_result.append(dict_item)
 
-        return _hits, list_result
+        return list_result
 
-    def search_google_by_isbn(self, isbn: str) -> Tuple[bool, Optional[dict[str, str]]]:
+    def search_google_by_isbn(self, isbn: str) -> Optional[dict[str, str]]:
         """
         ISBNから書籍を検索する
 
         Args:
             isbn : 検索したい書籍のISBN(13桁の数字、ハイフンなし)
         Returns:
-            bool: 検索でヒットした（True）、ヒットしなかった（False）
-            dict_info:  ヒットした書籍の情報を辞書形式で返す
+            dict_info : ヒットした書籍の情報を辞書形式で返す
+                        ヒットしなかった場合はNoneを返す
         """
 
         # URLのパラメータ
@@ -176,7 +177,7 @@ class _BookSearch:
         json_result = requests.get(self.base_url_google, param).json()
 
         if json_result["totalItems"] != 1:
-            return False, None
+            return None
 
         _item = json_result["items"][0]
 
@@ -186,7 +187,7 @@ class _BookSearch:
             "author": _item["volumeInfo"].get("authors", "No Authoer"),
         }
 
-        return True, dict_info
+        return dict_info
 
 
 bookSearch = _BookSearch()
@@ -213,14 +214,13 @@ hits, informations = bookSearch.search_rakuten_by_isbn(given_isbn)
 print(f"hits: {hits}\ntitle: {informations}")
 
 print(f"===== search google by title({given_title}) =====")
-hits, items = bookSearch.search_google_by_title(given_title)
+items = bookSearch.search_google_by_title(given_title)
 
-print(f"hits: {hits}")
+print(f"hits: {len(items)}")
 for item in items:
     print(f"title: {item['title']}  isbn: {item['isbn']}  author: {item['author']}")
 
 print(f"===== search google by isbn({given_isbn}) =====")
 
-hits, informations = bookSearch.search_google_by_isbn(given_isbn)
-
-print(f"hits: {hits}\ntitle: {informations}")
+info = bookSearch.search_google_by_isbn(given_isbn)
+print(f"info: {info}")
