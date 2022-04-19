@@ -144,7 +144,7 @@ def review_controller(app):
 
     # view_submission リクエストを処理
     @app.view("view_1")
-    def handle_submission(ack, body, client, view, logger):
+    def handle_submission(ack, body, _, view, logger):
         print("ビューからのイベント")
 
         book_title = view["state"]["values"]["input_book_title"][
