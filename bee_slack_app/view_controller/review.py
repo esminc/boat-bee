@@ -1,4 +1,5 @@
-from bee_slack_app.service.review import ReviewContents, post_review  # type: ignore
+from bee_slack_app.model.review import ReviewContents
+from bee_slack_app.service.review import post_review  # type: ignore
 
 
 def review_controller(app):

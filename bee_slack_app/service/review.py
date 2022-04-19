@@ -1,16 +1,8 @@
 import datetime
-from typing import Any, TypedDict
+from typing import Any
 
+from bee_slack_app.model.review import ReviewContents
 from bee_slack_app.repository.book_review import book_review_repository  # type: ignore
-
-
-class ReviewContents(TypedDict):
-    user_id: str
-    book_title: str
-    isbn: str
-    score_for_me: int
-    score_for_others: int
-    review_comment: str
 
 
 def post_review(logger: Any, review_contents: ReviewContents) -> None:
