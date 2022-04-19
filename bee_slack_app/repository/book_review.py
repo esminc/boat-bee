@@ -29,4 +29,4 @@ class _BookReview:
         pass
 
 
-bookReview = _BookReview()
+book_review_repository = _BookReview()
