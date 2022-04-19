@@ -149,7 +149,7 @@ class _BookSearch:
             dict_item = {
                 "title": _item["volumeInfo"]["title"],
                 "isbn": isbn_13,
-                "author": _item["volumeInfo"]["authors"],
+                "author": _item["volumeInfo"].get("authors", "No Authoer"),
             }
             list_result.append(dict_item)
 
@@ -183,7 +183,7 @@ class _BookSearch:
         # 必要な情報を辞書に格納する
         dict_info = {
             "title": _item["volumeInfo"]["title"],
-            "author": _item["volumeInfo"]["authors"],
+            "author": _item["volumeInfo"].get("authors", "No Authoer"),
         }
 
         return True, dict_info
