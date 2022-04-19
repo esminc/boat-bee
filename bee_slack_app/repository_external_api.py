@@ -59,7 +59,7 @@ class _BookSearch:
 
         return json_result["hits"], list_result
 
-    def search_rakuten_by_isbn(self, isbn: int) -> Tuple[int, Optional[dict[str, str]]]:
+    def search_rakuten_by_isbn(self, isbn: str) -> Tuple[int, Optional[dict[str, str]]]:
         """
         ISBNから書籍を検索する
 
@@ -155,7 +155,7 @@ class _BookSearch:
 
         return _hits, list_result
 
-    def search_google_by_isbn(self, isbn: int) -> Tuple[bool, Optional[dict[str, str]]]:
+    def search_google_by_isbn(self, isbn: str) -> Tuple[bool, Optional[dict[str, str]]]:
         """
         ISBNから書籍を検索する
 
@@ -194,33 +194,33 @@ bookSearch = _BookSearch()
 
 # Usage example
 args = sys.argv
-title = args[1]
-isbn = args[2]
+given_title = args[1]
+given_isbn = args[2]
 
 print("----------------------------------------------------------------------------")
 print(f"args: {args}")
-print(f"===== search rakuten by title({title}) =====")
+print(f"===== search rakuten by title({given_title}) =====")
 
-hits, items = bookSearch.search_rakuten_by_title(title)
+hits, items = bookSearch.search_rakuten_by_title(given_title)
 print(f"hits: {hits}")
 for item in items:
     print(f"title: {item['title']}  isbn: {item['isbn']}  author: {item['author']}")
 
-print(f"===== search rakuten by isbn({isbn}) =====")
+print(f"===== search rakuten by isbn({given_isbn}) =====")
 
-hits, informations = bookSearch.search_rakuten_by_isbn(isbn)
+hits, informations = bookSearch.search_rakuten_by_isbn(given_isbn)
 
 print(f"hits: {hits}\ntitle: {informations}")
 
-print(f"===== search google by title({title}) =====")
-hits, items = bookSearch.search_google_by_title(title)
+print(f"===== search google by title({given_title}) =====")
+hits, items = bookSearch.search_google_by_title(given_title)
 
 print(f"hits: {hits}")
 for item in items:
     print(f"title: {item['title']}  isbn: {item['isbn']}  author: {item['author']}")
 
-print(f"===== search google by isbn({isbn}) =====")
+print(f"===== search google by isbn({given_isbn}) =====")
 
-hits, informations = bookSearch.search_google_by_isbn(isbn)
+hits, informations = bookSearch.search_google_by_isbn(given_isbn)
 
 print(f"hits: {hits}\ntitle: {informations}")
