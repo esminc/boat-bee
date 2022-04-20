@@ -28,6 +28,14 @@ class TestRepository:
         )
 
     def test_レビューを作成できること(self):
+        response = self.table.query(
+            KeyConditionExpression=boto3.dynamodb.conditions.Key("user_id").eq(
+                "test_user_id"
+            ),
+        )
+
+        assert len(response["Items"]) == 0
+
         book_review = BookReview()
 
         book_review.create(
@@ -75,6 +83,24 @@ class TestRepository:
             }
         )
 
+        response = self.table.query(
+            KeyConditionExpression=boto3.dynamodb.conditions.Key("user_id").eq(
+                "test_user_id"
+            ),
+        )
+
+        assert len(response["Items"]) == 1
+
+        actual = response["Items"][0]
+
+        assert actual["user_id"] == "test_user_id"
+        assert actual["isbn"] == "12345"
+        assert actual["book_title"] == "最初のレビューのタイトル"
+        assert actual["score_for_me"] == "1"
+        assert actual["score_for_others"] == "3"
+        assert actual["review_comment"] == "最初のレビューのコメント"
+        assert actual["updated_at"] == "2022-04-01T00:00:00+09:00"
+
         book_review.create(
             {
                 "user_id": "test_user_id",
@@ -106,6 +132,14 @@ class TestRepository:
         assert actual["updated_at"] == "2022-04-02T00:00:00+09:00"
 
     def test_同じuser_idで別々のisbnの場合_別々のアイテムとして登録すること(self):
+        response = self.table.query(
+            KeyConditionExpression=boto3.dynamodb.conditions.Key("user_id").eq(
+                "test_user_id"
+            ),
+        )
+
+        assert len(response["Items"]) == 0
+
         book_review = BookReview()
 
         book_review.create(
