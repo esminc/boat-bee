@@ -33,6 +33,11 @@ train:
 deploy:
 	sls deploy
 
+start-dev: export AWS_DEFAULT_REGION := us-east-1
+start-dev: export DYNAMODB_TABLE := bee-dev
+start-dev: export DYNAMODB_ENDPOINT := http://localhost:8000
+start-dev: export AWS_ACCESS_KEY_ID := local
+start-dev: export AWS_SECRET_ACCESS_KEY := local
 start-dev:
 	pipenv run gunicorn --bind :3000 --workers 1 --threads 2 --timeout 0 --reload bee_slack_app.flask_app:flask_app
 
