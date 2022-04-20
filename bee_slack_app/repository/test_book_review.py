@@ -1,4 +1,5 @@
 # pylint: disable=attribute-defined-outside-init
+# pylint: disable=non-ascii-name
 
 import os
 
@@ -26,11 +27,7 @@ class TestRepository:
             ProvisionedThroughput={"ReadCapacityUnits": 1, "WriteCapacityUnits": 1},
         )
 
-    def test_create_review(self):
-        """
-        レビューを作成できること
-        """
-
+    def test_レビューを作成できること(self):
         book_review = BookReview()
 
         book_review.create(
@@ -63,11 +60,7 @@ class TestRepository:
         assert actual["review_comment"] == "レビューコメント"
         assert actual["updated_at"] == "2022-04-01T00:00:00+09:00"
 
-    def test_overwrite_review(self):
-        """
-        レビューを上書きできること
-        """
-
+    def test_レビューを上書きできること(self):
         book_review = BookReview()
 
         book_review.create(
@@ -112,10 +105,7 @@ class TestRepository:
         assert actual["review_comment"] == "上書き後のレビューのコメント"
         assert actual["updated_at"] == "2022-04-02T00:00:00+09:00"
 
-    def test_same_user_id_item(self):
-        """
-        同じuser_idで別々のisbnの場合、別々のアイテムとして登録すること
-        """
+    def test_同じuser_idで別々のisbnの場合_別々のアイテムとして登録すること(self):
         book_review = BookReview()
 
         book_review.create(
