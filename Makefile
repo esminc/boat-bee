@@ -38,4 +38,7 @@ start-dev:
 
 start-dynamodb:
 	sls dynamodb start --migrate
+
+start-admin:
+	npm start
 	
