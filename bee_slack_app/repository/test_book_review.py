@@ -10,7 +10,7 @@ from bee_slack_app.repository.book_review import BookReview
 
 
 @mock_dynamodb
-class TestRepository:
+class TestBookReview:
     def setup_method(self, _):
         dynamodb = boto3.resource("dynamodb")
 
