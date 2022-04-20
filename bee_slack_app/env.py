@@ -8,15 +8,7 @@ def configure_env_values():
 
     secretsmanager_client = boto3.client("secretsmanager", region_name="us-east-1")
 
-    stage = os.environ["SERVERLESS_STAGE"]
-
-    secret_id = None
-    if stage == "dev":
-        secret_id = "slack_secret"
-    elif stage in ["stage-a", "stage-b", "stage-c", "stage-d"]:
-        secret_id = f"slack_secret_{stage}"
-    else:
-        secret_id = "slack_secret"
+    secret_id = os.environ["SLACK_CREDENTIALS_SECRET_ID"]
 
     secret_value = secretsmanager_client.get_secret_value(SecretId=secret_id)
     secret = json.loads(secret_value["SecretString"])
