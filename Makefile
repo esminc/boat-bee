@@ -3,6 +3,7 @@ all: init format-check lint-check type-check test
 init:
 	pipenv install --dev
 	npm install
+	sls dynamodb install
 
 format:
 	pipenv run black ./
