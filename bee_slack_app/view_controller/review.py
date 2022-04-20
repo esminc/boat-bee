@@ -29,6 +29,16 @@ def review_controller(app):
                         },
                     },
                     {
+                        "type": "actions",
+                        "elements": [
+                            {
+                                "type": "button",
+                                "text": {"type": "plain_text", "text": "本の検索"},
+                                "action_id": "book_search",
+                            },
+                        ],
+                    },
+                    {
                         "type": "input",
                         "block_id": "input_isbn",
                         "label": {"type": "plain_text", "text": "ISBN Code"},
