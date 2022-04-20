@@ -3,35 +3,14 @@ from bee_slack_app.service.review import post_review
 
 
 def review_controller(app):
-    @app.message("レビュー")
-    def message_review(message, say):
-        # say() sends a message to the channel where the event was triggered
-        say(
-            blocks=[
-                {
-                    "type": "section",
-                    "text": {
-                        "type": "mrkdwn",
-                        "text": f"レビューします <@{message['user']}>!",
-                    },
-                    "accessory": {
-                        "type": "button",
-                        "text": {"type": "plain_text", "text": "Click Me"},
-                        "action_id": "button_click",
-                    },
-                }
-            ],
-            text=f"Hey there <@{message['user']}>!",
-        )
-
-    @app.action("button_click")
+    @app.action("post_review")
     def open_modal(ack, body, client):
         # コマンドのリクエストを確認
         ack()
-        # 組み込みのクライアントで views_open を呼び出し
-        client.views_open(
-            # 受け取りから 3 秒以内に有効な trigger_id を渡す
+        client.views_push(
             trigger_id=body["trigger_id"],
+            view_id=body["view"]["id"],
+            hash=body["view"]["hash"],
             # ビューのペイロード
             view={
                 "type": "modal",
