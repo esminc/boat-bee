@@ -101,9 +101,7 @@ class _BookSearch:
 
         return True, dict_info
 
-    def search_google_by_title(
-        self, target_title: str
-    ) -> List[dict[str, str]]:
+    def search_google_by_title(self, target_title: str) -> List[dict[str, str]]:
         """
         タイトルから書籍を検索する
 
@@ -123,7 +121,6 @@ class _BookSearch:
         # APIを実行して結果を取得する
         # result = requests.get("https://www.googleapis.com/books/v1/volumes?q=%E4%BB%95%E4%BA%8B")
         json_result = requests.get(self.base_url_google, param).json()
-
 
         # 整形した結果を格納するリスト型変数を宣言
         list_result: List[dict[str, str]] = []
