@@ -1,14 +1,12 @@
 def home_controller(app):
-    @app.command("/bee")
-    def open_home_modal(ack, body, client):
+    @app.event("app_home_opened")
+    def update_home_view(ack, event, client):
         ack()
 
-        client.views_open(
-            trigger_id=body["trigger_id"],
+        client.views_publish(
+            user_id=event["user"],
             view={
-                "title": {"type": "plain_text", "text": "Bee", "emoji": True},
-                "type": "modal",
-                "close": {"type": "plain_text", "text": "閉じる", "emoji": True},
+                "type": "home",
                 "blocks": [
                     {
                         "type": "header",
@@ -42,11 +40,7 @@ def home_controller(app):
                     },
                     {
                         "type": "header",
-                        "text": {
-                            "type": "plain_text",
-                            "text": "本のレビュー",
-                            "emoji": True,
-                        },
+                        "text": {"type": "plain_text", "text": "本のレビュー", "emoji": True},
                     },
                     {
                         "type": "actions",

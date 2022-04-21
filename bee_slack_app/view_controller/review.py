@@ -7,7 +7,7 @@ def review_controller(app):
     def open_modal(ack, body, client):
         # コマンドのリクエストを確認
         ack()
-        client.views_push(
+        client.views_open(
             trigger_id=body["trigger_id"],
             view_id=body["view"]["id"],
             hash=body["view"]["hash"],
