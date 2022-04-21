@@ -3,7 +3,7 @@ import os
 import boto3  # type: ignore
 
 
-def make_database():
+def get_database_client():
     """
     環境変数にDYNAMODB_ENDPOINTが設定されていればそこに接続する（ローカル環境）
     設定されていなければデフォルトのDynamoDBに接続する（AWSの環境）
