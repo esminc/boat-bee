@@ -1,13 +1,12 @@
 import os
 
-from bee_slack_app.repository.database import dynamodb
+from bee_slack_app.repository.database import make_database
 
 
 # This is a sample
 class BookReview:
     def __init__(self):
-
-        self.table = dynamodb.Table(os.environ["DYNAMODB_TABLE"])
+        self.table = make_database().Table(os.environ["DYNAMODB_TABLE"])
 
     def create(self, review):
         item = {
