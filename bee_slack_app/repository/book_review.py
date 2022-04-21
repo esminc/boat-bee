@@ -2,6 +2,7 @@ import os
 
 from bee_slack_app.repository.database import dynamodb
 
+
 # This is a sample
 class BookReview:
     def __init__(self):
