@@ -46,4 +46,3 @@ start-dynamodb:
 
 start-admin:
 	npm start
-	
