@@ -2,7 +2,9 @@ import datetime
 from typing import Any
 
 from bee_slack_app.model.review import ReviewContents
-from bee_slack_app.repository.book_review import book_review_repository
+from bee_slack_app.repository.book_review import BookReview
+
+book_review_repository = BookReview()
 
 
 def post_review(logger: Any, review_contents: ReviewContents) -> None:

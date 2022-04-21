@@ -1,13 +1,12 @@
 import os
 
-import boto3  # type: ignore
-
-dynamodb = boto3.resource("dynamodb")
+from bee_slack_app.repository.database import get_database_client
 
 
 # This is a sample
-class _BookReview:
-    table = dynamodb.Table(os.environ["DYNAMODB_TABLE"])
+class BookReview:
+    def __init__(self):
+        self.table = get_database_client().Table(os.environ["DYNAMODB_TABLE"])
 
     def create(self, review):
         item = {
@@ -27,6 +26,3 @@ class _BookReview:
     def delete(self):
         # 未実装
         pass
-
-
-book_review_repository = _BookReview()
