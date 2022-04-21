@@ -4,6 +4,24 @@
   "description": "boat bee",
   "author": "",
   "devDependencies": {
-    "serverless-offline": "8.5.0"
+    "serverless-dynamodb-local": "0.2.40",
+    "serverless-offline": "8.5.0",
+    "dynamodb-admin": "1.12.0",
+    "better-npm-run": "0.1.0"
+  },
+  "scripts": {
+    "start": "better-npm-run start",
+    "pre-start": "npm install"
+  },
+  "betterScripts": {
+    "start": {
+      "command": "dynamodb-admin",
+      "env": {
+        "DYNAMO_ENDPOINT": "http://localhost:8000",
+        "AWS_REGION": "us-east-1",
+        "AWS_ACCESS_KEY_ID": "local",
+        "AWS_SECRET_ACCESS_KEY": "local"
+      }
+    }
   }
 }
