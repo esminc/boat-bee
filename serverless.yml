@@ -46,6 +46,13 @@ custom:
   dynamodb:
     stages:
       - dev
+    start:
+      seed: true
+    seed:
+      development:
+        sources:
+          - table: bee-dev
+            sources: [bee_slack_app/data/seed_review.json]
 
 resources: # CloudFormation template syntax from here on.
   Resources:
