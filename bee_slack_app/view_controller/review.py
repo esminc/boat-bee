@@ -191,6 +191,7 @@ def review_controller(app):
                 "title": {"type": "plain_text", "text": "Bee"},
                 "submit": {"type": "plain_text", "text": "送信"},
                 "blocks": [
+                    {"type": "divider"},
                     {
                         "type": "section",
                         "text": {
@@ -271,6 +272,7 @@ def review_controller(app):
                             "emoji": True,
                         },
                     },
+                    {"type": "divider"},
                 ],
             },
         )
