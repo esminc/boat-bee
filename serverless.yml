@@ -9,7 +9,7 @@ provider:
       appimage:
         path: ./
   environment:
-    SERVERLESS_STAGE: ${sls:stage}
+    SLACK_CREDENTIALS_SECRET_ID: slack_secret_${sls:stage}
     DYNAMODB_TABLE: ${self:service}-${sls:stage}
   iamRoleStatements:
     - Effect: Allow
