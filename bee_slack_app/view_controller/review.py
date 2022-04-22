@@ -179,6 +179,93 @@ def review_controller(app):
     def open_read_modal(ack, body, client):
         # コマンドのリクエストを確認
         ack()
+
+        review_item = [
+            {
+                "type": "section",
+                "text": {
+                    "type": "plain_text",
+                    "text": "本のタイトル",
+                    "emoji": True,
+                },
+            },
+            {
+                "type": "section",
+                "text": {
+                    "type": "plain_text",
+                    "text": "仕事で使う機械学習",
+                    "emoji": True,
+                },
+            },
+            {
+                "type": "section",
+                "text": {
+                    "type": "plain_text",
+                    "text": "ISBN",
+                    "emoji": True,
+                },
+            },
+            {
+                "type": "section",
+                "text": {
+                    "type": "plain_text",
+                    "text": "978-4-315-52361-4",
+                    "emoji": True,
+                },
+            },
+            {
+                "type": "section",
+                "text": {
+                    "type": "plain_text",
+                    "text": "自分にとっての評価",
+                    "emoji": True,
+                },
+            },
+            {
+                "type": "section",
+                "text": {
+                    "type": "plain_text",
+                    "text": "とても良い",
+                    "emoji": True,
+                },
+            },
+            {
+                "type": "section",
+                "text": {
+                    "type": "plain_text",
+                    "text": "他の人へのお勧め度",
+                    "emoji": True,
+                },
+            },
+            {
+                "type": "section",
+                "text": {
+                    "type": "plain_text",
+                    "text": "お勧めしない",
+                    "emoji": True,
+                },
+            },
+            {
+                "type": "section",
+                "text": {
+                    "type": "plain_text",
+                    "text": "レビューコメント",
+                    "emoji": True,
+                },
+            },
+            {
+                "type": "section",
+                "text": {
+                    "type": "plain_text",
+                    "text": "タイトルどおり仕事で使えると思いました。",
+                    "emoji": True,
+                },
+            },
+            {"type": "divider"},
+        ]
+
+        review_list = [review_item, review_item, review_item]
+
         client.views_open(
             trigger_id=body["trigger_id"],
             view_id=body["view"]["id"],
@@ -190,89 +277,7 @@ def review_controller(app):
                 "callback_id": "view_1",
                 "title": {"type": "plain_text", "text": "Bee"},
                 "submit": {"type": "plain_text", "text": "送信"},
-                "blocks": [
-                    {"type": "divider"},
-                    {
-                        "type": "section",
-                        "text": {
-                            "type": "plain_text",
-                            "text": "本のタイトル",
-                            "emoji": True,
-                        },
-                    },
-                    {
-                        "type": "section",
-                        "text": {
-                            "type": "plain_text",
-                            "text": "仕事で使う機械学習",
-                            "emoji": True,
-                        },
-                    },
-                    {
-                        "type": "section",
-                        "text": {
-                            "type": "plain_text",
-                            "text": "ISBN",
-                            "emoji": True,
-                        },
-                    },
-                    {
-                        "type": "section",
-                        "text": {
-                            "type": "plain_text",
-                            "text": "978-4-315-52361-4",
-                            "emoji": True,
-                        },
-                    },
-                    {
-                        "type": "section",
-                        "text": {
-                            "type": "plain_text",
-                            "text": "自分にとっての評価",
-                            "emoji": True,
-                        },
-                    },
-                    {
-                        "type": "section",
-                        "text": {
-                            "type": "plain_text",
-                            "text": "とても良い",
-                            "emoji": True,
-                        },
-                    },
-                    {
-                        "type": "section",
-                        "text": {
-                            "type": "plain_text",
-                            "text": "他の人へのお勧め度",
-                            "emoji": True,
-                        },
-                    },
-                    {
-                        "type": "section",
-                        "text": {
-                            "type": "plain_text",
-                            "text": "お勧めしない",
-                            "emoji": True,
-                        },
-                    },
-                    {
-                        "type": "section",
-                        "text": {
-                            "type": "plain_text",
-                            "text": "レビューコメント",
-                            "emoji": True,
-                        },
-                    },
-                    {
-                        "type": "section",
-                        "text": {
-                            "type": "plain_text",
-                            "text": "タイトルどおり仕事で使えると思いました。",
-                            "emoji": True,
-                        },
-                    },
-                    {"type": "divider"},
-                ],
+                # sumで二次元リストを平坦化
+                "blocks": sum(review_list, []),
             },
         )
