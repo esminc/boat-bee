@@ -171,3 +171,122 @@ def review_controller(app):
         }
 
         post_review(logger, review_contents)
+
+    @app.action("read_review")
+    def open_read_modal(ack, body, client):
+        # コマンドのリクエストを確認
+        ack()
+        client.views_open(
+            trigger_id=body["trigger_id"],
+            view_id=body["view"]["id"],
+            hash=body["view"]["hash"],
+            # ビューのペイロード
+            view={
+                "type": "modal",
+                # ビューの識別子
+                "callback_id": "view_1",
+                "title": {"type": "plain_text", "text": "Bee"},
+                "submit": {"type": "plain_text", "text": "送信"},
+                "blocks": [
+                    {
+                        "type": "input",
+                        "block_id": "input_book_title",
+                        "label": {"type": "plain_text", "text": "タイトル"},
+                        "element": {
+                            "type": "plain_text_input",
+                            "action_id": "action_id_book_title",
+                        },
+                    },
+                    {
+                        "type": "input",
+                        "block_id": "input_isbn",
+                        "label": {"type": "plain_text", "text": "ISBN Code"},
+                        "element": {
+                            "type": "plain_text_input",
+                            "action_id": "action_id_isbn",
+                        },
+                    },
+                    {
+                        "type": "input",
+                        "block_id": "input_score_for_me",
+                        "label": {"type": "plain_text", "text": "自分にとっての評価"},
+                        "element": {
+                            "type": "radio_buttons",
+                            "action_id": "action_id_score_for_me",
+                            "initial_option": {
+                                "value": "3",
+                                "text": {"type": "plain_text", "text": "普通"},
+                            },
+                            "options": [
+                                {
+                                    "value": "5",
+                                    "text": {"type": "plain_text", "text": "とても良い"},
+                                },
+                                {
+                                    "value": "4",
+                                    "text": {"type": "plain_text", "text": "良い"},
+                                },
+                                {
+                                    "value": "3",
+                                    "text": {"type": "plain_text", "text": "普通"},
+                                },
+                                {
+                                    "value": "2",
+                                    "text": {"type": "plain_text", "text": "悪い"},
+                                },
+                                {
+                                    "value": "1",
+                                    "text": {"type": "plain_text", "text": "とても悪い"},
+                                },
+                            ],
+                        },
+                    },
+                    {
+                        "type": "input",
+                        "block_id": "input_score_for_others",
+                        "label": {"type": "plain_text", "text": "他の人へのお勧め度"},
+                        "element": {
+                            "type": "radio_buttons",
+                            "action_id": "action_id_score_for_others",
+                            "initial_option": {
+                                "value": "3",
+                                "text": {"type": "plain_text", "text": "普通"},
+                            },
+                            "options": [
+                                {
+                                    "value": "5",
+                                    "text": {"type": "plain_text", "text": "とてもお勧め"},
+                                },
+                                {
+                                    "value": "4",
+                                    "text": {"type": "plain_text", "text": "お勧め"},
+                                },
+                                {
+                                    "value": "3",
+                                    "text": {"type": "plain_text", "text": "普通"},
+                                },
+                                {
+                                    "value": "2",
+                                    "text": {"type": "plain_text", "text": "お勧めしない"},
+                                },
+                                {
+                                    "value": "1",
+                                    "text": {"type": "plain_text", "text": "絶対にお勧めしない"},
+                                },
+                            ],
+                        },
+                    },
+                    {
+                        "type": "input",
+                        "block_id": "input_comment",
+                        "label": {"type": "plain_text", "text": "レビューコメント"},
+                        "optional": True,
+                        "element": {
+                            "type": "plain_text_input",
+                            "action_id": "action_id_comment",
+                            "multiline": True,
+                        },
+                    },
+                ],
+            },
+        )
