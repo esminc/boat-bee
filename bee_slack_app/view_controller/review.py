@@ -1,6 +1,6 @@
-from pickle import TRUE
+# from pickle import TRUE
 
-from numpy import True_, append
+# from numpy import True_, append
 from bee_slack_app.model.review import ReviewContents
 from bee_slack_app.service.review import post_review
 
