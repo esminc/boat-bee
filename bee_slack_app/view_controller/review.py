@@ -1,6 +1,6 @@
 from pickle import TRUE
 
-from numpy import True_
+from numpy import True_, append
 from bee_slack_app.model.review import ReviewContents
 from bee_slack_app.service.review import post_review
 
@@ -264,7 +264,9 @@ def review_controller(app):
             {"type": "divider"},
         ]
 
-        review_list = [review_item, review_item, review_item]
+        review_list = []
+        for _ in range(5):
+            review_list.append(review_item)
 
         client.views_open(
             trigger_id=body["trigger_id"],
