@@ -66,6 +66,16 @@ class TestBookSearch:
         assert result["title"] == "仕事ではじめる機械学習"
         assert result["author"] is not None
 
+        # テストを実行する場所により "com"と"co.jp"が変わるのでそれ以外の部分のみ比較することにする
+        assert result["google_books_url"].startswith("http://books.google")
+        assert result["google_books_url"].endswith(
+            "books?id=q0YntAEACAAJ&dq=isbn:9784873118253&hl=&source=gbs_api"
+        )
+        assert result["image_url"].startswith("http://books.google")
+        assert result["image_url"].endswith(
+            "books/content?id=q0YntAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+        )
+
     def test_10桁の正当なISBNを指定したら結果が1件だけ得られること(self):  # pylint: disable=invalid-name
         target_isbn = "4873118255"
 
