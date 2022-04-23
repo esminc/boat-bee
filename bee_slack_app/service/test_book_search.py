@@ -32,13 +32,15 @@ class TestBookSearch:
         target_book = target_books[0]
         assert target_book["isbn"] == "9784873118253"
         assert target_book["author"] is not None
-        assert (
-            target_book["google_books_url"]
-            == "http://books.google.co.jp/books?id=q0YntAEACAAJ&dq=intitle:%E4%BB%95%E4%BA%8B%E3%81%A7%E3%81%AF%E3%81%98%E3%82%81%E3%82%8B%E6%A9%9F%E6%A2%B0%E5%AD%A6%E7%BF%92&hl=&source=gbs_api"
+
+        # テストを実行する場所により "com"と"co.jp"が変わるのでそれ以外の部分のみ比較することにする
+        assert target_book["google_books_url"].startswith("http://books.google")
+        assert target_book["google_books_url"].endswith(
+            "books?id=q0YntAEACAAJ&dq=intitle:%E4%BB%95%E4%BA%8B%E3%81%A7%E3%81%AF%E3%81%98%E3%82%81%E3%82%8B%E6%A9%9F%E6%A2%B0%E5%AD%A6%E7%BF%92&hl=&source=gbs_api"
         )
-        assert (
-            target_book["image_url"]
-            == "http://books.google.com/books/content?id=q0YntAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+        assert target_book["image_url"].startswith("http://books.google")
+        assert target_book["image_url"].endswith(
+            "books/content?id=q0YntAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
         )
 
     def test_曖昧にタイトルを指定して検索結果が得られること(self):
@@ -72,13 +74,15 @@ class TestBookSearch:
         assert len(result) is not None
         assert result["title"] == "仕事ではじめる機械学習"
         assert result["author"] is not None
-        assert (
-            result["google_books_url"]
-            == "http://books.google.co.jp/books?id=q0YntAEACAAJ&dq=isbn:4873118255&hl=&source=gbs_api"
+
+        # テストを実行する場所により "com"と"co.jp"が変わるのでそれ以外の部分のみ比較することにする
+        assert result["google_books_url"].startswith("http://books.google")
+        assert result["google_books_url"].endswith(
+            "books?id=q0YntAEACAAJ&dq=isbn:4873118255&hl=&source=gbs_api"
         )
-        assert (
-            result["image_url"]
-            == "http://books.google.com/books/content?id=q0YntAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+        assert result["image_url"].startswith("http://books.google")
+        assert result["image_url"].endswith(
+            "books/content?id=q0YntAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
         )
 
     def test_存在しないISBNを指定したら結果が0件であること(self):  # pylint: disable=invalid-name
