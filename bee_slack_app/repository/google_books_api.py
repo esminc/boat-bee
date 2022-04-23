@@ -20,13 +20,11 @@ class GoogleBooksApi:
 
         # URLのパラメータ
         param = {
-            # "isbn": 9784873119472
             "q": f"intitle:{target_title}",
             "Country": "JP",
         }
 
         # APIを実行して結果を取得する
-        # result = requests.get("https://www.googleapis.com/books/v1/volumes?q=%E4%BB%95%E4%BA%8B")
         json_result = requests.get(self.base_url_google, param).json()
 
         # 整形した結果を格納するリスト型変数を宣言
