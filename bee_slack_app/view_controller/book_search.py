@@ -67,6 +67,8 @@ def book_search_controller(app):
 
 def build_new_view(book_title, isbn):
     print("-----build_new_view-----")
+    print("book_title:", book_title)
+    print("isbn:", isbn)
     view = {
         "type": "modal",
         # ビューの識別子
@@ -81,6 +83,7 @@ def build_new_view(book_title, isbn):
                 "element": {
                     "type": "plain_text_input",
                     "action_id": "action_id_book_title",
+                    "initial_value": book_title,
                 },
             },
             {
@@ -100,6 +103,7 @@ def build_new_view(book_title, isbn):
                 "element": {
                     "type": "plain_text_input",
                     "action_id": "action_id_isbn",
+                    "initial_value": isbn,
                 },
             },
             {
@@ -185,5 +189,6 @@ def build_new_view(book_title, isbn):
             },
         ],
     }
+    print("view:", view)
 
     return view
