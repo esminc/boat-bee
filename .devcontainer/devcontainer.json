@@ -27,7 +27,7 @@
       */
     "python.linting.pylintArgs": [
       "--disable",
-      "missing-module-docstring, missing-class-docstring, missing-function-docstring, line-too-long, fixme"
+      "missing-module-docstring, missing-class-docstring, missing-function-docstring, line-too-long, fixme, duplicate-code"
     ]
   },
   "extensions": [
