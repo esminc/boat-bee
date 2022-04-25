@@ -91,7 +91,7 @@ class TestBookReview:
         assert reviews[2]["score_for_others"] == "4"
         assert reviews[2]["review_comment"] == "そこそこです"
 
-    def test_レビューが0件でもエラーにならないこと(self):
+    def test_レビューが0件の場合_空配列を返すこと(self):
         response = self.table.scan()
 
         assert len(response["Items"]) == 0
@@ -101,6 +101,7 @@ class TestBookReview:
         reviews = book_review.get_all()
 
         assert len(reviews) == 0
+        assert isinstance(reviews, list)
 
     def test_レビューを作成できること(self):
         response = self.table.query(
