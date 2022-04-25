@@ -4,7 +4,7 @@ def book_search_controller(app):
         # 受信した旨を 3 秒以内に Slack サーバーに伝えます
         ack()
 
-        search_item = {
+        search_item1 = {
             "value": "12345",
             "text": {
                 "type": "plain_text",
@@ -12,10 +12,29 @@ def book_search_controller(app):
                 "emoji": True,
             },
         }
+        search_item2 = {
+            "value": "11111",
+            "text": {
+                "type": "plain_text",
+                "text": "機械学習",
+                "emoji": True,
+            },
+        }
+        search_item3 = {
+            "value": "88888",
+            "text": {
+                "type": "plain_text",
+                "text": "機械学習図鑑",
+                "emoji": True,
+            },
+        }
 
         search_list = []
-        for _ in range(3):
-            search_list.append(search_item)
+        # PRマージ後にfor文に修正する。
+        # for _ in range(3):
+        search_list.append(search_item1)
+        search_list.append(search_item2)
+        search_list.append(search_item3)
 
         client.views_push(
             trigger_id=body["trigger_id"],
