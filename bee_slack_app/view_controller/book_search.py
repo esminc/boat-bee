@@ -65,15 +65,13 @@ def book_search_controller(app):
 
     # view_submission リクエストを処理
     @app.view("view_book_search")
-    def handle_submission(ack, body, _, view, logger, payload):
+    def handle_submission(ack, _, __, view):
         book_title = view["state"]["values"]["book_select"]["radio_buttons-action"][
             "selected_option"
         ]["text"]["text"]
         isbn = view["state"]["values"]["book_select"]["radio_buttons-action"][
             "selected_option"
         ]["value"]
-
-        user_id = body["user"]["id"]
 
         # view_submission リクエストの確認を行い、モーダルを閉じる
         ack(response_action="update", view=open_new_modal(book_title, isbn))
