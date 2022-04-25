@@ -171,3 +171,104 @@ def review_controller(app):
         }
 
         post_review(logger, review_contents)
+
+    @app.action("read_review")
+    def open_read_modal(ack, body, client):
+        # コマンドのリクエストを確認
+        ack()
+
+        review_list = []
+
+        review_contents_list: list[ReviewContents] = [
+            {
+                "user_id": "user_id_1",
+                "book_title": "仕事ではじめる機械学習",
+                "isbn": "1234567890",
+                "score_for_me": 4,
+                "score_for_others": 5,
+                "review_comment": "とても良い",
+            },
+            {
+                "user_id": "user_id_2",
+                "book_title": "仕事で使える機械学習",
+                "isbn": "9234567812",
+                "score_for_me": 3,
+                "score_for_others": 2,
+                "review_comment": "いまいち",
+            },
+        ]
+
+        for review_contents in review_contents_list:
+
+            review_item = {
+                "type": "section",
+                "fields": [
+                    {
+                        "type": "plain_text",
+                        "text": "本のタイトル",
+                        "emoji": True,
+                    },
+                    {
+                        "type": "plain_text",
+                        "text": review_contents["book_title"],
+                        "emoji": True,
+                    },
+                    {
+                        "type": "plain_text",
+                        "text": "ISBN",
+                        "emoji": True,
+                    },
+                    {
+                        "type": "plain_text",
+                        "text": review_contents["isbn"],
+                        "emoji": True,
+                    },
+                    {
+                        "type": "plain_text",
+                        "text": "自分にとっての評価",
+                        "emoji": True,
+                    },
+                    {
+                        "type": "plain_text",
+                        "text": str(review_contents["score_for_me"]),
+                        "emoji": True,
+                    },
+                    {
+                        "type": "plain_text",
+                        "text": "他の人へのお勧め度",
+                        "emoji": True,
+                    },
+                    {
+                        "type": "plain_text",
+                        "text": str(review_contents["score_for_others"]),
+                        "emoji": True,
+                    },
+                    {
+                        "type": "plain_text",
+                        "text": "レビューコメント",
+                        "emoji": True,
+                    },
+                    {
+                        "type": "plain_text",
+                        "text": review_contents["review_comment"],
+                        "emoji": True,
+                    },
+                ],
+            }
+
+            review_list.append(review_item)
+            review_list.append({"type": "divider"})
+
+        client.views_open(
+            trigger_id=body["trigger_id"],
+            view_id=body["view"]["id"],
+            hash=body["view"]["hash"],
+            # ビューのペイロード
+            view={
+                "type": "modal",
+                # ビューの識別子
+                "callback_id": "view_1",
+                "title": {"type": "plain_text", "text": "Bee"},
+                "blocks": review_list,
+            },
+        )
