@@ -27,6 +27,82 @@ class TestBookReview:
             ProvisionedThroughput={"ReadCapacityUnits": 1, "WriteCapacityUnits": 1},
         )
 
+    def test_レビューを取得できること(self):
+        item = {
+            "user_id": "user_id_0",
+            "book_title": "仕事ではじめる機械学習",
+            "isbn": "12345",
+            "score_for_me": "1",
+            "score_for_others": "5",
+            "review_comment": "とても良いです",
+            "updated_at": "2022-04-01T00:00:00+09:00",
+        }
+
+        self.table.put_item(Item=item)
+
+        item = {
+            "user_id": "user_id_1",
+            "book_title": "仕事ではじめる機械学習",
+            "isbn": "12345",
+            "score_for_me": "3",
+            "score_for_others": "4",
+            "review_comment": "まあまあです",
+            "updated_at": "2022-04-01T00:00:00+09:00",
+        }
+
+        self.table.put_item(Item=item)
+
+        item = {
+            "user_id": "user_id_2",
+            "book_title": "Python チュートリアル",
+            "isbn": "67890",
+            "score_for_me": "2",
+            "score_for_others": "4",
+            "review_comment": "そこそこです",
+            "updated_at": "2022-04-02T00:00:00+09:00",
+        }
+
+        self.table.put_item(Item=item)
+
+        book_review = BookReview()
+
+        reviews = book_review.get_all()
+
+        assert len(reviews) == 3
+
+        assert reviews[0]["user_id"] == "user_id_0"
+        assert reviews[0]["isbn"] == "12345"
+        assert reviews[0]["book_title"] == "仕事ではじめる機械学習"
+        assert reviews[0]["score_for_me"] == "1"
+        assert reviews[0]["score_for_others"] == "5"
+        assert reviews[0]["review_comment"] == "とても良いです"
+
+        assert reviews[1]["user_id"] == "user_id_1"
+        assert reviews[1]["isbn"] == "12345"
+        assert reviews[1]["book_title"] == "仕事ではじめる機械学習"
+        assert reviews[1]["score_for_me"] == "3"
+        assert reviews[1]["score_for_others"] == "4"
+        assert reviews[1]["review_comment"] == "まあまあです"
+
+        assert reviews[2]["user_id"] == "user_id_2"
+        assert reviews[2]["isbn"] == "67890"
+        assert reviews[2]["book_title"] == "Python チュートリアル"
+        assert reviews[2]["score_for_me"] == "2"
+        assert reviews[2]["score_for_others"] == "4"
+        assert reviews[2]["review_comment"] == "そこそこです"
+
+    def test_レビューが0件の場合_空配列を返すこと(self):
+        response = self.table.scan()
+
+        assert len(response["Items"]) == 0
+
+        book_review = BookReview()
+
+        reviews = book_review.get_all()
+
+        assert len(reviews) == 0
+        assert isinstance(reviews, list)
+
     def test_レビューを作成できること(self):
         response = self.table.query(
             KeyConditionExpression=boto3.dynamodb.conditions.Key("user_id").eq(
