@@ -3,7 +3,7 @@ from typing import Optional
 import requests  # type: ignore
 
 
-class GoogleBooksApi:
+class GoogleBooks:
     def __init__(self):
         # Google API
         self.base_url_google = "https://www.googleapis.com/books/v1/volumes"

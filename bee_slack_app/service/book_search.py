@@ -1,9 +1,9 @@
 from typing import Optional
 
 from bee_slack_app.model.search import SearchedBook
-from bee_slack_app.repository.google_books_api import GoogleBooksApi
+from bee_slack_app.repository.google_books import GoogleBooks
 
-api_client = GoogleBooksApi()
+api_client = GoogleBooks()
 
 
 def search_book_by_title(title: str) -> list[SearchedBook]:

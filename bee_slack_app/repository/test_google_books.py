@@ -2,7 +2,7 @@
 
 # pylint: disable=non-ascii-name
 
-from bee_slack_app.repository.google_books_api import GoogleBooksApi
+from bee_slack_app.repository.google_books import GoogleBooks
 
 # TODO:
 # このテストケースは外部に依存しているため本来の意味では
@@ -12,9 +12,9 @@ from bee_slack_app.repository.google_books_api import GoogleBooksApi
 # 変更などによりこちらのコードに手を加えなくてもFAILするリスクがあることに注意
 
 
-class TestGoogleBooksApi:
+class TestGoogleBooks:
     def setup_method(self, _):
-        self.api_client = GoogleBooksApi()
+        self.api_client = GoogleBooks()
 
     def teardown_method(self, _):
         pass
