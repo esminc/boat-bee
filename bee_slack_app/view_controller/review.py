@@ -296,7 +296,6 @@ def review_controller(app):
                 # ビューの識別子
                 "callback_id": "view_1",
                 "title": {"type": "plain_text", "text": "Bee"},
-                "submit": {"type": "plain_text", "text": "送信"},
                 # sumで二次元リストを平坦化
                 "blocks": sum(review_list, []),
             },
