@@ -2,8 +2,8 @@
 # pylint: disable=duplicate-code
 # pylint: disable=non-ascii-name
 
-from bee_slack_app.service import book_search
 from bee_slack_app.repository.google_books import GoogleBooks
+from bee_slack_app.service import book_search
 
 # TODO:
 # このテストケースは外部に依存しているため本来の意味では
