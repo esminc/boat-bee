@@ -1,5 +1,6 @@
 import os
 
+from bee_slack_app.model.review import ReviewContents
 from bee_slack_app.repository.database import get_database_client
 
 
@@ -7,6 +8,24 @@ from bee_slack_app.repository.database import get_database_client
 class BookReview:
     def __init__(self):
         self.table = get_database_client().Table(os.environ["DYNAMODB_TABLE"])
+
+    def get_all(self) -> list[ReviewContents]:
+        """
+        本のレビューを全件取得する
+
+        Returns:
+            list[ReviewContents]: 本のレビューのリスト
+        """
+        response = self.table.scan()
+        items = response["Items"]
+
+        # レスポンスに LastEvaluatedKey が含まれなくなるまでループ処理を実行する
+        # see https://dev.classmethod.jp/articles/hot-to-get-more-than-1mb-of-data-from-dynamodb-when-using-scan/
+        while "LastEvaluatedKey" in response:
+            response = self.table.scan(ExclusiveStartKey=response["LastEvaluatedKey"])
+            items.extend(response["Items"])
+
+        return items
 
     def create(self, review):
         item = {
