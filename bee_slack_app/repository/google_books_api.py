@@ -69,8 +69,8 @@ class GoogleBooksApi:
         Args:
             isbn : 検索したい書籍のISBN(13桁の数字、ハイフンなし)
         Returns:
-            dict_info : ヒットした書籍の情報を辞書形式で返す
-                        ヒットしなかった場合はNoneを返す
+            Optional[dict[str, str]]  : ヒットした書籍の情報を辞書形式で返す
+                                        ヒットしなかった場合はNoneを返す
         """
 
         # URLのパラメータ
