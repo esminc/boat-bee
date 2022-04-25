@@ -1,10 +1,19 @@
 import datetime
-from typing import Any
+from typing import Any, Optional
 
 from bee_slack_app.model.review import ReviewContents
 from bee_slack_app.repository.book_review import BookReview
 
 book_review_repository = BookReview()
+
+
+def get_review_all(logger: Any) -> Optional[list[ReviewContents]]:
+    try:
+        return book_review_repository.get_all()
+
+    except Exception:  # pylint: disable=broad-except
+        logger.exception("Failed to get data.")
+        return None
 
 
 def post_review(logger: Any, review_contents: ReviewContents) -> None:
