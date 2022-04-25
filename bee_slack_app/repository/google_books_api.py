@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Optional
 
 import requests  # type: ignore
 
@@ -8,7 +8,7 @@ class GoogleBooksApi:
         # Google API
         self.base_url_google = "https://www.googleapis.com/books/v1/volumes"
 
-    def search_book_by_title(self, title: str) -> List[dict[str, str]]:
+    def search_book_by_title(self, title: str) -> list[dict[str, str]]:
         """
         タイトルから書籍を検索する
 
@@ -28,7 +28,7 @@ class GoogleBooksApi:
         json_result = requests.get(self.base_url_google, param).json()
 
         # 整形した結果を格納するリスト型変数を宣言
-        list_result: List[dict[str, str]] = []
+        list_result: list[dict[str, str]] = []
 
         # ヒットしなかった場合はJSONにItemsが含まれないのですぐに空のListを返す
         _hits = json_result["totalItems"]

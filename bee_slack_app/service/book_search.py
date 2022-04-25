@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Optional
 
 from bee_slack_app.model.search import SearchedBook
 from bee_slack_app.repository.google_books_api import GoogleBooksApi
@@ -6,7 +6,7 @@ from bee_slack_app.repository.google_books_api import GoogleBooksApi
 api_client = GoogleBooksApi()
 
 
-def search_book_by_title(title: str) -> List[SearchedBook]:
+def search_book_by_title(title: str) -> list[SearchedBook]:
     """
     タイトルから書籍を検索する
 
