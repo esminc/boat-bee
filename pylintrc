@@ -8,4 +8,3 @@ disable=
     missing-function-docstring, 
     line-too-long,
     fixme,
-    duplicate-code,
