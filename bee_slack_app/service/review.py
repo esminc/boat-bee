@@ -11,8 +11,8 @@ def get_review_all(logger: Any) -> Optional[list[ReviewContents]]:
     try:
         return book_review_repository.get_all()
 
-    except Exception as error:  # pylint: disable=broad-except
-        logger.exception(f"Failed to get data {error}")
+    except Exception:  # pylint: disable=broad-except
+        logger.exception("Failed to get data.")
         return None
 
 
