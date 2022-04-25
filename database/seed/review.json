@@ -1,0 +1,83 @@
+[
+  {
+    "updated_at": "2022-04-20T16:29:14+09:00",
+    "user_id": "U029JHRHC15",
+    "book_title": "仕事ではじめる機械学習",
+    "isbn": "9784873118253",
+    "review_comment": "役に立つ！ by 岡本",
+    "score_for_me": "5",
+    "score_for_others": "5"
+  },
+  {
+    "updated_at": "2022-04-21T15:29:14+09:00",
+    "user_id": "U029SGVM1AA",
+    "book_title": "仕事ではじめる機械学習",
+    "isbn": "9784873118253",
+    "review_comment": "役に立つ！ by 坂部",
+    "score_for_me": "5",
+    "score_for_others": "5"
+  },
+  {
+    "updated_at": "2022-04-21T16:40:14+09:00",
+    "user_id": "U02A5F5KXKN",
+    "book_title": "仕事ではじめる機械学習",
+    "isbn": "9784873118253",
+    "review_comment": "役に立つ！ by 見澤",
+    "score_for_me": "5",
+    "score_for_others": "5"
+  },
+  {
+    "updated_at": "2022-03-21T16:29:14+09:00",
+    "user_id": "U029Z9HAK6E",
+    "book_title": "仕事ではじめる機械学習",
+    "isbn": "9784873118253",
+    "review_comment": "役に立つ！ by 三田村",
+    "score_for_me": "5",
+    "score_for_others": "5"
+  },
+  {
+    "updated_at": "2022-04-11T16:29:14+09:00",
+    "user_id": "U029JHRHC15",
+    "book_title": "カンバン仕事術",
+    "isbn": "978487311764",
+    "review_comment": "役に立つ！ by 岡本",
+    "score_for_me": "3",
+    "score_for_others": "4"
+  },
+  {
+    "updated_at": "2022-04-21T12:29:14+09:00",
+    "user_id": "U029JHRHC15",
+    "book_title": "iPhone／iPadではじめるファイル共有",
+    "isbn": "9784048913874",
+    "review_comment": "微妙 by 岡本",
+    "score_for_me": "1",
+    "score_for_others": "2"
+  },
+  {
+    "updated_at": "2022-04-21T16:29:50+09:00",
+    "user_id": "U029JHRHC15",
+    "book_title": "CDではじめるビジネス英会話入門",
+    "isbn": "9784262168739",
+    "review_comment": "無理！ by 岡本",
+    "score_for_me": "2",
+    "score_for_others": "2"
+  },
+  {
+    "updated_at": "2021-04-21T16:29:14+09:00",
+    "user_id": "U029JHRHC15",
+    "book_title": "Webデザイナーの仕事を楽にする！gulpではじめるWeb制作ワークフロー入門",
+    "isbn": "9784863542402",
+    "review_comment": "役に立つ！ by 岡本",
+    "score_for_me": "5",
+    "score_for_others": "4"
+  },
+  {
+    "updated_at": "2020-04-21T16:29:14+09:00",
+    "user_id": "U029JHRHC15",
+    "book_title": "仕事ではじめるプログラミング 研修前の基礎の基礎",
+    "isbn": "9784774162034",
+    "review_comment": "",
+    "score_for_me": "4",
+    "score_for_others": "4"
+  }
+]
