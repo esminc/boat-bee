@@ -180,92 +180,113 @@ def review_controller(app):
         # コマンドのリクエストを確認
         ack()
 
-        review_item = [
+        review_list = []
+
+        review_contents_list: list[ReviewContents] = [
             {
-                "type": "section",
-                "text": {
-                    "type": "plain_text",
-                    "text": "本のタイトル",
-                    "emoji": True,
-                },
+                "user_id": "user_id_1",
+                "book_title": "仕事ではじめる機械学習",
+                "isbn": "1234567890",
+                "score_for_me": 4,
+                "score_for_others": 5,
+                "review_comment": "とても良い",
             },
             {
-                "type": "section",
-                "text": {
-                    "type": "plain_text",
-                    "text": "仕事で使う機械学習",
-                    "emoji": True,
-                },
+                "user_id": "user_id_2",
+                "book_title": "仕事で使える機械学習",
+                "isbn": "9234567812",
+                "score_for_me": 3,
+                "score_for_others": 2,
+                "review_comment": "いまいち",
             },
-            {
-                "type": "section",
-                "text": {
-                    "type": "plain_text",
-                    "text": "ISBN",
-                    "emoji": True,
-                },
-            },
-            {
-                "type": "section",
-                "text": {
-                    "type": "plain_text",
-                    "text": "978-4-315-52361-4",
-                    "emoji": True,
-                },
-            },
-            {
-                "type": "section",
-                "text": {
-                    "type": "plain_text",
-                    "text": "自分にとっての評価",
-                    "emoji": True,
-                },
-            },
-            {
-                "type": "section",
-                "text": {
-                    "type": "plain_text",
-                    "text": "とても良い",
-                    "emoji": True,
-                },
-            },
-            {
-                "type": "section",
-                "text": {
-                    "type": "plain_text",
-                    "text": "他の人へのお勧め度",
-                    "emoji": True,
-                },
-            },
-            {
-                "type": "section",
-                "text": {
-                    "type": "plain_text",
-                    "text": "お勧めしない",
-                    "emoji": True,
-                },
-            },
-            {
-                "type": "section",
-                "text": {
-                    "type": "plain_text",
-                    "text": "レビューコメント",
-                    "emoji": True,
-                },
-            },
-            {
-                "type": "section",
-                "text": {
-                    "type": "plain_text",
-                    "text": "タイトルどおり仕事で使えると思いました。",
-                    "emoji": True,
-                },
-            },
-            {"type": "divider"},
         ]
 
-        review_list = []
-        for _ in range(5):
+        for review_contents in review_contents_list:
+
+            review_item = [
+                {
+                    "type": "section",
+                    "text": {
+                        "type": "plain_text",
+                        "text": "本のタイトル",
+                        "emoji": True,
+                    },
+                },
+                {
+                    "type": "section",
+                    "text": {
+                        "type": "plain_text",
+                        "text": review_contents["book_title"],
+                        "emoji": True,
+                    },
+                },
+                {
+                    "type": "section",
+                    "text": {
+                        "type": "plain_text",
+                        "text": "ISBN",
+                        "emoji": True,
+                    },
+                },
+                {
+                    "type": "section",
+                    "text": {
+                        "type": "plain_text",
+                        "text": review_contents["isbn"],
+                        "emoji": True,
+                    },
+                },
+                {
+                    "type": "section",
+                    "text": {
+                        "type": "plain_text",
+                        "text": "自分にとっての評価",
+                        "emoji": True,
+                    },
+                },
+                {
+                    "type": "section",
+                    "text": {
+                        "type": "plain_text",
+                        "text": str(review_contents["score_for_me"]),
+                        "emoji": True,
+                    },
+                },
+                {
+                    "type": "section",
+                    "text": {
+                        "type": "plain_text",
+                        "text": "他の人へのお勧め度",
+                        "emoji": True,
+                    },
+                },
+                {
+                    "type": "section",
+                    "text": {
+                        "type": "plain_text",
+                        "text": str(review_contents["score_for_others"]),
+                        "emoji": True,
+                    },
+                },
+                {
+                    "type": "section",
+                    "text": {
+                        "type": "plain_text",
+                        "text": "レビューコメント",
+                        "emoji": True,
+                    },
+                },
+                {
+                    "type": "section",
+                    "text": {
+                        "type": "plain_text",
+                        "text": review_contents["review_comment"],
+                        "emoji": True,
+                    },
+                },
+                {"type": "divider"},
+            ]
+
             review_list.append(review_item)
 
         client.views_open(
