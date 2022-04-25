@@ -200,91 +200,64 @@ def review_controller(app):
 
         for review_contents in review_contents_list:
 
-            review_item = [
-                {
-                    "type": "section",
-                    "text": {
+            review_item = {
+                "type": "section",
+                "fields": [
+                    {
                         "type": "plain_text",
                         "text": "本のタイトル",
                         "emoji": True,
                     },
-                },
-                {
-                    "type": "section",
-                    "text": {
+                    {
                         "type": "plain_text",
                         "text": review_contents["book_title"],
                         "emoji": True,
                     },
-                },
-                {
-                    "type": "section",
-                    "text": {
+                    {
                         "type": "plain_text",
                         "text": "ISBN",
                         "emoji": True,
                     },
-                },
-                {
-                    "type": "section",
-                    "text": {
+                    {
                         "type": "plain_text",
                         "text": review_contents["isbn"],
                         "emoji": True,
                     },
-                },
-                {
-                    "type": "section",
-                    "text": {
+                    {
                         "type": "plain_text",
                         "text": "自分にとっての評価",
                         "emoji": True,
                     },
-                },
-                {
-                    "type": "section",
-                    "text": {
+                    {
                         "type": "plain_text",
                         "text": str(review_contents["score_for_me"]),
                         "emoji": True,
                     },
-                },
-                {
-                    "type": "section",
-                    "text": {
+                    {
                         "type": "plain_text",
                         "text": "他の人へのお勧め度",
                         "emoji": True,
                     },
-                },
-                {
-                    "type": "section",
-                    "text": {
+                    {
                         "type": "plain_text",
                         "text": str(review_contents["score_for_others"]),
                         "emoji": True,
                     },
-                },
-                {
-                    "type": "section",
-                    "text": {
+                    {
                         "type": "plain_text",
                         "text": "レビューコメント",
                         "emoji": True,
                     },
-                },
-                {
-                    "type": "section",
-                    "text": {
+                    {
                         "type": "plain_text",
                         "text": review_contents["review_comment"],
                         "emoji": True,
                     },
-                },
-                {"type": "divider"},
-            ]
+                ],
+            }
 
             review_list.append(review_item)
+            review_list.append({"type": "divider"})
 
         client.views_open(
             trigger_id=body["trigger_id"],
@@ -296,7 +269,6 @@ def review_controller(app):
                 # ビューの識別子
                 "callback_id": "view_1",
                 "title": {"type": "plain_text", "text": "Bee"},
-                # sumで二次元リストを平坦化
-                "blocks": sum(review_list, []),
+                "blocks": review_list,
             },
         )
