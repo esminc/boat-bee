@@ -12,7 +12,7 @@ def review_controller(app):
             view_id=body["view"]["id"],
             hash=body["view"]["hash"],
             # ビューのペイロード
-            view=open_new_modal(),
+            view=generate_review_input_modal_view(),
         )
 
     # view_submission リクエストを処理
@@ -66,7 +66,7 @@ def review_controller(app):
         post_review(logger, review_contents)
 
 
-def open_new_modal(book_title="", isbn=""):
+def generate_review_input_modal_view(book_title="", isbn=""):
     view = {
         "type": "modal",
         # ビューの識別子

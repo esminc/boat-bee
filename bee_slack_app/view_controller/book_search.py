@@ -1,4 +1,4 @@
-from bee_slack_app.view_controller.review import open_new_modal
+from bee_slack_app.view_controller.review import generate_review_input_modal_view
 
 
 def book_search_controller(app):
@@ -73,4 +73,7 @@ def book_search_controller(app):
         ]["value"]
 
         # view_submission リクエストの確認を行い、モーダルを閉じる
-        ack(response_action="update", view=open_new_modal(book_title, isbn))
+        ack(
+            response_action="update",
+            view=generate_review_input_modal_view(book_title, isbn),
+        )
