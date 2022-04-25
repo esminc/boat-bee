@@ -8,7 +8,7 @@ class GoogleBooksApi:
         # Google API
         self.base_url_google = "https://www.googleapis.com/books/v1/volumes"
 
-    def search_book_by_title(self, target_title: str) -> List[dict[str, str]]:
+    def search_book_by_title(self, title: str) -> List[dict[str, str]]:
         """
         タイトルから書籍を検索する
 
@@ -20,7 +20,7 @@ class GoogleBooksApi:
 
         # URLのパラメータ
         param = {
-            "q": f"intitle:{target_title}",
+            "q": f"intitle:{title}",
             "Country": "JP",
         }
 

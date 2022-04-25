@@ -6,7 +6,7 @@ from bee_slack_app.repository.google_books_api import GoogleBooksApi
 api_client = GoogleBooksApi()
 
 
-def search_book_by_title(target_title: str) -> List[SearchedBook]:
+def search_book_by_title(title: str) -> List[SearchedBook]:
     """
     タイトルから書籍を検索する
 
@@ -16,7 +16,7 @@ def search_book_by_title(target_title: str) -> List[SearchedBook]:
         list: ヒットした書籍の辞書形式データをリストで格納する
     """
 
-    books = api_client.search_book_by_title(target_title)
+    books = api_client.search_book_by_title(title)
 
     results = []
 
