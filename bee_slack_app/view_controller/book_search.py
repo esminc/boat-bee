@@ -47,7 +47,6 @@ def book_search_controller(app):
                 "callback_id": "view_book_search",
                 "title": {"type": "plain_text", "text": "本の検索結果", "emoji": True},
                 "submit": {"type": "plain_text", "text": "選択", "emoji": True},
-                # sumを使って2次元配列を平坦化
                 "blocks": [
                     {
                         "type": "input",
