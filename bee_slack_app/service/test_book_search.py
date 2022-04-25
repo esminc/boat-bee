@@ -3,6 +3,7 @@
 # pylint: disable=non-ascii-name
 
 from bee_slack_app.service import book_search
+from bee_slack_app.repository.google_books import GoogleBooks
 
 # TODO:
 # このテストケースは外部に依存しているため本来の意味では
@@ -58,6 +59,41 @@ class TestBookSearch:
         assert len(result) > 0
 
     def test_13桁の正当なISBNを指定したら結果が1件だけ得られること(self):  # pylint: disable=invalid-name
+        target_isbn = "9784873118253"
+
+        result = self.book_search.search_book_by_isbn(target_isbn)
+
+        assert result is not None
+        assert result["title"] == "仕事ではじめる機械学習"
+        assert result["author"] is not None
+
+        # テストを実行する場所により "com"と"co.jp"が変わるのでそれ以外の部分のみ比較することにする
+        assert result["google_books_url"].startswith("http://books.google")
+        assert result["google_books_url"].endswith(
+            "books?id=q0YntAEACAAJ&dq=isbn:9784873118253&hl=&source=gbs_api"
+        )
+        assert result["image_url"].startswith("http://books.google")
+        assert result["image_url"].endswith(
+            "books/content?id=q0YntAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+        )
+
+    def test_13桁の正当なISBNを指定したら結果が1件だけ得られること_mockバージョン(
+        self, monkeypatch
+    ):  # pylint: disable=invalid-name
+        def mock_search_book_by_isbn(_, isbn):
+            book = {
+                "title": "仕事ではじめる機械学習",
+                "isbn": isbn,
+                "author": "適当な著者名",
+                "google_books_url": "http://books.google.co.jp/books?id=q0YntAEACAAJ&dq=isbn:9784873118253&hl=&source=gbs_api",
+                "image_url": "http://books.google.com/books/content?id=q0YntAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+            }
+            return book
+
+        monkeypatch.setattr(
+            GoogleBooks, "search_book_by_isbn", mock_search_book_by_isbn
+        )
+
         target_isbn = "9784873118253"
 
         result = self.book_search.search_book_by_isbn(target_isbn)
