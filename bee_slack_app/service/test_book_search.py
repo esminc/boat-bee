@@ -5,13 +5,6 @@
 from bee_slack_app.repository.google_books import GoogleBooks
 from bee_slack_app.service import book_search
 
-# TODO:
-# このテストケースは外部に依存しているため本来の意味では
-# ユニットテストとして不適切（期待値を確定できないため）
-# 今回は外部APIの利用方法を確認する目的を兼ねてここでテストを行う
-# ここに記載した期待値は現時点では正しく得られるが、Google Books API側の
-# 変更などによりこちらのコードに手を加えなくてもFAILするリスクがあることに注意
-
 
 class TestBookSearch:
     def setup_method(self, _):
