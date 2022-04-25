@@ -33,7 +33,7 @@ def book_search_controller(app):
         }
 
         search_list = []
-        # PRマージ後にfor文に修正する。
+        # TODO: PRマージ後にfor文に修正する。
         # for _ in range(3):
         search_list.append(search_item1)
         search_list.append(search_item2)
