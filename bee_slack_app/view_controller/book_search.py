@@ -36,45 +36,69 @@ def book_search_controller(app):
         else:
             book_results = search_book_by_title(title)
 
-            search_list = []
-
-            for book_result in book_results:
-                search_item = {
-                    "value": book_result["isbn"],
-                    "text": {
-                        "type": "plain_text",
-                        "text": book_result["title"],
-                        "emoji": True,
+            if len(book_results) == 0:
+                client.views_push(
+                    trigger_id=body["trigger_id"],
+                    view={
+                        "type": "modal",
+                        "title": {"type": "plain_text", "text": "検索結果", "emoji": True},
+                        "close": {"type": "plain_text", "text": "OK", "emoji": True},
+                        "blocks": [
+                            {
+                                "type": "section",
+                                "text": {
+                                    "type": "plain_text",
+                                    "text": "検索結果が0件でした",
+                                    "emoji": True,
+                                },
+                            },
+                        ],
                     },
-                }
-                search_list.append(search_item)
+                )
+            else:
+                search_list = []
 
-            client.views_push(
-                trigger_id=body["trigger_id"],
-                view={
-                    "type": "modal",
-                    # ビューの識別子
-                    "callback_id": "view_book_search",
-                    "title": {"type": "plain_text", "text": "本の検索結果", "emoji": True},
-                    "submit": {"type": "plain_text", "text": "選択", "emoji": True},
-                    "blocks": [
-                        {
-                            "type": "input",
-                            "block_id": "book_select",
-                            "element": {
-                                "type": "radio_buttons",
-                                "options": search_list,
-                                "action_id": "radio_buttons-action",
-                            },
-                            "label": {
-                                "type": "plain_text",
-                                "text": "選択してください",
-                                "emoji": True,
-                            },
+                for book_result in book_results:
+                    search_item = {
+                        "value": book_result["isbn"],
+                        "text": {
+                            "type": "plain_text",
+                            "text": book_result["title"],
+                            "emoji": True,
                         },
-                    ],
-                },
-            )
+                    }
+                    search_list.append(search_item)
+
+                client.views_push(
+                    trigger_id=body["trigger_id"],
+                    view={
+                        "type": "modal",
+                        # ビューの識別子
+                        "callback_id": "view_book_search",
+                        "title": {
+                            "type": "plain_text",
+                            "text": "本の検索結果",
+                            "emoji": True,
+                        },
+                        "submit": {"type": "plain_text", "text": "選択", "emoji": True},
+                        "blocks": [
+                            {
+                                "type": "input",
+                                "block_id": "book_select",
+                                "element": {
+                                    "type": "radio_buttons",
+                                    "options": search_list,
+                                    "action_id": "radio_buttons-action",
+                                },
+                                "label": {
+                                    "type": "plain_text",
+                                    "text": "選択してください",
+                                    "emoji": True,
+                                },
+                            },
+                        ],
+                    },
+                )
 
     # view_submission リクエストを処理
     @app.view("view_book_search")
