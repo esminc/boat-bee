@@ -1,5 +1,5 @@
 from bee_slack_app.model.review import ReviewContents
-from bee_slack_app.service.review import post_review, get_review_all
+from bee_slack_app.service.review import get_review_all, post_review
 
 
 def review_controller(app):
