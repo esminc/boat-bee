@@ -1,5 +1,5 @@
 from bee_slack_app.model.review import ReviewContents
-from bee_slack_app.service.review import post_review
+from bee_slack_app.service.review import post_review, get_review_all
 
 
 def review_controller(app):
@@ -66,30 +66,16 @@ def review_controller(app):
         post_review(logger, review_contents)
 
     @app.action("read_review")
-    def open_read_modal(ack, body, client):
+    def open_read_modal(ack, body, client, logger):
         # コマンドのリクエストを確認
         ack()
 
-        review_list = []
+        # レビューを全件取得する
+        review_contents_list: list[ReviewContents] = get_review_all(
+            logger,
+        )
 
-        review_contents_list: list[ReviewContents] = [
-            {
-                "user_id": "user_id_1",
-                "book_title": "仕事ではじめる機械学習",
-                "isbn": "1234567890",
-                "score_for_me": 4,
-                "score_for_others": 5,
-                "review_comment": "とても良い",
-            },
-            {
-                "user_id": "user_id_2",
-                "book_title": "仕事で使える機械学習",
-                "isbn": "9234567812",
-                "score_for_me": 3,
-                "score_for_others": 2,
-                "review_comment": "いまいち",
-            },
-        ]
+        review_list = []
 
         for review_contents in review_contents_list:
 
@@ -143,7 +129,10 @@ def review_controller(app):
                     },
                     {
                         "type": "plain_text",
-                        "text": review_contents["review_comment"],
+                        # 空はエラーになるため、ハイフンを設定
+                        "text": review_contents["review_comment"]
+                        if len(review_contents["review_comment"]) > 0
+                        else "-",
                         "emoji": True,
                     },
                 ],
