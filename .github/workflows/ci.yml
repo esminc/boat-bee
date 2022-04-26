@@ -45,6 +45,9 @@ jobs:
     permissions:
       id-token: write
       contents: read
+    strategy:
+      matrix:
+        stg: [dev, prod]
     steps:
       - uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -62,7 +65,7 @@ jobs:
           path: ~/.local/share/virtualenvs
           key: ${{ runner.os }}-pipenv-${{ hashFiles('./Pipfile.lock') }}
       - run: make init
-      - run: make deploy
+      - run: make deploy-${{ matrix.stg }}
       - name: Notify Action Result to Slack
         uses: slackapi/slack-github-action@v1.18.0
         with:

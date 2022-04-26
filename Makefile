@@ -30,8 +30,12 @@ test:
 train:
 	cd ml && pipenv run python train.py
 
-deploy:
-	sls deploy
+deploy: deploy-dev
+deploy-dev:
+	sls deploy --stage dev
+
+deploy-prod:
+	sls deploy --stage prod
 
 start-dev: export AWS_DEFAULT_REGION := us-east-1
 start-dev: export DYNAMODB_TABLE := bee-dev
