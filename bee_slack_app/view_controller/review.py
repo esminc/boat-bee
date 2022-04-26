@@ -71,9 +71,7 @@ def review_controller(app):
         ack()
 
         # レビューを全件取得する
-        review_contents_list: list[ReviewContents] = get_review_all(
-            logger,
-        )
+        review_contents_list: list[ReviewContents] = get_review_all(logger)
 
         review_list = []
 
