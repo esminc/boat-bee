@@ -41,7 +41,7 @@ def book_search_controller(app):
                     trigger_id=body["trigger_id"],
                     view={
                         "type": "modal",
-                        "title": {"type": "plain_text", "text": "エラー", "emoji": True},
+                        "title": {"type": "plain_text", "text": "検索結果", "emoji": True},
                         "close": {"type": "plain_text", "text": "OK", "emoji": True},
                         "blocks": [
                             {
