@@ -1,3 +1,4 @@
+from bee_slack_app.service.book_search import search_book_by_title
 from bee_slack_app.view_controller.review import generate_review_input_modal_view
 
 
@@ -7,37 +8,21 @@ def book_search_controller(app):
         # 受信した旨を 3 秒以内に Slack サーバーに伝えます
         ack()
 
-        search_item1 = {
-            "value": "12345",
-            "text": {
-                "type": "plain_text",
-                "text": "仕事ではじめる機械学習",
-                "emoji": True,
-            },
-        }
-        search_item2 = {
-            "value": "11111",
-            "text": {
-                "type": "plain_text",
-                "text": "機械学習",
-                "emoji": True,
-            },
-        }
-        search_item3 = {
-            "value": "88888",
-            "text": {
-                "type": "plain_text",
-                "text": "機械学習図鑑",
-                "emoji": True,
-            },
-        }
+        title = "統計"
+        book_results = search_book_by_title(title)
 
         search_list = []
-        # TODO: PRマージ後にfor文に修正する。
-        # for _ in range(3):
-        search_list.append(search_item1)
-        search_list.append(search_item2)
-        search_list.append(search_item3)
+
+        for book_result in book_results:
+            search_item = {
+                "value": book_result["isbn"],
+                "text": {
+                    "type": "plain_text",
+                    "text": book_result["title"],
+                    "emoji": True,
+                },
+            }
+            search_list.append(search_item)
 
         client.views_push(
             trigger_id=body["trigger_id"],
