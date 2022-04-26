@@ -56,7 +56,11 @@ def book_search_controller(app):
                             "options": search_list,
                             "action_id": "radio_buttons-action",
                         },
-                        "label": {"type": "plain_text", "text": "Label", "emoji": True},
+                        "label": {
+                            "type": "plain_text",
+                            "text": "選択してください",
+                            "emoji": True,
+                        },
                     },
                 ],
             },
