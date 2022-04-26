@@ -8,7 +8,11 @@ def book_search_controller(app):
         # 受信した旨を 3 秒以内に Slack サーバーに伝えます
         ack()
 
-        title = "統計"
+        print("body:", body)
+
+        title = body["view"]["state"]["values"]["input_book_title"][
+            "action_id_book_title"
+        ]["value"]
         book_results = search_book_by_title(title)
 
         search_list = []
