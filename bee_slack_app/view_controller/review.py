@@ -1,5 +1,5 @@
 from bee_slack_app.model.review import ReviewContents
-from bee_slack_app.service.review import post_review
+from bee_slack_app.service.review import get_review_all, post_review
 
 
 def review_controller(app):
@@ -66,32 +66,25 @@ def review_controller(app):
         post_review(logger, review_contents)
 
     @app.action("read_review")
-    def open_read_modal(ack, body, client):
+    def open_read_modal(ack, body, client, logger):
         # コマンドのリクエストを確認
         ack()
 
+        # レビューを全件取得する
+        review_contents_list: list[ReviewContents] = get_review_all(logger)
+
         review_list = []
 
-        review_contents_list: list[ReviewContents] = [
-            {
-                "user_id": "user_id_1",
-                "book_title": "仕事ではじめる機械学習",
-                "isbn": "1234567890",
-                "score_for_me": 4,
-                "score_for_others": 5,
-                "review_comment": "とても良い",
-            },
-            {
-                "user_id": "user_id_2",
-                "book_title": "仕事で使える機械学習",
-                "isbn": "9234567812",
-                "score_for_me": 3,
-                "score_for_others": 2,
-                "review_comment": "いまいち",
-            },
-        ]
-
         for review_contents in review_contents_list:
+
+            # 空はエラーになるため、ハイフンを設定
+            # TODO: 本来 review_comment が None になることは想定されていない（get_review_allが返す型と不一致）なので、service側での修正が必要
+            review_comment = review_contents["review_comment"]
+            review_comment = (
+                review_comment
+                if review_comment is not None and len(review_comment) > 0
+                else "-"
+            )
 
             review_item = {
                 "type": "section",
@@ -143,7 +136,7 @@ def review_controller(app):
                     },
                     {
                         "type": "plain_text",
-                        "text": review_contents["review_comment"],
+                        "text": review_comment,
                         "emoji": True,
                     },
                 ],
