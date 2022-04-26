@@ -121,7 +121,7 @@ def review_controller(app):
                     },
                     {
                         "type": "plain_text",
-                        "text": "他の人へのお勧め度",
+                        "text": "他の人へのおすすめ度",
                         "emoji": True,
                     },
                     {
@@ -236,7 +236,7 @@ def generate_review_input_modal_view(book_title="", isbn=""):
             {
                 "type": "input",
                 "block_id": "input_score_for_others",
-                "label": {"type": "plain_text", "text": "他の人へのお勧め度"},
+                "label": {"type": "plain_text", "text": "他の人へのおすすめ度"},
                 "element": {
                     "type": "radio_buttons",
                     "action_id": "action_id_score_for_others",
@@ -247,11 +247,11 @@ def generate_review_input_modal_view(book_title="", isbn=""):
                     "options": [
                         {
                             "value": "5",
-                            "text": {"type": "plain_text", "text": "とてもお勧め"},
+                            "text": {"type": "plain_text", "text": "とてもおすすめ"},
                         },
                         {
                             "value": "4",
-                            "text": {"type": "plain_text", "text": "お勧め"},
+                            "text": {"type": "plain_text", "text": "おすすめ"},
                         },
                         {
                             "value": "3",
@@ -259,11 +259,11 @@ def generate_review_input_modal_view(book_title="", isbn=""):
                         },
                         {
                             "value": "2",
-                            "text": {"type": "plain_text", "text": "お勧めしない"},
+                            "text": {"type": "plain_text", "text": "おすすめしない"},
                         },
                         {
                             "value": "1",
-                            "text": {"type": "plain_text", "text": "絶対にお勧めしない"},
+                            "text": {"type": "plain_text", "text": "絶対におすすめしない"},
                         },
                     ],
                 },
