@@ -13,7 +13,7 @@ class TestBookSearch:
     def teardown_method(self, _):
         pass
 
-    def test_正確にタイトルを指定して検索結果が得られること(self, monkeypatch):
+    def test_タイトル指定でヒットした場合は結果が1件以上返ってくること(self, monkeypatch):
         def mock_search_book_by_title(_, title):
             book = [
                 {
@@ -50,94 +50,15 @@ class TestBookSearch:
 
         assert len(result) > 0
 
-        target_books = [x for x in result if x["title"] == target_title]
-        assert len(target_books) == 1
+        # 何件見つかるかは不定なので、とりあえず先頭の要素だけチェックする
+        target_book = result[0]
 
-        target_book = target_books[0]
-        assert target_book["isbn"] == "1234567890123"
+        # 必要な要素が返ってきていること、内容の妥当性は問わない（Repository側で担保する）
+        assert target_book["title"] is not None
+        assert target_book["isbn"] is not None
         assert target_book["author"] is not None
-
-        assert (
-            target_book["google_books_url"]
-            == "http://books.google.co.jp/for_google_books_url_test_1"
-        )
-        assert (
-            target_book["image_url"] == "http://books.google.co.jp/for_image_url_test_1"
-        )
-
-    def test_曖昧にタイトルを指定して検索結果が得られること(self, monkeypatch):
-        def mock_search_book_by_title(_, __):
-            book = [
-                {
-                    "title": "テストのタイトル_1",
-                    "isbn": "1234567890123",
-                    "author": "テストの著者名_1",
-                    "google_books_url": "http://books.google.co.jp/for_google_books_url_test_1",
-                    "image_url": "http://books.google.co.jp/for_image_url_test_1",
-                },
-                {
-                    "title": "テストのタイトル_2",
-                    "isbn": "1234567890123",
-                    "author": "テストの著者名_2",
-                    "google_books_url": "http://books.google.co.jp/for_google_books_url_test_2",
-                    "image_url": "http://books.google.co.jp/for_image_url_test_2",
-                },
-                {
-                    "title": "テストのタイトル_3",
-                    "isbn": "1234567890123",
-                    "author": "テストの著者名_3",
-                    "google_books_url": "http://books.google.co.jp/for_google_books_url_test_3",
-                    "image_url": "http://books.google.co.jp/for_image_url_test_3",
-                },
-            ]
-            return book
-
-        monkeypatch.setattr(
-            GoogleBooks, "search_book_by_title", mock_search_book_by_title
-        )
-
-        target_title = "曖昧な検索ワード"
-
-        result = self.book_search.search_book_by_title(target_title)
-
-        assert len(result) > 0
-
-    def test_曖昧に複数の単語を指定して検索結果が得られること(self, monkeypatch):
-        def mock_search_book_by_title(_, __):
-            book = [
-                {
-                    "title": "テストのタイトル_1",
-                    "isbn": "1234567890123",
-                    "author": "テストの著者名_1",
-                    "google_books_url": "http://books.google.co.jp/for_google_books_url_test_1",
-                    "image_url": "http://books.google.co.jp/for_image_url_test_1",
-                },
-                {
-                    "title": "テストのタイトル_2",
-                    "isbn": "1234567890123",
-                    "author": "テストの著者名_2",
-                    "google_books_url": "http://books.google.co.jp/for_google_books_url_test_2",
-                    "image_url": "http://books.google.co.jp/for_image_url_test_2",
-                },
-                {
-                    "title": "テストのタイトル_3",
-                    "isbn": "1234567890123",
-                    "author": "テストの著者名_3",
-                    "google_books_url": "http://books.google.co.jp/for_google_books_url_test_3",
-                    "image_url": "http://books.google.co.jp/for_image_url_test_3",
-                },
-            ]
-            return book
-
-        monkeypatch.setattr(
-            GoogleBooks, "search_book_by_title", mock_search_book_by_title
-        )
-
-        target_title = "仕事ではじめる 適当な 検索ワード"
-
-        result = self.book_search.search_book_by_title(target_title)
-
-        assert len(result) > 0
+        assert target_book["google_books_url"] is not None
+        assert target_book["image_url"] is not None
 
     def test_検索ワードにヒットしない場合0件の結果が返ってくること(self, monkeypatch):
         def mock_search_book_by_title(_, __):
@@ -154,7 +75,7 @@ class TestBookSearch:
 
         assert len(result) == 0
 
-    def test_13桁の正当なISBNを指定したら結果が1件だけ得られること(
+    def test_ISBN指定でヒットした場合は結果が1件であること(
         self, monkeypatch
     ):  # pylint: disable=invalid-name
         def mock_search_book_by_isbn(_, isbn):
@@ -176,49 +97,15 @@ class TestBookSearch:
         result = self.book_search.search_book_by_isbn(target_isbn)
 
         assert result is not None
-        assert result["title"] == "テストのタイトル"
-        assert result["isbn"] == target_isbn
-        assert result["author"] == "テストの著者名"
 
-        assert (
-            result["google_books_url"]
-            == "http://books.google.co.jp/for_google_books_url_test"
-        )
-        assert result["image_url"] == "http://books.google.co.jp/for_image_url_test"
+        # 必要な要素が返ってきていること、内容の妥当性は問わない（Repository側で担保する）
+        assert result["title"] is not None
+        assert result["isbn"] is not None
+        assert result["author"] is not None
+        assert result["google_books_url"] is not None
+        assert result["image_url"] is not None
 
-    def test_10桁の正当なISBNを指定したら結果が1件だけ得られること(
-        self, monkeypatch
-    ):  # pylint: disable=invalid-name
-        def mock_search_book_by_isbn(_, isbn):
-            book = {
-                "title": "テストのタイトル",
-                "isbn": isbn,
-                "author": "テストの著者名",
-                "google_books_url": "http://books.google.co.jp/for_google_books_url_test",
-                "image_url": "http://books.google.co.jp/for_image_url_test",
-            }
-            return book
-
-        monkeypatch.setattr(
-            GoogleBooks, "search_book_by_isbn", mock_search_book_by_isbn
-        )
-
-        target_isbn = "4873118255"
-
-        result = self.book_search.search_book_by_isbn(target_isbn)
-
-        assert result is not None
-        assert result["title"] == "テストのタイトル"
-        assert result["isbn"] == target_isbn
-        assert result["author"] == "テストの著者名"
-
-        assert (
-            result["google_books_url"]
-            == "http://books.google.co.jp/for_google_books_url_test"
-        )
-        assert result["image_url"] == "http://books.google.co.jp/for_image_url_test"
-
-    def test_存在しないISBNを指定したら結果が0件であること(
+    def test_ISBN指定でヒットしなかった場合は結果が0件であること(
         self, monkeypatch
     ):  # pylint: disable=invalid-name
         def mock_search_book_by_isbn(_, __):
@@ -229,22 +116,6 @@ class TestBookSearch:
         )
 
         target_isbn = "1234567890123"
-
-        result = self.book_search.search_book_by_isbn(target_isbn)
-
-        assert result is None
-
-    def test_13桁ではない不正なISBNを指定したら結果が0件であること(
-        self, monkeypatch
-    ):  # pylint: disable=invalid-name
-        def mock_search_book_by_isbn(_, __):
-            return None
-
-        monkeypatch.setattr(
-            GoogleBooks, "search_book_by_isbn", mock_search_book_by_isbn
-        )
-
-        target_isbn = "123"
 
         result = self.book_search.search_book_by_isbn(target_isbn)
 
