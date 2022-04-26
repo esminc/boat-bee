@@ -1,3 +1,4 @@
+from bee_slack_app.service.book_search import search_book_by_title
 from bee_slack_app.view_controller.review import generate_review_input_modal_view
 
 
@@ -7,60 +8,73 @@ def book_search_controller(app):
         # 受信した旨を 3 秒以内に Slack サーバーに伝えます
         ack()
 
-        search_item1 = {
-            "value": "12345",
-            "text": {
-                "type": "plain_text",
-                "text": "仕事ではじめる機械学習",
-                "emoji": True,
-            },
-        }
-        search_item2 = {
-            "value": "11111",
-            "text": {
-                "type": "plain_text",
-                "text": "機械学習",
-                "emoji": True,
-            },
-        }
-        search_item3 = {
-            "value": "88888",
-            "text": {
-                "type": "plain_text",
-                "text": "機械学習図鑑",
-                "emoji": True,
-            },
-        }
+        title = body["view"]["state"]["values"]["input_book_title"][
+            "action_id_book_title"
+        ]["value"]
 
-        search_list = []
-        # TODO: PRマージ後にfor文に修正する。
-        # for _ in range(3):
-        search_list.append(search_item1)
-        search_list.append(search_item2)
-        search_list.append(search_item3)
+        if title is None:
 
-        client.views_push(
-            trigger_id=body["trigger_id"],
-            view={
-                "type": "modal",
-                # ビューの識別子
-                "callback_id": "view_book_search",
-                "title": {"type": "plain_text", "text": "本の検索結果", "emoji": True},
-                "submit": {"type": "plain_text", "text": "選択", "emoji": True},
-                "blocks": [
-                    {
-                        "type": "input",
-                        "block_id": "book_select",
-                        "element": {
-                            "type": "radio_buttons",
-                            "options": search_list,
-                            "action_id": "radio_buttons-action",
+            client.views_push(
+                trigger_id=body["trigger_id"],
+                view={
+                    "type": "modal",
+                    "title": {"type": "plain_text", "text": "エラー", "emoji": True},
+                    "close": {"type": "plain_text", "text": "OK", "emoji": True},
+                    "blocks": [
+                        {
+                            "type": "section",
+                            "text": {
+                                "type": "plain_text",
+                                "text": "本のタイトルが未入力です",
+                                "emoji": True,
+                            },
                         },
-                        "label": {"type": "plain_text", "text": "Label", "emoji": True},
+                    ],
+                },
+            )
+
+        else:
+            book_results = search_book_by_title(title)
+
+            search_list = []
+
+            for book_result in book_results:
+                search_item = {
+                    "value": book_result["isbn"],
+                    "text": {
+                        "type": "plain_text",
+                        "text": book_result["title"],
+                        "emoji": True,
                     },
-                ],
-            },
-        )
+                }
+                search_list.append(search_item)
+
+            client.views_push(
+                trigger_id=body["trigger_id"],
+                view={
+                    "type": "modal",
+                    # ビューの識別子
+                    "callback_id": "view_book_search",
+                    "title": {"type": "plain_text", "text": "本の検索結果", "emoji": True},
+                    "submit": {"type": "plain_text", "text": "選択", "emoji": True},
+                    "blocks": [
+                        {
+                            "type": "input",
+                            "block_id": "book_select",
+                            "element": {
+                                "type": "radio_buttons",
+                                "options": search_list,
+                                "action_id": "radio_buttons-action",
+                            },
+                            "label": {
+                                "type": "plain_text",
+                                "text": "選択してください",
+                                "emoji": True,
+                            },
+                        },
+                    ],
+                },
+            )
 
     # view_submission リクエストを処理
     @app.view("view_book_search")
