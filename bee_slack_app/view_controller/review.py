@@ -79,6 +79,15 @@ def review_controller(app):
 
         for review_contents in review_contents_list:
 
+            # 空はエラーになるため、ハイフンを設定
+            # TODO: 本来 review_comment が None になることは想定されていない（get_review_allが返す型と不一致）なので、service側での修正が必要
+            review_comment = review_contents["review_comment"]
+            review_comment = (
+                review_comment
+                if review_comment is not None and len(review_comment) > 0
+                else "-"
+            )
+
             review_item = {
                 "type": "section",
                 "fields": [
@@ -129,10 +138,7 @@ def review_controller(app):
                     },
                     {
                         "type": "plain_text",
-                        # 空はエラーになるため、ハイフンを設定
-                        "text": review_contents["review_comment"]
-                        if len(review_contents["review_comment"]) > 0
-                        else "-",
+                        "text": review_comment,
                         "emoji": True,
                     },
                 ],
