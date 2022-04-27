@@ -10,8 +10,6 @@ def book_controller(app):
         ack()
         client.views_open(
             trigger_id=body["trigger_id"],
-            view_id=body["view"]["id"],
-            hash=body["view"]["hash"],
             view={
                 "type": "modal",
                 "title": {"type": "plain_text", "text": "あなたへのおすすめ本", "emoji": True},
