@@ -5,7 +5,7 @@ def book_controller(app):
     @app.action("see_more_recommended_book")
     def open_see_more_recommended_book_modal(ack, body, client):
         """
-        今日のおすすめ本モーダル
+        あなたへのおすすめ本モーダル
         """
         ack()
         client.views_open(
@@ -14,7 +14,7 @@ def book_controller(app):
             hash=body["view"]["hash"],
             view={
                 "type": "modal",
-                "title": {"type": "plain_text", "text": "今日のおすすめ本", "emoji": True},
+                "title": {"type": "plain_text", "text": "あなたへのおすすめ本", "emoji": True},
                 "close": {"type": "plain_text", "text": "閉じる", "emoji": True},
                 "blocks": [
                     {
