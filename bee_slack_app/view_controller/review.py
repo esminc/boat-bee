@@ -191,7 +191,7 @@ def generate_review_input_modal_view(book_title="", isbn=""):
             {
                 "type": "input",
                 "block_id": "input_isbn",
-                "label": {"type": "plain_text", "text": "ISBN Code"},
+                "label": {"type": "plain_text", "text": "ISBN"},
                 "element": {
                     "type": "plain_text_input",
                     "action_id": "action_id_isbn",
