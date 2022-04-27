@@ -203,11 +203,12 @@ def generate_review_input_modal_view(book_title="", isbn=""):
                 "block_id": "input_score_for_me",
                 "label": {"type": "plain_text", "text": "自分にとっての評価"},
                 "element": {
-                    "type": "radio_buttons",
+                    "type": "static_select",
                     "action_id": "action_id_score_for_me",
-                    "initial_option": {
-                        "value": "3",
-                        "text": {"type": "plain_text", "text": "普通"},
+                    "placeholder": {
+                        "type": "plain_text",
+                        "text": "選択してください",
+                        "emoji": True,
                     },
                     "options": [
                         {
@@ -238,11 +239,12 @@ def generate_review_input_modal_view(book_title="", isbn=""):
                 "block_id": "input_score_for_others",
                 "label": {"type": "plain_text", "text": "他の人へのおすすめ度"},
                 "element": {
-                    "type": "radio_buttons",
+                    "type": "static_select",
                     "action_id": "action_id_score_for_others",
-                    "initial_option": {
-                        "value": "3",
-                        "text": {"type": "plain_text", "text": "普通"},
+                    "placeholder": {
+                        "type": "plain_text",
+                        "text": "選択してください",
+                        "emoji": True,
                     },
                     "options": [
                         {
