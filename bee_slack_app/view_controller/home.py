@@ -12,7 +12,7 @@ def home_controller(app):
                         "type": "header",
                         "text": {
                             "type": "plain_text",
-                            "text": "今日のおすすめ本",
+                            "text": "あなたへのおすすめ本",
                             "emoji": True,
                         },
                     },
