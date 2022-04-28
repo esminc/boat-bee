@@ -22,6 +22,8 @@ def user_controller(app):
                         "element": {
                             "type": "plain_text_input",
                             "action_id": "plain_text_input-action",
+                            # TODO: SlackのユーザIDからSlackの表示名を取得して表示する
+                            "initial_value": "えいわ（今は初期値として固定表示）",
                         },
                     },
                     {
@@ -33,7 +35,7 @@ def user_controller(app):
                             "action_id": "action_id_department",
                             "placeholder": {
                                 "type": "plain_text",
-                                "text": "選択してください",
+                                "text": "所属部署を選択してください",
                                 "emoji": True,
                             },
                             "options": [
@@ -72,7 +74,7 @@ def user_controller(app):
                             "action_id": "action_id_job_type",
                             "placeholder": {
                                 "type": "plain_text",
-                                "text": "選択してください",
+                                "text": "職種を選択してください",
                                 "emoji": True,
                             },
                             "options": [
@@ -100,7 +102,7 @@ def user_controller(app):
                             "action_id": "action_id_age_range",
                             "placeholder": {
                                 "type": "plain_text",
-                                "text": "選択してください",
+                                "text": "年代を選択してください",
                                 "emoji": True,
                             },
                             "options": [
