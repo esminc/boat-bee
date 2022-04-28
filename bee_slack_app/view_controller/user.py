@@ -21,7 +21,7 @@ def user_controller(app):
                         "label": {"type": "plain_text", "text": "氏名"},
                         "element": {
                             "type": "plain_text_input",
-                            "action_id": "plain_text_input-action",
+                            "action_id": "action_id_user_name",
                             # TODO: SlackのユーザIDからSlackの表示名を取得して表示する
                             "initial_value": "えいわ（今は初期値として固定表示）",
                         },
