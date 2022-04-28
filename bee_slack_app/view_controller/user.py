@@ -16,51 +16,53 @@ def user_controller(app):
                 "close": {"type": "plain_text", "text": "閉じる", "emoji": True},
                 "blocks": [
                     {
-                        "type": "input",
-                        "block_id": "input_user_name",
-                        "label": {"type": "plain_text", "text": "氏名"},
-                        "element": {
-                            "type": "plain_text_input",
-                            "action_id": "action_id_user_name",
+                        "type": "section",
+                        "block_id": "section_user_name",
+                        "text": {
+                            "type": "plain_text",
                             # TODO: SlackのユーザIDからSlackの表示名を取得して表示する
-                            "initial_value": "えいわ（今は初期値として固定表示）",
+                            "text": "えいわ　たろう（今は初期値として固定表示）",
                         },
                     },
                     {
                         "type": "input",
                         "block_id": "input_department",
-                        "label": {"type": "plain_text", "text": "所属事業部"},
+                        "label": {"type": "plain_text", "text": "事業部"},
                         "element": {
                             "type": "static_select",
                             "action_id": "action_id_department",
                             "placeholder": {
                                 "type": "plain_text",
-                                "text": "所属部署を選択してください",
+                                "text": "事業部を選択してください",
                                 "emoji": True,
                             },
                             "options": [
                                 {
-                                    "value": "0",
+                                    "value": "its",
                                     "text": {"type": "plain_text", "text": "ITS事業部"},
                                 },
                                 {
-                                    "value": "1",
+                                    "value": "finance",
                                     "text": {"type": "plain_text", "text": "金融システム事業部"},
                                 },
                                 {
-                                    "value": "2",
+                                    "value": "medical",
                                     "text": {"type": "plain_text", "text": "医療システム事業部"},
                                 },
                                 {
-                                    "value": "3",
+                                    "value": "agile",
                                     "text": {
                                         "type": "plain_text",
                                         "text": "アジャイルシステム事業部",
                                     },
                                 },
                                 {
-                                    "value": "4",
+                                    "value": "general",
                                     "text": {"type": "plain_text", "text": "管理部"},
+                                },
+                                {
+                                    "value": "other",
+                                    "text": {"type": "plain_text", "text": "その他"},
                                 },
                             ],
                         },
@@ -79,16 +81,20 @@ def user_controller(app):
                             },
                             "options": [
                                 {
-                                    "value": "value-0",
+                                    "value": "engineer",
                                     "text": {"type": "plain_text", "text": "エンジニア"},
                                 },
                                 {
-                                    "value": "value-1",
+                                    "value": "management",
                                     "text": {"type": "plain_text", "text": "管理職"},
                                 },
                                 {
-                                    "value": "value-2",
+                                    "value": "sales",
                                     "text": {"type": "plain_text", "text": "営業"},
+                                },
+                                {
+                                    "value": "other",
+                                    "text": {"type": "plain_text", "text": "その他"},
                                 },
                             ],
                         },
@@ -96,35 +102,39 @@ def user_controller(app):
                     {
                         "type": "input",
                         "block_id": "input_age_range",
-                        "label": {"type": "plain_text", "text": "年代"},
+                        "label": {"type": "plain_text", "text": "年齢層"},
                         "element": {
                             "type": "static_select",
                             "action_id": "action_id_age_range",
                             "placeholder": {
                                 "type": "plain_text",
-                                "text": "年代を選択してください",
+                                "text": "年齢層を選択してください",
                                 "emoji": True,
                             },
                             "options": [
                                 {
-                                    "value": "value-0",
-                                    "text": {"type": "plain_text", "text": "20代"},
+                                    "value": "10",
+                                    "text": {"type": "plain_text", "text": "～19才"},
                                 },
                                 {
-                                    "value": "value-1",
-                                    "text": {"type": "plain_text", "text": "30代"},
+                                    "value": "20",
+                                    "text": {"type": "plain_text", "text": "20才～29才"},
                                 },
                                 {
-                                    "value": "value-2",
-                                    "text": {"type": "plain_text", "text": "40代"},
+                                    "value": "30",
+                                    "text": {"type": "plain_text", "text": "30才～39才"},
                                 },
                                 {
-                                    "value": "value-3",
-                                    "text": {"type": "plain_text", "text": "50代"},
+                                    "value": "40",
+                                    "text": {"type": "plain_text", "text": "40才～49才"},
                                 },
                                 {
-                                    "value": "value-4",
-                                    "text": {"type": "plain_text", "text": "60代"},
+                                    "value": "50",
+                                    "text": {"type": "plain_text", "text": "50才～59才"},
+                                },
+                                {
+                                    "value": "60",
+                                    "text": {"type": "plain_text", "text": "60才～"},
                                 },
                             ],
                         },
