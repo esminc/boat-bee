@@ -86,7 +86,7 @@ def review_controller(app):
                 else "-"
             )
 
-            review_item = {
+            review_items_1 = {
                 "type": "section",
                 "fields": [
                     {
@@ -142,7 +142,36 @@ def review_controller(app):
                 ],
             }
 
-            review_list.append(review_item)
+            review_list.append(review_items_1)
+
+            review_items_2 = {
+                "type": "section",
+                "fields": [
+                    {
+                        "type": "plain_text",
+                        "text": "レビュー投稿者",
+                        "emoji": True,
+                    },
+                    {
+                        "type": "plain_text",
+                        "text": review_contents["user_id"],
+                        "emoji": True,
+                    },
+                    {
+                        "type": "plain_text",
+                        "text": "レビュー投稿日時",
+                        "emoji": True,
+                    },
+                    {
+                        "type": "plain_text",
+                        "text": review_contents["updated_at"],
+                        "emoji": True,
+                    },
+                ],
+            }
+
+            review_list.append(review_items_2)
+
             review_list.append({"type": "divider"})
 
         client.views_open(
