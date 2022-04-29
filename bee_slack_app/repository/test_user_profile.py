@@ -57,7 +57,7 @@ class TestUserProfile:
 
         actual = response["Items"][0]
 
-        assert actual["user_id"] == "user_id_0"
+        assert actual["user_id"] == "test_user_id"
         assert actual["user_name"] == "永和　太郎"
         assert actual["department"] == "ＩＴＳ事業部"
         assert actual["job_type"] == "技術職"
