@@ -25,7 +25,7 @@ class TestUserProfile:
             ProvisionedThroughput={"ReadCapacityUnits": 1, "WriteCapacityUnits": 1},
         )
 
-    def test_ユーザー情報を作成できること(self):
+    def test_初期状態から最初のユーザー情報を作成できること(self):
         response = self.table.query(
             KeyConditionExpression=boto3.dynamodb.conditions.Key("user_id").eq(
                 "test_user_id"
@@ -123,7 +123,7 @@ class TestUserProfile:
         assert actual["age_range"] == "50"
         assert actual["updated_at"] == "2022-04-28T09:32:14+09:00"
 
-    def test_ユーザー情報を追加できること(self):
+    def test_追加のユーザー情報を作成できること(self):
         user_profile = UserProfile()
 
         user_profile.create(
