@@ -14,7 +14,7 @@ class UserProfile:
         pass
 
     # データを追加および上書きします
-    def create(self, profile: User):
+    def create(self, profile: User) -> None:
         item = {
             "user_id": profile["user_id"],
             "user_name": profile["user_name"],
@@ -25,8 +25,6 @@ class UserProfile:
         }
 
         self.table.put_item(Item=item)
-
-        return item
 
     # データを削除します
     def delete(self):
