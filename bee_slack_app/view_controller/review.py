@@ -144,6 +144,19 @@ def review_controller(app):
 
             review_list.append(review_items_1)
 
+            update_datetime = (
+                review_contents["updated_at"][0:4]
+                + "年"
+                + review_contents["updated_at"][5:7]
+                + "月"
+                + review_contents["updated_at"][8:10]
+                + "日"
+                + review_contents["updated_at"][11:13]
+                + "時"
+                + review_contents["updated_at"][14:16]
+                + "分"
+            )
+
             review_items_2 = {
                 "type": "section",
                 "fields": [
@@ -164,7 +177,7 @@ def review_controller(app):
                     },
                     {
                         "type": "plain_text",
-                        "text": review_contents["updated_at"],
+                        "text": update_datetime,
                         "emoji": True,
                     },
                 ],
