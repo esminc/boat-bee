@@ -1,5 +1,6 @@
 from bee_slack_app.model.review import ReviewContents
 from bee_slack_app.service.review import get_review_all, post_review
+from bee_slack_app.view_controller.score import ViewScore
 
 
 def review_controller(app):
@@ -73,6 +74,9 @@ def review_controller(app):
         # レビューを全件取得する
         review_contents_list: list[ReviewContents] = get_review_all(logger)
 
+        # スコアを文字変換するインスタンスを生成
+        book_review_score = ViewScore()
+
         review_list = []
 
         for review_contents in review_contents_list:
@@ -116,7 +120,9 @@ def review_controller(app):
                     },
                     {
                         "type": "plain_text",
-                        "text": str(review_contents["score_for_me"]),
+                        "text": book_review_score.score_for_me(
+                            str(review_contents["score_for_me"])
+                        ),
                         "emoji": True,
                     },
                     {
@@ -126,7 +132,9 @@ def review_controller(app):
                     },
                     {
                         "type": "plain_text",
-                        "text": str(review_contents["score_for_others"]),
+                        "text": book_review_score.score_for_others(
+                            str(review_contents["score_for_others"])
+                        ),
                         "emoji": True,
                     },
                     {
