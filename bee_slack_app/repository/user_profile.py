@@ -15,8 +15,10 @@ class UserProfile:
         # 未実装
         pass
 
-    # データを追加および上書きします
     def create(self, profile: User) -> None:
+        """
+        データを追加および上書きします
+        """
         item = {
             "user_id": profile["user_id"],
             "user_name": profile["user_name"],
