@@ -429,6 +429,11 @@ def generate_review_list_modal_view(review_contents_list: list[ReviewContents]):
                     },
                 ],
             },
+            {"type": "section", "text": {"type": "mrkdwn", "text": "*検索結果*"}},
+            {
+                "type": "section",
+                "text": {"type": "mrkdwn", "text": f"{len(review_contents_list)}件"},
+            },
             {"type": "divider"},
         ]
         + review_list,  # type: ignore
