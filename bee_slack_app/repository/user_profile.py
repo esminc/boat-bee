@@ -3,6 +3,7 @@ import os
 from bee_slack_app.model.user import User
 from bee_slack_app.repository.database import get_database_client
 
+
 # ユーザー情報の追加・更新・削除を行います
 class UserProfile:
     def __init__(self):
