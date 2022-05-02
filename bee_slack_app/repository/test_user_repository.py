@@ -6,11 +6,11 @@ import os
 import boto3  # type: ignore
 from moto import mock_dynamodb  # type: ignore
 
-from bee_slack_app.repository.user_profile import UserProfile
+from bee_slack_app.repository.user_repository import UserRepository
 
 
 @mock_dynamodb
-class TestUserProfile:
+class TestUserRepository:
     def setup_method(self, _):
         dynamodb = boto3.resource("dynamodb")
 
@@ -34,9 +34,9 @@ class TestUserProfile:
 
         assert len(response["Items"]) == 0
 
-        user_profile = UserProfile()
+        user_repository = UserRepository()
 
-        user_profile.create(
+        user_repository.create(
             {
                 "user_id": "test_user_id",
                 "user_name": "永和　太郎",
@@ -65,9 +65,9 @@ class TestUserProfile:
         assert actual["updated_at"] == "2022-04-01T00:00:00+09:00"
 
     def test_ユーザー情報を上書きできること(self):
-        user_profile = UserProfile()
+        user_repository = UserRepository()
 
-        user_profile.create(
+        user_repository.create(
             {
                 "user_id": "test_user_id",
                 "user_name": "永和 花子",
@@ -95,7 +95,7 @@ class TestUserProfile:
         assert actual["age_range"] == "30"
         assert actual["updated_at"] == "2022-04-15T09:20:12+09:00"
 
-        user_profile.create(
+        user_repository.create(
             {
                 "user_id": "test_user_id",
                 "user_name": "上書き次郎",
@@ -124,9 +124,9 @@ class TestUserProfile:
         assert actual["updated_at"] == "2022-04-28T09:32:14+09:00"
 
     def test_２件目以降のユーザー情報を作成できること(self):
-        user_profile = UserProfile()
+        user_repository = UserRepository()
 
-        user_profile.create(
+        user_repository.create(
             {
                 "user_id": "test_user_id",
                 "user_name": "永和 花子",
@@ -154,7 +154,7 @@ class TestUserProfile:
         assert actual["age_range"] == "30"
         assert actual["updated_at"] == "2022-04-15T09:20:12+09:00"
 
-        user_profile.create(
+        user_repository.create(
             {
                 "user_id": "test_user_id_1",
                 "user_name": "追加　小次郎",
@@ -183,9 +183,9 @@ class TestUserProfile:
         assert actual["updated_at"] == "2022-04-28T09:32:14+09:00"
 
     def test_キー以外が同じ情報を追加で作成できること(self):
-        user_profile = UserProfile()
+        user_repository = UserRepository()
 
-        user_profile.create(
+        user_repository.create(
             {
                 "user_id": "test_user_id",
                 "user_name": "永和 花子",
@@ -213,7 +213,7 @@ class TestUserProfile:
         assert actual["age_range"] == "30"
         assert actual["updated_at"] == "2022-04-15T09:20:12+09:00"
 
-        user_profile.create(
+        user_repository.create(
             {
                 "user_id": "test_user_id_1",
                 "user_name": "永和 花子",
