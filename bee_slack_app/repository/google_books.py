@@ -39,7 +39,9 @@ class GoogleBooks:
         for _item in json_result["items"]:
 
             # ISBN13を取り出す
-            isbn_list = _item["volumeInfo"]["industryIdentifiers"]
+            isbn_list = _item["volumeInfo"].get("industryIdentifiers")
+            if not isbn_list:
+                continue
             isbn_13_list = [x for x in isbn_list if x["type"] == "ISBN_13"]
 
             # ISBN13がない場合は検索結果から除外する
