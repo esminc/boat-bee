@@ -4,7 +4,7 @@
 import os
 
 import boto3  # type: ignore
-from moto import mock_dynamodb  # type: ignore
+from moto import mock_dynamodb
 
 from bee_slack_app.repository.user_repository import UserRepository
 
@@ -61,7 +61,7 @@ class TestUserRepository:
 
         user_repository = UserRepository()
 
-        users = user_repository.get_user("test_user_id_1")
+        users = user_repository.get_user("test_user_id_0")
 
         assert len(users) == 1
 
