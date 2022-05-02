@@ -1,5 +1,5 @@
 import datetime
-from typing import Any, Optional
+from typing import Any, Optional, TypedDict
 
 from bee_slack_app.model.review import ReviewContents
 from bee_slack_app.repository.book_review import BookReview
@@ -7,9 +7,16 @@ from bee_slack_app.repository.book_review import BookReview
 book_review_repository = BookReview()
 
 
-def get_review_all(logger: Any) -> Optional[list[ReviewContents]]:
+class GetConditions(TypedDict):
+    score_for_me: Optional[str]
+    score_for_others: Optional[str]
+
+
+def get_reviews(
+    logger: Any, conditions: Optional[GetConditions] = None
+) -> Optional[list[ReviewContents]]:
     try:
-        return book_review_repository.get()
+        return book_review_repository.get(conditions)
 
     except Exception:  # pylint: disable=broad-except
         logger.exception("Failed to get data.")

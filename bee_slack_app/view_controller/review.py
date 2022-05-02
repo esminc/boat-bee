@@ -1,5 +1,5 @@
 from bee_slack_app.model.review import ReviewContents
-from bee_slack_app.service.review import get_review_all, post_review
+from bee_slack_app.service.review import get_reviews, post_review
 
 
 def review_controller(app):
@@ -62,7 +62,7 @@ def review_controller(app):
         # コマンドのリクエストを確認
         ack()
 
-        review_contents_list = get_review_all(logger)
+        review_contents_list = get_reviews(logger)
 
         view = generate_review_list_modal_view(review_contents_list)
 
@@ -77,28 +77,18 @@ def review_controller(app):
 
         values_from_body = body["view"]["state"]["values"]
 
-        score_for_me_selected_option = values_from_body["score_for_me_select_block"][
-            "score_for_me_select_action"
-        ]["selected_option"]
-        score_for_others_selected_option = values_from_body[
-            "score_for_others_select_block"
-        ]["score_for_others_select_action"]["selected_option"]
+        scores = {}
 
-        score_for_me = (  # pylint: disable=unused-variable
-            score_for_me_selected_option.get("value", "0")
-            if score_for_me_selected_option is not None
-            else "0"
-        )
+        for label in ["score_for_me", "score_for_others"]:
 
-        score_for_others = (  # pylint: disable=unused-variable
-            score_for_others_selected_option.get("value", "0")
-            if score_for_others_selected_option is not None
-            else "0"
-        )
+            select_block = values_from_body[f"{label}_select_block"]
+            selected_option = select_block[f"{label}_select_action"]["selected_option"]
+            score = selected_option and selected_option.get("value")
 
-        # TODO: score_for_me, score_for_othersに一致するレビューを取得する
+            if score in ["1", "2", "3", "4", "5"]:
+                scores[label] = score
 
-        review_contents_list = get_review_all(logger)
+        review_contents_list = get_reviews(logger, scores)
 
         view = generate_review_list_modal_view(review_contents_list)
 
@@ -254,7 +244,7 @@ def generate_review_list_modal_view(review_contents_list: list[ReviewContents]):
     for review_contents in review_contents_list:
 
         # 空はエラーになるため、ハイフンを設定
-        # TODO: 本来 review_comment が None になることは想定されていない（get_review_allが返す型と不一致）なので、service側での修正が必要
+        # TODO: 本来 review_comment が None になることは想定されていない（get_reviewsが返す型と不一致）なので、service側での修正が必要
         review_comment = review_contents["review_comment"]
         review_comment = (
             review_comment
