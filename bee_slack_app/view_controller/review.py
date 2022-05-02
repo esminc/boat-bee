@@ -332,6 +332,7 @@ def generate_review_list_modal_view(review_contents_list: list[ReviewContents]):
         "callback_id": "update_review_list_view",
         "title": {"type": "plain_text", "text": "Bee"},
         "blocks": [
+            {"type": "section", "text": {"type": "mrkdwn", "text": "*検索条件*"}},
             {
                 "block_id": "score_for_me_select_block",
                 "type": "section",
