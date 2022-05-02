@@ -69,9 +69,8 @@ def book_search_controller(app):
                     }
                     search_list.append(search_item)
 
-                client.views_update(
+                client.views_push(
                     trigger_id=body["trigger_id"],
-                    view_id=body["view"]["id"],
                     view={
                         "type": "modal",
                         # ビューの識別子
