@@ -76,8 +76,6 @@ def review_controller(app):
 
         client.views_open(
             trigger_id=body["trigger_id"],
-            view_id=body["view"]["id"],
-            hash=body["view"]["hash"],
             view=view,
         )
 
