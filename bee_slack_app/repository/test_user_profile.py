@@ -15,7 +15,7 @@ class TestUserProfile:
         dynamodb = boto3.resource("dynamodb")
 
         self.table = dynamodb.create_table(
-            TableName=os.environ["DYNAMODB_TABLE"],
+            TableName=os.environ["DYNAMODB_TABLE"] + "-user",
             AttributeDefinitions=[
                 {"AttributeName": "user_id", "AttributeType": "S"},
             ],
