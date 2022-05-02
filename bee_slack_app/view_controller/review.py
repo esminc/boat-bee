@@ -18,32 +18,24 @@ def review_controller(app):
     # view_submission リクエストを処理
     @app.view("view_1")
     def handle_submission(ack, body, _, view, logger):
-        print("ビューからのイベント")
 
         book_title = view["state"]["values"]["input_book_title"][
             "action_id_book_title"
         ]["value"]
-        print(f"Book title= {book_title}")
         isbn = view["state"]["values"]["input_isbn"]["action_id_isbn"]["value"]
-        print(f"ISBN code= {isbn}")
 
         score_for_me = view["state"]["values"]["input_score_for_me"][
             "action_id_score_for_me"
         ]["selected_option"]["value"]
-        print(f"Score for me= {score_for_me}")
         score_for_others = view["state"]["values"]["input_score_for_others"][
             "action_id_score_for_others"
         ]["selected_option"]["value"]
-        print(f"Score for others= {score_for_others}")
 
         # `input_comment`という block_id に `action_id_comment` を持つ input ブロックがある場合
         review_comment = view["state"]["values"]["input_comment"]["action_id_comment"][
             "value"
         ]
-        print(f"Review comment = {review_comment}")
-
         user_id = body["user"]["id"]
-        print("user_id:", user_id)
         # 入力値を検証
         errors = {}
         if review_comment is not None and len(review_comment) <= 1:
