@@ -9,7 +9,7 @@ from bee_slack_app.service.review import get_review_all
 
 
 def test_レビューを取得できること(monkeypatch):
-    def mock_book_review_repository_get_all(_):
+    def mock_book_review_repository_get(_):
         return [
             {
                 "user_id": "user_id_0",
@@ -37,7 +37,7 @@ def test_レビューを取得できること(monkeypatch):
             },
         ]
 
-    monkeypatch.setattr(BookReview, "get_all", mock_book_review_repository_get_all)
+    monkeypatch.setattr(BookReview, "get", mock_book_review_repository_get)
 
     reviews = get_review_all(getLogger())
 
@@ -66,10 +66,10 @@ def test_レビューを取得できること(monkeypatch):
 
 
 def test_repositoryの処理でエラーが発生した場合Noneを返すこと(monkeypatch):  # pylint: disable=invalid-name
-    def mock_book_review_repository_get_all(_):
+    def mock_book_review_repository_get(_):
         raise Exception("dummy exception")
 
-    monkeypatch.setattr(BookReview, "get_all", mock_book_review_repository_get_all)
+    monkeypatch.setattr(BookReview, "get", mock_book_review_repository_get)
 
     reviews = get_review_all(getLogger())
 
