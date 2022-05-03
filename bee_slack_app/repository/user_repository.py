@@ -10,11 +10,6 @@ class UserRepository:
     def __init__(self):
         self.table = get_database_client().Table(os.environ["DYNAMODB_TABLE"] + "-user")
 
-    # 全てのデータを抽出します
-    def get_all(self):
-        # 未実装
-        pass
-
     def create(self, user: User) -> None:
         """
         データを追加および上書きします
@@ -30,7 +25,8 @@ class UserRepository:
 
         self.table.put_item(Item=item)
 
-    # データを削除します
     def delete(self):
+        """
+        データを削除します
+        """
         # 未実装
-        pass
