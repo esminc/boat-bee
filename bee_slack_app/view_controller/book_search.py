@@ -6,6 +6,9 @@ from bee_slack_app.view_controller.review import generate_review_input_modal_vie
 def book_search_controller(app):
     @app.action("book_search")
     def open_book_search(ack, body, client):
+        """
+        検索結果のモーダルを開く
+        """
         # 受信した旨を 3 秒以内に Slack サーバーに伝えます
         ack()
 
@@ -75,53 +78,15 @@ def book_search_controller(app):
                 new_view = generate_search_result_model_view(options=search_list)
                 client.views_push(trigger_id=body["trigger_id"], view=new_view)
 
-    @app.action("radio_buttons-action")
-    def handle_book_selected(ack, body, new_view, client, logger):
-
-        print(f"view = {new_view}")
-        print(f"body = {body}")
-
-        view_id = body["container"]["view_id"]
-        print(f"view_id = {view_id}")
-
-        book_title = body["actions"][0]["selected_option"]["text"]["text"]
-        isbn = body["actions"][0]["selected_option"]["value"]
-        options = body["view"]["blocks"][0]["accessory"]["options"]
-        print(f"book title = {book_title}")
-        print(f"isbn = {isbn}")
-        print(f"options = {options}")
-
-        new_view = generate_search_result_model_view(
-            options=options, selected_isbn=isbn
-        )
-        print(f"new_view = {new_view}")
-
-        logger.info(body)
-
-        client.views_update(
-            view_id=view_id,
-            view=new_view,
-        )
-        ack()
-
-    # view_submission リクエストを処理
-    @app.view("view_book_search")
-    def handle_submission(ack, _, __, view):
-        book_title = view["state"]["values"]["book_select"]["radio_buttons-action"][
-            "selected_option"
-        ]["text"]["text"]
-        isbn = view["state"]["values"]["book_select"]["radio_buttons-action"][
-            "selected_option"
-        ]["value"]
-
-        # view_submission リクエストの確認を行い、モーダルを閉じる
-        ack(
-            response_action="update",
-            view=generate_review_input_modal_view(book_title, isbn),
-        )
-
     def generate_search_result_model_view(options, selected_isbn=None):
+        """
+        検索結果画面の作成を行う
+
+        ISBNが与えられた場合はGoogle BooksへのURLと画像リンクを更新する
+        """
+
         def isbn_to_urls(isbn: Optional[str]) -> Tuple[str, str]:
+            # TODO: 暫定で適当な画像をデフォルトに設定、S3に画像を置くようになったら自前の画像に差し替える
             dummy_url = "https://pbs.twimg.com/profile_images/625633822235693056/lNGUneLX_400x400.jpg"
             if isbn is None:
                 return dummy_url, dummy_url
@@ -180,3 +145,56 @@ def book_search_controller(app):
         }
 
         return view
+
+    @app.action("radio_buttons-action")
+    def handle_book_selected(ack, body, new_view, client, logger):
+        """
+        検索結果画面でラジオボタンを選択した時に行う処理
+
+        選択に応じてGoogle BooksへのURLと画像リンクを更新する
+        """
+
+        print(f"view = {new_view}")
+        print(f"body = {body}")
+
+        view_id = body["container"]["view_id"]
+        print(f"view_id = {view_id}")
+
+        book_title = body["actions"][0]["selected_option"]["text"]["text"]
+        isbn = body["actions"][0]["selected_option"]["value"]
+        options = body["view"]["blocks"][0]["accessory"]["options"]
+        print(f"book title = {book_title}")
+        print(f"isbn = {isbn}")
+        print(f"options = {options}")
+
+        new_view = generate_search_result_model_view(
+            options=options, selected_isbn=isbn
+        )
+        print(f"new_view = {new_view}")
+
+        logger.info(body)
+
+        client.views_update(
+            view_id=view_id,
+            view=new_view,
+        )
+        ack()
+
+    # view_submission リクエストを処理
+    @app.view("view_book_search")
+    def handle_submission(ack, _, __, view):
+        """
+        検索結果画面で選択ボタンを押下したときに行う処理
+        """
+        book_title = view["state"]["values"]["book_select"]["radio_buttons-action"][
+            "selected_option"
+        ]["text"]["text"]
+        isbn = view["state"]["values"]["book_select"]["radio_buttons-action"][
+            "selected_option"
+        ]["value"]
+
+        # view_submission リクエストの確認を行い、モーダルを閉じる
+        ack(
+            response_action="update",
+            view=generate_review_input_modal_view(book_title, isbn),
+        )
