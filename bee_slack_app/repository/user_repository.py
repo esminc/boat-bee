@@ -24,7 +24,7 @@ class UserRepository:
         response = self.table.get_item(Key={"user_id": user_id})
         return response.get("Item")
 
-    def create(self, user: Optional[User]) -> None:
+    def create(self, user: User) -> None:
         """
         データを追加および上書きします
         """
