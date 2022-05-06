@@ -11,7 +11,6 @@ user_repository = UserRepository()
 def add_user(logger: Any, user: User) -> None:
     """
     ユーザ情報の登録・更新をする
-
     """
 
     try:
