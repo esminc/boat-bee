@@ -61,7 +61,7 @@ class TestUserRepository:
 
         user_repository = UserRepository()
 
-        user = user_repository.get_user("test_user_id_1")
+        user = user_repository.get("test_user_id_1")
 
         assert len(user) == 6
 
@@ -108,7 +108,7 @@ class TestUserRepository:
 
         user_repository = UserRepository()
 
-        user = user_repository.get_user("test_user_id_3")
+        user = user_repository.get("test_user_id_3")
 
         assert user is None
 
@@ -118,7 +118,7 @@ class TestUserRepository:
         assert len(response["Items"]) == 0
 
         user_repository = UserRepository()
-        user = user_repository.get_user("test_user_id_0")
+        user = user_repository.get("test_user_id_0")
 
         assert user is None
 
