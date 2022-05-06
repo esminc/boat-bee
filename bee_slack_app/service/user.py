@@ -1,6 +1,6 @@
+# pylint: disable=duplicate-code
 import datetime
-import logging
-from typing import Any, Optional
+from typing import Any
 
 from bee_slack_app.model.user import User
 from bee_slack_app.repository.user_repository import UserRepository
@@ -8,7 +8,7 @@ from bee_slack_app.repository.user_repository import UserRepository
 user_repository = UserRepository()
 
 
-def add_user(user: User) -> None:
+def add_user(logger: Any, user: User) -> None:
     """
     ユーザ情報の登録・更新をする
 
@@ -18,15 +18,15 @@ def add_user(user: User) -> None:
         user_repository.create(
             {
                 "user_id": user["user_id"],
-                "book_title": user["user_name"],
-                "isbn": user["department"],
-                "score_for_me": user["job_type"],
-                "score_for_others": user["age_range"],
+                "user_name": user["user_name"],
+                "department": user["department"],
+                "job_type": user["job_type"],
+                "age_range": user["age_range"],
                 "updated_at": datetime.datetime.now(
                     datetime.timezone(datetime.timedelta(hours=9))
                 ).isoformat(timespec="seconds"),
             }
         )
 
-    except Exception as error:  # pylint: disable=broad-except
-        logger.exception(f"Failed to store data {error}")
+    except Exception as user_error:  # pylint: disable=broad-except
+        logger.exception(f"Failed to store data {user_error}")
