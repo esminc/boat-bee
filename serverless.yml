@@ -5,6 +5,7 @@ frameworkVersion: "3"
 provider:
   name: aws
   region: ap-northeast-1
+  timeout: 900
   ecr:
     images:
       appimage:
