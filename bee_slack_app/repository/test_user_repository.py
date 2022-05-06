@@ -113,7 +113,7 @@ class TestUserRepository:
         assert user is None
 
     def test_ユーザー情報が0件の場合にNoneを返すこと(self):  # pylint: disable=invalid-name
-        # ㏈が空であることを確認
+        # DBが空であることを確認
         response = self.table.scan()
         assert len(response["Items"]) == 0
 
