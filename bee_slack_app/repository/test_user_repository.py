@@ -61,28 +61,24 @@ class TestUserRepository:
 
         user_repository = UserRepository()
 
-        users = user_repository.get_user("test_user_id_1")
+        user = user_repository.get_user("test_user_id_1")
 
-        assert len(users) == 6
+        assert len(user) == 6
 
-        assert users["user_id"] == "test_user_id_1"
-        assert users["user_name"] == "問屋町　花子"
-        assert users["department"] == "ＩＴＳ事業部"
-        assert users["job_type"] == "管理職"
-        assert users["age_range"] == "50"
-        assert users["updated_at"] == "2022-04-11T09:23:04+09:00"
+        assert user["user_id"] == "test_user_id_1"
+        assert user["user_name"] == "問屋町　花子"
+        assert user["department"] == "ＩＴＳ事業部"
+        assert user["job_type"] == "管理職"
+        assert user["age_range"] == "50"
+        assert user["updated_at"] == "2022-04-11T09:23:04+09:00"
 
-
-"""
     def test_ユーザー情報が0件の場合_空配列を返すこと(self):
+        # ㏈が空であることを確認
         response = self.table.scan()
-
         assert len(response["Items"]) == 0
 
         user_repository = UserRepository()
-
         users = user_repository.get_user("test_user_id_0")
 
         assert len(users) == 0
         assert isinstance(users, list)
-"""

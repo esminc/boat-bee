@@ -15,10 +15,10 @@ class UserRepository:
         自分のユーザー情報を取得する
 
         Returns:
-                    User: 自分のユーザー情報のリスト
+                    User: 自分のユーザー情報
         """
         response = self.table.get_item(Key={"user_id": user_id})
-
+        print(response)
         return response["Item"]
 
     def create(self, user: User) -> None:
