@@ -28,6 +28,12 @@ provider:
         - dynamodb:DeleteItem
       Resource:
         - "*"
+    - Effect: Allow
+      Action:
+        - lambda:InvokeFunction
+        - lambda:GetFunction
+      Resource:
+        - "*"
 
 functions:
   app:

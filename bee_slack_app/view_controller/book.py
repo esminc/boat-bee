@@ -2,12 +2,13 @@
 
 
 def book_controller(app):
-    @app.action("see_more_recommended_book")
-    def open_see_more_recommended_book_modal(ack, body, client):
+    def respond_to_slack_within_3_seconds(body, ack):
+        ack()
+
+    def open_see_more_recommended_book_modal(body, client):
         """
         あなたへのおすすめ本モーダル
         """
-        ack()
         client.views_open(
             trigger_id=body["trigger_id"],
             view={
@@ -25,3 +26,10 @@ def book_controller(app):
                 ],
             },
         )
+
+    app.action("see_more_recommended_book")(
+        # この場合でも ack() は 3 秒以内に呼ばれます
+        ack=respond_to_slack_within_3_seconds,
+        # Lazy 関数がイベントの処理を担当します
+        lazy=[open_see_more_recommended_book_modal],
+    )
