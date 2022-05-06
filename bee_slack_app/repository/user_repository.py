@@ -10,12 +10,12 @@ class UserRepository:
     def __init__(self):
         self.table = get_database_client().Table(os.environ["DYNAMODB_TABLE"] + "-user")
 
-    def get_user(self, user_id: str) -> list[User]:
+    def get_user(self, user_id: str) -> User:
         """
         自分のユーザー情報を取得する
 
         Returns:
-                    list[User]: 自分のユーザー情報のリスト
+                    User: 自分のユーザー情報のリスト
         """
         response = self.table.get_item(Key={"user_id": user_id})
 
