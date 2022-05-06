@@ -15,8 +15,11 @@ class UserRepository:
         """
         自分のユーザー情報を取得する
 
+        Args:
+            user_id : 検索するユーザー情報のuser_id
+
         Returns:
-                    User: 自分のユーザー情報です。未登録の場合は、Noneを返します。
+            User: 取得したユーザー情報。未登録の場合は、Noneを返します。
         """
         response = self.table.get_item(Key={"user_id": user_id})
         return response["Item"] if "Item" in response else None
