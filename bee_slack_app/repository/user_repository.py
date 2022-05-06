@@ -15,15 +15,13 @@ class UserRepository:
         自分のユーザー情報を取得する
 
         Returns:
-                    User: 自分のユーザー情報
+                    User: 自分のユーザー情報です。未登録の場合は、Noneを返します。
         """
         response = self.table.get_item(Key={"user_id": user_id})
-        print(response)
-        return response["Item"]
+        return response["Item"] if "Item" in response else None
 
     def create(self, user: User) -> None:
         """
         データを追加および上書きします
         """
         # 未実装
-        pass
