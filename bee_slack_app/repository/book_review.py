@@ -10,8 +10,8 @@ from bee_slack_app.repository.database import get_database_client
 # This is a sample
 class BookReview:
     class GetConditions(TypedDict):
-        score_for_me: Optional[int]
-        score_for_others: Optional[int]
+        score_for_me: Optional[str]
+        score_for_others: Optional[str]
 
     def __init__(self):
         self.table = get_database_client().Table(os.environ["DYNAMODB_TABLE"])
