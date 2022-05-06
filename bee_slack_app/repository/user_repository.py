@@ -17,7 +17,7 @@ class UserRepository:
         Returns:
                     list[User]: 自分のユーザー情報のリスト
         """
-        response = self.table.get_item(key={"user_id": user_id})
+        response = self.table.get_item(Key={"user_id": user_id})
 
         return response["Item"]
 
