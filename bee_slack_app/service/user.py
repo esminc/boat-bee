@@ -27,5 +27,5 @@ def add_user(logger: Any, user: User) -> None:
             }
         )
 
-    except Exception as user_error:  # pylint: disable=broad-except
-        logger.exception(f"Failed to store data {user_error}")
+    except Exception as error:  # pylint: disable=broad-except
+        logger.exception(f"Failed to store data {error}")
