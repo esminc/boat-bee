@@ -85,9 +85,6 @@ def book_search_controller(app):
                     }
                     cache_list.append(cache_item)
 
-                print(book_results[0])
-                print(f"search_list len = {len(json.dumps(cache_list))}")
-
                 # private_metadataに格納するためにCacheを文字列に変換する
                 cache_list_str = json.dumps(cache_list)
 
@@ -145,8 +142,7 @@ def book_search_controller(app):
             books = [x for x in search_result if x["isbn"] == isbn]
             if len(books) == 0:
                 return None, None
-            else:
-                book = books[0]
+            book = books[0]
 
             image_url = (
                 book.get("image_url", dummy_url)
@@ -161,14 +157,27 @@ def book_search_controller(app):
 
             return google_books_url, image_url
 
-        # private_metadataに格納していたCacheを文字列から復元する
-        search_resut = json.loads(cached_search_result)
+        def isbn_to_url(
+            isbn: Optional[str], cached_search_result: Optional[str]
+        ) -> Tuple[str, str]:
+        
+            # Cacheが与えられない場合はAPIを使って取得する
+            if cached_search_result is None:
+                google_books_url, image_url = isbn_to_url_by_api(isbn)
+                return google_books_url, image_url
 
-        google_books_url, image_url = isbn_to_url_by_cache(selected_isbn, search_resut)
+            # private_metadataに格納していたCacheを文字列から復元する
+            search_resut = json.loads(cached_search_result)
 
-        # Cacheから取得できない場合はAPIを使って取得する
-        if google_books_url is None or image_url is None:
-            google_books_url, image_url = isbn_to_url_by_api(selected_isbn)
+            google_books_url, image_url = isbn_to_url_by_cache(isbn, search_resut)
+
+            # Cacheから取得できない場合はAPIを使って取得する
+            if google_books_url is None or image_url is None:
+                google_books_url, image_url = isbn_to_url_by_api(isbn)
+
+            return google_books_url, image_url
+
+        google_books_url, image_url = isbn_to_url(selected_isbn, cached_search_result)
 
         view = {
             "type": "modal",
@@ -220,31 +229,18 @@ def book_search_controller(app):
         選択に応じてGoogle BooksへのURLと画像リンクを更新する
         """
 
-        print(f"view = {new_view}")
-        print(f"body = {body}")
-
-        view_id = body["container"]["view_id"]
-        print(f"view_id = {view_id}")
-
-        book_title = body["actions"][0]["selected_option"]["text"]["text"]
         isbn = body["actions"][0]["selected_option"]["value"]
         options = body["view"]["blocks"][0]["accessory"]["options"]
-        print(f"book title = {book_title}")
-        print(f"isbn = {isbn}")
-        print(f"options = {options}")
-
         cache_list = body["view"]["private_metadata"]
-        print(f"private metadata = {cache_list}")
 
         new_view = generate_search_result_model_view(
             options=options, selected_isbn=isbn, cached_search_result=cache_list
         )
-        print(f"new_view = {new_view}")
 
         logger.info(body)
 
         client.views_update(
-            view_id=view_id,
+            view_id=body["container"]["view_id"],
             view=new_view,
         )
         ack()
