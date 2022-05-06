@@ -9,7 +9,7 @@ book_review_repository = BookReview()
 
 def get_review_all(logger: Any) -> Optional[list[ReviewContents]]:
     try:
-        return book_review_repository.get_all()
+        return book_review_repository.get()
 
     except Exception:  # pylint: disable=broad-except
         logger.exception("Failed to get data.")
