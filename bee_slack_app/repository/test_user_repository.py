@@ -63,8 +63,6 @@ class TestUserRepository:
 
         user = user_repository.get("test_user_id_1")
 
-        assert len(user) == 6
-
         assert user["user_id"] == "test_user_id_1"
         assert user["user_name"] == "問屋町　花子"
         assert user["department"] == "ＩＴＳ事業部"
