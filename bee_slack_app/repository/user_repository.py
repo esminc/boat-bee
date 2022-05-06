@@ -24,4 +24,19 @@ class UserRepository:
         """
         データを追加および上書きします
         """
+        item = {
+            "user_id": user["user_id"],
+            "user_name": user["user_name"],
+            "department": user["department"],
+            "job_type": user["job_type"],
+            "age_range": user["age_range"],
+            "updated_at": user["updated_at"],
+        }
+
+        self.table.put_item(Item=item)
+
+    def delete(self):
+        """
+        データを削除します
+        """
         # 未実装

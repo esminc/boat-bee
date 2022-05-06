@@ -66,7 +66,7 @@ class TestBookReview:
 
         book_review = BookReview()
 
-        reviews = book_review.get_all()
+        reviews = book_review.get()
 
         assert len(reviews) == 3
 
@@ -98,7 +98,7 @@ class TestBookReview:
 
         book_review = BookReview()
 
-        reviews = book_review.get_all()
+        reviews = book_review.get()
 
         assert len(reviews) == 0
         assert isinstance(reviews, list)
@@ -143,6 +143,219 @@ class TestBookReview:
         assert actual["score_for_others"] == "3"
         assert actual["review_comment"] == "レビューコメント"
         assert actual["updated_at"] == "2022-04-01T00:00:00+09:00"
+
+    def test_自分にとっての評価を指定してレビューを取得できること(self):
+        item = {
+            "user_id": "user_id_0",
+            "book_title": "仕事ではじめる機械学習",
+            "isbn": "12345",
+            "score_for_me": "3",
+            "score_for_others": "5",
+            "review_comment": "とても良いです",
+            "updated_at": "2022-04-01T00:00:00+09:00",
+        }
+
+        self.table.put_item(Item=item)
+
+        item = {
+            "user_id": "user_id_1",
+            "book_title": "仕事ではじめる機械学習",
+            "isbn": "12345",
+            "score_for_me": "3",
+            "score_for_others": "4",
+            "review_comment": "まあまあです",
+            "updated_at": "2022-04-01T00:00:00+09:00",
+        }
+
+        self.table.put_item(Item=item)
+
+        item = {
+            "user_id": "user_id_2",
+            "book_title": "Python チュートリアル",
+            "isbn": "67890",
+            "score_for_me": "2",
+            "score_for_others": "4",
+            "review_comment": "そこそこです",
+            "updated_at": "2022-04-02T00:00:00+09:00",
+        }
+
+        self.table.put_item(Item=item)
+
+        book_review = BookReview()
+
+        reviews = book_review.get({"score_for_me": 3})
+
+        assert len(reviews) == 2
+
+        assert reviews[0]["user_id"] == "user_id_0"
+        assert reviews[0]["isbn"] == "12345"
+        assert reviews[0]["book_title"] == "仕事ではじめる機械学習"
+        assert reviews[0]["score_for_me"] == "3"
+        assert reviews[0]["score_for_others"] == "5"
+        assert reviews[0]["review_comment"] == "とても良いです"
+
+        assert reviews[1]["user_id"] == "user_id_1"
+        assert reviews[1]["isbn"] == "12345"
+        assert reviews[1]["book_title"] == "仕事ではじめる機械学習"
+        assert reviews[1]["score_for_me"] == "3"
+        assert reviews[1]["score_for_others"] == "4"
+        assert reviews[1]["review_comment"] == "まあまあです"
+
+    def test_他の人へのおすすめ度を指定してレビューを取得できること(self):
+        item = {
+            "user_id": "user_id_0",
+            "book_title": "仕事ではじめる機械学習",
+            "isbn": "12345",
+            "score_for_me": "3",
+            "score_for_others": "5",
+            "review_comment": "とても良いです",
+            "updated_at": "2022-04-01T00:00:00+09:00",
+        }
+
+        self.table.put_item(Item=item)
+
+        item = {
+            "user_id": "user_id_1",
+            "book_title": "仕事ではじめる機械学習",
+            "isbn": "12345",
+            "score_for_me": "3",
+            "score_for_others": "4",
+            "review_comment": "まあまあです",
+            "updated_at": "2022-04-01T00:00:00+09:00",
+        }
+
+        self.table.put_item(Item=item)
+
+        item = {
+            "user_id": "user_id_2",
+            "book_title": "Python チュートリアル",
+            "isbn": "67890",
+            "score_for_me": "2",
+            "score_for_others": "4",
+            "review_comment": "そこそこです",
+            "updated_at": "2022-04-02T00:00:00+09:00",
+        }
+
+        self.table.put_item(Item=item)
+
+        book_review = BookReview()
+
+        reviews = book_review.get({"score_for_others": 4})
+
+        assert len(reviews) == 2
+
+        assert reviews[0]["user_id"] == "user_id_1"
+        assert reviews[0]["isbn"] == "12345"
+        assert reviews[0]["book_title"] == "仕事ではじめる機械学習"
+        assert reviews[0]["score_for_me"] == "3"
+        assert reviews[0]["score_for_others"] == "4"
+        assert reviews[0]["review_comment"] == "まあまあです"
+
+        assert reviews[1]["user_id"] == "user_id_2"
+        assert reviews[1]["isbn"] == "67890"
+        assert reviews[1]["book_title"] == "Python チュートリアル"
+        assert reviews[1]["score_for_me"] == "2"
+        assert reviews[1]["score_for_others"] == "4"
+        assert reviews[1]["review_comment"] == "そこそこです"
+
+    def test_自分にとっての評価と他の人へのおすすめ度を指定してレビューを取得できること(self):
+        item = {
+            "user_id": "user_id_0",
+            "book_title": "仕事ではじめる機械学習",
+            "isbn": "12345",
+            "score_for_me": "3",
+            "score_for_others": "5",
+            "review_comment": "とても良いです",
+            "updated_at": "2022-04-01T00:00:00+09:00",
+        }
+
+        self.table.put_item(Item=item)
+
+        item = {
+            "user_id": "user_id_1",
+            "book_title": "仕事ではじめる機械学習",
+            "isbn": "12345",
+            "score_for_me": "3",
+            "score_for_others": "4",
+            "review_comment": "まあまあです",
+            "updated_at": "2022-04-01T00:00:00+09:00",
+        }
+
+        self.table.put_item(Item=item)
+
+        item = {
+            "user_id": "user_id_2",
+            "book_title": "Python チュートリアル",
+            "isbn": "67890",
+            "score_for_me": "3",
+            "score_for_others": "5",
+            "review_comment": "そこそこです",
+            "updated_at": "2022-04-02T00:00:00+09:00",
+        }
+
+        self.table.put_item(Item=item)
+
+        book_review = BookReview()
+
+        reviews = book_review.get({"score_for_me": 3, "score_for_others": 5})
+
+        assert len(reviews) == 2
+
+        assert reviews[0]["user_id"] == "user_id_0"
+        assert reviews[0]["isbn"] == "12345"
+        assert reviews[0]["book_title"] == "仕事ではじめる機械学習"
+        assert reviews[0]["score_for_me"] == "3"
+        assert reviews[0]["score_for_others"] == "5"
+        assert reviews[0]["review_comment"] == "とても良いです"
+
+        assert reviews[1]["user_id"] == "user_id_2"
+        assert reviews[1]["isbn"] == "67890"
+        assert reviews[1]["book_title"] == "Python チュートリアル"
+        assert reviews[1]["score_for_me"] == "3"
+        assert reviews[1]["score_for_others"] == "5"
+        assert reviews[1]["review_comment"] == "そこそこです"
+
+    def test_検索条件を指定してレビューが0件の場合_空配列を返すこと(self):
+        item = {
+            "user_id": "user_id_0",
+            "book_title": "仕事ではじめる機械学習",
+            "isbn": "12345",
+            "score_for_me": "3",
+            "score_for_others": "5",
+            "review_comment": "とても良いです",
+            "updated_at": "2022-04-01T00:00:00+09:00",
+        }
+
+        self.table.put_item(Item=item)
+
+        item = {
+            "user_id": "user_id_1",
+            "book_title": "仕事ではじめる機械学習",
+            "isbn": "12345",
+            "score_for_me": "3",
+            "score_for_others": "4",
+            "review_comment": "まあまあです",
+            "updated_at": "2022-04-01T00:00:00+09:00",
+        }
+
+        self.table.put_item(Item=item)
+
+        item = {
+            "user_id": "user_id_2",
+            "book_title": "Python チュートリアル",
+            "isbn": "67890",
+            "score_for_me": "2",
+            "score_for_others": "4",
+            "review_comment": "そこそこです",
+            "updated_at": "2022-04-02T00:00:00+09:00",
+        }
+
+        book_review = BookReview()
+
+        reviews = book_review.get({"score_for_others": 1})
+
+        assert len(reviews) == 0
+        assert isinstance(reviews, list)
 
     def test_レビューを上書きできること(self):
         book_review = BookReview()

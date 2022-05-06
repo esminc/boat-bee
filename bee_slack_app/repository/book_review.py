@@ -1,4 +1,7 @@
 import os
+from typing import Optional, TypedDict
+
+from boto3.dynamodb.conditions import Attr  # type: ignore
 
 from bee_slack_app.model.review import ReviewContents
 from bee_slack_app.repository.database import get_database_client
@@ -6,24 +9,54 @@ from bee_slack_app.repository.database import get_database_client
 
 # This is a sample
 class BookReview:
+    class GetConditions(TypedDict):
+        score_for_me: Optional[int]
+        score_for_others: Optional[int]
+
     def __init__(self):
         self.table = get_database_client().Table(os.environ["DYNAMODB_TABLE"])
 
-    def get_all(self) -> list[ReviewContents]:
+    def get(self, conditions: GetConditions = None) -> list[ReviewContents]:
         """
-        本のレビューを全件取得する
+        本のレビューを取得する
 
+        Args:
+            conditions : 検索条件。省略した場合は、全てのレビューを取得する。
         Returns:
             list[ReviewContents]: 本のレビューのリスト
         """
-        response = self.table.scan()
-        items = response["Items"]
+
+        def scan(exclusive_start_key=None, filter_expression=None):
+            option = {}
+            if filter_expression:
+                option["FilterExpression"] = filter_expression
+            if exclusive_start_key:
+                option["ExclusiveStartKey"] = exclusive_start_key
+
+            response = self.table.scan(**option)
+
+            return response["Items"], response.get("LastEvaluatedKey")
+
+        filter_expression = None
+
+        if conditions:
+            for condition_key, condition_value in conditions.items():
+                filter_expression = (
+                    filter_expression & Attr(condition_key).eq(str(condition_value))
+                    if filter_expression
+                    else Attr(condition_key).eq(str(condition_value))
+                )
+
+        items, last_evaluated_key = scan(filter_expression=filter_expression)
 
         # レスポンスに LastEvaluatedKey が含まれなくなるまでループ処理を実行する
         # see https://dev.classmethod.jp/articles/hot-to-get-more-than-1mb-of-data-from-dynamodb-when-using-scan/
-        while "LastEvaluatedKey" in response:
-            response = self.table.scan(ExclusiveStartKey=response["LastEvaluatedKey"])
-            items.extend(response["Items"])
+        while last_evaluated_key is not None:
+            new_items, last_evaluated_key = scan(
+                exclusive_start_key=last_evaluated_key,
+                filter_expression=filter_expression,
+            )
+            items.extend(new_items)
 
         return items
 

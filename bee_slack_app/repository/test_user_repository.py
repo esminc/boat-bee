@@ -4,7 +4,7 @@
 import os
 
 import boto3  # type: ignore
-from moto import mock_dynamodb
+from moto import mock_dynamodb  # type: ignore
 
 from bee_slack_app.repository.user_repository import UserRepository
 
@@ -121,3 +121,219 @@ class TestUserRepository:
         user = user_repository.get_user("test_user_id_0")
 
         assert user is None
+
+    def test_初期状態から最初のユーザー情報を作成できること(self):
+        response = self.table.query(
+            KeyConditionExpression=boto3.dynamodb.conditions.Key("user_id").eq(
+                "test_user_id"
+            ),
+        )
+
+        assert len(response["Items"]) == 0
+
+        user_repository = UserRepository()
+
+        user_repository.create(
+            {
+                "user_id": "test_user_id",
+                "user_name": "永和　太郎",
+                "department": "ＩＴＳ事業部",
+                "job_type": "技術職",
+                "age_range": "20",
+                "updated_at": "2022-04-01T00:00:00+09:00",
+            }
+        )
+
+        response = self.table.query(
+            KeyConditionExpression=boto3.dynamodb.conditions.Key("user_id").eq(
+                "test_user_id"
+            ),
+        )
+
+        assert len(response["Items"]) == 1
+
+        actual = response["Items"][0]
+
+        assert actual["user_id"] == "test_user_id"
+        assert actual["user_name"] == "永和　太郎"
+        assert actual["department"] == "ＩＴＳ事業部"
+        assert actual["job_type"] == "技術職"
+        assert actual["age_range"] == "20"
+        assert actual["updated_at"] == "2022-04-01T00:00:00+09:00"
+
+    def test_ユーザー情報を上書きできること(self):
+        user_repository = UserRepository()
+
+        user_repository.create(
+            {
+                "user_id": "test_user_id",
+                "user_name": "永和 花子",
+                "department": "金融システム事業部",
+                "job_type": "営業職",
+                "age_range": "30",
+                "updated_at": "2022-04-15T09:20:12+09:00",
+            }
+        )
+
+        response = self.table.query(
+            KeyConditionExpression=boto3.dynamodb.conditions.Key("user_id").eq(
+                "test_user_id"
+            ),
+        )
+
+        assert len(response["Items"]) == 1
+
+        actual = response["Items"][0]
+
+        assert actual["user_id"] == "test_user_id"
+        assert actual["user_name"] == "永和 花子"
+        assert actual["department"] == "金融システム事業部"
+        assert actual["job_type"] == "営業職"
+        assert actual["age_range"] == "30"
+        assert actual["updated_at"] == "2022-04-15T09:20:12+09:00"
+
+        user_repository.create(
+            {
+                "user_id": "test_user_id",
+                "user_name": "上書き次郎",
+                "department": "金融システム事業部",
+                "job_type": "管理職",
+                "age_range": "50",
+                "updated_at": "2022-04-28T09:32:14+09:00",
+            }
+        )
+
+        response = self.table.query(
+            KeyConditionExpression=boto3.dynamodb.conditions.Key("user_id").eq(
+                "test_user_id"
+            ),
+        )
+
+        assert len(response["Items"]) == 1
+
+        actual = response["Items"][0]
+
+        assert actual["user_id"] == "test_user_id"
+        assert actual["user_name"] == "上書き次郎"
+        assert actual["department"] == "金融システム事業部"
+        assert actual["job_type"] == "管理職"
+        assert actual["age_range"] == "50"
+        assert actual["updated_at"] == "2022-04-28T09:32:14+09:00"
+
+    def test_２件目以降のユーザー情報を作成できること(self):
+        user_repository = UserRepository()
+
+        user_repository.create(
+            {
+                "user_id": "test_user_id",
+                "user_name": "永和 花子",
+                "department": "金融システム事業部",
+                "job_type": "営業職",
+                "age_range": "30",
+                "updated_at": "2022-04-15T09:20:12+09:00",
+            }
+        )
+
+        response = self.table.query(
+            KeyConditionExpression=boto3.dynamodb.conditions.Key("user_id").eq(
+                "test_user_id"
+            ),
+        )
+
+        assert len(response["Items"]) == 1
+
+        actual = response["Items"][0]
+
+        assert actual["user_id"] == "test_user_id"
+        assert actual["user_name"] == "永和 花子"
+        assert actual["department"] == "金融システム事業部"
+        assert actual["job_type"] == "営業職"
+        assert actual["age_range"] == "30"
+        assert actual["updated_at"] == "2022-04-15T09:20:12+09:00"
+
+        user_repository.create(
+            {
+                "user_id": "test_user_id_1",
+                "user_name": "追加　小次郎",
+                "department": "金融システム事業部",
+                "job_type": "技術職",
+                "age_range": "40",
+                "updated_at": "2022-04-28T09:32:14+09:00",
+            }
+        )
+
+        response = self.table.query(
+            KeyConditionExpression=boto3.dynamodb.conditions.Key("user_id").eq(
+                "test_user_id_1"
+            ),
+        )
+
+        assert len(response["Items"]) == 1
+
+        actual = response["Items"][0]
+
+        assert actual["user_id"] == "test_user_id_1"
+        assert actual["user_name"] == "追加　小次郎"
+        assert actual["department"] == "金融システム事業部"
+        assert actual["job_type"] == "技術職"
+        assert actual["age_range"] == "40"
+        assert actual["updated_at"] == "2022-04-28T09:32:14+09:00"
+
+    def test_キー以外が同じ情報を追加で作成できること(self):
+        user_repository = UserRepository()
+
+        user_repository.create(
+            {
+                "user_id": "test_user_id",
+                "user_name": "永和 花子",
+                "department": "金融システム事業部",
+                "job_type": "営業職",
+                "age_range": "30",
+                "updated_at": "2022-04-15T09:20:12+09:00",
+            }
+        )
+
+        response = self.table.query(
+            KeyConditionExpression=boto3.dynamodb.conditions.Key("user_id").eq(
+                "test_user_id"
+            ),
+        )
+
+        assert len(response["Items"]) == 1
+
+        actual = response["Items"][0]
+
+        assert actual["user_id"] == "test_user_id"
+        assert actual["user_name"] == "永和 花子"
+        assert actual["department"] == "金融システム事業部"
+        assert actual["job_type"] == "営業職"
+        assert actual["age_range"] == "30"
+        assert actual["updated_at"] == "2022-04-15T09:20:12+09:00"
+
+        user_repository.create(
+            {
+                "user_id": "test_user_id_1",
+                "user_name": "永和 花子",
+                "department": "金融システム事業部",
+                "job_type": "営業職",
+                "age_range": "30",
+                "updated_at": "2022-04-15T09:20:12+09:00",
+            }
+        )
+
+        response = self.table.query(
+            KeyConditionExpression=boto3.dynamodb.conditions.Key("user_id").eq(
+                "test_user_id_1"
+            ),
+        )
+
+        assert len(response["Items"]) == 1
+
+        actual = response["Items"][0]
+
+        assert actual["user_id"] == "test_user_id_1"
+        assert actual["user_name"] == "永和 花子"
+        assert actual["department"] == "金融システム事業部"
+        assert actual["job_type"] == "営業職"
+        assert actual["age_range"] == "30"
+        assert actual["updated_at"] == "2022-04-15T09:20:12+09:00"

@@ -67,6 +67,25 @@ def home_controller(app):
                             },
                         ],
                     },
+                    {
+                        "type": "header",
+                        "text": {"type": "plain_text", "text": "ユーザ情報", "emoji": True},
+                    },
+                    {
+                        "type": "actions",
+                        "elements": [
+                            {
+                                "type": "button",
+                                "text": {
+                                    "type": "plain_text",
+                                    "text": "プロフィール",
+                                    "emoji": True,
+                                },
+                                "value": "dummy_value",
+                                "action_id": "user_info",
+                            },
+                        ],
+                    },
                 ],
             },
         )

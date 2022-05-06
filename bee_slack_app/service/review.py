@@ -9,7 +9,7 @@ book_review_repository = BookReview()
 
 def get_review_all(logger: Any) -> Optional[list[ReviewContents]]:
     try:
-        return book_review_repository.get_all()
+        return book_review_repository.get()
 
     except Exception:  # pylint: disable=broad-except
         logger.exception("Failed to get data.")
@@ -17,10 +17,7 @@ def get_review_all(logger: Any) -> Optional[list[ReviewContents]]:
 
 
 def post_review(logger: Any, review_contents: ReviewContents) -> None:
-    # 入力されたデータを使った処理を実行。このサンプルでは DB に保存する処理を行う
-
     try:
-        # DB に保存
         book_review_repository.create(
             {
                 "user_id": review_contents["user_id"],
@@ -36,5 +33,4 @@ def post_review(logger: Any, review_contents: ReviewContents) -> None:
         )
 
     except Exception as error:  # pylint: disable=broad-except
-        # エラーをハンドリング
         logger.exception(f"Failed to store data {error}")
