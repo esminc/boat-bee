@@ -2,6 +2,7 @@
 """
 import os
 
+from typing import Optional
 from bee_slack_app.model.user import User
 from bee_slack_app.repository.database import get_database_client
 
@@ -10,7 +11,7 @@ class UserRepository:
     def __init__(self):
         self.table = get_database_client().Table(os.environ["DYNAMODB_TABLE"] + "-user")
 
-    def get(self, user_id: str) -> User:
+    def get(self, user_id: str) -> Optional[User]:
         """
         自分のユーザー情報を取得する
 
@@ -20,7 +21,7 @@ class UserRepository:
         response = self.table.get_item(Key={"user_id": user_id})
         return response["Item"] if "Item" in response else None
 
-    def create(self, user: User) -> None:
+    def create(self, user: Optional[User]) -> None:
         """
         データを追加および上書きします
         """
