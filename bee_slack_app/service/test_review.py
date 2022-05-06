@@ -3,13 +3,13 @@
 
 from logging import getLogger
 
-from bee_slack_app.repository.book_review import BookReview
+from bee_slack_app.repository.review import Review
 from bee_slack_app.repository.user_repository import UserRepository
 from bee_slack_app.service.review import get_review, get_reviews
 
 
 def test_get_reviewでレビューを取得できること(monkeypatch):
-    def mock_book_review_repository_get(_, **__):
+    def mock_review_repository_get(_, **__):
         return {
             "user_id": "user_id_0",
             "book_title": "仕事ではじめる機械学習",
@@ -22,7 +22,7 @@ def test_get_reviewでレビューを取得できること(monkeypatch):
             "book_url": "dummy_book_url_0",
         }
 
-    monkeypatch.setattr(BookReview, "get", mock_book_review_repository_get)
+    monkeypatch.setattr(Review, "get", mock_review_repository_get)
 
     def mock_user_repository_get(_, __):
         return {
@@ -53,7 +53,7 @@ def test_get_reviewでレビューを取得できること(monkeypatch):
 def test_get_reviewで該当するユーザ情報がない場合はユーザ名としてユーザIDを返すこと(
     monkeypatch,
 ):  # pylint: disable=invalid-name
-    def mock_book_review_repository_get(_, **__):
+    def mock_review_repository_get(_, **__):
         return {
             "user_id": "user_id_0",
             "book_title": "仕事ではじめる機械学習",
@@ -66,7 +66,7 @@ def test_get_reviewで該当するユーザ情報がない場合はユーザ名�
             "book_url": "dummy_book_url_0",
         }
 
-    monkeypatch.setattr(BookReview, "get", mock_book_review_repository_get)
+    monkeypatch.setattr(Review, "get", mock_review_repository_get)
 
     def mock_user_repository_get(_, __):
         return None
@@ -82,10 +82,10 @@ def test_get_reviewで該当するユーザ情報がない場合はユーザ名�
 def test_get_reviewでreview_repositoryの処理でエラーが発生した場合Noneを返すこと(
     monkeypatch,
 ):  # pylint: disable=invalid-name
-    def mock_book_review_repository_get(_, **__):
+    def mock_review_repository_get(_, **__):
         raise Exception("dummy exception")
 
-    monkeypatch.setattr(BookReview, "get", mock_book_review_repository_get)
+    monkeypatch.setattr(Review, "get", mock_review_repository_get)
 
     def mock_user_repository_get(_, __):
         return {
@@ -107,7 +107,7 @@ def test_get_reviewでreview_repositoryの処理でエラーが発生した場�
 def test_get_reviewでuser_repositoryの処理でエラーが発生した場合Noneを返すこと(
     monkeypatch,
 ):  # pylint: disable=invalid-name
-    def mock_book_review_repository_get(_, **__):
+    def mock_review_repository_get(_, **__):
         return {
             "user_id": "user_id_0",
             "book_title": "仕事ではじめる機械学習",
@@ -120,7 +120,7 @@ def test_get_reviewでuser_repositoryの処理でエラーが発生した場合N
             "book_url": "dummy_book_url_0",
         }
 
-    monkeypatch.setattr(BookReview, "get", mock_book_review_repository_get)
+    monkeypatch.setattr(Review, "get", mock_review_repository_get)
 
     def mock_user_repository_get(_, __):
         raise Exception("dummy exception")
@@ -133,7 +133,7 @@ def test_get_reviewでuser_repositoryの処理でエラーが発生した場合N
 
 
 def test_get_reviewsでレビューを取得できること(monkeypatch):
-    def mock_book_review_repository_get_some(_, **__):
+    def mock_review_repository_get_some(_, **__):
         return {
             "items": [
                 {
@@ -173,7 +173,7 @@ def test_get_reviewsでレビューを取得できること(monkeypatch):
             "last_key": None,
         }
 
-    monkeypatch.setattr(BookReview, "get_some", mock_book_review_repository_get_some)
+    monkeypatch.setattr(Review, "get_some", mock_review_repository_get_some)
 
     def mock_user_repository_get_all(_, **__):
         return [
@@ -246,7 +246,7 @@ def test_get_reviewsでレビューを取得できること(monkeypatch):
 def test_get_reviewsで該当するユーザ情報がない場合はユーザ名としてユーザIDを返すこと(
     monkeypatch,
 ):  # pylint: disable=invalid-name
-    def mock_book_review_repository_get_some(_, **__):
+    def mock_review_repository_get_some(_, **__):
         return {
             "items": [
                 {
@@ -286,7 +286,7 @@ def test_get_reviewsで該当するユーザ情報がない場合はユーザ名
             "last_key": None,
         }
 
-    monkeypatch.setattr(BookReview, "get_some", mock_book_review_repository_get_some)
+    monkeypatch.setattr(Review, "get_some", mock_review_repository_get_some)
 
     def mock_user_repository_get_all(_, **__):
         return []
@@ -331,13 +331,13 @@ def test_get_reviewsで該当するユーザ情報がない場合はユーザ名
     assert reviews[2]["book_url"] == "dummy_book_url_2"
 
 
-def test_get_reviewsでbook_review_repositoryの処理でエラーが発生した場合Noneを返すこと(
+def test_get_reviewsでreview_repositoryの処理でエラーが発生した場合Noneを返すこと(
     monkeypatch,
 ):  # pylint: disable=invalid-name
-    def mock_book_review_repository_get_some(_, __):
+    def mock_review_repository_get_some(_, __):
         raise Exception("dummy exception")
 
-    monkeypatch.setattr(UserRepository, "get_all", mock_book_review_repository_get_some)
+    monkeypatch.setattr(UserRepository, "get_all", mock_review_repository_get_some)
 
     reviews = get_reviews(logger=getLogger(), limit=10, keys=[])
 
@@ -350,7 +350,7 @@ def test_get_reviewsでuser_repositoryの処理でエラーが発生した場合
     def mock_user_repository_get_all(_, __):
         raise Exception("dummy exception")
 
-    monkeypatch.setattr(BookReview, "get", mock_user_repository_get_all)
+    monkeypatch.setattr(Review, "get", mock_user_repository_get_all)
 
     reviews = get_reviews(logger=getLogger(), limit=10, keys=[])
 
