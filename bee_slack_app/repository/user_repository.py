@@ -1,8 +1,8 @@
 """ユーザー情報の追加・更新・削除を行います
 """
 import os
-
 from typing import Optional
+
 from bee_slack_app.model.user import User
 from bee_slack_app.repository.database import get_database_client
 
@@ -22,7 +22,7 @@ class UserRepository:
             User: 取得したユーザー情報。未登録の場合は、Noneを返します。
         """
         response = self.table.get_item(Key={"user_id": user_id})
-        return response["Item"] if "Item" in response else None
+        return response.get("Item")
 
     def create(self, user: Optional[User]) -> None:
         """
