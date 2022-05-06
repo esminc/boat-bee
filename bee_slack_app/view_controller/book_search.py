@@ -160,7 +160,7 @@ def book_search_controller(app):
         def isbn_to_url(
             isbn: Optional[str], cached_search_result: Optional[str]
         ) -> Tuple[str, str]:
-        
+
             # Cacheが与えられない場合はAPIを使って取得する
             if cached_search_result is None:
                 google_books_url, image_url = isbn_to_url_by_api(isbn)
@@ -208,7 +208,7 @@ def book_search_controller(app):
                     "type": "section",
                     "text": {
                         "type": "mrkdwn",
-                        "text": f"<{google_books_url}|Jump to Google Books>",
+                        "text": f"<{google_books_url}|Google Booksで見る>",
                     },
                     "accessory": {
                         "type": "image",
