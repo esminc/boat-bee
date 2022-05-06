@@ -61,16 +61,16 @@ class TestUserRepository:
 
         user_repository = UserRepository()
 
-        users = user_repository.get_user("test_user_id_0")
+        users = user_repository.get_user("test_user_id_1")
 
-        assert len(users) == 1
+        assert len(users) == 6
 
-        assert users[0]["user_id"] == "test_user_id_1"
-        assert users[0]["user_name"] == "問屋町　花子"
-        assert users[0]["department"] == "ＩＴＳ事業部"
-        assert users[0]["job_type"] == "管理職"
-        assert users[0]["age_range"] == "50"
-        assert users[0]["updated_at"] == "2022-04-11T09:23:04+09:00"
+        assert users["user_id"] == "test_user_id_1"
+        assert users["user_name"] == "問屋町　花子"
+        assert users["department"] == "ＩＴＳ事業部"
+        assert users["job_type"] == "管理職"
+        assert users["age_range"] == "50"
+        assert users["updated_at"] == "2022-04-11T09:23:04+09:00"
 
 
 """
