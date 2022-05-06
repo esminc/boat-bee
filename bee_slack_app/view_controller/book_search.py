@@ -1,6 +1,7 @@
 import json
 from typing import List, Optional, Tuple
-from bee_slack_app.service.book_search import search_book_by_title, search_book_by_isbn
+
+from bee_slack_app.service.book_search import search_book_by_isbn, search_book_by_title
 from bee_slack_app.view_controller.review import generate_review_input_modal_view
 
 
@@ -163,8 +164,7 @@ def book_search_controller(app):
 
             # Cacheが与えられない場合はAPIを使って取得する
             if cached_search_result is None:
-                google_books_url, image_url = isbn_to_url_by_api(isbn)
-                return google_books_url, image_url
+                return isbn_to_url_by_api(isbn)
 
             # private_metadataに格納していたCacheを文字列から復元する
             search_resut = json.loads(cached_search_result)
@@ -173,7 +173,7 @@ def book_search_controller(app):
 
             # Cacheから取得できない場合はAPIを使って取得する
             if google_books_url is None or image_url is None:
-                google_books_url, image_url = isbn_to_url_by_api(isbn)
+                return isbn_to_url_by_api(isbn)
 
             return google_books_url, image_url
 
