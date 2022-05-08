@@ -1,7 +1,5 @@
-import tensorflow as tf  # type: ignore
-
-
 def predict():
+    import tensorflow as tf  # type: ignore # pylint: disable=import-outside-toplevel
 
     model = tf.keras.models.load_model("./models/sample")
 
