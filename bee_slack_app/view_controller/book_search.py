@@ -1,4 +1,5 @@
 import json
+from pprint import pprint
 from typing import List, Optional, Tuple
 
 from bee_slack_app.service.book_search import search_book_by_isbn, search_book_by_title
@@ -90,7 +91,7 @@ def book_search_controller(app):
                 cache_list_str = json.dumps(cache_list)
 
                 new_view = generate_search_result_model_view(
-                    options=search_list, cached_search_result=cache_list_str
+                    options=book_results, cached_search_result=cache_list_str
                 )
                 client.views_push(trigger_id=body["trigger_id"], view=new_view)
 
@@ -179,6 +180,13 @@ def book_search_controller(app):
 
         google_books_url, image_url = isbn_to_url(selected_isbn, cached_search_result)
 
+        blocks = []
+
+        for book in options:
+            # print(book)
+
+            blocks.extend(generate_searched_book(book))
+
         view = {
             "type": "modal",
             # ビューの識別子
@@ -190,39 +198,154 @@ def book_search_controller(app):
                 "emoji": True,
             },
             "submit": {"type": "plain_text", "text": "選択", "emoji": True},
-            "blocks": [
-                {
-                    "type": "section",
-                    "block_id": "book_select",
-                    "text": {
-                        "type": "plain_text",
-                        "text": "選択してください",
-                    },
-                    "accessory": {
-                        "type": "radio_buttons",
-                        "options": options,
-                        "action_id": "radio_buttons-action",
-                    },
-                },
-                {
-                    "type": "section",
-                    "text": {
-                        "type": "mrkdwn",
-                        "text": f"<{google_books_url}|Google Booksで見る>",
-                    },
-                    "accessory": {
-                        "type": "image",
-                        "image_url": image_url,
-                        "alt_text": "",
-                    },
-                },
-            ],
+            "blocks": blocks,
         }
 
         return view
 
+    def generate_searched_book(book):
+        # TODO: 暫定で適当な画像をデフォルトに設定、S3に画像を置くようになったら自前の画像に差し替える
+        dummy_url = "https://pbs.twimg.com/profile_images/625633822235693056/lNGUneLX_400x400.jpg"
+
+        # print(book)
+
+        author = ", ".join(book["author"])
+        image_url = book["image_url"] if book["image_url"] is not None else dummy_url
+
+        block = [
+            {"type": "divider"},
+            {
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": f"*{book['title']}*\n{author}\nISBN-{book['isbn']}",
+                },
+                "accessory": {
+                    "type": "image",
+                    "image_url": image_url,
+                    "alt_text": "Windsor Court Hotel thumbnail",
+                },
+            },
+            {
+                "type": "actions",
+                "elements": [
+                    {
+                        "type": "button",
+                        "text": {"type": "plain_text", "text": "選択", "emoji": True},
+                        "value": book["isbn"],
+                        "action_id": "select_buttons-action",
+                    },
+                    {
+                        "type": "button",
+                        "text": {
+                            "type": "plain_text",
+                            "text": "Google Booksで見る",
+                            "emoji": True,
+                        },
+                        "url": book["google_books_url"],
+                    },
+                ],
+            },
+        ]
+
+        return block
+
+    @app.action("select_buttons-action")
+    def handle_book_selected(ack, body, _, client, logger):
+        """
+        検索結果画面でボタンを選択した時に行う処理
+        """
+
+        actions = body["actions"]
+        # pprint(f"actions = {actions}")
+
+        isbn = body["actions"][0]["value"]
+        # print(f"isbn = {isbn}")
+
+        blocks = body["view"]["blocks"]
+
+        pprint(f"blocks = {blocks}")
+
+        new_blocks = [
+            x
+            if x["type"] != "actions"
+            else selected_book(x)
+            if x["elements"][0]["value"] == isbn
+            else unselected_book(x)
+            for x in blocks
+        ]
+        pprint(f"new_blocks = {new_blocks}")
+
+        new_view = {
+            "type": "modal",
+            # ビューの識別子
+            "callback_id": "view_book_search",
+            "title": {
+                "type": "plain_text",
+                "text": "本の検索結果",
+                "emoji": True,
+            },
+            # "private_metadata": ,
+            "submit": {"type": "plain_text", "text": "選択", "emoji": True},
+            "blocks": new_blocks,
+        }
+        client.views_update(
+            view_id=body["container"]["view_id"],
+            view=new_view,
+        )
+        ack()
+
+    def selected_book(item):
+        return {
+            "type": "actions",
+            "elements": [
+                {
+                    "type": "button",
+                    "text": {
+                        "type": "plain_text",
+                        "text": ":hand:選択中です",
+                        "emoji": True,
+                    },
+                    "value": item["elements"][0]["value"],
+                    "action_id": "select_buttons-action",
+                    "style": "primary",
+                },
+                {
+                    "type": "button",
+                    "text": {
+                        "type": "plain_text",
+                        "text": "Google Booksで見る",
+                        "emoji": True,
+                    },
+                    "url": item["elements"][1]["url"],
+                },
+            ],
+        }
+
+    def unselected_book(item):
+        return {
+            "type": "actions",
+            "elements": [
+                {
+                    "type": "button",
+                    "text": {"type": "plain_text", "text": "選択", "emoji": True},
+                    "value": item["elements"][0]["value"],
+                    "action_id": "select_buttons-action",
+                },
+                {
+                    "type": "button",
+                    "text": {
+                        "type": "plain_text",
+                        "text": "Google Booksで見る",
+                        "emoji": True,
+                    },
+                    "url": item["elements"][1]["url"],
+                },
+            ],
+        }
+
     @app.action("radio_buttons-action")
-    def handle_book_selected(ack, body, new_view, client, logger):
+    def handle_book_selected_(ack, body, new_view, client, logger):
         """
         検索結果画面でラジオボタンを選択した時に行う処理
 
