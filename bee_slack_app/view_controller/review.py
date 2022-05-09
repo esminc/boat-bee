@@ -1,4 +1,4 @@
-from dateutil import parser
+from dateutil import parser  # type: ignore
 
 from bee_slack_app.model.review import ReviewContents
 from bee_slack_app.service.review import get_review_all, post_review
