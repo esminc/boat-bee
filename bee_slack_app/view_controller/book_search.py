@@ -164,17 +164,17 @@ def book_search_controller(app):
         private_metadata = body["view"]["private_metadata"]
 
         # private_metadataに格納していた情報を復元する
-        search_resut: list = json.loads(private_metadata)
+        search_result: list = json.loads(private_metadata)
 
         # private_metadataに選択情報が入っている場合は取り除く
-        search_resut = [x for x in search_resut if x.get("isbn", None) is not None]
+        search_result = [x for x in search_result if x.get("isbn", None) is not None]
 
         isbn = body["actions"][0]["value"]
-        title = [x for x in search_resut if x["isbn"] == isbn][0]["title"]
+        title = [x for x in search_result if x["isbn"] == isbn][0]["title"]
 
         # private_metadataに選択情報を追加する
         selected_item = {"selected_title": title, "selected_isbn": isbn}
-        search_resut.append(selected_item)
+        search_result.append(selected_item)
 
         # ボタンの選択状態を更新する
         blocks = body["view"]["blocks"]
@@ -190,7 +190,7 @@ def book_search_controller(app):
         new_view = {
             "type": "modal",
             "callback_id": "view_book_search",
-            "private_metadata": json.dumps(search_resut),
+            "private_metadata": json.dumps(search_result),
             "title": {
                 "type": "plain_text",
                 "text": "本の検索結果",
