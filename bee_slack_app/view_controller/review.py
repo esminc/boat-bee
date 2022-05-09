@@ -1,7 +1,7 @@
+from dateutil import parser
+
 from bee_slack_app.model.review import ReviewContents
 from bee_slack_app.service.review import get_review_all, post_review
-from datetime import datetime
-from dateutil import parser
 
 
 def review_controller(app):
