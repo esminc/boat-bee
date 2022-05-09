@@ -55,8 +55,6 @@ def review_controller(app):
             "score_for_me": score_for_me,
             "score_for_others": score_for_others,
             "review_comment": review_comment,
-            "post_user": post_user,
-            "post_date": post_date,
         }
 
         post_review(logger, review_contents)
