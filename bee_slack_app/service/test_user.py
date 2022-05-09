@@ -8,7 +8,7 @@ from bee_slack_app.service.user import get_user
 
 
 def test_ユーザー情報を取得できること(monkeypatch):
-    def mock_user_repository_repository_get(_, __):
+    def mock_user_repository_get(_, __):
         return {
             "user_id": "test_user_id_2",
             "user_name": "北ノ庄　肇",
@@ -18,7 +18,7 @@ def test_ユーザー情報を取得できること(monkeypatch):
             "updated_at": "2022-05-02T16:43:25+09:00",
         }
 
-    monkeypatch.setattr(UserRepository, "get", mock_user_repository_repository_get)
+    monkeypatch.setattr(UserRepository, "get", mock_user_repository_get)
 
     return_user = get_user(getLogger(), "test_user_id_2")
 
