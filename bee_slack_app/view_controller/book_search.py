@@ -228,7 +228,7 @@ def book_search_controller(app):
         ボタンが選択された本のblockを生成する
         """
         return {
-            "type": "actions",
+            "type": "actions",  # pylint: disable=duplicate-code
             "elements": [
                 {
                     "type": "button",
