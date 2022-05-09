@@ -36,9 +36,9 @@ def test_ユーザー情報が無い場合にNoneを返すこと(monkeypatch):  
 
     monkeypatch.setattr(UserRepository, "get", mock_user_repository_repository_get)
 
-    return_user = get_user(getLogger(), "test_user_id_2")
+    user = get_user(getLogger(), "test_user_id")
 
-    assert return_user is None
+    assert user is None
 
 
 def test_repositoryの処理でエラーが発生した場合Noneを返すこと(monkeypatch):  # pylint: disable=invalid-name
@@ -47,6 +47,6 @@ def test_repositoryの処理でエラーが発生した場合Noneを返すこと
 
     monkeypatch.setattr(UserRepository, "get", mock_user_user_repository_get)
 
-    return_user = get_user(getLogger(), "test_user_id_2")
+    user = get_user(getLogger(), "test_user_id")
 
-    assert return_user is None
+    assert user is None
