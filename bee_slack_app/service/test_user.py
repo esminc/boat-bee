@@ -20,14 +20,14 @@ def test_ユーザー情報を取得できること(monkeypatch):
 
     monkeypatch.setattr(UserRepository, "get", mock_user_repository_get)
 
-    return_user = get_user(getLogger(), "test_user_id")
+    user = get_user(getLogger(), "test_user_id")
 
-    assert return_user["user_id"] == "test_user_id"
-    assert return_user["user_name"] == "北ノ庄　肇"
-    assert return_user["department"] == "金融システム事業部"
-    assert return_user["job_type"] == "営業職"
-    assert return_user["age_range"] == "30"
-    assert return_user["updated_at"] == "2022-05-02T16:43:25+09:00"
+    assert user["user_id"] == "test_user_id"
+    assert user["user_name"] == "北ノ庄　肇"
+    assert user["department"] == "金融システム事業部"
+    assert user["job_type"] == "営業職"
+    assert user["age_range"] == "30"
+    assert user["updated_at"] == "2022-05-02T16:43:25+09:00"
 
 
 def test_ユーザー情報が無い場合にNoneを返すこと(monkeypatch):  # pylint: disable=invalid-name
