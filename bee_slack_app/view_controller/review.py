@@ -139,7 +139,7 @@ def generate_review_input_modal_view(book_title="", isbn=""):
                 "elements": [
                     {
                         "type": "button",
-                        "text": {"type": "plain_text", "text": "本の検索"},
+                        "text": {"type": "plain_text", "text": "書籍の検索"},
                         "action_id": "book_search",
                     },
                 ],

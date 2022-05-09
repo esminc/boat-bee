@@ -101,7 +101,7 @@ def book_search_controller(app):
             "private_metadata": private_metadata,
             "title": {
                 "type": "plain_text",
-                "text": "本の検索結果",
+                "text": "書籍の検索結果",
                 "emoji": True,
             },
             "submit": {"type": "plain_text", "text": "選択", "emoji": True},
@@ -193,7 +193,7 @@ def book_search_controller(app):
             "private_metadata": json.dumps(search_result),
             "title": {
                 "type": "plain_text",
-                "text": "本の検索結果",
+                "text": "書籍の検索結果",
                 "emoji": True,
             },
             "submit": {"type": "plain_text", "text": "選択", "emoji": True},
