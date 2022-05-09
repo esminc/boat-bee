@@ -272,7 +272,32 @@ def book_search_controller(app):
         cache_list = body["view"]["private_metadata"]
         items: list = json.loads(cache_list)
 
-        book = [x for x in items if x.get("selected_title", None) is not None][0]
+        books = [x for x in items if x.get("selected_title", None) is not None]
+
+        print(f"books = {books}")
+
+        if len(books) == 0:
+            ack(
+                response_action="push",
+                view={
+                    "type": "modal",
+                    "title": {"type": "plain_text", "text": "エラー", "emoji": True},
+                    "close": {"type": "plain_text", "text": "OK", "emoji": True},
+                    "blocks": [
+                        {
+                            "type": "section",
+                            "text": {
+                                "type": "plain_text",
+                                "text": "本が選択されていません",
+                                "emoji": True,
+                            },
+                        },
+                    ],
+                },
+            )
+            return
+
+        book = books[0]
         title = book["selected_title"]
         isbn = book["selected_isbn"]
 
