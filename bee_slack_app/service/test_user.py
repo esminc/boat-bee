@@ -10,7 +10,7 @@ from bee_slack_app.service.user import get_user
 def test_ユーザー情報を取得できること(monkeypatch):
     def mock_user_repository_get(_, __):
         return {
-            "user_id": "test_user_id_2",
+            "user_id": "test_user_id",
             "user_name": "北ノ庄　肇",
             "department": "金融システム事業部",
             "job_type": "営業職",
@@ -20,9 +20,9 @@ def test_ユーザー情報を取得できること(monkeypatch):
 
     monkeypatch.setattr(UserRepository, "get", mock_user_repository_get)
 
-    return_user = get_user(getLogger(), "test_user_id_2")
+    return_user = get_user(getLogger(), "test_user_id")
 
-    assert return_user["user_id"] == "test_user_id_2"
+    assert return_user["user_id"] == "test_user_id"
     assert return_user["user_name"] == "北ノ庄　肇"
     assert return_user["department"] == "金融システム事業部"
     assert return_user["job_type"] == "営業職"
