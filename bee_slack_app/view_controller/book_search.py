@@ -1,5 +1,6 @@
 import json
 
+from bee_slack_app.model.search import SearchedBook
 from bee_slack_app.service.book_search import search_book_by_title
 from bee_slack_app.view_controller.review import generate_review_input_modal_view
 
@@ -84,7 +85,7 @@ def book_search_controller(app):
                 )
 
     def generate_search_result_model_view(
-        book_results,
+        book_results: list[SearchedBook],
         private_metadata: str,
     ):
         """
@@ -117,7 +118,7 @@ def book_search_controller(app):
 
         return view
 
-    def generate_book_block(book):
+    def generate_book_block(book: SearchedBook):
         # TODO: 暫定で適当な画像をデフォルトに設定、S3に画像を置くようになったら自前の画像に差し替える
         dummy_url = "https://pbs.twimg.com/profile_images/625633822235693056/lNGUneLX_400x400.jpg"
 
