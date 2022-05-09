@@ -92,6 +92,13 @@ def book_search_controller(app):
         """
 
         blocks = []
+        blocks.append(
+            {
+                "type": "image",
+                "image_url": "https://developers.google.com/maps/documentation/images/powered_by_google_on_white.png",
+                "alt_text": "",
+            },
+        )
         for book in book_results:
             blocks.extend(generate_book_block(book))
 
@@ -186,6 +193,17 @@ def book_search_controller(app):
             else unselected_book(x)
             for x in blocks
         ]
+
+        # Blocksで渡ってくるimageには余計なパラメータが付与されているため一旦削除して付け直す
+        new_blocks = [x for x in new_blocks if x["type"] != "image"]
+        new_blocks.insert(
+            0,
+            {
+                "type": "image",
+                "image_url": "https://developers.google.com/maps/documentation/images/powered_by_google_on_white.png",
+                "alt_text": "",
+            },
+        )
 
         new_view = {
             "type": "modal",
