@@ -1,11 +1,20 @@
 # pylint: disable=duplicate-code
 import datetime
-from typing import Any
+from typing import Any, Optional
 
 from bee_slack_app.model.user import User
 from bee_slack_app.repository.user_repository import UserRepository
 
 user_repository = UserRepository()
+
+
+def get_user(logger: Any, user_id: str) -> Optional[User]:
+    try:
+        return user_repository.get(user_id)
+
+    except Exception:  # pylint: disable=broad-except
+        logger.exception("Failed to get data.")
+        return None
 
 
 def add_user(logger: Any, user: User) -> None:
