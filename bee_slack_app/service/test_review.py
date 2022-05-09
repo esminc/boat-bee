@@ -5,11 +5,11 @@
 from logging import getLogger
 
 from bee_slack_app.repository.book_review import BookReview
-from bee_slack_app.service.review import get_review_all
+from bee_slack_app.service.review import get_reviews
 
 
 def test_レビューを取得できること(monkeypatch):
-    def mock_book_review_repository_get(_):
+    def mock_book_review_repository_get(_, __):
         return [
             {
                 "user_id": "user_id_0",
@@ -39,7 +39,7 @@ def test_レビューを取得できること(monkeypatch):
 
     monkeypatch.setattr(BookReview, "get", mock_book_review_repository_get)
 
-    reviews = get_review_all(getLogger())
+    reviews = get_reviews(getLogger())
 
     assert len(reviews) == 3
 
@@ -66,11 +66,11 @@ def test_レビューを取得できること(monkeypatch):
 
 
 def test_repositoryの処理でエラーが発生した場合Noneを返すこと(monkeypatch):  # pylint: disable=invalid-name
-    def mock_book_review_repository_get(_):
+    def mock_book_review_repository_get(_, __):
         raise Exception("dummy exception")
 
     monkeypatch.setattr(BookReview, "get", mock_book_review_repository_get)
 
-    reviews = get_review_all(getLogger())
+    reviews = get_reviews(getLogger())
 
     assert reviews is None
