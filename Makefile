@@ -25,7 +25,7 @@ type-check:
 test: export AWS_DEFAULT_REGION := us-east-1
 test: export DYNAMODB_TABLE := bee-dev
 test:
-	pipenv run pytest
+	pipenv run pytest bee_slack_app/service/test_review.py -vv
 
 train:
 	cd ml && pipenv run python train.py

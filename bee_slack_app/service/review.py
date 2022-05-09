@@ -1,10 +1,12 @@
-import datetime
 from typing import Any, Optional, TypedDict
 
 from bee_slack_app.model.review import ReviewContents
 from bee_slack_app.repository.book_review import BookReview
+from bee_slack_app.repository.google_books import GoogleBooks
+from bee_slack_app.utils import datetime
 
 book_review_repository = BookReview()
+google_books_repository = GoogleBooks()
 
 
 class GetConditions(TypedDict):
@@ -25,6 +27,13 @@ def get_reviews(
 
 def post_review(logger: Any, review_contents: ReviewContents) -> None:
     try:
+        isbn = review_contents["isbn"]
+
+        book = google_books_repository.search_book_by_isbn(isbn)
+
+        if book is None:
+            logger.info(f"Failed to fetch book data by ISBN. ISBN: {isbn}")
+
         book_review_repository.create(
             {
                 "user_id": review_contents["user_id"],
@@ -33,9 +42,8 @@ def post_review(logger: Any, review_contents: ReviewContents) -> None:
                 "score_for_me": review_contents["score_for_me"],
                 "score_for_others": review_contents["score_for_others"],
                 "review_comment": review_contents["review_comment"],
-                "updated_at": datetime.datetime.now(
-                    datetime.timezone(datetime.timedelta(hours=9))
-                ).isoformat(timespec="seconds"),
+                "updated_at": datetime.now(),
+                "image_url": book and book.get("image_url"),
             }
         )
 

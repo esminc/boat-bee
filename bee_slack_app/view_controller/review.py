@@ -252,63 +252,44 @@ def generate_review_list_modal_view(review_contents_list: list[ReviewContents]):
             else "-"
         )
 
-        review_item = {
-            "type": "section",
-            "fields": [
-                {
-                    "type": "plain_text",
-                    "text": "本のタイトル",
-                    "emoji": True,
+        review_list.append(
+            {
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": f"本のタイトル\n*{review_contents['book_title']}*\n\nISBN\n *{review_contents['isbn']}*",
                 },
-                {
-                    "type": "plain_text",
-                    "text": review_contents["book_title"],
-                    "emoji": True,
+                "accessory": {
+                    "type": "image",
+                    "image_url": review_contents["image_url"],
+                    "alt_text": "Airstream Suite",
                 },
-                {
-                    "type": "plain_text",
-                    "text": "ISBN",
-                    "emoji": True,
-                },
-                {
-                    "type": "plain_text",
-                    "text": review_contents["isbn"],
-                    "emoji": True,
-                },
-                {
-                    "type": "plain_text",
-                    "text": "自分にとっての評価",
-                    "emoji": True,
-                },
-                {
-                    "type": "plain_text",
-                    "text": str(review_contents["score_for_me"]),
-                    "emoji": True,
-                },
-                {
-                    "type": "plain_text",
-                    "text": "他の人へのおすすめ度",
-                    "emoji": True,
-                },
-                {
-                    "type": "plain_text",
-                    "text": str(review_contents["score_for_others"]),
-                    "emoji": True,
-                },
-                {
-                    "type": "plain_text",
-                    "text": "レビューコメント",
-                    "emoji": True,
-                },
-                {
-                    "type": "plain_text",
-                    "text": review_comment,
-                    "emoji": True,
-                },
-            ],
-        }
+            }
+        )
 
-        review_list.append(review_item)
+        review_list.append(
+            {
+                "type": "context",
+                "elements": [
+                    {
+                        "type": "mrkdwn",
+                        "text": f"自分にとっての評価: *{review_contents['score_for_me']}*",
+                    },
+                    {
+                        "type": "mrkdwn",
+                        "text": f"他の人へのおすすめ度: *{review_contents['score_for_others']}*",
+                    },
+                ],
+            }
+        )
+
+        review_list.append(
+            {
+                "type": "section",
+                "text": {"type": "mrkdwn", "text": f"レビューコメント\n\n{review_comment}"},
+            }
+        )
+
         review_list.append({"type": "divider"})
 
     return {

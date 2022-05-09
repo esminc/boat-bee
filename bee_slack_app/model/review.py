@@ -8,3 +8,4 @@ class ReviewContents(TypedDict):
     score_for_me: str
     score_for_others: str
     review_comment: str
+    image_url: str
