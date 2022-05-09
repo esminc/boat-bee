@@ -14,6 +14,15 @@ class GetConditions(TypedDict):
     score_for_others: Optional[str]
 
 
+def get_review(logger: Any, user_id: str, isbn: str) -> Optional[ReviewContents]:
+    try:
+        return book_review_repository.get({"user_id": user_id, "isbn": isbn})
+
+    except Exception:  # pylint: disable=broad-except
+        logger.exception("Failed to get data.")
+        return None
+
+
 def get_reviews(
     logger: Any, conditions: Optional[GetConditions] = None
 ) -> Optional[list[ReviewContents]]:

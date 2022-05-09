@@ -10,6 +10,8 @@ from bee_slack_app.repository.database import get_database_client
 # This is a sample
 class BookReview:
     class GetConditions(TypedDict):
+        user_id: Optional[str]
+        isbn: Optional[str]
         score_for_me: Optional[str]
         score_for_others: Optional[str]
 
@@ -25,6 +27,14 @@ class BookReview:
         Returns:
             list[ReviewContents]: 本のレビューのリスト
         """
+
+        if conditions and "user_id" in conditions and "isbn" in conditions:
+            return self.table.get_item(
+                Key={
+                    "user_id": conditions["user_id"],
+                    "isbn": conditions["isbn"],
+                }
+            ).get("Item")
 
         def scan(exclusive_start_key=None, filter_expression=None):
             option = {}

@@ -1,5 +1,5 @@
 from bee_slack_app.model.review import ReviewContents
-from bee_slack_app.service.review import get_reviews, post_review
+from bee_slack_app.service.review import get_review, get_reviews, post_review
 
 
 def review_controller(app):
@@ -109,6 +109,65 @@ def review_controller(app):
     def score_for_others_select_action(ack):
         # 何もしない
         ack()
+
+    @app.action("read_more_review_action")
+    def read_more_review_action(ack, body, client, logger, action):
+        ack()
+
+        user_id_and_isbn = action["value"]
+
+        print("user_id_and_isbn = ", user_id_and_isbn)
+
+        user_id_and_isbn = user_id_and_isbn.split(":")
+
+        review = get_review(logger, user_id_and_isbn[0], user_id_and_isbn[1])
+
+        client.views_push(
+            trigger_id=body["trigger_id"],
+            view={
+                "type": "modal",
+                "title": {"type": "plain_text", "text": "Bee", "emoji": True},
+                "close": {"type": "plain_text", "text": "閉じる", "emoji": True},
+                "blocks": generate_read_more_review_blocks(review),
+            },
+        )
+
+
+def generate_read_more_review_blocks(review_contents: ReviewContents):
+    return [
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": f"本のタイトル\n*{review_contents['book_title']}*\n\nISBN\n *{review_contents['isbn']}*",
+            },
+            "accessory": {
+                "type": "image",
+                "image_url": review_contents["image_url"],
+                "alt_text": "Airstream Suite",
+            },
+        },
+        {
+            "type": "context",
+            "elements": [
+                {
+                    "type": "mrkdwn",
+                    "text": f"自分にとっての評価: *{review_contents['score_for_me']}*",
+                },
+                {
+                    "type": "mrkdwn",
+                    "text": f"他の人へのおすすめ度: *{review_contents['score_for_others']}*",
+                },
+            ],
+        },
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": f"レビューコメント\n\n{review_contents['review_comment']}",
+            },
+        },
+    ]
 
 
 def generate_review_input_modal_view(book_title="", isbn=""):
@@ -252,6 +311,10 @@ def generate_review_list_modal_view(review_contents_list: list[ReviewContents]):
             else "-"
         )
 
+        review_comment_short = (
+            review_comment[0:20] + "..." if len(review_comment) > 20 else review_comment
+        )
+
         review_list.append(
             {
                 "type": "section",
@@ -286,8 +349,31 @@ def generate_review_list_modal_view(review_contents_list: list[ReviewContents]):
         review_list.append(
             {
                 "type": "section",
-                "text": {"type": "mrkdwn", "text": f"レビューコメント\n\n{review_comment}"},
+                "text": {
+                    "type": "mrkdwn",
+                    "text": f"レビューコメント\n\n{review_comment_short}",
+                },
             }
+        )
+
+        review_list.append(
+            {
+                "type": "actions",
+                "elements": [
+                    {
+                        "type": "button",
+                        "text": {
+                            "type": "plain_text",
+                            "text": "もっと見る",
+                            "emoji": True,
+                        },
+                        "value": review_contents["user_id"]
+                        + ":"
+                        + review_contents["isbn"],
+                        "action_id": "read_more_review_action",
+                    }
+                ],
+            },
         )
 
         review_list.append({"type": "divider"})
