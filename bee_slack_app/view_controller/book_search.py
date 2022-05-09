@@ -82,8 +82,9 @@ def book_search_controller(app):
                     # private_metadataに格納できる情報が3000文字なので最小限にする
                     cache_item = {
                         "isbn": book_result["isbn"],
-                        "image_url": book_result["image_url"],
-                        "google_books_url": book_result["google_books_url"],
+                        "title": book_result["title"],
+                        # "image_url": book_result["image_url"],
+                        # "google_books_url": book_result["google_books_url"],
                     }
                     cache_list.append(cache_item)
 
@@ -233,6 +234,7 @@ def book_search_controller(app):
                         "type": "button",
                         "text": {"type": "plain_text", "text": "選択", "emoji": True},
                         "value": book["isbn"],
+                        "accessibility_label": book["title"],
                         "action_id": "select_buttons-action",
                     },
                     {
@@ -260,11 +262,30 @@ def book_search_controller(app):
         # pprint(f"actions = {actions}")
 
         isbn = body["actions"][0]["value"]
-        # print(f"isbn = {isbn}")
+        print(f"isbn = {isbn}")
+
+        view = body["view"]
+        # pprint(f"view = {view}")
+
+        cache_list = body["view"]["private_metadata"]
+        # pprint(f"cache_list = {cache_list}")
+
+        # private_metadataに格納していたCacheを文字列から復元する
+        search_resut: list = json.loads(cache_list)
+        print(f"search_resut_1 = {search_resut}")
+
+        search_resut = [x for x in search_resut if x.get("isbn", None) is not None]
+        print(f"search_resut_2 = {search_resut}")
+
+        title = [x for x in search_resut if x["isbn"] == isbn][0]["title"]
+        print(f"title = {title}")
+
+        selected_item = {"selected_title": title, "selected_isbn": isbn}
+        search_resut.append(selected_item)
 
         blocks = body["view"]["blocks"]
 
-        pprint(f"blocks = {blocks}")
+        # pprint(f"blocks = {blocks}")
 
         new_blocks = [
             x
@@ -274,18 +295,18 @@ def book_search_controller(app):
             else unselected_book(x)
             for x in blocks
         ]
-        pprint(f"new_blocks = {new_blocks}")
+        # pprint(f"new_blocks = {new_blocks}")
 
         new_view = {
             "type": "modal",
             # ビューの識別子
             "callback_id": "view_book_search",
+            "private_metadata": json.dumps(search_resut),
             "title": {
                 "type": "plain_text",
                 "text": "本の検索結果",
                 "emoji": True,
             },
-            # "private_metadata": ,
             "submit": {"type": "plain_text", "text": "選択", "emoji": True},
             "blocks": new_blocks,
         }
@@ -370,19 +391,36 @@ def book_search_controller(app):
 
     # view_submission リクエストを処理
     @app.view("view_book_search")
-    def handle_submission(ack, _, __, view):
+    def handle_submission(ack, body, __, view):
         """
         検索結果画面で選択ボタンを押下したときに行う処理
         """
-        book_title = view["state"]["values"]["book_select"]["radio_buttons-action"][
-            "selected_option"
-        ]["text"]["text"]
-        isbn = view["state"]["values"]["book_select"]["radio_buttons-action"][
-            "selected_option"
-        ]["value"]
+        # book_title = view["state"]["values"]["book_select"]["radio_buttons-action"][
+        #     "selected_option"
+        # ]["text"]["text"]
+        # isbn = view["state"]["values"]["book_select"]["radio_buttons-action"][
+        #     "selected_option"
+        # ]["value"]
+
+        # values = body
+        # pprint(f"body = {body}")
+        pprint(f"view = {view}")
+
+        cache_list = body["view"]["private_metadata"]
+        # pprint(f"cache_list = {cache_list}")
+        items: list = json.loads(cache_list)
+        book = [x for x in items if x.get("selected_title", None) is not None][0]
+        title = book["selected_title"]
+        isbn = book["selected_isbn"]
+
+        # private_metadataに格納していたCacheを文字列から復元する
+        search_resut = json.loads(cache_list)
+        pprint(f"search_resut = {search_resut}")
+
+        # book = [x for x in search_resut if x["isbn"] == ]
 
         # view_submission リクエストの確認を行い、モーダルを閉じる
         ack(
             response_action="update",
-            view=generate_review_input_modal_view(book_title, isbn),
+            view=generate_review_input_modal_view(title, isbn),
         )
