@@ -31,10 +31,10 @@ def test_ユーザー情報を取得できること(monkeypatch):
 
 
 def test_ユーザー情報が無い場合にNoneを返すこと(monkeypatch):  # pylint: disable=invalid-name
-    def mock_user_repository_repository_get(_, __):
+    def mock_user_repository_get(_, __):
         return None
 
-    monkeypatch.setattr(UserRepository, "get", mock_user_repository_repository_get)
+    monkeypatch.setattr(UserRepository, "get", mock_user_repository_get)
 
     user = get_user(getLogger(), "test_user_id")
 
@@ -42,10 +42,10 @@ def test_ユーザー情報が無い場合にNoneを返すこと(monkeypatch):  
 
 
 def test_repositoryの処理でエラーが発生した場合Noneを返すこと(monkeypatch):  # pylint: disable=invalid-name
-    def mock_user_user_repository_get(_):
+    def mock_user_repository_get(_):
         raise Exception("dummy exception")
 
-    monkeypatch.setattr(UserRepository, "get", mock_user_user_repository_get)
+    monkeypatch.setattr(UserRepository, "get", mock_user_repository_get)
 
     user = get_user(getLogger(), "test_user_id")
 
