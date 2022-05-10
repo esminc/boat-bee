@@ -130,11 +130,16 @@ def generate_review_input_modal_view(book_title="", isbn=""):
                 },
             },
             {
+                "type": "image",
+                "image_url": "https://developers.google.com/maps/documentation/images/powered_by_google_on_white.png",
+                "alt_text": "",
+            },
+            {
                 "type": "actions",
                 "elements": [
                     {
                         "type": "button",
-                        "text": {"type": "plain_text", "text": "本の検索"},
+                        "text": {"type": "plain_text", "text": "書籍の検索"},
                         "action_id": "book_search",
                     },
                 ],
