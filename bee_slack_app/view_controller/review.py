@@ -1,12 +1,38 @@
 from bee_slack_app.model.review import ReviewContents
 from bee_slack_app.service.review import get_reviews, post_review
+from bee_slack_app.service.user import get_user
 
 
 def review_controller(app):
     @app.action("post_review")
-    def open_modal(ack, body, client):
+    def open_modal(ack, body, client, logger):
         # コマンドのリクエストを確認
         ack()
+
+        if not get_user(logger, body["user"]["id"]):
+            client.views_open(
+                trigger_id=body["trigger_id"],
+                view={
+                    "type": "modal",
+                    "title": {
+                        "type": "plain_text",
+                        "text": "プロフィールを入力してください",
+                        "emoji": True,
+                    },
+                    "close": {"type": "plain_text", "text": "OK", "emoji": True},
+                    "blocks": [
+                        {
+                            "type": "section",
+                            "text": {
+                                "type": "mrkdwn",
+                                "text": "レビューを投稿するには、プロフィールの入力が必要です :bow:",
+                            },
+                        },
+                    ],
+                },
+            )
+            return
+
         client.views_open(
             trigger_id=body["trigger_id"],
             view_id=body["view"]["id"],
