@@ -305,8 +305,6 @@ def book_search_controller(app):
 
         books = [x for x in items if x.get("selected_title", None) is not None]
 
-        print(f"books = {books}")
-
         if len(books) == 0:
             ack(
                 response_action="push",
