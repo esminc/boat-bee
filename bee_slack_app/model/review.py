@@ -1,4 +1,4 @@
-from typing import TypedDict
+from typing import Optional, TypedDict
 
 
 class ReviewContents(TypedDict):
@@ -8,4 +8,4 @@ class ReviewContents(TypedDict):
     score_for_me: str
     score_for_others: str
     review_comment: str
-    image_url: str
+    image_url: Optional[str]

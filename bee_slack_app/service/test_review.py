@@ -5,9 +5,8 @@
 from logging import getLogger
 
 from bee_slack_app.repository.book_review import BookReview
-from bee_slack_app.service.review import get_reviews, post_review
-
 from bee_slack_app.repository.google_books import GoogleBooks
+from bee_slack_app.service.review import get_reviews, post_review
 from bee_slack_app.utils import datetime
 
 

@@ -252,20 +252,22 @@ def generate_review_list_modal_view(review_contents_list: list[ReviewContents]):
             else "-"
         )
 
-        review_list.append(
-            {
-                "type": "section",
-                "text": {
-                    "type": "mrkdwn",
-                    "text": f"本のタイトル\n*{review_contents['book_title']}*\n\nISBN\n *{review_contents['isbn']}*",
-                },
-                "accessory": {
-                    "type": "image",
-                    "image_url": review_contents["image_url"],
-                    "alt_text": "Airstream Suite",
-                },
+        title_and_image_section = {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": f"本のタイトル\n*{review_contents['book_title']}*\n\nISBN\n *{review_contents['isbn']}*",
+            },
+        }
+
+        if image_url := review_contents.get("image_url"):
+            title_and_image_section["accessory"] = {
+                "type": "image",
+                "image_url": image_url,
+                "alt_text": "Airstream Suite",
             }
-        )
+
+        review_list.append(title_and_image_section)
 
         review_list.append(
             {
