@@ -70,7 +70,9 @@ def review_controller(app):
             ack(response_action="errors", errors=errors)
             return
         # view_submission リクエストの確認を行い、モーダルを閉じる
-        ack()
+        # この時、最初に開いていたモーダルも含めてすべて閉じるために
+        # response_action="clear" を設定する
+        ack(response_action="clear")
 
         review_contents: ReviewContents = {
             "user_id": user_id,
