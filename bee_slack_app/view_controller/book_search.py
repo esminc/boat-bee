@@ -167,7 +167,7 @@ def book_search_controller(app):
     @app.action("select_buttons-action")
     def handle_book_selected(ack, body, _, client):
         """
-        検索結果画面でボタンを選択した時に行う処理
+        検索結果画面で選択ボタンを選択した時に行う処理
         """
 
         private_metadata = body["view"]["private_metadata"]
@@ -296,7 +296,7 @@ def book_search_controller(app):
     @app.view("view_book_search")
     def handle_submission(ack, body, _, __):
         """
-        検索結果画面で選択ボタンを押下したときに行う処理
+        検索結果画面で決定ボタンを押した時に行う処理
         """
 
         # 通常のボタン押下状態はactionsには入ってこないためprivate_metadataで伝達する
