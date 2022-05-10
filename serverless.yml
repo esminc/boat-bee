@@ -52,7 +52,7 @@ custom:
     seed:
       development:
         sources:
-          - table: bee-dev
+          - table: ${self:provider.environment.DYNAMODB_TABLE}-review
             sources: [database/seed/review.json]
 
 resources: # CloudFormation template syntax from here on.
@@ -60,7 +60,7 @@ resources: # CloudFormation template syntax from here on.
     BeeTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: ${self:provider.environment.DYNAMODB_TABLE}
+        TableName: ${self:provider.environment.DYNAMODB_TABLE}-review
         AttributeDefinitions:
           - AttributeName: user_id
             AttributeType: S
