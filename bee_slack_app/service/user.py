@@ -1,9 +1,9 @@
 # pylint: disable=duplicate-code
-import datetime
 from typing import Any, Optional
 
 from bee_slack_app.model.user import User
 from bee_slack_app.repository.user_repository import UserRepository
+from bee_slack_app.utils import datetime
 
 user_repository = UserRepository()
 
@@ -39,9 +39,7 @@ def add_user(logger: Any, user: User) -> None:
                 "department": user["department"],
                 "job_type": user["job_type"],
                 "age_range": user["age_range"],
-                "updated_at": datetime.datetime.now(
-                    datetime.timezone(datetime.timedelta(hours=9))
-                ).isoformat(timespec="seconds"),
+                "updated_at": datetime.now(),
             }
         )
 

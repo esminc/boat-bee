@@ -1,10 +1,9 @@
 import json
 
-from dateutil import parser  # type: ignore
-
 from bee_slack_app.model.review import ReviewContents
 from bee_slack_app.service.review import get_reviews, post_review
 from bee_slack_app.service.user import get_user
+from bee_slack_app.utils import datetime
 
 
 def review_controller(app):
@@ -357,8 +356,11 @@ def generate_review_list_modal_view(review_contents_list: list[ReviewContents]):
         }
         review_list.append(review_item)
 
-        update_datetime = parser.parse(review_contents["updated_at"])
-        update_datetime = update_datetime.strftime("%Y/%m/%d %H:%M:%S")
+        update_datetime = (
+            datetime.parse(review_contents["updated_at"])
+            if review_contents["updated_at"]
+            else "-"
+        )
 
         review_post_item = {
             "type": "section",
