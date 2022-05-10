@@ -12,6 +12,30 @@ def home_controller(app):
                         "type": "header",
                         "text": {
                             "type": "plain_text",
+                            "text": "読書レビュー共有アプリ「Bee（Book Erabu Eiwa）」",
+                            "emoji": True,
+                        },
+                    },
+                    {"type": "divider"},
+                    {
+                        "type": "section",
+                        "text": {
+                            "type": "mrkdwn",
+                            "text": "*読んだ本のレビューを投稿して、データ蓄積に協力お願いします* ",
+                        },
+                    },
+                    {
+                        "type": "section",
+                        "text": {
+                            "type": "mrkdwn",
+                            "text": "Beeは、FDOが開発・提供する、本のレビュー共有アプリです。\n仕事で役立った本のレビューを投稿・共有できます。\nデータがたまればたまるほど、AIはより賢くなりあなたに合ったおすすめの本をお伝えすることができます。\n書籍購入制度で購入した本などのレビューを投稿してみましょう！！。",
+                        },
+                    },
+                    {"type": "divider"},
+                    {
+                        "type": "header",
+                        "text": {
+                            "type": "plain_text",
                             "text": "あなたへのおすすめ本",
                             "emoji": True,
                         },
