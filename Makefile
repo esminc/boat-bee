@@ -16,7 +16,7 @@ format-check:
 	prettier --check ./
 
 lint-check:
-	pipenv run pylint app.py
+	pipenv run pylint app.py app_local.py
 	pipenv run pylint bee_slack_app
 
 type-check:
@@ -43,7 +43,7 @@ start-dev: export DYNAMODB_ENDPOINT := http://localhost:8000
 start-dev: export AWS_ACCESS_KEY_ID := local
 start-dev: export AWS_SECRET_ACCESS_KEY := local
 start-dev:
-	pipenv run gunicorn --bind :3000 --workers 1 --threads 2 --timeout 0 --reload bee_slack_app.flask_app:flask_app
+	pipenv run gunicorn --bind :3000 --workers 1 --threads 2 --timeout 0 --reload app_local:flask_app
 
 start-dynamodb:
 	sls dynamodb start --migrate

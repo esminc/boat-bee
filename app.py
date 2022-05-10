@@ -1,14 +1,24 @@
+import json
 import logging
+import os
 
+import boto3  # type: ignore
 from slack_bolt.adapter.aws_lambda import SlackRequestHandler
 
 logging.basicConfig(level=logging.DEBUG)
 
-from bee_slack_app.env import (  # pylint: disable=wrong-import-position
-    configure_env_values,
-)
 
-configure_env_values()
+secretsmanager_client = boto3.client("secretsmanager", region_name="us-east-1")
+
+secret_id = os.environ["SLACK_CREDENTIALS_SECRET_ID"]
+
+secret_value = secretsmanager_client.get_secret_value(SecretId=secret_id)
+secret = json.loads(secret_value["SecretString"])
+
+os.environ["SLACK_APP_TOKEN"] = secret["SLACK_APP_TOKEN"]
+os.environ["SLACK_BOT_TOKEN"] = secret["SLACK_BOT_TOKEN"]
+os.environ["SLACK_SIGNING_SECRET"] = secret["SLACK_SIGNING_SECRET"]
+
 
 from bee_slack_app.slack import app  # pylint: disable=wrong-import-position
 
