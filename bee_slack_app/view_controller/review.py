@@ -75,8 +75,12 @@ def review_controller(app):
     # view_submission リクエストを処理
     @app.view("view_1")
     def handle_submission(ack, body, _, view, logger):
-        book_title = view["blocks"][2]["text"]["text"]
-        isbn = view["blocks"][4]["text"]["text"]
+
+        # ハック的な対処なので注意
+        # "*<本のタイトル>*\n<本の著者>\nISBN-<本のISBN>"のような文字列からタイトルやISBNを抜き出す
+        book_title_author_isbn = view["blocks"][1]["text"]["text"]
+        book_title = book_title_author_isbn.split("*")[1]
+        isbn = book_title_author_isbn.split("-")[-1]
 
         score_for_me = view["state"]["values"]["input_score_for_me"][
             "action_id_score_for_me"
@@ -168,7 +172,7 @@ def review_controller(app):
         ack()
 
 
-def generate_review_input_modal_view(book_title="", isbn=""):
+def generate_review_input_modal_view(book_section):
     view = {
         "type": "modal",
         # ビューの識別子
@@ -182,10 +186,7 @@ def generate_review_input_modal_view(book_title="", isbn=""):
                 "image_url": "https://developers.google.com/maps/documentation/images/powered_by_google_on_white.png",
                 "alt_text": "",
             },
-            {"type": "section", "text": {"type": "mrkdwn", "text": "*タイトル*"}},
-            {"type": "section", "text": {"type": "mrkdwn", "text": book_title}},
-            {"type": "section", "text": {"type": "mrkdwn", "text": "*ISBN*"}},
-            {"type": "section", "text": {"type": "mrkdwn", "text": isbn}},
+            book_section,
             {
                 "type": "input",
                 "block_id": "input_score_for_me",

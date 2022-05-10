@@ -328,11 +328,40 @@ def book_search_controller(app):
             )
             return
 
-        book = books[0]
-        title = book["selected_title"]
-        isbn = book["selected_isbn"]
+        blocks = body["view"]["blocks"]
+
+        # 選択された本のbook_sectionを、ISBNをもとに取得する (ハック的な対処なので注意)
+        selected_book_section = None
+
+        for i, block in enumerate(blocks):
+            if (
+                "elements" in block
+                and block["elements"][0]["value"] == books[0]["selected_isbn"]
+            ):
+                selected_book_section = blocks[i - 1]  # iは選択された本のaction blockのindex
+
+        if not selected_book_section:
+            ack(
+                response_action="push",
+                view={
+                    "type": "modal",
+                    "title": {"type": "plain_text", "text": "エラー", "emoji": True},
+                    "close": {"type": "plain_text", "text": "OK", "emoji": True},
+                    "blocks": [
+                        {
+                            "type": "section",
+                            "text": {
+                                "type": "plain_text",
+                                "text": "本のデータ取得でエラーが発生しました",
+                                "emoji": True,
+                            },
+                        },
+                    ],
+                },
+            )
+            return
 
         ack(
             response_action="push",
-            view=generate_review_input_modal_view(title, isbn),
+            view=generate_review_input_modal_view(selected_book_section),
         )
