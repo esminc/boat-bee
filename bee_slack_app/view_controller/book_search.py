@@ -112,7 +112,7 @@ def book_search_controller(app):
                 "text": "書籍の検索結果",
                 "emoji": True,
             },
-            "submit": {"type": "plain_text", "text": "選択", "emoji": True},
+            "submit": {"type": "plain_text", "text": "決定", "emoji": True},
             "blocks": blocks,
         }
 
