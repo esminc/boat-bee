@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from dateutil import parser  # type: ignore
 
 from bee_slack_app.model.review import ReviewContents
@@ -57,6 +55,7 @@ def review_controller(app):
             "score_for_me": score_for_me,
             "score_for_others": score_for_others,
             "review_comment": review_comment,
+            "updated_at": None,
         }
 
         post_review(logger, review_contents)
