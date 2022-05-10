@@ -6,21 +6,18 @@ from bee_slack_app.view_controller.review import generate_review_input_modal_vie
 
 
 def book_search_controller(app):
-    @app.action("book_search")
-    def open_book_search(ack, body, client):
+    @app.view("book_search_modal")
+    def open_book_search_result_modal(ack, body):
         """
         検索結果のモーダルを開く
         """
-        # 受信した旨を 3 秒以内に Slack サーバーに伝えます
-        ack()
-
         title = body["view"]["state"]["values"]["input_book_title"][
             "action_id_book_title"
         ]["value"]
 
         if title is None:
-            client.views_push(
-                trigger_id=body["trigger_id"],
+            ack(
+                response_action="push",
                 view={
                     "type": "modal",
                     "title": {"type": "plain_text", "text": "エラー", "emoji": True},
@@ -42,8 +39,8 @@ def book_search_controller(app):
             book_results = search_book_by_title(title)
 
             if len(book_results) == 0:
-                client.views_push(
-                    trigger_id=body["trigger_id"],
+                ack(
+                    response_action="push",
                     view={
                         "type": "modal",
                         "title": {"type": "plain_text", "text": "検索結果", "emoji": True},
@@ -77,8 +74,8 @@ def book_search_controller(app):
                 # private_metadataに格納するために文字列に変換する
                 private_metadata = json.dumps(book_result_summary)
 
-                client.views_push(
-                    trigger_id=body["trigger_id"],
+                ack(
+                    response_action="push",
                     view=generate_search_result_model_view(
                         book_results=book_results, private_metadata=private_metadata
                     ),
@@ -112,6 +109,7 @@ def book_search_controller(app):
                 "text": "書籍の検索結果",
                 "emoji": True,
             },
+            "close": {"type": "plain_text", "text": "戻る", "emoji": True},
             "submit": {"type": "plain_text", "text": "決定", "emoji": True},
             "blocks": blocks,
         }
@@ -216,6 +214,7 @@ def book_search_controller(app):
                 "text": "書籍の検索結果",
                 "emoji": True,
             },
+            "close": {"type": "plain_text", "text": "戻る", "emoji": True},
             "submit": {"type": "plain_text", "text": "選択", "emoji": True},
             "blocks": new_blocks,
         }
@@ -333,8 +332,7 @@ def book_search_controller(app):
         title = book["selected_title"]
         isbn = book["selected_isbn"]
 
-        # view_submission リクエストの確認を行い、モーダルを閉じる
         ack(
-            response_action="update",
+            response_action="push",
             view=generate_review_input_modal_view(title, isbn),
         )
