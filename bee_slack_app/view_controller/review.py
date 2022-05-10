@@ -1,3 +1,5 @@
+from dateutil import parser  # type: ignore
+
 from bee_slack_app.model.review import ReviewContents
 from bee_slack_app.service.review import get_reviews, post_review
 from bee_slack_app.service.user import get_user
@@ -81,6 +83,7 @@ def review_controller(app):
             "score_for_me": score_for_me,
             "score_for_others": score_for_others,
             "review_comment": review_comment,
+            "updated_at": None,
         }
 
         post_review(logger, review_contents)
@@ -340,8 +343,37 @@ def generate_review_list_modal_view(review_contents_list: list[ReviewContents]):
                 },
             ],
         }
-
         review_list.append(review_item)
+
+        update_datetime = parser.parse(review_contents["updated_at"])
+        update_datetime = update_datetime.strftime("%Y/%m/%d %H:%M:%S")
+
+        review_post_item = {
+            "type": "section",
+            "fields": [
+                {
+                    "type": "plain_text",
+                    "text": "投稿者",
+                    "emoji": True,
+                },
+                {
+                    "type": "plain_text",
+                    "text": review_contents["user_id"],
+                    "emoji": True,
+                },
+                {
+                    "type": "plain_text",
+                    "text": "投稿日時",
+                    "emoji": True,
+                },
+                {
+                    "type": "plain_text",
+                    "text": update_datetime,
+                    "emoji": True,
+                },
+            ],
+        }
+        review_list.append(review_post_item)
         review_list.append({"type": "divider"})
 
     return {
