@@ -330,7 +330,7 @@ def generate_review_list_modal_view(review_contents_list: list[ReviewContents]):
             "fields": [
                 {
                     "type": "plain_text",
-                    "text": "レビュー投稿者",
+                    "text": "投稿者",
                     "emoji": True,
                 },
                 {
@@ -340,7 +340,7 @@ def generate_review_list_modal_view(review_contents_list: list[ReviewContents]):
                 },
                 {
                     "type": "plain_text",
-                    "text": "レビュー投稿日時",
+                    "text": "投稿日時",
                     "emoji": True,
                 },
                 {
