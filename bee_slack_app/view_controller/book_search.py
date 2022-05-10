@@ -156,6 +156,7 @@ def book_search_controller(app):
                             "emoji": True,
                         },
                         "url": book["google_books_url"],
+                        "action_id": "google_books_buttons-action",
                     },
                 ],
             },
@@ -250,6 +251,7 @@ def book_search_controller(app):
                         "emoji": True,
                     },
                     "url": item["elements"][1]["url"],
+                    "action_id": "google_books_buttons-action",
                 },
             ],
         }
@@ -275,9 +277,20 @@ def book_search_controller(app):
                         "emoji": True,
                     },
                     "url": item["elements"][1]["url"],
+                    "action_id": "google_books_buttons-action",
                 },
             ],
         }
+
+    @app.action("google_books_buttons-action")
+    def handle_google_books_selected(ack, body, _, logger):
+        """
+        検索結果画面でGoogle Booksで見るボタンを押した時に行う処理
+
+        何か処理する必要はないがackを返さないとエラーが発生するのでackのみ返す
+        """
+        ack()
+        logger.info(body)
 
     # view_submission リクエストを処理
     @app.view("view_book_search")
