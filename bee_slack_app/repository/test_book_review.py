@@ -15,7 +15,7 @@ class TestBookReview:
         dynamodb = boto3.resource("dynamodb")
 
         self.table = dynamodb.create_table(
-            TableName=os.environ["DYNAMODB_TABLE"],
+            TableName=os.environ["DYNAMODB_TABLE"] + "-review",
             AttributeDefinitions=[
                 {"AttributeName": "user_id", "AttributeType": "S"},
                 {"AttributeName": "isbn", "AttributeType": "S"},

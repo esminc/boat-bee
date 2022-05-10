@@ -14,7 +14,9 @@ class BookReview:
         score_for_others: Optional[str]
 
     def __init__(self):
-        self.table = get_database_client().Table(os.environ["DYNAMODB_TABLE"])
+        self.table = get_database_client().Table(
+            os.environ["DYNAMODB_TABLE"] + "-review"
+        )
 
     def get(self, conditions: GetConditions = None) -> list[ReviewContents]:
         """
