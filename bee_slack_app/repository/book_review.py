@@ -71,9 +71,9 @@ class BookReview:
             "score_for_others": review["score_for_others"],
             "review_comment": review["review_comment"],
             "updated_at": review["updated_at"],
-            "image_url": review["image_url"],
-            "author": review["author"],
-            "url": review["url"],
+            "book_image_url": review["book_image_url"],
+            "book_author": review["book_author"],
+            "book_url": review["book_url"],
         }
 
         self.table.put_item(Item=item)

@@ -36,9 +36,9 @@ def post_review(logger: Any, review_contents: ReviewContents) -> None:
                 "updated_at": datetime.datetime.now(
                     datetime.timezone(datetime.timedelta(hours=9))
                 ).isoformat(timespec="seconds"),
-                "image_url": review_contents["image_url"],
-                "author": review_contents["author"],
-                "url": review_contents["url"],
+                "book_image_url": review_contents["book_image_url"],
+                "book_author": review_contents["book_author"],
+                "book_url": review_contents["book_url"],
             }
         )
 

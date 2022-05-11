@@ -118,9 +118,9 @@ def review_controller(app):
             "score_for_others": score_for_others,
             "review_comment": review_comment,
             "updated_at": None,
-            "image_url": image_url,
-            "author": author,
-            "url": json.loads(view["private_metadata"])["url"],
+            "book_image_url": image_url,
+            "book_author": author,
+            "book_url": json.loads(view["private_metadata"])["url"],
         }
 
         post_review(logger, review_contents)
