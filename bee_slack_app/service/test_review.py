@@ -51,7 +51,7 @@ def test_レビューを取得できること(monkeypatch):
 
     monkeypatch.setattr(BookReview, "get", mock_book_review_repository_get)
 
-    reviews = get_reviews(getLogger())
+    reviews = get_reviews(logger=getLogger(), limit=10, keys=[])["items"]
 
     assert len(reviews) == 3
 
@@ -92,6 +92,6 @@ def test_repositoryの処理でエラーが発生した場合Noneを返すこと
 
     monkeypatch.setattr(BookReview, "get", mock_book_review_repository_get)
 
-    reviews = get_reviews(getLogger())
+    reviews = get_reviews(logger=getLogger(), limit=10, keys=[])
 
     assert reviews is None
