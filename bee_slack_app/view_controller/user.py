@@ -29,8 +29,7 @@ def user_controller(app):
     @app.view("view_user")
     def handle_submission(ack, body, _, view, logger):
 
-        # ユーザ名は入力でなく、TEXT表示のため、viewからは取得できない。
-        user_name = body["view"]["blocks"][0]["text"]["text"]
+        user_name = view["blocks"][0]["text"]["text"]
 
         department = view["state"]["values"]["input_department"][
             "action_id_department"
