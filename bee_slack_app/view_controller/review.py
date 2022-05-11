@@ -7,7 +7,10 @@ from bee_slack_app.service.user import get_user
 
 def review_controller(app):
     @app.action("post_review")
-    def open_modal(ack, body, client, logger):
+    def open_book_search_modal(ack, body, client, logger):
+        """
+        本の検索モーダルを開く
+        """
         # コマンドのリクエストを確認
         ack()
 
@@ -40,17 +43,44 @@ def review_controller(app):
             view_id=body["view"]["id"],
             hash=body["view"]["hash"],
             # ビューのペイロード
-            view=generate_review_input_modal_view(),
+            view={
+                "type": "modal",
+                "callback_id": "book_search_modal",
+                "title": {"type": "plain_text", "text": "レビューする本を検索する"},
+                "submit": {"type": "plain_text", "text": "書籍の検索"},
+                "blocks": [
+                    {
+                        "type": "input",
+                        "block_id": "input_book_title",
+                        "label": {"type": "plain_text", "text": "タイトル"},
+                        "element": {
+                            "type": "plain_text_input",
+                            "action_id": "action_id_book_title",
+                            "placeholder": {
+                                "type": "plain_text",
+                                "text": "本のタイトルを入力してください",
+                                "emoji": True,
+                            },
+                        },
+                    },
+                    {
+                        "type": "image",
+                        "image_url": "https://developers.google.com/maps/documentation/images/powered_by_google_on_white.png",
+                        "alt_text": "",
+                    },
+                ],
+            },
         )
 
     # view_submission リクエストを処理
     @app.view("view_1")
     def handle_submission(ack, body, _, view, logger):
 
-        book_title = view["state"]["values"]["input_book_title"][
-            "action_id_book_title"
-        ]["value"]
-        isbn = view["state"]["values"]["input_isbn"]["action_id_isbn"]["value"]
+        # ハック的な対処なので注意
+        # "*<本のタイトル>*\n<本の著者>\nISBN-<本のISBN>"のような文字列からタイトルやISBNを抜き出す
+        book_title_author_isbn = view["blocks"][1]["text"]["text"]
+        book_title = book_title_author_isbn.split("*")[1]
+        isbn = book_title_author_isbn.split("-")[-1]
 
         score_for_me = view["state"]["values"]["input_score_for_me"][
             "action_id_score_for_me"
@@ -142,49 +172,21 @@ def review_controller(app):
         ack()
 
 
-def generate_review_input_modal_view(book_title="", isbn=""):
+def generate_review_input_modal_view(book_section):
     view = {
         "type": "modal",
         # ビューの識別子
         "callback_id": "view_1",
         "title": {"type": "plain_text", "text": "Bee"},
         "submit": {"type": "plain_text", "text": "送信"},
+        "close": {"type": "plain_text", "text": "戻る", "emoji": True},
         "blocks": [
-            {
-                "type": "input",
-                "block_id": "input_book_title",
-                "label": {"type": "plain_text", "text": "タイトル"},
-                "element": {
-                    "type": "plain_text_input",
-                    "action_id": "action_id_book_title",
-                    "initial_value": book_title,
-                },
-            },
             {
                 "type": "image",
                 "image_url": "https://developers.google.com/maps/documentation/images/powered_by_google_on_white.png",
                 "alt_text": "",
             },
-            {
-                "type": "actions",
-                "elements": [
-                    {
-                        "type": "button",
-                        "text": {"type": "plain_text", "text": "書籍の検索"},
-                        "action_id": "book_search",
-                    },
-                ],
-            },
-            {
-                "type": "input",
-                "block_id": "input_isbn",
-                "label": {"type": "plain_text", "text": "ISBN"},
-                "element": {
-                    "type": "plain_text_input",
-                    "action_id": "action_id_isbn",
-                    "initial_value": isbn,
-                },
-            },
+            book_section,
             {
                 "type": "input",
                 "block_id": "input_score_for_me",

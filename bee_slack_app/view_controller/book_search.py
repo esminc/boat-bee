@@ -6,21 +6,18 @@ from bee_slack_app.view_controller.review import generate_review_input_modal_vie
 
 
 def book_search_controller(app):
-    @app.action("book_search")
-    def open_book_search(ack, body, client):
+    @app.view("book_search_modal")
+    def open_book_search_result_modal(ack, body):
         """
         検索結果のモーダルを開く
         """
-        # 受信した旨を 3 秒以内に Slack サーバーに伝えます
-        ack()
-
         title = body["view"]["state"]["values"]["input_book_title"][
             "action_id_book_title"
         ]["value"]
 
         if title is None:
-            client.views_push(
-                trigger_id=body["trigger_id"],
+            ack(
+                response_action="push",
                 view={
                     "type": "modal",
                     "title": {"type": "plain_text", "text": "エラー", "emoji": True},
@@ -42,8 +39,8 @@ def book_search_controller(app):
             book_results = search_book_by_title(title)
 
             if len(book_results) == 0:
-                client.views_push(
-                    trigger_id=body["trigger_id"],
+                ack(
+                    response_action="push",
                     view={
                         "type": "modal",
                         "title": {"type": "plain_text", "text": "検索結果", "emoji": True},
@@ -77,8 +74,8 @@ def book_search_controller(app):
                 # private_metadataに格納するために文字列に変換する
                 private_metadata = json.dumps(book_result_summary)
 
-                client.views_push(
-                    trigger_id=body["trigger_id"],
+                ack(
+                    response_action="push",
                     view=generate_search_result_model_view(
                         book_results=book_results, private_metadata=private_metadata
                     ),
@@ -112,6 +109,7 @@ def book_search_controller(app):
                 "text": "書籍の検索結果",
                 "emoji": True,
             },
+            "close": {"type": "plain_text", "text": "戻る", "emoji": True},
             "submit": {"type": "plain_text", "text": "決定", "emoji": True},
             "blocks": blocks,
         }
@@ -216,6 +214,7 @@ def book_search_controller(app):
                 "text": "書籍の検索結果",
                 "emoji": True,
             },
+            "close": {"type": "plain_text", "text": "戻る", "emoji": True},
             "submit": {"type": "plain_text", "text": "選択", "emoji": True},
             "blocks": new_blocks,
         }
@@ -306,8 +305,6 @@ def book_search_controller(app):
 
         books = [x for x in items if x.get("selected_title", None) is not None]
 
-        print(f"books = {books}")
-
         if len(books) == 0:
             ack(
                 response_action="push",
@@ -329,12 +326,40 @@ def book_search_controller(app):
             )
             return
 
-        book = books[0]
-        title = book["selected_title"]
-        isbn = book["selected_isbn"]
+        blocks = body["view"]["blocks"]
 
-        # view_submission リクエストの確認を行い、モーダルを閉じる
+        # 選択された本のbook_sectionを、ISBNをもとに取得する (ハック的な対処なので注意)
+        selected_book_section = None
+
+        for i, block in enumerate(blocks):
+            if (
+                "elements" in block
+                and block["elements"][0]["value"] == books[0]["selected_isbn"]
+            ):
+                selected_book_section = blocks[i - 1]  # iは選択された本のaction blockのindex
+
+        if not selected_book_section:
+            ack(
+                response_action="push",
+                view={
+                    "type": "modal",
+                    "title": {"type": "plain_text", "text": "エラー", "emoji": True},
+                    "close": {"type": "plain_text", "text": "OK", "emoji": True},
+                    "blocks": [
+                        {
+                            "type": "section",
+                            "text": {
+                                "type": "plain_text",
+                                "text": "本のデータ取得でエラーが発生しました",
+                                "emoji": True,
+                            },
+                        },
+                    ],
+                },
+            )
+            return
+
         ack(
-            response_action="update",
-            view=generate_review_input_modal_view(title, isbn),
+            response_action="push",
+            view=generate_review_input_modal_view(selected_book_section),
         )
