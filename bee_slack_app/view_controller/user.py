@@ -106,7 +106,21 @@ def generate_user_input_modal_view(user_name: str, user: Optional[User]):
                             "value": "agile",
                             "text": {
                                 "type": "plain_text",
-                                "text": "アジャイルシステム事業部",
+                                "text": "アジャイル事業部",
+                            },
+                        },
+                        {
+                            "value": "etec",
+                            "text": {
+                                "type": "plain_text",
+                                "text": "ETEC",
+                            },
+                        },
+                        {
+                            "value": "f-cess",
+                            "text": {
+                                "type": "plain_text",
+                                "text": "F.CESS",
                             },
                         },
                         {
@@ -201,7 +215,9 @@ def generate_user_input_modal_view(user_name: str, user: Optional[User]):
             "its": "ITS事業部",
             "finance": "金融システム事業部",
             "medical": "医療システム事業部",
-            "agile": "アジャイルシステム事業部",
+            "agile": "アジャイル事業部",
+            "etec": "ETEC",
+            "f-cess": "F.CESS",
             "general": "管理部",
             "other": "その他",
         }
