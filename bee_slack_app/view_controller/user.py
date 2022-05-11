@@ -48,13 +48,13 @@ def user_controller(app):
         # view_submission リクエストの確認を行い、モーダルを閉じる
         ack()
 
-        user: Optional[User] = {
+        user: User = {
             "user_id": user_id,
             "user_name": user_name,
             "department": department,
             "job_type": job_type,
             "age_range": age_range,
-            "update_at": None,
+            "updated_at": None,
         }
 
         add_user(logger, user)
