@@ -201,7 +201,7 @@ class TestBookReview:
         assert reviews[1]["score_for_others"] == "4"
         assert reviews[1]["review_comment"] == "まあまあです"
 
-    def test_他の人へのおすすめ度を指定してレビューを取得できること(self):
+    def test_永和社員へのおすすめ度を指定してレビューを取得できること(self):
         item = {
             "user_id": "user_id_0",
             "book_title": "仕事ではじめる機械学習",
@@ -258,7 +258,7 @@ class TestBookReview:
         assert reviews[1]["score_for_others"] == "4"
         assert reviews[1]["review_comment"] == "そこそこです"
 
-    def test_自分にとっての評価と他の人へのおすすめ度を指定してレビューを取得できること(self):
+    def test_自分にとっての評価と永和社員へのおすすめ度を指定してレビューを取得できること(self):
         item = {
             "user_id": "user_id_0",
             "book_title": "仕事ではじめる機械学習",
