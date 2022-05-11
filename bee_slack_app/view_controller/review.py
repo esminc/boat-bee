@@ -83,7 +83,7 @@ def review_controller(app):
         book_title_author_isbn = view["blocks"][1]["text"]["text"]
         book_title = book_title_author_isbn.split("*")[1]
         isbn = book_title_author_isbn.split("-")[-1]
-        author = book_title_author_isbn.split("*")[2].split("-")[-2][:-5]
+        author = book_title_author_isbn.split("*")[2].split("-")[-2][:-5][1:]
         image_url = view["blocks"][1]["accessory"]["image_url"]
 
         score_for_me = view["state"]["values"]["input_score_for_me"][
