@@ -6,7 +6,10 @@
     "isbn": "9784873118253",
     "review_comment": "役に立つ！ by 岡本",
     "score_for_me": "5",
-    "score_for_others": "5"
+    "score_for_others": "5",
+    "book_image_url": "dummy_book_image_url",
+    "book_author": "dummy_book_author",
+    "book_url": "dummy_book_url"
   },
   {
     "updated_at": "2022-04-21T15:29:14+09:00",
@@ -15,7 +18,10 @@
     "isbn": "9784873118253",
     "review_comment": "役に立つ！ by 坂部",
     "score_for_me": "5",
-    "score_for_others": "5"
+    "score_for_others": "5",
+    "book_image_url": "dummy_book_image_url",
+    "book_author": "dummy_book_author",
+    "book_url": "dummy_book_url"
   },
   {
     "updated_at": "2022-04-21T16:40:14+09:00",
@@ -24,7 +30,10 @@
     "isbn": "9784873118253",
     "review_comment": "役に立つ！ by 見澤",
     "score_for_me": "5",
-    "score_for_others": "5"
+    "score_for_others": "5",
+    "book_image_url": "dummy_book_image_url",
+    "book_author": "dummy_book_author",
+    "book_url": "dummy_book_url"
   },
   {
     "updated_at": "2022-03-21T16:29:14+09:00",
@@ -33,7 +42,10 @@
     "isbn": "9784873118253",
     "review_comment": "役に立つ！ by 三田村",
     "score_for_me": "5",
-    "score_for_others": "5"
+    "score_for_others": "5",
+    "book_image_url": "dummy_book_image_url",
+    "book_author": "dummy_book_author",
+    "book_url": "dummy_book_url"
   },
   {
     "updated_at": "2022-04-11T16:29:14+09:00",
@@ -42,7 +54,10 @@
     "isbn": "978487311764",
     "review_comment": "役に立つ！ by 岡本",
     "score_for_me": "3",
-    "score_for_others": "4"
+    "score_for_others": "4",
+    "book_image_url": "dummy_book_image_url",
+    "book_author": "dummy_book_author",
+    "book_url": "dummy_book_url"
   },
   {
     "updated_at": "2022-04-21T12:29:14+09:00",
@@ -51,7 +66,10 @@
     "isbn": "9784048913874",
     "review_comment": "微妙 by 岡本",
     "score_for_me": "1",
-    "score_for_others": "2"
+    "score_for_others": "2",
+    "book_image_url": "dummy_book_image_url",
+    "book_author": "dummy_book_author",
+    "book_url": "dummy_book_url"
   },
   {
     "updated_at": "2022-04-21T16:29:50+09:00",
@@ -60,7 +78,10 @@
     "isbn": "9784262168739",
     "review_comment": "無理！ by 岡本",
     "score_for_me": "2",
-    "score_for_others": "2"
+    "score_for_others": "2",
+    "book_image_url": "dummy_book_image_url",
+    "book_author": "dummy_book_author",
+    "book_url": "dummy_book_url"
   },
   {
     "updated_at": "2021-04-21T16:29:14+09:00",
@@ -69,7 +90,10 @@
     "isbn": "9784863542402",
     "review_comment": "役に立つ！ by 岡本",
     "score_for_me": "5",
-    "score_for_others": "4"
+    "score_for_others": "4",
+    "book_image_url": "dummy_book_image_url",
+    "book_author": "dummy_book_author",
+    "book_url": "dummy_book_url"
   },
   {
     "updated_at": "2020-04-21T16:29:14+09:00",
@@ -78,6 +102,9 @@
     "isbn": "9784774162034",
     "review_comment": "",
     "score_for_me": "4",
-    "score_for_others": "4"
+    "score_for_others": "4",
+    "book_image_url": "dummy_book_image_url",
+    "book_author": "dummy_book_author",
+    "book_url": "dummy_book_url"
   }
 ]

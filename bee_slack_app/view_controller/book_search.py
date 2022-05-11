@@ -5,7 +5,8 @@ from bee_slack_app.service.book_search import search_book_by_title
 from bee_slack_app.view_controller.review import generate_review_input_modal_view
 
 
-def book_search_controller(app):
+# TODO: disable=too-many-statementsを取り消す
+def book_search_controller(app):  # pylint: disable=too-many-statements
     @app.view("book_search_modal")
     def open_book_search_result_modal(ack, body):
         """
@@ -328,8 +329,9 @@ def book_search_controller(app):
 
         blocks = body["view"]["blocks"]
 
-        # 選択された本のbook_sectionを、ISBNをもとに取得する (ハック的な対処なので注意)
+        # 選択された本のbook_sectionとurlを、ISBNをもとに取得する (ハック的な対処なので注意)
         selected_book_section = None
+        url = None
 
         for i, block in enumerate(blocks):
             if (
@@ -337,8 +339,9 @@ def book_search_controller(app):
                 and block["elements"][0]["value"] == books[0]["selected_isbn"]
             ):
                 selected_book_section = blocks[i - 1]  # iは選択された本のaction blockのindex
+                url = blocks[i]["elements"][1]["url"]
 
-        if not selected_book_section:
+        if not selected_book_section or not url:
             ack(
                 response_action="push",
                 view={
@@ -361,5 +364,5 @@ def book_search_controller(app):
 
         ack(
             response_action="push",
-            view=generate_review_input_modal_view(selected_book_section),
+            view=generate_review_input_modal_view(selected_book_section, url),
         )

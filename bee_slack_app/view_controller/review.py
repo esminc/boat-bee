@@ -1,3 +1,5 @@
+import json
+
 from dateutil import parser  # type: ignore
 
 from bee_slack_app.model.review import ReviewContents
@@ -81,6 +83,8 @@ def review_controller(app):
         book_title_author_isbn = view["blocks"][1]["text"]["text"]
         book_title = book_title_author_isbn.split("*")[1]
         isbn = book_title_author_isbn.split("-")[-1]
+        author = book_title_author_isbn.split("*")[2].split("-")[-2][:-5][1:]
+        image_url = view["blocks"][1]["accessory"]["image_url"]
 
         score_for_me = view["state"]["values"]["input_score_for_me"][
             "action_id_score_for_me"
@@ -114,6 +118,9 @@ def review_controller(app):
             "score_for_others": score_for_others,
             "review_comment": review_comment,
             "updated_at": None,
+            "book_image_url": image_url,
+            "book_author": author,
+            "book_url": json.loads(view["private_metadata"])["url"],
         }
 
         post_review(logger, review_contents)
@@ -172,11 +179,14 @@ def review_controller(app):
         ack()
 
 
-def generate_review_input_modal_view(book_section):
+def generate_review_input_modal_view(book_section, url: str):
+    private_metadata = json.dumps({"url": url})
+
     view = {
         "type": "modal",
         # ビューの識別子
         "callback_id": "view_1",
+        "private_metadata": private_metadata,
         "title": {"type": "plain_text", "text": "Bee"},
         "submit": {"type": "plain_text", "text": "送信"},
         "close": {"type": "plain_text", "text": "戻る", "emoji": True},

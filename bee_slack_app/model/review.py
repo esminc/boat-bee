@@ -9,3 +9,6 @@ class ReviewContents(TypedDict):
     score_for_others: str
     review_comment: str
     updated_at: Optional[str]
+    book_image_url: str
+    book_author: str
+    book_url: str
