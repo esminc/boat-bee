@@ -1,3 +1,5 @@
+import json
+
 from dateutil import parser  # type: ignore
 
 from bee_slack_app.model.review import ReviewContents
@@ -118,6 +120,7 @@ def review_controller(app):
             "updated_at": None,
             "image_url": image_url,
             "author": author,
+            "url": json.loads(view["private_metadata"])["url"],
         }
 
         post_review(logger, review_contents)
@@ -176,11 +179,14 @@ def review_controller(app):
         ack()
 
 
-def generate_review_input_modal_view(book_section):
+def generate_review_input_modal_view(book_section, url: str):
+    private_metadata = json.dumps({"url": url})
+
     view = {
         "type": "modal",
         # ビューの識別子
         "callback_id": "view_1",
+        "private_metadata": private_metadata,
         "title": {"type": "plain_text", "text": "Bee"},
         "submit": {"type": "plain_text", "text": "送信"},
         "close": {"type": "plain_text", "text": "戻る", "emoji": True},

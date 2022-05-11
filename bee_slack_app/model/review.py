@@ -11,3 +11,4 @@ class ReviewContents(TypedDict):
     updated_at: Optional[str]
     image_url: str
     author: str
+    url: str

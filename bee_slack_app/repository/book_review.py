@@ -73,6 +73,7 @@ class BookReview:
             "updated_at": review["updated_at"],
             "image_url": review["image_url"],
             "author": review["author"],
+            "url": review["url"],
         }
 
         self.table.put_item(Item=item)

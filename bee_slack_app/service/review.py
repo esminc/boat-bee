@@ -38,6 +38,7 @@ def post_review(logger: Any, review_contents: ReviewContents) -> None:
                 ).isoformat(timespec="seconds"),
                 "image_url": review_contents["image_url"],
                 "author": review_contents["author"],
+                "url": review_contents["url"],
             }
         )
 
