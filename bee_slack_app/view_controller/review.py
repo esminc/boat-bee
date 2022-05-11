@@ -81,6 +81,8 @@ def review_controller(app):
         book_title_author_isbn = view["blocks"][1]["text"]["text"]
         book_title = book_title_author_isbn.split("*")[1]
         isbn = book_title_author_isbn.split("-")[-1]
+        author = book_title_author_isbn.split("*")[2].split("-")[-2][:-5]
+        image_url = view["blocks"][1]["accessory"]["image_url"]
 
         score_for_me = view["state"]["values"]["input_score_for_me"][
             "action_id_score_for_me"
@@ -114,6 +116,8 @@ def review_controller(app):
             "score_for_others": score_for_others,
             "review_comment": review_comment,
             "updated_at": None,
+            "image_url": image_url,
+            "author": author,
         }
 
         post_review(logger, review_contents)
