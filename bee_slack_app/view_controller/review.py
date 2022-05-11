@@ -226,7 +226,7 @@ def generate_review_input_modal_view(book_section):
             {
                 "type": "input",
                 "block_id": "input_score_for_others",
-                "label": {"type": "plain_text", "text": "他の人へのおすすめ度"},
+                "label": {"type": "plain_text", "text": "永和社員へのおすすめ度"},
                 "element": {
                     "type": "static_select",
                     "action_id": "action_id_score_for_others",
@@ -325,7 +325,7 @@ def generate_review_list_modal_view(review_contents_list: list[ReviewContents]):
                 },
                 {
                     "type": "plain_text",
-                    "text": "他の人へのおすすめ度",
+                    "text": "永和社員へのおすすめ度",
                     "emoji": True,
                 },
                 {
@@ -432,7 +432,7 @@ def generate_review_list_modal_view(review_contents_list: list[ReviewContents]):
                 "type": "section",
                 "text": {
                     "type": "mrkdwn",
-                    "text": "他の人へのおすすめ度",
+                    "text": "永和社員へのおすすめ度",
                 },
                 "accessory": {
                     "type": "static_select",

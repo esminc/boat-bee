@@ -106,7 +106,21 @@ def generate_user_input_modal_view(user_name: str, user: Optional[User]):
                             "value": "agile",
                             "text": {
                                 "type": "plain_text",
-                                "text": "アジャイルシステム事業部",
+                                "text": "アジャイル事業部",
+                            },
+                        },
+                        {
+                            "value": "etec",
+                            "text": {
+                                "type": "plain_text",
+                                "text": "ETEC",
+                            },
+                        },
+                        {
+                            "value": "f-cess",
+                            "text": {
+                                "type": "plain_text",
+                                "text": "F.CESS",
                             },
                         },
                         {
@@ -123,27 +137,27 @@ def generate_user_input_modal_view(user_name: str, user: Optional[User]):
             {
                 "type": "input",
                 "block_id": "input_job_type",
-                "label": {"type": "plain_text", "text": "職種"},
+                "label": {"type": "plain_text", "text": "主な仕事"},
                 "element": {
                     "type": "static_select",
                     "action_id": "action_id_job_type",
                     "placeholder": {
                         "type": "plain_text",
-                        "text": "職種を選択してください",
+                        "text": "一番近いものを選択してください",
                         "emoji": True,
                     },
                     "options": [
                         {
                             "value": "engineer",
-                            "text": {"type": "plain_text", "text": "エンジニア"},
+                            "text": {"type": "plain_text", "text": "開発・導入"},
                         },
                         {
                             "value": "management",
-                            "text": {"type": "plain_text", "text": "管理職"},
+                            "text": {"type": "plain_text", "text": "マネジメント・営業"},
                         },
                         {
-                            "value": "sales",
-                            "text": {"type": "plain_text", "text": "営業職"},
+                            "value": "executive",
+                            "text": {"type": "plain_text", "text": "経営"},
                         },
                         {
                             "value": "other",
@@ -201,7 +215,9 @@ def generate_user_input_modal_view(user_name: str, user: Optional[User]):
             "its": "ITS事業部",
             "finance": "金融システム事業部",
             "medical": "医療システム事業部",
-            "agile": "アジャイルシステム事業部",
+            "agile": "アジャイル事業部",
+            "etec": "ETEC",
+            "f-cess": "F.CESS",
             "general": "管理部",
             "other": "その他",
         }
@@ -211,9 +227,9 @@ def generate_user_input_modal_view(user_name: str, user: Optional[User]):
         }
 
         job_type_dict = {
-            "engineer": "エンジニア",
-            "management": "管理職",
-            "sales": "営業職",
+            "engineer": "開発・導入",
+            "management": "マネジメント・営業",
+            "executive": "経営",
             "other": "その他",
         }
         view["blocks"][2]["element"]["initial_option"] = {  # type: ignore
