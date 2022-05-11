@@ -27,6 +27,100 @@ class TestBookReview:
             ProvisionedThroughput={"ReadCapacityUnits": 1, "WriteCapacityUnits": 1},
         )
 
+    def test_ページネーションして_レビューを取得できること(self):
+        item = {
+            "user_id": "user_id_0",
+            "book_title": "仕事ではじめる機械学習",
+            "isbn": "12345",
+            "score_for_me": "1",
+            "score_for_others": "5",
+            "review_comment": "とても良いです",
+            "updated_at": "2022-04-01T00:00:00+09:00",
+            "book_image_url": "dummy_book_image_url_0",
+            "book_author": "dummy_book_author_0",
+            "book_url": "dummy_book_url_0",
+        }
+
+        self.table.put_item(Item=item)
+
+        item = {
+            "user_id": "user_id_1",
+            "book_title": "仕事ではじめる機械学習",
+            "isbn": "12345",
+            "score_for_me": "3",
+            "score_for_others": "4",
+            "review_comment": "まあまあです",
+            "updated_at": "2022-04-01T00:00:00+09:00",
+            "book_image_url": "dummy_book_image_url_1",
+            "book_author": "dummy_book_author_1",
+            "book_url": "dummy_book_url_1",
+        }
+
+        self.table.put_item(Item=item)
+
+        item = {
+            "user_id": "user_id_2",
+            "book_title": "Python チュートリアル",
+            "isbn": "67890",
+            "score_for_me": "2",
+            "score_for_others": "4",
+            "review_comment": "そこそこです",
+            "updated_at": "2022-04-02T00:00:00+09:00",
+            "book_image_url": "dummy_book_image_url_2",
+            "book_author": "dummy_book_author_2",
+            "book_url": "dummy_book_url_2",
+        }
+
+        self.table.put_item(Item=item)
+
+        book_review = BookReview()
+
+        response = book_review.get(limit=2)
+        reviews = response["items"]
+        last_key = response["last_key"]
+
+        assert len(reviews) == 2
+
+        assert last_key is not None
+
+        assert reviews[0]["user_id"] == "user_id_0"
+        assert reviews[0]["isbn"] == "12345"
+        assert reviews[0]["book_title"] == "仕事ではじめる機械学習"
+        assert reviews[0]["score_for_me"] == "1"
+        assert reviews[0]["score_for_others"] == "5"
+        assert reviews[0]["review_comment"] == "とても良いです"
+        assert reviews[0]["book_image_url"] == "dummy_book_image_url_0"
+        assert reviews[0]["book_author"] == "dummy_book_author_0"
+        assert reviews[0]["book_url"] == "dummy_book_url_0"
+
+        assert reviews[1]["user_id"] == "user_id_1"
+        assert reviews[1]["isbn"] == "12345"
+        assert reviews[1]["book_title"] == "仕事ではじめる機械学習"
+        assert reviews[1]["score_for_me"] == "3"
+        assert reviews[1]["score_for_others"] == "4"
+        assert reviews[1]["review_comment"] == "まあまあです"
+        assert reviews[1]["book_image_url"] == "dummy_book_image_url_1"
+        assert reviews[1]["book_author"] == "dummy_book_author_1"
+        assert reviews[1]["book_url"] == "dummy_book_url_1"
+
+        response = book_review.get(limit=2, start_key=last_key)
+        reviews = response["items"]
+        last_key = response["last_key"]
+
+        assert len(reviews) == 1
+
+        assert last_key is None
+
+        assert reviews[0]["user_id"] == "user_id_2"
+        assert reviews[0]["isbn"] == "67890"
+        assert reviews[0]["book_title"] == "Python チュートリアル"
+        assert reviews[0]["score_for_me"] == "2"
+        assert reviews[0]["score_for_others"] == "4"
+        assert reviews[0]["review_comment"] == "そこそこです"
+        assert reviews[0]["book_image_url"] == "dummy_book_image_url_2"
+        assert reviews[0]["book_author"] == "dummy_book_author_2"
+        assert reviews[0]["book_url"] == "dummy_book_url_2"
+
     def test_レビューを取得できること(self):
         item = {
             "user_id": "user_id_0",
@@ -75,7 +169,7 @@ class TestBookReview:
 
         book_review = BookReview()
 
-        reviews = book_review.get()
+        reviews = book_review.get()["items"]
 
         assert len(reviews) == 3
 
@@ -116,7 +210,7 @@ class TestBookReview:
 
         book_review = BookReview()
 
-        reviews = book_review.get()
+        reviews = book_review.get()["items"]
 
         assert len(reviews) == 0
         assert isinstance(reviews, list)
@@ -216,7 +310,7 @@ class TestBookReview:
 
         book_review = BookReview()
 
-        reviews = book_review.get({"score_for_me": 3})
+        reviews = book_review.get(conditions={"score_for_me": 3})["items"]
 
         assert len(reviews) == 2
 
@@ -288,7 +382,7 @@ class TestBookReview:
 
         book_review = BookReview()
 
-        reviews = book_review.get({"score_for_others": 4})
+        reviews = book_review.get(conditions={"score_for_others": 4})["items"]
 
         assert len(reviews) == 2
 
@@ -360,7 +454,9 @@ class TestBookReview:
 
         book_review = BookReview()
 
-        reviews = book_review.get({"score_for_me": 3, "score_for_others": 5})
+        reviews = book_review.get(
+            conditions={"score_for_me": 3, "score_for_others": 5}
+        )["items"]
 
         assert len(reviews) == 2
 
@@ -430,7 +526,7 @@ class TestBookReview:
 
         book_review = BookReview()
 
-        reviews = book_review.get({"score_for_others": 1})
+        reviews = book_review.get(conditions={"score_for_others": 1})["items"]
 
         assert len(reviews) == 0
         assert isinstance(reviews, list)

@@ -16,7 +16,7 @@ def get_reviews(
     logger: Any, conditions: Optional[GetConditions] = None
 ) -> Optional[list[ReviewContents]]:
     try:
-        return book_review_repository.get(conditions)
+        return book_review_repository.get(conditions=conditions)["items"]
 
     except Exception:  # pylint: disable=broad-except
         logger.exception("Failed to get data.")
