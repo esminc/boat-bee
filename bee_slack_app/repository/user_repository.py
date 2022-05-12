@@ -24,6 +24,23 @@ class UserRepository:
         response = self.table.get_item(Key={"user_id": user_id})
         return response.get("Item")
 
+    def get_all(self) -> list[User]:
+        """
+        全てのユーザー情報を取得する
+
+        Returns:
+            list[User]: 取得した全てユーザー情報のリスト。未登録の場合は、空のリストを返す
+        """
+        response = self.table.scan()
+        users = response["Items"]
+
+        # レスポンスに LastEvaluatedKey が含まれなくなるまでループ処理を実行する
+        while "LastEvaluatedKey" in response:
+            response = self.table.scan(ExclusiveStartKey=response["LastEvaluatedKey"])
+            users.extend(response["Items"])
+
+        return users
+
     def create(self, user: User) -> None:
         """
         データを追加および上書きします
