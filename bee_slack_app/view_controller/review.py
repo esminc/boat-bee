@@ -4,6 +4,9 @@ from bee_slack_app.model.review import ReviewContents
 from bee_slack_app.service.review import get_reviews, get_reviews_before, post_review
 from bee_slack_app.service.user import get_user
 from bee_slack_app.utils import datetime
+from bee_slack_app.model.user import User
+from bee_slack_app.service.review import get_reviews, post_review
+from bee_slack_app.service.user import get_all_user, get_user
 
 
 def review_controller(app):  # pylint: disable=too-many-statements
@@ -136,9 +139,11 @@ def review_controller(app):  # pylint: disable=too-many-statements
         metadata_str = ReviewPrivateMetadataConvertor.convert_to_private_metadata(
             keys=reviews["keys"]
         )
+        users = get_all_user(logger)
 
         view = generate_review_list_modal_view(
             reviews["items"],
+            users,
             private_metadata=metadata_str,
             show_move_to_next=bool(reviews["keys"]),
         )
@@ -240,8 +245,11 @@ def review_controller(app):  # pylint: disable=too-many-statements
             keys=reviews["keys"], conditions=scores
         )
 
+        users = get_all_user(logger)
+
         view = generate_review_list_modal_view(
             reviews["items"],
+            users,
             private_metadata=private_metadata,
             show_move_to_next=bool(reviews["keys"]),
         )
@@ -391,6 +399,7 @@ def generate_review_input_modal_view(book_section, url: str):
 
 def generate_review_list_modal_view(
     review_contents_list: list[ReviewContents],
+    users: list[User],
     private_metadata=None,
     show_move_to_back=False,
     show_move_to_next=True,
