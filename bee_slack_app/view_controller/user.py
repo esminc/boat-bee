@@ -92,7 +92,7 @@ def generate_user_input_modal_view(user_name: str, user: Optional[User]):
                     "options": [
                         {
                             "value": "its",
-                            "text": {"type": "plain_text", "text": "ITS事業部"},
+                            "text": {"type": "plain_text", "text": "ITサービス事業部"},
                         },
                         {
                             "value": "finance",
@@ -113,14 +113,14 @@ def generate_user_input_modal_view(user_name: str, user: Optional[User]):
                             "value": "etec",
                             "text": {
                                 "type": "plain_text",
-                                "text": "ETEC",
+                                "text": "組み込み技術事業部",
                             },
                         },
                         {
-                            "value": "f-cess",
+                            "value": "medical-education",
                             "text": {
                                 "type": "plain_text",
-                                "text": "F.CESS",
+                                "text": "医学教育支援室",
                             },
                         },
                         {
@@ -212,12 +212,12 @@ def generate_user_input_modal_view(user_name: str, user: Optional[User]):
     # ユーザー情報が登録されている場合に、そのユーザー情報を取得し表示する。
     if user:
         department_dict = {
-            "its": "ITS事業部",
+            "its": "ITサービス事業部",
             "finance": "金融システム事業部",
             "medical": "医療システム事業部",
             "agile": "アジャイル事業部",
-            "etec": "ETEC",
-            "f-cess": "F.CESS",
+            "etec": "組み込み技術事業部",
+            "medical-education": "医学教育支援室",
             "general": "管理部",
             "other": "その他",
         }
