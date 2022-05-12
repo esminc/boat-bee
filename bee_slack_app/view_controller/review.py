@@ -1,12 +1,12 @@
 import json
 
 from bee_slack_app.model.review import ReviewContents
-from bee_slack_app.service.review import get_reviews, post_review
+from bee_slack_app.service.review import get_reviews, get_reviews_before, post_review
 from bee_slack_app.service.user import get_user
 from bee_slack_app.utils import datetime
 
 
-def review_controller(app):
+def review_controller(app):  # pylint: disable=too-many-statements
     @app.action("post_review")
     def open_book_search_modal(ack, body, client, logger):
         """
@@ -129,12 +129,85 @@ def review_controller(app):
         # コマンドのリクエストを確認
         ack()
 
-        review_contents_list = get_reviews(logger)
+        reviews = get_reviews(logger=logger, limit=10, keys=[])
 
-        view = generate_review_list_modal_view(review_contents_list)
+        metadata_str = ReviewPrivateMetadataConvertor.convert_to_private_metadata(
+            keys=reviews["keys"]
+        )
+
+        view = generate_review_list_modal_view(
+            reviews["items"],
+            private_metadata=metadata_str,
+            show_move_to_next=bool(reviews["keys"]),
+        )
 
         client.views_open(
             trigger_id=body["trigger_id"],
+            view=view,
+        )
+
+    @app.action("move_to_next")
+    def move_to_next(ack, logger, client, body):
+        ack()
+
+        metadata_dict = ReviewPrivateMetadataConvertor.convert_to_dict(
+            private_metadata=body["view"]["private_metadata"]
+        )
+        keys = metadata_dict["keys"]
+
+        conditions = metadata_dict.get("conditions")
+
+        reviews = get_reviews(logger=logger, limit=10, keys=keys, conditions=conditions)
+
+        metadata_str = ReviewPrivateMetadataConvertor.convert_to_private_metadata(
+            keys=reviews["keys"], conditions=conditions
+        )
+
+        view = generate_review_list_modal_view(
+            reviews["items"],
+            private_metadata=metadata_str,
+            show_move_to_back=True,
+            show_move_to_next=reviews["keys"][-1] != "end",
+        )
+
+        client.views_update(
+            trigger_id=body["trigger_id"],
+            view_id=body["view"]["id"],
+            hash=body["view"]["hash"],
+            view=view,
+        )
+
+    @app.action("move_to_back")
+    def move_to_back(ack, logger, client, body):
+        ack()
+
+        metadata_dict = ReviewPrivateMetadataConvertor.convert_to_dict(
+            private_metadata=body["view"]["private_metadata"]
+        )
+        keys = metadata_dict["keys"]
+
+        is_move_to_first = len(keys) < 3
+
+        conditions = metadata_dict.get("conditions")
+
+        reviews = get_reviews_before(
+            logger=logger, limit=10, keys=keys, conditions=conditions
+        )
+
+        metadata_str = ReviewPrivateMetadataConvertor.convert_to_private_metadata(
+            keys=reviews["keys"], conditions=conditions
+        )
+
+        view = generate_review_list_modal_view(
+            reviews["items"],
+            private_metadata=metadata_str,
+            show_move_to_back=not is_move_to_first,
+        )
+
+        client.views_update(
+            trigger_id=body["trigger_id"],
+            view_id=body["view"]["id"],
+            hash=body["view"]["hash"],
             view=view,
         )
 
@@ -155,9 +228,17 @@ def review_controller(app):
             if score in ["1", "2", "3", "4", "5"]:
                 scores[label] = score
 
-        review_contents_list = get_reviews(logger, scores)
+        reviews = get_reviews(logger=logger, conditions=scores, limit=10, keys=[])
 
-        view = generate_review_list_modal_view(review_contents_list)
+        private_metadata = ReviewPrivateMetadataConvertor.convert_to_private_metadata(
+            keys=reviews["keys"], conditions=scores
+        )
+
+        view = generate_review_list_modal_view(
+            reviews["items"],
+            private_metadata=private_metadata,
+            show_move_to_next=bool(reviews["keys"]),
+        )
 
         client.views_update(
             trigger_id=body["trigger_id"],
@@ -176,6 +257,23 @@ def review_controller(app):
     def score_for_others_select_action(ack):
         # 何もしない
         ack()
+
+
+class ReviewPrivateMetadataConvertor:
+    @staticmethod
+    def convert_to_private_metadata(*, keys, conditions=None):
+
+        metadata = {"keys": keys}
+
+        if conditions:
+            metadata["conditions"] = conditions
+
+        return json.dumps(metadata)
+
+    @staticmethod
+    def convert_to_dict(*, private_metadata):
+
+        return json.loads(private_metadata)
 
 
 def generate_review_input_modal_view(book_section, url: str):
@@ -285,7 +383,12 @@ def generate_review_input_modal_view(book_section, url: str):
     return view
 
 
-def generate_review_list_modal_view(review_contents_list: list[ReviewContents]):
+def generate_review_list_modal_view(
+    review_contents_list: list[ReviewContents],
+    private_metadata=None,
+    show_move_to_back=False,
+    show_move_to_next=True,
+):
     review_list = []
 
     for review_contents in review_contents_list:
@@ -390,7 +493,31 @@ def generate_review_list_modal_view(review_contents_list: list[ReviewContents]):
         review_list.append(review_post_item)
         review_list.append({"type": "divider"})
 
+    move_buttons = {
+        "type": "actions",
+        "elements": [],
+    }
+
+    if show_move_to_back:
+        move_buttons["elements"] = [
+            {  # type: ignore
+                "type": "button",
+                "text": {"type": "plain_text", "text": "前へ"},
+                "action_id": "move_to_back",
+            }
+        ]
+
+    if show_move_to_next:
+        move_buttons["elements"] = move_buttons["elements"] + [  # type: ignore
+            {
+                "type": "button",
+                "text": {"type": "plain_text", "text": "次へ"},
+                "action_id": "move_to_next",
+            }
+        ]
+
     return {
+        "private_metadata": private_metadata or "[]",
         "type": "modal",
         "callback_id": "update_review_list_view",
         "title": {"type": "plain_text", "text": "Bee"},
@@ -499,5 +626,6 @@ def generate_review_list_modal_view(review_contents_list: list[ReviewContents]):
             },
             {"type": "divider"},
         ]
-        + review_list,  # type: ignore
+        + review_list  # type: ignore
+        + [move_buttons],  # type: ignore
     }
