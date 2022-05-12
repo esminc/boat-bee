@@ -235,7 +235,6 @@ def review_controller(app):  # pylint: disable=too-many-statements
             keys=reviews["keys"], conditions=scores
         )
 
-        # TODO: ここで検索条件をprivate_metadataに格納する
         view = generate_review_list_modal_view(
             reviews["items"],
             private_metadata=private_metadata,
