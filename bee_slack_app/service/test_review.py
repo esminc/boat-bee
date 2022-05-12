@@ -9,46 +9,49 @@ from bee_slack_app.service.review import get_reviews
 
 
 def test_レビューを取得できること(monkeypatch):
-    def mock_book_review_repository_get(_, __):
-        return [
-            {
-                "user_id": "user_id_0",
-                "book_title": "仕事ではじめる機械学習",
-                "isbn": "12345",
-                "score_for_me": "1",
-                "score_for_others": "5",
-                "review_comment": "とても良いです",
-                "book_image_url": "dummy_book_image_url_0",
-                "book_author": "dummy_book_author_0",
-                "book_url": "dummy_book_url_0",
-            },
-            {
-                "user_id": "user_id_1",
-                "book_title": "仕事ではじめる機械学習",
-                "isbn": "12345",
-                "score_for_me": "3",
-                "score_for_others": "4",
-                "review_comment": "まあまあです",
-                "book_image_url": "dummy_book_image_url_1",
-                "book_author": "dummy_book_author_1",
-                "book_url": "dummy_book_url_1",
-            },
-            {
-                "user_id": "user_id_2",
-                "book_title": "Python チュートリアル",
-                "isbn": "67890",
-                "score_for_me": "2",
-                "score_for_others": "4",
-                "review_comment": "そこそこです",
-                "book_image_url": "dummy_book_image_url_2",
-                "book_author": "dummy_book_author_2",
-                "book_url": "dummy_book_url_2",
-            },
-        ]
+    def mock_book_review_repository_get(_, **__):
+        return {
+            "items": [
+                {
+                    "user_id": "user_id_0",
+                    "book_title": "仕事ではじめる機械学習",
+                    "isbn": "12345",
+                    "score_for_me": "1",
+                    "score_for_others": "5",
+                    "review_comment": "とても良いです",
+                    "book_image_url": "dummy_book_image_url_0",
+                    "book_author": "dummy_book_author_0",
+                    "book_url": "dummy_book_url_0",
+                },
+                {
+                    "user_id": "user_id_1",
+                    "book_title": "仕事ではじめる機械学習",
+                    "isbn": "12345",
+                    "score_for_me": "3",
+                    "score_for_others": "4",
+                    "review_comment": "まあまあです",
+                    "book_image_url": "dummy_book_image_url_1",
+                    "book_author": "dummy_book_author_1",
+                    "book_url": "dummy_book_url_1",
+                },
+                {
+                    "user_id": "user_id_2",
+                    "book_title": "Python チュートリアル",
+                    "isbn": "67890",
+                    "score_for_me": "2",
+                    "score_for_others": "4",
+                    "review_comment": "そこそこです",
+                    "book_image_url": "dummy_book_image_url_2",
+                    "book_author": "dummy_book_author_2",
+                    "book_url": "dummy_book_url_2",
+                },
+            ],
+            "last_key": None,
+        }
 
     monkeypatch.setattr(BookReview, "get", mock_book_review_repository_get)
 
-    reviews = get_reviews(getLogger())
+    reviews = get_reviews(logger=getLogger(), limit=10, keys=[])["items"]
 
     assert len(reviews) == 3
 
@@ -89,6 +92,6 @@ def test_repositoryの処理でエラーが発生した場合Noneを返すこと
 
     monkeypatch.setattr(BookReview, "get", mock_book_review_repository_get)
 
-    reviews = get_reviews(getLogger())
+    reviews = get_reviews(logger=getLogger(), limit=10, keys=[])
 
     assert reviews is None

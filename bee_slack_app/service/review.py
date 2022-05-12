@@ -1,5 +1,5 @@
 import datetime
-from typing import Any, Optional, TypedDict
+from typing import Any, Optional, TypedDict, Union
 
 from bee_slack_app.model.review import ReviewContents
 from bee_slack_app.repository.book_review import BookReview
@@ -12,11 +12,74 @@ class GetConditions(TypedDict):
     score_for_others: Optional[str]
 
 
+class ReviewItemKey(TypedDict):
+    user_id: str
+    isbn: str
+
+
+class GetResponse(TypedDict):  # pylint: disable=duplicate-code
+    items: list[ReviewContents]
+    keys: list[Union[ReviewItemKey, str]]
+
+
 def get_reviews(
-    logger: Any, conditions: Optional[GetConditions] = None
-) -> Optional[list[ReviewContents]]:
+    *,
+    logger: Any,
+    conditions: Optional[GetConditions] = None,
+    limit: int,
+    keys: list[ReviewItemKey],
+) -> Optional[GetResponse]:
+    """
+    次のlimit分のレビューを取得する
+
+    Returns
+        items: 取得したレビューのリスト
+        keys: 更新された読み込みキーのリスト。これ以上アイテムが存在しない場合は、リストの最後の要素が"end"となる。
+    """
     try:
-        return book_review_repository.get(conditions)
+
+        start_key = keys[-1] if len(keys) > 0 else None
+
+        reviews = book_review_repository.get(
+            conditions=conditions, limit=limit, start_key=start_key
+        )
+
+        last_key = [reviews["last_key"]] if reviews["last_key"] else ["end"]  # type: ignore
+
+        return {"items": reviews["items"], "keys": keys + last_key}  # type: ignore
+
+    except Exception:  # pylint: disable=broad-except
+        logger.exception("Failed to get data.")
+        return None
+
+
+def get_reviews_before(
+    *,
+    logger: Any,
+    conditions: Optional[GetConditions] = None,
+    limit: int,
+    keys: list[ReviewItemKey],
+) -> Optional[GetResponse]:
+    """
+    前のlimit分のレビューを取得する
+
+    Returns
+        items: 取得したレビューのリスト
+        keys: 更新された読み込みキーのリスト
+    """
+    try:
+        is_move_to_first = len(keys) < 3
+
+        start_key = None if is_move_to_first else keys[-3]
+
+        reviews = book_review_repository.get(
+            conditions=conditions, limit=limit, start_key=start_key
+        )
+
+        return {
+            "items": reviews["items"],
+            "keys": [reviews["last_key"]] if is_move_to_first else keys[:-1],  # type: ignore
+        }
 
     except Exception:  # pylint: disable=broad-except
         logger.exception("Failed to get data.")
