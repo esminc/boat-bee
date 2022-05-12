@@ -16,26 +16,6 @@ def book_search_controller(app):  # pylint: disable=too-many-statements
             "action_id_book_title"
         ]["value"]
 
-        if title is None:
-            ack(
-                response_action="push",
-                view={
-                    "type": "modal",
-                    "title": {"type": "plain_text", "text": "エラー", "emoji": True},
-                    "close": {"type": "plain_text", "text": "OK", "emoji": True},
-                    "blocks": [
-                        {
-                            "type": "section",
-                            "text": {
-                                "type": "plain_text",
-                                "text": "本のタイトルが未入力です",
-                                "emoji": True,
-                            },
-                        },
-                    ],
-                },
-            )
-            return
         book_results = search_book_by_title(title)
 
         if len(book_results) == 0:
