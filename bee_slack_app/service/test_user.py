@@ -3,7 +3,7 @@
 from logging import getLogger
 
 from bee_slack_app.repository.user_repository import UserRepository
-from bee_slack_app.service.user import get_user, get_all_user
+from bee_slack_app.service.user import get_all_user, get_user
 
 
 def test_ユーザー情報を取得できること(monkeypatch):
@@ -89,6 +89,19 @@ def test_全てのユーザー情報を取得できること(monkeypatch):
 def test_全取得ではユーザー情報が無い場合に空のリストを返すこと(monkeypatch):
     def mock_user_repository_get_all(_):
         return []
+
+    monkeypatch.setattr(UserRepository, "get_all", mock_user_repository_get_all)
+
+    users = get_all_user(getLogger())
+
+    assert len(users) == 0
+
+
+def test_全取得ではrepositoryの処理でエラーが発生した場合空のリストを返すこと(
+    monkeypatch,
+):  # pylint: disable=invalid-name
+    def mock_user_repository_get_all(_):
+        raise Exception("dummy exception")
 
     monkeypatch.setattr(UserRepository, "get_all", mock_user_repository_get_all)
 

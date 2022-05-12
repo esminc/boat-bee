@@ -40,7 +40,7 @@ def get_all_user(logger: Any) -> list[User]:
 
     except Exception:  # pylint: disable=broad-except
         logger.exception("Failed to get data.")
-        return None
+        return []
 
 
 def add_user(logger: Any, user: User) -> None:
