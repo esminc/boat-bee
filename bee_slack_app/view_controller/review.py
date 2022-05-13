@@ -7,7 +7,7 @@ from bee_slack_app.utils import datetime
 
 
 def review_controller(app):  # pylint: disable=too-many-statements
-    REVIEW_ITEM_LIMIT = 10
+    review_item_limit = 10
 
     @app.action("post_review")
     def open_book_search_modal(ack, body, client, logger):
@@ -131,7 +131,7 @@ def review_controller(app):  # pylint: disable=too-many-statements
         # コマンドのリクエストを確認
         ack()
 
-        reviews = get_reviews(logger=logger, limit=REVIEW_ITEM_LIMIT, keys=[])
+        reviews = get_reviews(logger=logger, limit=review_item_limit, keys=[])
 
         metadata_str = ReviewPrivateMetadataConvertor.convert_to_private_metadata(
             keys=reviews["keys"]
@@ -160,7 +160,7 @@ def review_controller(app):  # pylint: disable=too-many-statements
         conditions = metadata_dict.get("conditions")
 
         reviews = get_reviews(
-            logger=logger, limit=REVIEW_ITEM_LIMIT, keys=keys, conditions=conditions
+            logger=logger, limit=review_item_limit, keys=keys, conditions=conditions
         )
 
         metadata_str = ReviewPrivateMetadataConvertor.convert_to_private_metadata(
@@ -195,7 +195,7 @@ def review_controller(app):  # pylint: disable=too-many-statements
         conditions = metadata_dict.get("conditions")
 
         reviews = get_reviews_before(
-            logger=logger, limit=REVIEW_ITEM_LIMIT, keys=keys, conditions=conditions
+            logger=logger, limit=review_item_limit, keys=keys, conditions=conditions
         )
 
         metadata_str = ReviewPrivateMetadataConvertor.convert_to_private_metadata(
@@ -233,7 +233,7 @@ def review_controller(app):  # pylint: disable=too-many-statements
                 scores[label] = score
 
         reviews = get_reviews(
-            logger=logger, conditions=scores, limit=REVIEW_ITEM_LIMIT, keys=[]
+            logger=logger, conditions=scores, limit=review_item_limit, keys=[]
         )
 
         private_metadata = ReviewPrivateMetadataConvertor.convert_to_private_metadata(
