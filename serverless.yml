@@ -54,6 +54,8 @@ custom:
         sources:
           - table: ${self:provider.environment.DYNAMODB_TABLE}-review
             sources: [database/seed/review.json]
+          - table: ${self:provider.environment.DYNAMODB_TABLE}-user
+            sources: [database/seed/user.json]
 
 resources: # CloudFormation template syntax from here on.
   Resources:
