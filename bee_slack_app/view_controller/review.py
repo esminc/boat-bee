@@ -172,8 +172,11 @@ def review_controller(app):  # pylint: disable=too-many-statements
             keys=reviews["keys"], conditions=conditions
         )
 
+        users = get_all_user(logger)
+
         view = generate_review_list_modal_view(
             reviews["items"],
+            users,
             private_metadata=metadata_str,
             show_move_to_back=True,
             show_move_to_next=reviews["keys"][-1] != "end",
@@ -207,8 +210,11 @@ def review_controller(app):  # pylint: disable=too-many-statements
             keys=reviews["keys"], conditions=conditions
         )
 
+        users = get_all_user(logger)
+
         view = generate_review_list_modal_view(
             reviews["items"],
+            users,
             private_metadata=metadata_str,
             show_move_to_back=not is_move_to_first,
         )
