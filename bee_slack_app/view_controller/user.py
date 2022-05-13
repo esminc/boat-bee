@@ -14,8 +14,13 @@ def user_controller(app):
         # ユーザー情報の取得
         user: Optional[User] = get_user(logger, user_id)
 
-        # slackアカウントから名前（Display Name）を取得する
-        user_name = client.users_info(user=user_id)["user"]["profile"]["display_name"]
+        # slackアカウントから名前（Display Name）Display Nameを取得する
+        # display_nameを設定していない場合は、設定必須のreal_nameをユーザ名とすることで、対応する
+        user_info = client.users_info(user=user_id)
+        user_name = (
+            user_info["user"]["profile"]["display_name"]
+            or user_info["user"]["profile"]["real_name"]
+        )
 
         modal_view = generate_user_input_modal_view(user_name, user)
 
