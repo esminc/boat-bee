@@ -16,71 +16,50 @@ def book_search_controller(app):  # pylint: disable=too-many-statements
             "action_id_book_title"
         ]["value"]
 
-        if title is None:
+        book_results = search_book_by_title(title)
+
+        if len(book_results) == 0:
             ack(
                 response_action="push",
                 view={
                     "type": "modal",
-                    "title": {"type": "plain_text", "text": "エラー", "emoji": True},
+                    "title": {"type": "plain_text", "text": "検索結果", "emoji": True},
                     "close": {"type": "plain_text", "text": "OK", "emoji": True},
                     "blocks": [
                         {
                             "type": "section",
                             "text": {
                                 "type": "plain_text",
-                                "text": "本のタイトルが未入力です",
+                                "text": "検索結果が0件でした",
                                 "emoji": True,
                             },
                         },
                     ],
                 },
             )
+            return
+        book_result_summary = []
 
-        else:
-            book_results = search_book_by_title(title)
+        for book_result in book_results:
 
-            if len(book_results) == 0:
-                ack(
-                    response_action="push",
-                    view={
-                        "type": "modal",
-                        "title": {"type": "plain_text", "text": "検索結果", "emoji": True},
-                        "close": {"type": "plain_text", "text": "OK", "emoji": True},
-                        "blocks": [
-                            {
-                                "type": "section",
-                                "text": {
-                                    "type": "plain_text",
-                                    "text": "検索結果が0件でした",
-                                    "emoji": True,
-                                },
-                            },
-                        ],
-                    },
-                )
-            else:
-                book_result_summary = []
+            # ボタン選択時に書籍のデータを再利用するため情報を保持しておく
+            # とりあえずはTitleとISBNを取得できれば良い
+            # private_metadataに格納できる情報が3000文字なので最小限にする
+            book_info = {
+                "isbn": book_result["isbn"],
+                "title": book_result["title"],
+            }
+            book_result_summary.append(book_info)
 
-                for book_result in book_results:
+        # private_metadataに格納するために文字列に変換する
+        private_metadata = json.dumps(book_result_summary)
 
-                    # ボタン選択時に書籍のデータを再利用するため情報を保持しておく
-                    # とりあえずはTitleとISBNを取得できれば良い
-                    # private_metadataに格納できる情報が3000文字なので最小限にする
-                    book_info = {
-                        "isbn": book_result["isbn"],
-                        "title": book_result["title"],
-                    }
-                    book_result_summary.append(book_info)
-
-                # private_metadataに格納するために文字列に変換する
-                private_metadata = json.dumps(book_result_summary)
-
-                ack(
-                    response_action="push",
-                    view=generate_search_result_model_view(
-                        book_results=book_results, private_metadata=private_metadata
-                    ),
-                )
+        ack(
+            response_action="push",
+            view=generate_search_result_model_view(
+                book_results=book_results, private_metadata=private_metadata
+            ),
+        )
 
     def generate_search_result_model_view(
         book_results: list[SearchedBook],
