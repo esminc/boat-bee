@@ -1,8 +1,8 @@
-import datetime
 from typing import Any, Optional, TypedDict, Union
 
 from bee_slack_app.model.review import ReviewContents
 from bee_slack_app.repository.book_review import BookReview
+from bee_slack_app.utils import datetime
 
 book_review_repository = BookReview()
 
@@ -96,9 +96,7 @@ def post_review(logger: Any, review_contents: ReviewContents) -> None:
                 "score_for_me": review_contents["score_for_me"],
                 "score_for_others": review_contents["score_for_others"],
                 "review_comment": review_contents["review_comment"],
-                "updated_at": datetime.datetime.now(
-                    datetime.timezone(datetime.timedelta(hours=9))
-                ).isoformat(timespec="seconds"),
+                "updated_at": datetime.now(),
                 "book_image_url": review_contents["book_image_url"],
                 "book_author": review_contents["book_author"],
                 "book_url": review_contents["book_url"],
