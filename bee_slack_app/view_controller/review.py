@@ -1,12 +1,10 @@
 import json
 
 from bee_slack_app.model.review import ReviewContents
-from bee_slack_app.service.review import get_reviews, get_reviews_before, post_review
-from bee_slack_app.service.user import get_user
-from bee_slack_app.utils import datetime
 from bee_slack_app.model.user import User
-from bee_slack_app.service.review import get_reviews, post_review
+from bee_slack_app.service.review import get_reviews, get_reviews_before, post_review
 from bee_slack_app.service.user import get_all_user, get_user
+from bee_slack_app.utils import datetime
 
 
 def review_controller(app):  # pylint: disable=too-many-statements
