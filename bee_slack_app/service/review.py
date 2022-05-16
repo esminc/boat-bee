@@ -57,22 +57,6 @@ def get_reviews(
         return None
 
 
-def fill_user_name(review_contents_list: list[ReviewContents]) -> None:
-    # 対応するユーザ情報からユーザ名を取得してレビュー情報に追加する
-    users = user_repository.get_all()
-    for review_contents in review_contents_list:
-        user_candidate = [
-            user for user in users if user["user_id"] == review_contents["user_id"]
-        ]
-        if len(user_candidate) == 1:
-            user_name = user_candidate[0]["user_name"]
-        else:
-            # 対応するユーザ情報が存在しない場合はユーザIDを返す
-            user_name = review_contents["user_id"]
-
-        review_contents["user_name"] = user_name
-
-
 def get_reviews_before(
     *,
     logger: Any,
@@ -106,6 +90,22 @@ def get_reviews_before(
     except Exception:  # pylint: disable=broad-except
         logger.exception("Failed to get data.")
         return None
+
+
+def fill_user_name(review_contents_list: list[ReviewContents]) -> None:
+    # 対応するユーザ情報からユーザ名を取得してレビュー情報に追加する
+    users = user_repository.get_all()
+    for review_contents in review_contents_list:
+        user_candidate = [
+            user for user in users if user["user_id"] == review_contents["user_id"]
+        ]
+        if len(user_candidate) == 1:
+            user_name = user_candidate[0]["user_name"]
+        else:
+            # 対応するユーザ情報が存在しない場合はユーザIDを返す
+            user_name = review_contents["user_id"]
+
+        review_contents["user_name"] = user_name
 
 
 def post_review(logger: Any, review_contents: ReviewContents) -> None:
