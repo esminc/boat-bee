@@ -120,6 +120,77 @@ class TestUserRepository:
 
         assert user is None
 
+    def test_複数のユーザー情報を取得できること(self):
+        item = {
+            "user_id": "test_user_id_0",
+            "user_name": "永和　太郎",
+            "department": "ＩＴＳ事業部",
+            "job_type": "技術職",
+            "age_range": "20",
+            "updated_at": "2022-04-01T00:00:00+09:00",
+        }
+
+        self.table.put_item(Item=item)
+
+        item = {
+            "user_id": "test_user_id_1",
+            "user_name": "問屋町　花子",
+            "department": "ＩＴＳ事業部",
+            "job_type": "管理職",
+            "age_range": "50",
+            "updated_at": "2022-04-11T09:23:04+09:00",
+        }
+
+        self.table.put_item(Item=item)
+
+        item = {
+            "user_id": "test_user_id_2",
+            "user_name": "北ノ庄　肇",
+            "department": "金融システム事業部",
+            "job_type": "営業職",
+            "age_range": "30",
+            "updated_at": "2022-05-02T16:43:25+09:00",
+        }
+
+        self.table.put_item(Item=item)
+
+        user_repository = UserRepository()
+
+        users = user_repository.get_all()
+
+        assert len(users) == 3
+
+        assert users[0]["user_id"] == "test_user_id_0"
+        assert users[0]["user_name"] == "永和　太郎"
+        assert users[0]["department"] == "ＩＴＳ事業部"
+        assert users[0]["job_type"] == "技術職"
+        assert users[0]["age_range"] == "20"
+        assert users[0]["updated_at"] == "2022-04-01T00:00:00+09:00"
+
+        assert users[1]["user_id"] == "test_user_id_1"
+        assert users[1]["user_name"] == "問屋町　花子"
+        assert users[1]["department"] == "ＩＴＳ事業部"
+        assert users[1]["job_type"] == "管理職"
+        assert users[1]["age_range"] == "50"
+        assert users[1]["updated_at"] == "2022-04-11T09:23:04+09:00"
+
+        assert users[2]["user_id"] == "test_user_id_2"
+        assert users[2]["user_name"] == "北ノ庄　肇"
+        assert users[2]["department"] == "金融システム事業部"
+        assert users[2]["job_type"] == "営業職"
+        assert users[2]["age_range"] == "30"
+        assert users[2]["updated_at"] == "2022-05-02T16:43:25+09:00"
+
+    def test_ユーザー情報が0件の場合に空のListを返すこと(self):  # pylint: disable=invalid-name
+        # DBが空であることを確認
+        response = self.table.scan()
+        assert len(response["Items"]) == 0
+
+        user_repository = UserRepository()
+        users = user_repository.get_all()
+
+        assert len(users) == 0
+
     def test_初期状態から最初のユーザー情報を作成できること(self):
         response = self.table.query(
             KeyConditionExpression=boto3.dynamodb.conditions.Key("user_id").eq(
