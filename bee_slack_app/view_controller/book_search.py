@@ -1,8 +1,12 @@
 import json
 
-from bee_slack_app.model.search import SearchedBook
 from bee_slack_app.service.book_search import search_book_by_title
-from bee_slack_app.view_controller.review import generate_review_input_modal_view
+from bee_slack_app.view.book_search import (
+    book_search_result_modal,
+    book_search_result_selected_modal,
+)
+from bee_slack_app.view.common import simple_modal
+from bee_slack_app.view.post_review import post_review_modal
 
 
 # TODO: disable=too-many-statementsを取り消す
@@ -21,21 +25,7 @@ def book_search_controller(app):  # pylint: disable=too-many-statements
         if len(book_results) == 0:
             ack(
                 response_action="push",
-                view={
-                    "type": "modal",
-                    "title": {"type": "plain_text", "text": "検索結果", "emoji": True},
-                    "close": {"type": "plain_text", "text": "OK", "emoji": True},
-                    "blocks": [
-                        {
-                            "type": "section",
-                            "text": {
-                                "type": "plain_text",
-                                "text": "検索結果が0件でした",
-                                "emoji": True,
-                            },
-                        },
-                    ],
-                },
+                view=simple_modal(title="検索結果", text="検索結果が0件でした"),
             )
             return
         book_result_summary = []
@@ -56,91 +46,12 @@ def book_search_controller(app):  # pylint: disable=too-many-statements
 
         ack(
             response_action="push",
-            view=generate_search_result_model_view(
-                book_results=book_results, private_metadata=private_metadata
+            view=book_search_result_modal(
+                callback_id="view_book_search",
+                private_metadata=private_metadata,
+                book_results=book_results,
             ),
         )
-
-    def generate_search_result_model_view(
-        book_results: list[SearchedBook],
-        private_metadata: str,
-    ):
-        """
-        検索結果画面の作成を行う
-        """
-
-        blocks = []
-        blocks.append(
-            {
-                "type": "image",
-                "image_url": "https://developers.google.com/maps/documentation/images/powered_by_google_on_white.png",
-                "alt_text": "",
-            },
-        )
-        for book in book_results:
-            blocks.extend(generate_book_block(book))
-
-        view = {
-            "type": "modal",
-            "callback_id": "view_book_search",
-            "private_metadata": private_metadata,
-            "title": {
-                "type": "plain_text",
-                "text": "書籍の検索結果",
-                "emoji": True,
-            },
-            "close": {"type": "plain_text", "text": "戻る", "emoji": True},
-            "submit": {"type": "plain_text", "text": "決定", "emoji": True},
-            "blocks": blocks,
-        }
-
-        return view
-
-    def generate_book_block(book: SearchedBook):
-        # TODO: 暫定で適当な画像をデフォルトに設定、S3に画像を置くようになったら自前の画像に差し替える
-        dummy_url = "https://pbs.twimg.com/profile_images/625633822235693056/lNGUneLX_400x400.jpg"
-
-        author = ", ".join(book["author"])
-        image_url = book["image_url"] if book["image_url"] is not None else dummy_url
-
-        block = [
-            {"type": "divider"},
-            {
-                "type": "section",
-                "text": {
-                    "type": "mrkdwn",
-                    "text": f"*{book['title']}*\n{author}\nISBN-{book['isbn']}",
-                },
-                "accessory": {
-                    "type": "image",
-                    "image_url": image_url,
-                    "alt_text": "Windsor Court Hotel thumbnail",
-                },
-            },
-            {
-                "type": "actions",
-                "elements": [
-                    {
-                        "type": "button",
-                        "text": {"type": "plain_text", "text": "選択", "emoji": True},
-                        "value": book["isbn"],
-                        "action_id": "select_buttons-action",
-                    },
-                    {
-                        "type": "button",
-                        "text": {
-                            "type": "plain_text",
-                            "text": "Google Booksで見る",
-                            "emoji": True,
-                        },
-                        "url": book["google_books_url"],
-                        "action_id": "google_books_buttons-action",
-                    },
-                ],
-            },
-        ]
-
-        return block
 
     @app.action("select_buttons-action")
     def handle_book_selected(ack, body, _, client):
@@ -165,101 +76,17 @@ def book_search_controller(app):  # pylint: disable=too-many-statements
 
         # ボタンの選択状態を更新する
         blocks = body["view"]["blocks"]
-        new_blocks = [
-            x
-            if x["type"] != "actions"
-            else selected_book(x)
-            if x["elements"][0]["value"] == isbn
-            else unselected_book(x)
-            for x in blocks
-        ]
 
-        # Blocksで渡ってくるimageには余計なパラメータが付与されているため一旦削除して付け直す
-        new_blocks = [x for x in new_blocks if x["type"] != "image"]
-        new_blocks.insert(
-            0,
-            {
-                "type": "image",
-                "image_url": "https://developers.google.com/maps/documentation/images/powered_by_google_on_white.png",
-                "alt_text": "",
-            },
-        )
-
-        new_view = {
-            "type": "modal",
-            "callback_id": "view_book_search",
-            "private_metadata": json.dumps(search_result),
-            "title": {
-                "type": "plain_text",
-                "text": "書籍の検索結果",
-                "emoji": True,
-            },
-            "close": {"type": "plain_text", "text": "戻る", "emoji": True},
-            "submit": {"type": "plain_text", "text": "選択", "emoji": True},
-            "blocks": new_blocks,
-        }
         client.views_update(
             view_id=body["container"]["view_id"],
-            view=new_view,
+            view=book_search_result_selected_modal(
+                callback_id="view_book_search",
+                private_metadata=json.dumps(search_result),
+                book_search_result_modal_blocks=blocks,
+                isbn=isbn,
+            ),
         )
         ack()
-
-    def selected_book(item):
-        """
-        ボタンが選択された本のblockを生成する
-        """
-        return {
-            "type": "actions",
-            "elements": [
-                {
-                    "type": "button",
-                    "text": {
-                        "type": "plain_text",
-                        "text": ":hand:選択中です",
-                        "emoji": True,
-                    },
-                    "value": item["elements"][0]["value"],
-                    "action_id": "select_buttons-action",
-                    "style": "primary",
-                },
-                {
-                    "type": "button",
-                    "text": {
-                        "type": "plain_text",
-                        "text": "Google Booksで見る",
-                        "emoji": True,
-                    },
-                    "url": item["elements"][1]["url"],
-                    "action_id": "google_books_buttons-action",
-                },
-            ],
-        }
-
-    def unselected_book(item):
-        """
-        ボタンが選択されていない本のblockを生成する
-        """
-        return {
-            "type": "actions",
-            "elements": [
-                {
-                    "type": "button",
-                    "text": {"type": "plain_text", "text": "選択", "emoji": True},
-                    "value": item["elements"][0]["value"],
-                    "action_id": "select_buttons-action",
-                },
-                {
-                    "type": "button",
-                    "text": {
-                        "type": "plain_text",
-                        "text": "Google Booksで見る",
-                        "emoji": True,
-                    },
-                    "url": item["elements"][1]["url"],
-                    "action_id": "google_books_buttons-action",
-                },
-            ],
-        }
 
     @app.action("google_books_buttons-action")
     def handle_google_books_selected(ack, body, _, logger):
@@ -288,21 +115,7 @@ def book_search_controller(app):  # pylint: disable=too-many-statements
         if len(books) == 0:
             ack(
                 response_action="push",
-                view={
-                    "type": "modal",
-                    "title": {"type": "plain_text", "text": "エラー", "emoji": True},
-                    "close": {"type": "plain_text", "text": "OK", "emoji": True},
-                    "blocks": [
-                        {
-                            "type": "section",
-                            "text": {
-                                "type": "plain_text",
-                                "text": "本が選択されていません",
-                                "emoji": True,
-                            },
-                        },
-                    ],
-                },
+                view=simple_modal(title="エラー", text="本が選択されていません"),
             )
             return
 
@@ -323,25 +136,15 @@ def book_search_controller(app):  # pylint: disable=too-many-statements
         if not selected_book_section or not url:
             ack(
                 response_action="push",
-                view={
-                    "type": "modal",
-                    "title": {"type": "plain_text", "text": "エラー", "emoji": True},
-                    "close": {"type": "plain_text", "text": "OK", "emoji": True},
-                    "blocks": [
-                        {
-                            "type": "section",
-                            "text": {
-                                "type": "plain_text",
-                                "text": "本のデータ取得でエラーが発生しました",
-                                "emoji": True,
-                            },
-                        },
-                    ],
-                },
+                view=simple_modal(title="エラー", text="本のデータ取得でエラーが発生しました"),
             )
             return
 
         ack(
             response_action="push",
-            view=generate_review_input_modal_view(selected_book_section, url),
+            view=post_review_modal(
+                callback_id="view_1",
+                book_section=selected_book_section,
+                url=url,
+            ),
         )

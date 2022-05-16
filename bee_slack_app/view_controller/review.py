@@ -3,7 +3,9 @@ import json
 from bee_slack_app.model.review import ReviewContents
 from bee_slack_app.service.review import get_reviews, get_reviews_before, post_review
 from bee_slack_app.service.user import get_user
-from bee_slack_app.utils import datetime
+from bee_slack_app.view.common import simple_modal
+from bee_slack_app.view.post_review import search_book_to_review_modal
+from bee_slack_app.view.read_review import review_list_modal
 
 
 def review_controller(app):  # pylint: disable=too-many-statements
@@ -20,24 +22,9 @@ def review_controller(app):  # pylint: disable=too-many-statements
         if not get_user(logger, body["user"]["id"]):
             client.views_open(
                 trigger_id=body["trigger_id"],
-                view={
-                    "type": "modal",
-                    "title": {
-                        "type": "plain_text",
-                        "text": "プロフィールを入力してください",
-                        "emoji": True,
-                    },
-                    "close": {"type": "plain_text", "text": "OK", "emoji": True},
-                    "blocks": [
-                        {
-                            "type": "section",
-                            "text": {
-                                "type": "mrkdwn",
-                                "text": "レビューを投稿するには、プロフィールの入力が必要です :bow:",
-                            },
-                        },
-                    ],
-                },
+                view=simple_modal(
+                    title="プロフィールを入力してください", text="レビューを投稿するには、プロフィールの入力が必要です :bow:"
+                ),
             )
             return
 
@@ -46,33 +33,7 @@ def review_controller(app):  # pylint: disable=too-many-statements
             view_id=body["view"]["id"],
             hash=body["view"]["hash"],
             # ビューのペイロード
-            view={
-                "type": "modal",
-                "callback_id": "book_search_modal",
-                "title": {"type": "plain_text", "text": "レビューする本を検索する"},
-                "submit": {"type": "plain_text", "text": "書籍の検索"},
-                "blocks": [
-                    {
-                        "type": "input",
-                        "block_id": "input_book_title",
-                        "label": {"type": "plain_text", "text": "タイトル"},
-                        "element": {
-                            "type": "plain_text_input",
-                            "action_id": "action_id_book_title",
-                            "placeholder": {
-                                "type": "plain_text",
-                                "text": "本のタイトルを入力してください",
-                                "emoji": True,
-                            },
-                        },
-                    },
-                    {
-                        "type": "image",
-                        "image_url": "https://developers.google.com/maps/documentation/images/powered_by_google_on_white.png",
-                        "alt_text": "",
-                    },
-                ],
-            },
+            view=search_book_to_review_modal(callback_id="book_search_modal"),
         )
 
     # view_submission リクエストを処理
@@ -137,8 +98,10 @@ def review_controller(app):  # pylint: disable=too-many-statements
             keys=reviews["keys"]
         )
 
-        view = generate_review_list_modal_view(
-            reviews["items"],
+        view = review_list_modal(
+            callback_id="view_1",
+            search_button_action_id="search_review",
+            review_contents_list=reviews["items"],
             private_metadata=metadata_str,
             show_move_to_next=bool(reviews["keys"]),
         )
@@ -167,8 +130,10 @@ def review_controller(app):  # pylint: disable=too-many-statements
             keys=reviews["keys"], conditions=conditions
         )
 
-        view = generate_review_list_modal_view(
-            reviews["items"],
+        view = review_list_modal(
+            callback_id="view_1",
+            search_button_action_id="search_review",
+            review_contents_list=reviews["items"],
             private_metadata=metadata_str,
             show_move_to_back=True,
             show_move_to_next=reviews["keys"][-1] != "end",
@@ -202,8 +167,10 @@ def review_controller(app):  # pylint: disable=too-many-statements
             keys=reviews["keys"], conditions=conditions
         )
 
-        view = generate_review_list_modal_view(
-            reviews["items"],
+        view = review_list_modal(
+            callback_id="view_1",
+            search_button_action_id="search_review",
+            review_contents_list=reviews["items"],
             private_metadata=metadata_str,
             show_move_to_back=not is_move_to_first,
         )
@@ -240,8 +207,10 @@ def review_controller(app):  # pylint: disable=too-many-statements
             keys=reviews["keys"], conditions=scores
         )
 
-        view = generate_review_list_modal_view(
-            reviews["items"],
+        view = review_list_modal(
+            callback_id="view_1",
+            search_button_action_id="search_review",
+            review_contents_list=reviews["items"],
             private_metadata=private_metadata,
             show_move_to_next=bool(reviews["keys"]),
         )
@@ -280,326 +249,3 @@ class ReviewPrivateMetadataConvertor:
     def convert_to_dict(*, private_metadata):
 
         return json.loads(private_metadata)
-
-
-def generate_review_input_modal_view(book_section, url: str):
-    private_metadata = json.dumps({"url": url})
-
-    view = {
-        "type": "modal",
-        # ビューの識別子
-        "callback_id": "view_1",
-        "private_metadata": private_metadata,
-        "title": {"type": "plain_text", "text": "Bee"},
-        "submit": {"type": "plain_text", "text": "送信"},
-        "close": {"type": "plain_text", "text": "戻る", "emoji": True},
-        "blocks": [
-            {
-                "type": "image",
-                "image_url": "https://developers.google.com/maps/documentation/images/powered_by_google_on_white.png",
-                "alt_text": "",
-            },
-            book_section,
-            {
-                "type": "input",
-                "block_id": "input_score_for_me",
-                "label": {"type": "plain_text", "text": "自分にとっての評価"},
-                "element": {
-                    "type": "static_select",
-                    "action_id": "action_id_score_for_me",
-                    "placeholder": {
-                        "type": "plain_text",
-                        "text": "選択してください",
-                        "emoji": True,
-                    },
-                    "options": [
-                        {
-                            "value": "5",
-                            "text": {"type": "plain_text", "text": "とても良い"},
-                        },
-                        {
-                            "value": "4",
-                            "text": {"type": "plain_text", "text": "良い"},
-                        },
-                        {
-                            "value": "3",
-                            "text": {"type": "plain_text", "text": "普通"},
-                        },
-                        {
-                            "value": "2",
-                            "text": {"type": "plain_text", "text": "悪い"},
-                        },
-                        {
-                            "value": "1",
-                            "text": {"type": "plain_text", "text": "とても悪い"},
-                        },
-                    ],
-                },
-            },
-            {
-                "type": "input",
-                "block_id": "input_score_for_others",
-                "label": {"type": "plain_text", "text": "永和社員へのおすすめ度"},
-                "element": {
-                    "type": "static_select",
-                    "action_id": "action_id_score_for_others",
-                    "placeholder": {
-                        "type": "plain_text",
-                        "text": "選択してください",
-                        "emoji": True,
-                    },
-                    "options": [
-                        {
-                            "value": "5",
-                            "text": {"type": "plain_text", "text": "とてもおすすめ"},
-                        },
-                        {
-                            "value": "4",
-                            "text": {"type": "plain_text", "text": "おすすめ"},
-                        },
-                        {
-                            "value": "3",
-                            "text": {"type": "plain_text", "text": "普通"},
-                        },
-                        {
-                            "value": "2",
-                            "text": {"type": "plain_text", "text": "おすすめしない"},
-                        },
-                        {
-                            "value": "1",
-                            "text": {"type": "plain_text", "text": "絶対におすすめしない"},
-                        },
-                    ],
-                },
-            },
-            {
-                "type": "input",
-                "block_id": "input_comment",
-                "label": {"type": "plain_text", "text": "レビューコメント"},
-                "optional": True,
-                "element": {
-                    "type": "plain_text_input",
-                    "action_id": "action_id_comment",
-                    "multiline": True,
-                },
-            },
-        ],
-    }
-
-    return view
-
-
-def generate_review_list_modal_view(
-    review_contents_list: list[ReviewContents],
-    private_metadata=None,
-    show_move_to_back=False,
-    show_move_to_next=True,
-):
-    review_list = []
-
-    for review_contents in review_contents_list:
-
-        # 空はエラーになるため、ハイフンを設定
-        # TODO: 本来 review_comment が None になることは想定されていない（get_reviewsが返す型と不一致）なので、service側での修正が必要
-        review_comment = review_contents["review_comment"]
-        review_comment = (
-            review_comment
-            if review_comment is not None and len(review_comment) > 0
-            else "-"
-        )
-
-        review_list.append(
-            {
-                "type": "section",
-                "text": {
-                    "type": "mrkdwn",
-                    "text": f"*{review_contents['book_title']}*\n{review_contents['book_author']}\nISBN-{review_contents['isbn']}\n<{review_contents['book_url']}|Google Booksで見る>",
-                },
-                "accessory": {
-                    "type": "image",
-                    "image_url": review_contents["book_image_url"],
-                    "alt_text": review_contents["book_title"],
-                },
-            },
-        )
-
-        update_datetime = (
-            datetime.parse(review_contents["updated_at"])
-            if review_contents["updated_at"]
-            else "-"
-        )
-
-        review_list.append(
-            {
-                "type": "section",
-                "fields": [
-                    {
-                        "type": "mrkdwn",
-                        "text": f"*投稿者*\n{review_contents['user_id']}",
-                    },  # type:ignore
-                    {
-                        "type": "mrkdwn",
-                        "text": f"*投稿日時*\n{update_datetime}",
-                    },  # type:ignore
-                    {  # type:ignore
-                        "type": "mrkdwn",
-                        "text": f"*自分にとっての評価*\n{review_contents['score_for_me']}",
-                    },
-                    {  # type:ignore
-                        "type": "mrkdwn",
-                        "text": f"*永和社員へのおすすめ度*\n{review_contents['score_for_others']}",
-                    },
-                ],
-            }
-        )
-
-        review_list.append(
-            {
-                "type": "section",
-                "text": {"type": "mrkdwn", "text": f"*レビューコメント*\n\n{review_comment}"},
-            }
-        )
-
-        review_list.append({"type": "divider"})
-
-    move_buttons = {
-        "type": "actions",
-        "elements": [],
-    }
-
-    if show_move_to_back:
-        move_buttons["elements"] = [
-            {  # type: ignore
-                "type": "button",
-                "text": {"type": "plain_text", "text": "前へ"},
-                "action_id": "move_to_back",
-            }
-        ]
-
-    if show_move_to_next:
-        move_buttons["elements"] = move_buttons["elements"] + [  # type: ignore
-            {
-                "type": "button",
-                "text": {"type": "plain_text", "text": "次へ"},
-                "action_id": "move_to_next",
-            }
-        ]
-
-    return {
-        "private_metadata": private_metadata or "[]",
-        "type": "modal",
-        "callback_id": "update_review_list_view",
-        "title": {"type": "plain_text", "text": "Bee"},
-        "blocks": [
-            {
-                "type": "image",
-                "image_url": "https://developers.google.com/maps/documentation/images/powered_by_google_on_white.png",
-                "alt_text": "",
-            },
-            {"type": "section", "text": {"type": "mrkdwn", "text": "*検索条件*"}},
-            {
-                "block_id": "score_for_me_select_block",
-                "type": "section",
-                "text": {
-                    "type": "mrkdwn",
-                    "text": "自分にとっての評価",
-                },
-                "accessory": {
-                    "type": "static_select",
-                    "placeholder": {
-                        "type": "plain_text",
-                        "text": "未指定",
-                        "emoji": True,
-                    },
-                    "options": [
-                        {
-                            "value": "0",
-                            "text": {"type": "plain_text", "text": "未指定"},
-                        },
-                        {
-                            "value": "5",
-                            "text": {"type": "plain_text", "text": "とても良い"},
-                        },
-                        {
-                            "value": "4",
-                            "text": {"type": "plain_text", "text": "良い"},
-                        },
-                        {
-                            "value": "3",
-                            "text": {"type": "plain_text", "text": "普通"},
-                        },
-                        {
-                            "value": "2",
-                            "text": {"type": "plain_text", "text": "悪い"},
-                        },
-                        {
-                            "value": "1",
-                            "text": {"type": "plain_text", "text": "とても悪い"},
-                        },
-                    ],
-                    "action_id": "score_for_me_select_action",
-                },
-            },
-            {
-                "block_id": "score_for_others_select_block",
-                "type": "section",
-                "text": {
-                    "type": "mrkdwn",
-                    "text": "永和社員へのおすすめ度",
-                },
-                "accessory": {
-                    "type": "static_select",
-                    "placeholder": {
-                        "type": "plain_text",
-                        "text": "未指定",
-                        "emoji": True,
-                    },
-                    "options": [
-                        {
-                            "value": "0",
-                            "text": {"type": "plain_text", "text": "未指定"},
-                        },
-                        {
-                            "value": "5",
-                            "text": {"type": "plain_text", "text": "とてもおすすめ"},
-                        },
-                        {
-                            "value": "4",
-                            "text": {"type": "plain_text", "text": "おすすめ"},
-                        },
-                        {
-                            "value": "3",
-                            "text": {"type": "plain_text", "text": "普通"},
-                        },
-                        {
-                            "value": "2",
-                            "text": {"type": "plain_text", "text": "おすすめしない"},
-                        },
-                        {
-                            "value": "1",
-                            "text": {"type": "plain_text", "text": "絶対におすすめしない"},
-                        },
-                    ],
-                    "action_id": "score_for_others_select_action",
-                },
-            },
-            {
-                "type": "actions",
-                "elements": [
-                    {
-                        "type": "button",
-                        "text": {"type": "plain_text", "text": "検索"},
-                        "action_id": "search_review",
-                    },
-                ],
-            },
-            {"type": "section", "text": {"type": "mrkdwn", "text": "*検索結果*"}},
-            {
-                "type": "section",
-                "text": {"type": "mrkdwn", "text": f"{len(review_contents_list)}件"},
-            },
-            {"type": "divider"},
-        ]
-        + review_list  # type: ignore
-        + [move_buttons],  # type: ignore
-    }
