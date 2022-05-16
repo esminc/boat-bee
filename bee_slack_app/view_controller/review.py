@@ -4,9 +4,6 @@ from bee_slack_app.model.review import ReviewContents
 from bee_slack_app.service.review import get_reviews, get_reviews_before, post_review
 from bee_slack_app.service.user import get_user
 from bee_slack_app.utils import datetime
-from bee_slack_app.model.user import User
-from bee_slack_app.service.review import get_reviews, post_review
-from bee_slack_app.service.user import get_all_user, get_user
 
 
 def review_controller(app):  # pylint: disable=too-many-statements
@@ -438,7 +435,7 @@ def generate_review_list_modal_view(
                 "fields": [
                     {
                         "type": "mrkdwn",
-                        "text": f"*投稿者*\n{review_contents['name']}",
+                        "text": f"*投稿者*\n{review_contents['user_name']}",
                     },  # type:ignore
                     {
                         "type": "mrkdwn",

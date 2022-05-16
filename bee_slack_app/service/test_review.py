@@ -119,7 +119,7 @@ def test_レビューを取得できること(monkeypatch):
     assert reviews[2]["book_url"] == "dummy_book_url_2"
 
 
-def test_該当するユーザ情報がない場合はユーザ名としてユーザIDを返すこと(monkeypatch):
+def test_該当するユーザ情報がない場合はユーザ名としてユーザIDを返すこと(monkeypatch):  # pylint: disable=invalid-name
     def mock_book_review_repository_get(_, **__):
         return {
             "items": [
