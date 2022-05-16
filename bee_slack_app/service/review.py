@@ -17,7 +17,7 @@ class ReviewItemKey(TypedDict):
     isbn: str
 
 
-class GetResponse(TypedDict):  # pylint: disable=duplicate-code
+class GetResponse(TypedDict):
     items: list[ReviewContents]
     keys: list[Union[ReviewItemKey, str]]
 

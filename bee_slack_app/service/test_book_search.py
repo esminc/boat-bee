@@ -1,5 +1,4 @@
 # pylint: disable=attribute-defined-outside-init
-# pylint: disable=duplicate-code
 # pylint: disable=non-ascii-name
 
 from bee_slack_app.service import book_search

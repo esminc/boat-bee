@@ -209,7 +209,7 @@ def book_search_controller(app):  # pylint: disable=too-many-statements
         ボタンが選択された本のblockを生成する
         """
         return {
-            "type": "actions",  # pylint: disable=duplicate-code
+            "type": "actions",
             "elements": [
                 {
                     "type": "button",
