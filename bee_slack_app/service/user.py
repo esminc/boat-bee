@@ -25,6 +25,22 @@ def get_user(logger: Any, user_id: str) -> Optional[User]:
         return None
 
 
+def get_all_user(logger: Any) -> list[User]:
+    """
+    ユーザ情報を取得する
+
+
+    Returns:
+        User: 取得したユーザー情報。未登録の場合は、空のリストが返る。
+    """
+    try:
+        return user_repository.get_all()
+
+    except Exception:  # pylint: disable=broad-except
+        logger.exception("Failed to get data.")
+        return []
+
+
 def add_user(logger: Any, user: User) -> None:
     """
     ユーザ情報の登録・更新をする

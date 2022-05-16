@@ -1,7 +1,11 @@
 from typing import Optional, TypedDict
 
 
-class ReviewContents(TypedDict):
+class ReviewContentsRequired(TypedDict):
+    """
+    Required keys
+    """
+
     user_id: str
     book_title: str
     isbn: str
@@ -12,3 +16,11 @@ class ReviewContents(TypedDict):
     book_image_url: str
     book_author: str
     book_url: str
+
+
+class ReviewContents(ReviewContentsRequired, total=False):
+    """
+    Optional keys
+    """
+
+    user_name: str

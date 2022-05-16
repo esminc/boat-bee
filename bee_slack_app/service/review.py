@@ -2,9 +2,11 @@ from typing import Any, Optional, TypedDict, Union
 
 from bee_slack_app.model.review import ReviewContents
 from bee_slack_app.repository.book_review import BookReview
+from bee_slack_app.repository.user_repository import UserRepository
 from bee_slack_app.utils import datetime
 
 book_review_repository = BookReview()
+user_repository = UserRepository()
 
 
 class GetConditions(TypedDict):
@@ -44,6 +46,8 @@ def get_reviews(
             conditions=conditions, limit=limit, start_key=start_key
         )
 
+        fill_user_name(reviews["items"])
+
         last_key = [reviews["last_key"]] if reviews["last_key"] else ["end"]  # type: ignore
 
         return {"items": reviews["items"], "keys": keys + last_key}  # type: ignore
@@ -76,6 +80,8 @@ def get_reviews_before(
             conditions=conditions, limit=limit, start_key=start_key
         )
 
+        fill_user_name(reviews["items"])
+
         return {
             "items": reviews["items"],
             "keys": [reviews["last_key"]] if is_move_to_first else keys[:-1],  # type: ignore
@@ -84,6 +90,22 @@ def get_reviews_before(
     except Exception:  # pylint: disable=broad-except
         logger.exception("Failed to get data.")
         return None
+
+
+def fill_user_name(review_contents_list: list[ReviewContents]) -> None:
+    # 対応するユーザ情報からユーザ名を取得してレビュー情報に追加する
+    users = user_repository.get_all()
+    for review_contents in review_contents_list:
+        user_candidate = [
+            user for user in users if user["user_id"] == review_contents["user_id"]
+        ]
+        if len(user_candidate) == 1:
+            user_name = user_candidate[0]["user_name"]
+        else:
+            # 対応するユーザ情報が存在しない場合はユーザIDを返す
+            user_name = review_contents["user_id"]
+
+        review_contents["user_name"] = user_name
 
 
 def post_review(logger: Any, review_contents: ReviewContents) -> None:

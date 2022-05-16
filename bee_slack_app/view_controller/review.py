@@ -435,7 +435,7 @@ def generate_review_list_modal_view(
                 "fields": [
                     {
                         "type": "mrkdwn",
-                        "text": f"*投稿者*\n{review_contents['user_id']}",
+                        "text": f"*投稿者*\n{review_contents['user_name']}",
                     },  # type:ignore
                     {
                         "type": "mrkdwn",
