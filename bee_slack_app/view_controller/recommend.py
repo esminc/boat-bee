@@ -88,7 +88,9 @@ def recommend_controller(app):  # pylint: disable=too-many-statements
         )
 
     def generate_book_recommend_model_view(
-        book: Optional[SearchedBook], author, image_url
+        book,
+        author,
+        image_url,
     ):
 
         view = {
