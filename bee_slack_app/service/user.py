@@ -1,4 +1,3 @@
-# pylint: disable=duplicate-code
 from typing import Any, Optional
 
 from bee_slack_app.model.user import User

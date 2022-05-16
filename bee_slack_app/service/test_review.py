@@ -1,4 +1,3 @@
-# pylint: disable=duplicate-code
 # pylint: disable=non-ascii-name
 
 
