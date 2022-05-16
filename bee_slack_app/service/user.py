@@ -29,8 +29,6 @@ def get_all_user(logger: Any) -> list[User]:
     """
     ユーザ情報を取得する
 
-    Args:
-        user_id : 取得するユーザー情報のuser_id。
 
     Returns:
         User: 取得したユーザー情報。未登録の場合は、Noneが返る。
