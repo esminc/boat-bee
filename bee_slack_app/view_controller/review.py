@@ -408,62 +408,20 @@ def generate_review_list_modal_view(
             else "-"
         )
 
-        review_item = {
-            "type": "section",
-            "fields": [
-                {
-                    "type": "plain_text",
-                    "text": "本のタイトル",
-                    "emoji": True,
+        review_list.append(
+            {
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": f"*{review_contents['book_title']}*\n{review_contents['book_author']}\nISBN-{review_contents['isbn']}\n<{review_contents['book_url']}|Google Booksで見る>",
                 },
-                {
-                    "type": "plain_text",
-                    "text": review_contents["book_title"],
-                    "emoji": True,
+                "accessory": {
+                    "type": "image",
+                    "image_url": review_contents["book_image_url"],
+                    "alt_text": review_contents["book_title"],
                 },
-                {
-                    "type": "plain_text",
-                    "text": "ISBN",
-                    "emoji": True,
-                },
-                {
-                    "type": "plain_text",
-                    "text": review_contents["isbn"],
-                    "emoji": True,
-                },
-                {
-                    "type": "plain_text",
-                    "text": "自分にとっての評価",
-                    "emoji": True,
-                },
-                {
-                    "type": "plain_text",
-                    "text": str(review_contents["score_for_me"]),
-                    "emoji": True,
-                },
-                {
-                    "type": "plain_text",
-                    "text": "永和社員へのおすすめ度",
-                    "emoji": True,
-                },
-                {
-                    "type": "plain_text",
-                    "text": str(review_contents["score_for_others"]),
-                    "emoji": True,
-                },
-                {
-                    "type": "plain_text",
-                    "text": "レビューコメント",
-                    "emoji": True,
-                },
-                {
-                    "type": "plain_text",
-                    "text": review_comment,
-                    "emoji": True,
-                },
-            ],
-        }
-        review_list.append(review_item)
+            },
+        )
 
         update_datetime = (
             datetime.parse(review_contents["updated_at"])
@@ -471,32 +429,37 @@ def generate_review_list_modal_view(
             else "-"
         )
 
-        review_post_item = {
-            "type": "section",
-            "fields": [
-                {
-                    "type": "plain_text",
-                    "text": "投稿者",
-                    "emoji": True,
-                },
-                {
-                    "type": "plain_text",
-                    "text": review_contents["user_id"],
-                    "emoji": True,
-                },
-                {
-                    "type": "plain_text",
-                    "text": "投稿日時",
-                    "emoji": True,
-                },
-                {
-                    "type": "plain_text",
-                    "text": update_datetime,
-                    "emoji": True,
-                },
-            ],
-        }
-        review_list.append(review_post_item)
+        review_list.append(
+            {
+                "type": "section",
+                "fields": [
+                    {
+                        "type": "mrkdwn",
+                        "text": f"*投稿者*\n{review_contents['user_id']}",
+                    },  # type:ignore
+                    {
+                        "type": "mrkdwn",
+                        "text": f"*投稿日時*\n{update_datetime}",
+                    },  # type:ignore
+                    {  # type:ignore
+                        "type": "mrkdwn",
+                        "text": f"*自分にとっての評価*\n{review_contents['score_for_me']}",
+                    },
+                    {  # type:ignore
+                        "type": "mrkdwn",
+                        "text": f"*永和社員へのおすすめ度*\n{review_contents['score_for_others']}",
+                    },
+                ],
+            }
+        )
+
+        review_list.append(
+            {
+                "type": "section",
+                "text": {"type": "mrkdwn", "text": f"*レビューコメント*\n\n{review_comment}"},
+            }
+        )
+
         review_list.append({"type": "divider"})
 
     move_buttons = {
@@ -528,6 +491,11 @@ def generate_review_list_modal_view(
         "callback_id": "update_review_list_view",
         "title": {"type": "plain_text", "text": "Bee"},
         "blocks": [
+            {
+                "type": "image",
+                "image_url": "https://developers.google.com/maps/documentation/images/powered_by_google_on_white.png",
+                "alt_text": "",
+            },
             {"type": "section", "text": {"type": "mrkdwn", "text": "*検索条件*"}},
             {
                 "block_id": "score_for_me_select_block",
