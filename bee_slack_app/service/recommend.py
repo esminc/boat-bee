@@ -1,0 +1,29 @@
+from typing import Any
+
+from bee_slack_app.model.search import SearchedBook
+from bee_slack_app.model.user import User
+from bee_slack_app.service.book_search import search_book_by_isbn
+
+
+def recommend(logger: Any, user: User) -> SearchedBook:
+    """
+    おすすめのブック情報を返却する
+
+    Args:
+        user : おすすめ本を知りたい、利用者のユーザ情報。
+
+    Returns:
+        book: おすすめするブック情報。取得できない場合は、Noneが返る。
+    """
+    # TODO 機械学習の部品が実装できたら、部品を呼び出す。
+    # TODO 取得したisbnからブック情報を取得する。
+    print(user)
+    isbn = "9784873118253"
+    book_info = search_book_by_isbn(isbn)
+
+    try:
+        return book_info
+
+    except Exception:  # pylint: disable=broad-except
+        logger.exception("Failed to get data.")
+        return None
