@@ -2,7 +2,6 @@ from typing import Optional
 
 from bee_slack_app.model.search import SearchedBook
 from bee_slack_app.model.user import User
-from bee_slack_app.service.book_search import search_book_by_isbn
 from bee_slack_app.service.user import get_user
 
 
@@ -14,7 +13,6 @@ def recommend_controller(app):  # pylint: disable=too-many-statements
         logger.info(body)
 
         user_id = body["user"]["id"]
-        print("user_id = " + user_id)
 
         user: Optional[User] = get_user(logger, user_id)
         if not user:
@@ -41,18 +39,39 @@ def recommend_controller(app):  # pylint: disable=too-many-statements
             )
             return
 
-        print(user)
+        # TODO レコメンドのサービスから、おすすめのブック情報を取得する
+        # いまはモックでブック情報を代入する
+        book: SearchedBook = {
+            "title": "道は開ける",
+            "isbn": "9784422100999",
+            "author": "デールカーネギー",
+            "image_url": "http://books.google.com/books/content?id=rfVbjwEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+            "google_books_url": "http://books.google.co.jp/books?id=rfVbjwEACAAJ&dq=isbn:9784422100999&hl=&source=gbs_api",
+        }
 
-        # TODO レコメンドのサービスから、レコメンド情報を取得する
-        # おすすめ度（recommend_score）をモックで入れる
-        recommend_score: str = "3.5"
-        # いまはisbnをモックで代入する
-        isbn = "9784422100999"
-
-        # レコメンド情報のisbnから本の情報を取得する
-        book = search_book_by_isbn(isbn)
-
-        # TODO 対象のbookがisbnから見つからなかった場合の処理
+        if book is None:
+            client.views_open(
+                trigger_id=body["trigger_id"],
+                view={
+                    "type": "modal",
+                    "title": {
+                        "type": "plain_text",
+                        "text": "おすすめの本は見つかりませんでした",
+                        "emoji": True,
+                    },
+                    "close": {"type": "plain_text", "text": "OK", "emoji": True},
+                    "blocks": [
+                        {
+                            "type": "section",
+                            "text": {
+                                "type": "mrkdwn",
+                                "text": "アプリ管理者にお問い合わせください :bow:",
+                            },
+                        },
+                    ],
+                },
+            )
+            return
 
         # TODO: 暫定で適当な画像をデフォルトに設定、S3に画像を置くようになったら自前の画像に差し替える
         dummy_url = "https://pbs.twimg.com/profile_images/625633822235693056/lNGUneLX_400x400.jpg"
@@ -60,9 +79,7 @@ def recommend_controller(app):  # pylint: disable=too-many-statements
         author = ", ".join(book["author"])
         image_url = book["image_url"] if book["image_url"] is not None else dummy_url
 
-        modal_view = generate_book_recommend_model_view(
-            book, author, image_url, recommend_score
-        )
+        modal_view = generate_book_recommend_model_view(book, author, image_url)
 
         client.views_open(
             trigger_id=body["trigger_id"],
@@ -71,7 +88,7 @@ def recommend_controller(app):  # pylint: disable=too-many-statements
         )
 
     def generate_book_recommend_model_view(
-        book: Optional[SearchedBook], author, image_url, recommend_score
+        book: Optional[SearchedBook], author, image_url
     ):
 
         view = {
@@ -85,18 +102,12 @@ def recommend_controller(app):  # pylint: disable=too-many-statements
                     "text": {
                         "type": "mrkdwn",
                         "text": f"*{book['title']}*\n{author}\nISBN-{book['isbn']}",
+                        # "text": f"*{book['title']}*\n{book['author']}\nISBN-{book['isbn']}",
                     },
                     "accessory": {
                         "type": "image",
                         "image_url": image_url,
                         "alt_text": "Windsor Court Hotel thumbnail",
-                    },
-                },
-                {
-                    "type": "section",
-                    "text": {
-                        "type": "mrkdwn",
-                        "text": "おすすめ度は " + recommend_score + " です",
                     },
                 },
                 {
