@@ -31,7 +31,7 @@ def get_all_user(logger: Any) -> list[User]:
 
 
     Returns:
-        User: 取得したユーザー情報。未登録の場合は、Noneが返る。
+        User: 取得したユーザー情報。未登録の場合は、空のリストが返る。
     """
     try:
         return user_repository.get_all()
