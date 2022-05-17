@@ -47,7 +47,7 @@ def book_search_controller(app):  # pylint: disable=too-many-statements
         ack(
             response_action="push",
             view=book_search_result_modal(
-                callback_id="view_book_search",
+                callback_id="book_search_result_modal",
                 private_metadata=private_metadata,
                 book_results=book_results,
             ),
@@ -80,7 +80,7 @@ def book_search_controller(app):  # pylint: disable=too-many-statements
         client.views_update(
             view_id=body["container"]["view_id"],
             view=book_search_result_selected_modal(
-                callback_id="view_book_search",
+                callback_id="book_search_result_modal",
                 private_metadata=json.dumps(search_result),
                 book_search_result_modal_blocks=blocks,
                 isbn=isbn,
@@ -99,7 +99,7 @@ def book_search_controller(app):  # pylint: disable=too-many-statements
         logger.info(body)
 
     # view_submission リクエストを処理
-    @app.view("view_book_search")
+    @app.view("book_search_result_modal")
     def handle_submission(ack, body, _, __):
         """
         検索結果画面で決定ボタンを押した時に行う処理
@@ -143,7 +143,7 @@ def book_search_controller(app):  # pylint: disable=too-many-statements
         ack(
             response_action="push",
             view=post_review_modal(
-                callback_id="view_1",
+                callback_id="post_review_modal",
                 book_section=selected_book_section,
                 url=url,
             ),

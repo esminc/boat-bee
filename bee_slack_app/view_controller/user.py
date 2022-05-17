@@ -24,7 +24,7 @@ def user_controller(app):
         )
 
         modal_view = user_profile_modal(
-            callback_id="view_user", user_name=user_name, user=user
+            callback_id="user_profile_modal", user_name=user_name, user=user
         )
 
         client.views_open(
@@ -34,7 +34,7 @@ def user_controller(app):
         )
 
     # view_submission リクエストを処理
-    @app.view("view_user")
+    @app.view("user_profile_modal")
     def handle_submission(ack, body, _, view, logger):
 
         user_name = view["blocks"][0]["text"]["text"]

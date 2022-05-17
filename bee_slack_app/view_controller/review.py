@@ -37,7 +37,7 @@ def review_controller(app):  # pylint: disable=too-many-statements
         )
 
     # view_submission リクエストを処理
-    @app.view("view_1")
+    @app.view("post_review_modal")
     def handle_submission(ack, body, _, view, logger):
 
         # ハック的な対処なので注意
@@ -99,7 +99,7 @@ def review_controller(app):  # pylint: disable=too-many-statements
         )
 
         view = review_list_modal(
-            callback_id="view_1",
+            callback_id="post_review_modal",
             search_button_action_id="search_review",
             review_contents_list=reviews["items"],
             private_metadata=metadata_str,
@@ -131,7 +131,7 @@ def review_controller(app):  # pylint: disable=too-many-statements
         )
 
         view = review_list_modal(
-            callback_id="view_1",
+            callback_id="post_review_modal",
             search_button_action_id="search_review",
             review_contents_list=reviews["items"],
             private_metadata=metadata_str,
@@ -168,7 +168,7 @@ def review_controller(app):  # pylint: disable=too-many-statements
         )
 
         view = review_list_modal(
-            callback_id="view_1",
+            callback_id="post_review_modal",
             search_button_action_id="search_review",
             review_contents_list=reviews["items"],
             private_metadata=metadata_str,
@@ -208,7 +208,7 @@ def review_controller(app):  # pylint: disable=too-many-statements
         )
 
         view = review_list_modal(
-            callback_id="view_1",
+            callback_id="post_review_modal",
             search_button_action_id="search_review",
             review_contents_list=reviews["items"],
             private_metadata=private_metadata,
