@@ -85,9 +85,10 @@ class BookReview:
 
         return {"items": items, "last_key": last_key}
 
-    def create(self, review):
+    def create(self, review: ReviewContents):
         item = {
             "user_id": review["user_id"],
+            "user_name": review["user_name"],
             "book_title": review["book_title"],
             "isbn": review["isbn"],
             "score_for_me": review["score_for_me"],

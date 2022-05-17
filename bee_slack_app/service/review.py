@@ -46,8 +46,6 @@ def get_reviews(
             conditions=conditions, limit=limit, start_key=start_key
         )
 
-        fill_user_name(reviews["items"])
-
         last_key = [reviews["last_key"]] if reviews["last_key"] else ["end"]  # type: ignore
 
         return {"items": reviews["items"], "keys": keys + last_key}  # type: ignore
@@ -80,8 +78,6 @@ def get_reviews_before(
             conditions=conditions, limit=limit, start_key=start_key
         )
 
-        fill_user_name(reviews["items"])
-
         return {
             "items": reviews["items"],
             "keys": [reviews["last_key"]] if is_move_to_first else keys[:-1],  # type: ignore
@@ -92,27 +88,18 @@ def get_reviews_before(
         return None
 
 
-def fill_user_name(review_contents_list: list[ReviewContents]) -> None:
-    # 対応するユーザ情報からユーザ名を取得してレビュー情報に追加する
-    users = user_repository.get_all()
-    for review_contents in review_contents_list:
-        user_candidate = [
-            user for user in users if user["user_id"] == review_contents["user_id"]
-        ]
-        if len(user_candidate) == 1:
-            user_name = user_candidate[0]["user_name"]
-        else:
-            # 対応するユーザ情報が存在しない場合はユーザIDを返す
-            user_name = review_contents["user_id"]
-
-        review_contents["user_name"] = user_name
-
-
 def post_review(logger: Any, review_contents: ReviewContents) -> None:
     try:
+        user = user_repository.get(review_contents["user_id"])
+
+        if not user:
+            logger.info(f"Failed to get user: {review_contents['user_id']}")
+            return None
+
         book_review_repository.create(
             {
                 "user_id": review_contents["user_id"],
+                "user_name": user["user_name"],
                 "book_title": review_contents["book_title"],
                 "isbn": review_contents["isbn"],
                 "score_for_me": review_contents["score_for_me"],
