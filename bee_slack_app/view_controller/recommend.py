@@ -73,13 +73,7 @@ def recommend_controller(app):  # pylint: disable=too-many-statements
             )
             return
 
-        # TODO: 暫定で適当な画像をデフォルトに設定、S3に画像を置くようになったら自前の画像に差し替える
-        dummy_url = "https://pbs.twimg.com/profile_images/625633822235693056/lNGUneLX_400x400.jpg"
-
-        author = ", ".join(book["author"])
-        image_url = book["image_url"] if book["image_url"] is not None else dummy_url
-
-        modal_view = generate_book_recommend_model_view(book, author, image_url)
+        modal_view = generate_book_recommend_model_view(book)
 
         client.views_open(
             trigger_id=body["trigger_id"],
@@ -89,8 +83,6 @@ def recommend_controller(app):  # pylint: disable=too-many-statements
 
     def generate_book_recommend_model_view(
         book,
-        author,
-        image_url,
     ):
 
         view = {
@@ -103,11 +95,11 @@ def recommend_controller(app):  # pylint: disable=too-many-statements
                     "type": "section",
                     "text": {
                         "type": "mrkdwn",
-                        "text": f"*{book['title']}*\n{author}\nISBN-{book['isbn']}",
+                        "text": f"*{book['title']}*\n{book['author']}\nISBN-{book['isbn']}",
                     },
                     "accessory": {
                         "type": "image",
-                        "image_url": image_url,
+                        "image_url": book["image_url"],
                         "alt_text": "Windsor Court Hotel thumbnail",
                     },
                 },
