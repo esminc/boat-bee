@@ -103,7 +103,7 @@ def recommend_controller(app):  # pylint: disable=too-many-statements
                     "accessory": {
                         "type": "image",
                         "image_url": image_url,
-                        "alt_text": "Windsor Court Hotel thumbnail",
+                        "alt_text": "An incredibly cute kitten.",
                     },
                 },
                 {
