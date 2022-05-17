@@ -266,7 +266,7 @@ def review_detail_modal(review_contents: ReviewContents):
     return {
         "type": "modal",
         "title": {"type": "plain_text", "text": "レビュー詳細", "emoji": True},
-        "close": {"type": "plain_text", "text": "閉じる", "emoji": True},
+        "close": {"type": "plain_text", "text": "戻る", "emoji": True},
         "blocks": [
             {
                 "type": "section",
