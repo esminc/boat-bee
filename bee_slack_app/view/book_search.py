@@ -140,7 +140,7 @@ def book_search_result_selected_modal(
             "emoji": True,
         },
         "close": {"type": "plain_text", "text": "戻る", "emoji": True},
-        "submit": {"type": "plain_text", "text": "選択", "emoji": True},
+        "submit": {"type": "plain_text", "text": "決定", "emoji": True},
         "blocks": new_blocks,
     }
 
