@@ -3,6 +3,7 @@ from typing import Optional
 from bee_slack_app.model.search import SearchedBook
 from bee_slack_app.model.user import User
 from bee_slack_app.service.user import get_user
+from bee_slack_app.service.recommend import recommend
 
 
 def recommend_controller(app):  # pylint: disable=too-many-statements
@@ -39,15 +40,7 @@ def recommend_controller(app):  # pylint: disable=too-many-statements
             )
             return
 
-        # TODO レコメンドのサービスから、おすすめのブック情報を取得する
-        # いまはモックでブック情報を代入する
-        book: SearchedBook = {
-            "title": "道は開ける",
-            "isbn": "9784422100999",
-            "author": "デールカーネギー",
-            "image_url": "http://books.google.com/books/content?id=rfVbjwEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
-            "google_books_url": "http://books.google.co.jp/books?id=rfVbjwEACAAJ&dq=isbn:9784422100999&hl=&source=gbs_api",
-        }
+        book: SearchedBook = recommend(logger, user)
 
         if book is None:
             client.views_open(

@@ -1,11 +1,11 @@
-from typing import Any
+from typing import Any, Optional
 
 from bee_slack_app.model.search import SearchedBook
 from bee_slack_app.model.user import User
 from bee_slack_app.service.book_search import search_book_by_isbn
 
 
-def recommend(logger: Any, user: User) -> SearchedBook:
+def recommend(logger: Any, user: User) -> Optional[SearchedBook]:
     """
     おすすめのブック情報を返却する
 
@@ -19,9 +19,10 @@ def recommend(logger: Any, user: User) -> SearchedBook:
     # TODO 取得したisbnからブック情報を取得する。
     print(user)
     isbn = "9784873118253"
-    book_info = search_book_by_isbn(isbn)
 
     try:
+        book_info = search_book_by_isbn(isbn)
+        print(book_info)
         return book_info
 
     except Exception:  # pylint: disable=broad-except
