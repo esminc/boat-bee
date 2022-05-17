@@ -11,7 +11,7 @@ def home_controller(app):
             view=home(
                 read_review_action_id="read_review",
                 post_review_action_id="post_review",
-                see_more_recommended_book_action_id="see_more_recommended_book",
+                see_more_recommended_book_action_id="book_recommend",
                 user_info_action_id="user_info",
             ),
         )
