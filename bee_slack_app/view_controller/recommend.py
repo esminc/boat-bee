@@ -81,9 +81,7 @@ def recommend_controller(app):  # pylint: disable=too-many-statements
             view=modal_view,
         )
 
-    def generate_book_recommend_model_view(
-        book,
-    ):
+    def generate_book_recommend_model_view(book: SearchedBook):
         # TODO: 暫定で適当な画像をデフォルトに設定、S3に画像を置くようになったら自前の画像に差し替える
         dummy_url = "https://pbs.twimg.com/profile_images/625633822235693056/lNGUneLX_400x400.jpg"
         image_url = book["image_url"] if book["image_url"] is not None else dummy_url
