@@ -18,7 +18,7 @@ class GetResponse(TypedDict):
 
 
 # This is a sample
-class Review:
+class ReviewRepository:
     class GetConditions(TypedDict):
         score_for_me: Optional[str]
         score_for_others: Optional[str]

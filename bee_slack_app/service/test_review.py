@@ -3,7 +3,7 @@
 
 from logging import getLogger
 
-from bee_slack_app.repository.review import Review
+from bee_slack_app.repository.review_repository import ReviewRepository
 from bee_slack_app.repository.user_repository import UserRepository
 from bee_slack_app.service.review import get_review, get_reviews
 
@@ -22,7 +22,7 @@ def test_get_reviewでレビューを取得できること(monkeypatch):
             "book_url": "dummy_book_url_0",
         }
 
-    monkeypatch.setattr(Review, "get", mock_review_repository_get)
+    monkeypatch.setattr(ReviewRepository, "get", mock_review_repository_get)
 
     def mock_user_repository_get(_, __):
         return {
@@ -66,7 +66,7 @@ def test_get_reviewで該当するユーザ情報がない場合はユーザ名�
             "book_url": "dummy_book_url_0",
         }
 
-    monkeypatch.setattr(Review, "get", mock_review_repository_get)
+    monkeypatch.setattr(ReviewRepository, "get", mock_review_repository_get)
 
     def mock_user_repository_get(_, __):
         return None
@@ -85,7 +85,7 @@ def test_get_reviewでreview_repositoryの処理でエラーが発生した場�
     def mock_review_repository_get(_, **__):
         raise Exception("dummy exception")
 
-    monkeypatch.setattr(Review, "get", mock_review_repository_get)
+    monkeypatch.setattr(ReviewRepository, "get", mock_review_repository_get)
 
     def mock_user_repository_get(_, __):
         return {
@@ -120,7 +120,7 @@ def test_get_reviewでuser_repositoryの処理でエラーが発生した場合N
             "book_url": "dummy_book_url_0",
         }
 
-    monkeypatch.setattr(Review, "get", mock_review_repository_get)
+    monkeypatch.setattr(ReviewRepository, "get", mock_review_repository_get)
 
     def mock_user_repository_get(_, __):
         raise Exception("dummy exception")
@@ -173,7 +173,7 @@ def test_get_reviewsでレビューを取得できること(monkeypatch):
             "last_key": None,
         }
 
-    monkeypatch.setattr(Review, "get_some", mock_review_repository_get_some)
+    monkeypatch.setattr(ReviewRepository, "get_some", mock_review_repository_get_some)
 
     def mock_user_repository_get_all(_, **__):
         return [
@@ -286,7 +286,7 @@ def test_get_reviewsで該当するユーザ情報がない場合はユーザ名
             "last_key": None,
         }
 
-    monkeypatch.setattr(Review, "get_some", mock_review_repository_get_some)
+    monkeypatch.setattr(ReviewRepository, "get_some", mock_review_repository_get_some)
 
     def mock_user_repository_get_all(_, **__):
         return []
@@ -350,7 +350,7 @@ def test_get_reviewsでuser_repositoryの処理でエラーが発生した場合
     def mock_user_repository_get_all(_, __):
         raise Exception("dummy exception")
 
-    monkeypatch.setattr(Review, "get", mock_user_repository_get_all)
+    monkeypatch.setattr(ReviewRepository, "get", mock_user_repository_get_all)
 
     reviews = get_reviews(logger=getLogger(), limit=10, keys=[])
 

@@ -1,11 +1,11 @@
 from typing import Any, Optional, TypedDict, Union
 
 from bee_slack_app.model.review import ReviewContents
-from bee_slack_app.repository.review import Review
+from bee_slack_app.repository.review_repository import ReviewRepository
 from bee_slack_app.repository.user_repository import UserRepository
 from bee_slack_app.utils import datetime
 
-review_repository = Review()
+review_repository = ReviewRepository()
 user_repository = UserRepository()
 
 
