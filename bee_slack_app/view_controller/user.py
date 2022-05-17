@@ -8,7 +8,6 @@ from bee_slack_app.view.user import user_profile_modal
 def user_controller(app):
     @app.action("user_info")
     def open_user_info(ack, body, client, logger):
-        # 受信した旨を 3 秒以内に Slack サーバーに伝えます
         ack()
         user_id = body["user"]["id"]
 
@@ -29,11 +28,9 @@ def user_controller(app):
 
         client.views_open(
             trigger_id=body["trigger_id"],
-            # ビューのペイロード
             view=modal_view,
         )
 
-    # view_submission リクエストを処理
     @app.view("user_profile_modal")
     def handle_submission(ack, body, _, view, logger):
 
@@ -53,7 +50,6 @@ def user_controller(app):
 
         user_id = body["user"]["id"]
 
-        # view_submission リクエストの確認を行い、モーダルを閉じる
         ack()
 
         user: User = {

@@ -8,7 +8,6 @@ from bee_slack_app.service.user import get_user
 def recommend_controller(app):  # pylint: disable=too-many-statements
     @app.action("book_recommend")
     def open_recommend_modal(ack, body, client, logger):
-        # コマンドのリクエストを確認
         ack()
         logger.info(body)
 
@@ -77,7 +76,6 @@ def recommend_controller(app):  # pylint: disable=too-many-statements
 
         client.views_open(
             trigger_id=body["trigger_id"],
-            # ビューのペイロード
             view=modal_view,
         )
 

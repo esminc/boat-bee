@@ -16,7 +16,6 @@ def review_controller(app):  # pylint: disable=too-many-statements
         """
         本の検索モーダルを開く
         """
-        # コマンドのリクエストを確認
         ack()
 
         if not get_user(logger, body["user"]["id"]):
@@ -32,11 +31,9 @@ def review_controller(app):  # pylint: disable=too-many-statements
             trigger_id=body["trigger_id"],
             view_id=body["view"]["id"],
             hash=body["view"]["hash"],
-            # ビューのペイロード
             view=search_book_to_review_modal(callback_id="book_search_modal"),
         )
 
-    # view_submission リクエストを処理
     @app.view("post_review_modal")
     def handle_submission(ack, body, _, view, logger):
 
@@ -54,8 +51,6 @@ def review_controller(app):  # pylint: disable=too-many-statements
         score_for_others = view["state"]["values"]["input_score_for_others"][
             "score_for_others_action"
         ]["selected_option"]["value"]
-
-        # `input_comment`という block_id に `comment_action` を持つ input ブロックがある場合
         review_comment = view["state"]["values"]["input_comment"]["comment_action"][
             "value"
         ]
@@ -89,7 +84,6 @@ def review_controller(app):  # pylint: disable=too-many-statements
 
     @app.action("read_review")
     def open_read_modal(ack, body, client, logger):
-        # コマンドのリクエストを確認
         ack()
 
         reviews = get_reviews(logger=logger, limit=review_item_limit, keys=[])
@@ -219,7 +213,6 @@ def review_controller(app):  # pylint: disable=too-many-statements
             trigger_id=body["trigger_id"],
             view_id=body["view"]["id"],
             hash=body["view"]["hash"],
-            # ビューのペイロード
             view=view,
         )
 

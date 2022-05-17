@@ -98,7 +98,6 @@ def book_search_controller(app):  # pylint: disable=too-many-statements
         ack()
         logger.info(body)
 
-    # view_submission リクエストを処理
     @app.view("book_search_result_modal")
     def handle_submission(ack, body, _, __):
         """
