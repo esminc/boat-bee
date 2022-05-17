@@ -27,13 +27,7 @@ def review_list_modal(
     for review_contents in review_contents_list:
 
         # 空はエラーになるため、ハイフンを設定
-        # TODO: 本来 review_comment が None になることは想定されていない（get_reviewsが返す型と不一致）なので、service側での修正が必要
-        review_comment = review_contents["review_comment"]
-        review_comment = (
-            review_comment
-            if review_comment is not None and len(review_comment) > 0
-            else "-"
-        )
+        review_comment = review_contents["review_comment"] or "-"
 
         review_list.append(
             {

@@ -139,6 +139,45 @@ class TestBookReview:
 
         assert review is None
 
+    def test_getでレビューコメントが存在しない場合_レビューコメントは空文字で取得できること(self):
+        item = {
+            "user_id": "user_id_0",
+            "book_title": "仕事ではじめる機械学習",
+            "isbn": "12345",
+            "score_for_me": "1",
+            "score_for_others": "5",
+            "review_comment": None,
+            "updated_at": "2022-04-01T00:00:00+09:00",
+            "book_image_url": "dummy_book_image_url_0",
+            "book_author": "dummy_book_author_0",
+            "book_url": "dummy_book_url_0",
+        }
+
+        self.table.put_item(Item=item)
+
+        item = {
+            "user_id": "user_id_1",
+            "book_title": "仕事ではじめる機械学習",
+            "isbn": "12345",
+            "score_for_me": "3",
+            "score_for_others": "4",
+            "review_comment": "まあまあです",
+            "updated_at": "2022-04-01T00:00:00+09:00",
+            "book_image_url": "dummy_book_image_url_1",
+            "book_author": "dummy_book_author_1",
+            "book_url": "dummy_book_url_1",
+        }
+
+        self.table.put_item(Item=item)
+
+        book_review = BookReview()
+
+        review = book_review.get(user_id="user_id_0", isbn="12345")
+
+        assert review["user_id"] == "user_id_0"
+        assert review["isbn"] == "12345"
+        assert review["review_comment"] == ""
+
     def test_ページネーションして_レビューを取得できること(self):
         item = {
             "user_id": "user_id_0",
@@ -326,6 +365,51 @@ class TestBookReview:
 
         assert len(reviews) == 0
         assert isinstance(reviews, list)
+
+    def test_get_someでレビューコメントが存在しない場合_レビューコメントは空文字で取得できること(self):
+        item = {
+            "user_id": "user_id_0",
+            "book_title": "仕事ではじめる機械学習",
+            "isbn": "12345",
+            "score_for_me": "1",
+            "score_for_others": "5",
+            "review_comment": None,
+            "updated_at": "2022-04-01T00:00:00+09:00",
+            "book_image_url": "dummy_book_image_url_0",
+            "book_author": "dummy_book_author_0",
+            "book_url": "dummy_book_url_0",
+        }
+
+        self.table.put_item(Item=item)
+
+        item = {
+            "user_id": "user_id_1",
+            "book_title": "仕事ではじめる機械学習",
+            "isbn": "12345",
+            "score_for_me": "3",
+            "score_for_others": "4",
+            "review_comment": "まあまあです",
+            "updated_at": "2022-04-01T00:00:00+09:00",
+            "book_image_url": "dummy_book_image_url_1",
+            "book_author": "dummy_book_author_1",
+            "book_url": "dummy_book_url_1",
+        }
+
+        self.table.put_item(Item=item)
+
+        book_review = BookReview()
+
+        reviews = book_review.get_some()["items"]
+
+        assert len(reviews) == 2
+
+        assert reviews[0]["user_id"] == "user_id_0"
+        assert reviews[0]["isbn"] == "12345"
+        assert reviews[0]["review_comment"] == ""
+
+        assert reviews[1]["user_id"] == "user_id_1"
+        assert reviews[1]["isbn"] == "12345"
+        assert reviews[1]["review_comment"] == "まあまあです"
 
     def test_レビューを作成できること(self):
         response = self.table.query(

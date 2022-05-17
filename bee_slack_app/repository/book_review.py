@@ -38,12 +38,20 @@ class BookReview:
         Returns:
             本のレビュー。存在しない場合はNone。
         """
-        return self.table.get_item(
+        item = self.table.get_item(
             Key={
                 "user_id": user_id,
                 "isbn": isbn,
             }
         ).get("Item")
+
+        if not item:
+            return None
+
+        # item["review_comment"]がNoneの場合、空文字に置き換える
+        item["review_comment"] = item["review_comment"] or ""
+
+        return item
 
     def get_some(
         self,
@@ -99,6 +107,10 @@ class BookReview:
             while last_key is not None:
                 new_items, last_key = scan(exclusive_start_key=last_key)
                 items.extend(new_items)
+
+        for item in items:
+            # item["review_comment"]がNoneの場合、空文字に置き換える
+            item["review_comment"] = item["review_comment"] or ""
 
         return {"items": items, "last_key": last_key}
 
