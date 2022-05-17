@@ -58,7 +58,7 @@ def home_controller(app):
                                     "emoji": True,
                                 },
                                 "value": "dummy_value",
-                                "action_id": "see_more_recommended_book",
+                                "action_id": "book_recommend",
                             }
                         ],
                     },

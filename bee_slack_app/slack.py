@@ -1,6 +1,14 @@
 from slack_bolt import App
 
-from bee_slack_app.view_controller import book, book_search, hello, home, review, user
+from bee_slack_app.view_controller import (
+    book,
+    book_search,
+    hello,
+    home,
+    recommend,
+    review,
+    user,
+)
 
 app = App(process_before_response=True)
 
@@ -10,3 +18,4 @@ home.home_controller(app)
 book_search.book_search_controller(app)
 book.book_controller(app)
 user.user_controller(app)
+recommend.recommend_controller(app)
