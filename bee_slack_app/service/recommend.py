@@ -21,9 +21,7 @@ def recommend(logger: Any, user: User) -> Optional[SearchedBook]:
     isbn = "9784873118253"
 
     try:
-        google_books = GoogleBooks()
-        book_info = google_books.search_book_by_isbn(isbn)
-        print(book_info)
+        book_info = GoogleBooks().search_book_by_isbn(isbn)
         return book_info
 
     except Exception:  # pylint: disable=broad-except
