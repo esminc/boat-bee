@@ -87,6 +87,26 @@ def review_list_modal(
             }
         )
 
+        review_list.append(
+            {  # pylint: disable=duplicate-code
+                "type": "actions",
+                "elements": [
+                    {  # type: ignore
+                        "type": "button",
+                        "text": {
+                            "type": "plain_text",
+                            "text": "もっと見る",
+                            "emoji": True,
+                        },
+                        "value": review_contents["user_id"]
+                        + ":"
+                        + review_contents["isbn"],
+                        "action_id": "open_review_detail_modal_action",
+                    }
+                ],
+            },
+        )
+
         review_list.append({"type": "divider"})
 
     move_buttons = {
@@ -224,4 +244,69 @@ def review_list_modal(
         ]
         + review_list  # type: ignore
         + [move_buttons],  # type: ignore
+    }
+
+
+def review_detail_modal(review_contents: ReviewContents):
+    """
+    レビュー詳細モーダル
+
+    Args:
+        review_contents: 表示するレビュー
+    """
+
+    update_datetime = (
+        datetime.parse(review_contents["updated_at"])
+        if review_contents["updated_at"]
+        else "-"
+    )
+
+    review_comment = review_contents["review_comment"] or "-"
+
+    return {
+        "type": "modal",
+        "title": {"type": "plain_text", "text": "レビュー詳細", "emoji": True},
+        "close": {"type": "plain_text", "text": "戻る", "emoji": True},
+        "blocks": [
+            {
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": f"*{review_contents['book_title']}*\n{review_contents['book_author']}\nISBN-{review_contents['isbn']}\n<{review_contents['book_url']}|Google Booksで見る>",
+                },
+                "accessory": {
+                    "type": "image",
+                    "image_url": review_contents["book_image_url"],
+                    "alt_text": review_contents["book_title"],
+                },
+            },
+            {
+                "type": "section",
+                "fields": [
+                    {
+                        "type": "mrkdwn",
+                        "text": f"*投稿者*\n{review_contents['user_name']}",
+                    },  # type:ignore
+                    {
+                        "type": "mrkdwn",
+                        "text": f"*投稿日時*\n{update_datetime}",
+                    },  # type:ignore
+                    {  # type:ignore
+                        "type": "mrkdwn",
+                        "text": f"*自分にとっての評価*\n{review_contents['score_for_me']}",
+                    },
+                    {  # type:ignore
+                        "type": "mrkdwn",
+                        "text": f"*永和社員へのおすすめ度*\n{review_contents['score_for_others']}",
+                    },
+                ],
+            },
+            {
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": f"*レビューコメント*\n\n{review_comment}",
+                },
+            },
+        ],
     }

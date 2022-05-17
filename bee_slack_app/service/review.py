@@ -24,6 +24,27 @@ class GetResponse(TypedDict):
     keys: list[Union[ReviewItemKey, str]]
 
 
+def get_review(*, logger: Any, user_id: str, isbn: str) -> Optional[ReviewContents]:
+    """
+    レビューを一意に指定して取得する
+    """
+    try:
+        review = book_review_repository.get(user_id=user_id, isbn=isbn)
+
+        if not review:
+            return None
+
+        user = user_repository.get(user_id)
+
+        review["user_name"] = user["user_name"] if user else review["user_id"]
+
+        return review
+
+    except Exception:  # pylint: disable=broad-except
+        logger.exception("Failed to get data.")
+        return None
+
+
 def get_reviews(
     *,
     logger: Any,
@@ -42,7 +63,7 @@ def get_reviews(
 
         start_key = keys[-1] if len(keys) > 0 else None
 
-        reviews = book_review_repository.get(
+        reviews = book_review_repository.get_some(
             conditions=conditions, limit=limit, start_key=start_key
         )
 
@@ -76,7 +97,7 @@ def get_reviews_before(
 
         start_key = None if is_move_to_first else keys[-3]
 
-        reviews = book_review_repository.get(
+        reviews = book_review_repository.get_some(
             conditions=conditions, limit=limit, start_key=start_key
         )
 
