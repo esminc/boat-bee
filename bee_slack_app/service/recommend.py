@@ -2,7 +2,7 @@ from typing import Any, Optional
 
 from bee_slack_app.model.search import SearchedBook
 from bee_slack_app.model.user import User
-from bee_slack_app.service.book_search import search_book_by_isbn
+from bee_slack_app.repository.google_books import GoogleBooks
 
 
 def recommend(logger: Any, user: User) -> Optional[SearchedBook]:
@@ -21,7 +21,8 @@ def recommend(logger: Any, user: User) -> Optional[SearchedBook]:
     isbn = "9784873118253"
 
     try:
-        book_info = search_book_by_isbn(isbn)
+        google_books = GoogleBooks()
+        book_info = google_books.search_book_by_isbn(isbn)
         print(book_info)
         return book_info
 
