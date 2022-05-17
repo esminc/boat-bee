@@ -1,6 +1,6 @@
 from typing import Optional
 
-from bee_slack_app.model.user import User
+from bee_slack_app.model import User
 
 
 def user_profile_modal(callback_id: str, user_name: str, user: Optional[User]):

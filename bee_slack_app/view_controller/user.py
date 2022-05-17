@@ -1,6 +1,6 @@
 from typing import Optional
 
-from bee_slack_app.model.user import User
+from bee_slack_app.model import User
 from bee_slack_app.service.user import add_user, get_user
 from bee_slack_app.view.user import user_profile_modal
 

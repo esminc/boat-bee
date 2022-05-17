@@ -1,7 +1,7 @@
 from typing import Optional
 
-from bee_slack_app.model.search import SearchedBook
-from bee_slack_app.repository.google_books_repository import GoogleBooksRepository
+from bee_slack_app.model import SearchedBook
+from bee_slack_app.repository import GoogleBooksRepository
 
 api_client = GoogleBooksRepository()
 

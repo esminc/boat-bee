@@ -1,6 +1,6 @@
 import json
 
-from bee_slack_app.model.review import ReviewContents
+from bee_slack_app.model import ReviewContents
 from bee_slack_app.service.review import (
     get_review,
     get_reviews,

@@ -3,7 +3,7 @@
 import os
 from typing import Optional
 
-from bee_slack_app.model.user import User
+from bee_slack_app.model import User
 from bee_slack_app.repository.database import get_database_client
 
 

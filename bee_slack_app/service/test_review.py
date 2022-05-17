@@ -3,8 +3,7 @@
 
 from logging import getLogger
 
-from bee_slack_app.repository.review_repository import ReviewRepository
-from bee_slack_app.repository.user_repository import UserRepository
+from bee_slack_app.repository import UserRepository, ReviewRepository
 from bee_slack_app.service.review import get_review, get_reviews
 
 
