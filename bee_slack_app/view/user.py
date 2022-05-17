@@ -33,7 +33,7 @@ def user_profile_modal(callback_id: str, user_name: str, user: Optional[User]):
                 "label": {"type": "plain_text", "text": "事業部"},
                 "element": {
                     "type": "static_select",
-                    "action_id": "action_id_department",
+                    "action_id": "department_action",
                     "placeholder": {
                         "type": "plain_text",
                         "text": "事業部を選択してください",
@@ -90,7 +90,7 @@ def user_profile_modal(callback_id: str, user_name: str, user: Optional[User]):
                 "label": {"type": "plain_text", "text": "主な仕事"},
                 "element": {
                     "type": "static_select",
-                    "action_id": "action_id_job_type",
+                    "action_id": "job_type_action",
                     "placeholder": {
                         "type": "plain_text",
                         "text": "一番近いものを選択してください",
@@ -122,7 +122,7 @@ def user_profile_modal(callback_id: str, user_name: str, user: Optional[User]):
                 "label": {"type": "plain_text", "text": "年齢層"},
                 "element": {
                     "type": "static_select",
-                    "action_id": "action_id_age_range",
+                    "action_id": "age_range_action",
                     "placeholder": {
                         "type": "plain_text",
                         "text": "年齢層を選択してください",

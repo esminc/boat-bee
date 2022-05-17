@@ -17,7 +17,7 @@ def book_search_controller(app):  # pylint: disable=too-many-statements
         検索結果のモーダルを開く
         """
         title = body["view"]["state"]["values"]["input_book_title"][
-            "action_id_book_title"
+            "book_title_action"
         ]["value"]
 
         book_results = search_book_by_title(title)
@@ -53,7 +53,7 @@ def book_search_controller(app):  # pylint: disable=too-many-statements
             ),
         )
 
-    @app.action("select_buttons-action")
+    @app.action("select_book_action")
     def handle_book_selected(ack, body, _, client):
         """
         検索結果画面で選択ボタンを選択した時に行う処理
@@ -88,7 +88,7 @@ def book_search_controller(app):  # pylint: disable=too-many-statements
         )
         ack()
 
-    @app.action("google_books_buttons-action")
+    @app.action("google_books_buttons_action")
     def handle_google_books_selected(ack, body, _, logger):
         """
         検索結果画面でGoogle Booksで見るボタンを押した時に行う処理

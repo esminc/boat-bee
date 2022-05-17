@@ -115,7 +115,7 @@ def recommend_controller(app):  # pylint: disable=too-many-statements
                                 "emoji": True,
                             },
                             "url": book["google_books_url"],
-                            "action_id": "google_books_buttons-action",
+                            "action_id": "google_books_buttons_action",
                         },
                     ],
                 },

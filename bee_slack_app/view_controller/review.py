@@ -49,14 +49,14 @@ def review_controller(app):  # pylint: disable=too-many-statements
         image_url = view["blocks"][1]["accessory"]["image_url"]
 
         score_for_me = view["state"]["values"]["input_score_for_me"][
-            "action_id_score_for_me"
+            "score_for_me_action"
         ]["selected_option"]["value"]
         score_for_others = view["state"]["values"]["input_score_for_others"][
-            "action_id_score_for_others"
+            "score_for_others_action"
         ]["selected_option"]["value"]
 
-        # `input_comment`という block_id に `action_id_comment` を持つ input ブロックがある場合
-        review_comment = view["state"]["values"]["input_comment"]["action_id_comment"][
+        # `input_comment`という block_id に `comment_action` を持つ input ブロックがある場合
+        review_comment = view["state"]["values"]["input_comment"]["comment_action"][
             "value"
         ]
         user_id = body["user"]["id"]
@@ -111,7 +111,7 @@ def review_controller(app):  # pylint: disable=too-many-statements
             view=view,
         )
 
-    @app.action("move_to_next")
+    @app.action("move_to_next_action")
     def move_to_next(ack, logger, client, body):
         ack()
 
@@ -146,7 +146,7 @@ def review_controller(app):  # pylint: disable=too-many-statements
             view=view,
         )
 
-    @app.action("move_to_back")
+    @app.action("move_to_back_action")
     def move_to_back(ack, logger, client, body):
         ack()
 

@@ -39,15 +39,15 @@ def user_controller(app):
 
         user_name = view["blocks"][0]["text"]["text"]
 
-        department = view["state"]["values"]["input_department"][
-            "action_id_department"
-        ]["selected_option"]["value"]
-
-        job_type = view["state"]["values"]["input_job_type"]["action_id_job_type"][
+        department = view["state"]["values"]["input_department"]["department_action"][
             "selected_option"
         ]["value"]
 
-        age_range = view["state"]["values"]["input_age_range"]["action_id_age_range"][
+        job_type = view["state"]["values"]["input_job_type"]["job_type_action"][
+            "selected_option"
+        ]["value"]
+
+        age_range = view["state"]["values"]["input_age_range"]["age_range_action"][
             "selected_option"
         ]["value"]
 
