@@ -22,7 +22,16 @@ def recommend(logger: Any, user: User) -> Optional[SearchedBook]:
 
     try:
         book_info = GoogleBooks().search_book_by_isbn(isbn)
-        return book_info
+        book: Optional[SearchedBook] = None
+        if book_info is not None:
+            book = {
+                "title": book_info["title"],
+                "isbn": isbn,
+                "author": book_info.get("authors", "No Authoer"),
+                "google_books_url": book_info["google_books_url"],
+                "image_url": book_info["image_url"],
+            }
+        return book
 
     except Exception:  # pylint: disable=broad-except
         logger.exception("Failed to get data.")

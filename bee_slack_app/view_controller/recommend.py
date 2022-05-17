@@ -2,8 +2,8 @@ from typing import Optional
 
 from bee_slack_app.model.search import SearchedBook
 from bee_slack_app.model.user import User
-from bee_slack_app.service.user import get_user
 from bee_slack_app.service.recommend import recommend
+from bee_slack_app.service.user import get_user
 
 
 def recommend_controller(app):  # pylint: disable=too-many-statements
