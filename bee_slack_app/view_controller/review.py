@@ -267,6 +267,7 @@ def review_controller(app):  # pylint: disable=too-many-statements
                 trigger_id=body["trigger_id"],
                 view=simple_modal(title="エラー", text="レビューの取得でエラーが発生しました"),
             )
+            return
 
         client.views_push(
             trigger_id=body["trigger_id"], view=review_detail_modal(review)
