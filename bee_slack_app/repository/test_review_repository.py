@@ -6,7 +6,7 @@ import os
 import boto3  # type: ignore
 from moto import mock_dynamodb  # type: ignore
 
-from bee_slack_app.repository.review import Review
+from bee_slack_app.repository.review_repository import ReviewRepository
 
 
 @mock_dynamodb
@@ -73,7 +73,7 @@ class TestReview:
 
         self.table.put_item(Item=item)
 
-        review_repository = Review()
+        review_repository = ReviewRepository()
 
         review = review_repository.get(user_id="user_id_1", isbn="12345")
 
@@ -133,7 +133,7 @@ class TestReview:
 
         self.table.put_item(Item=item)
 
-        review_repository = Review()
+        review_repository = ReviewRepository()
 
         review = review_repository.get(user_id="user_id_not_exist", isbn="12345")
 
@@ -185,7 +185,7 @@ class TestReview:
 
         self.table.put_item(Item=item)
 
-        review_repository = Review()
+        review_repository = ReviewRepository()
 
         response = review_repository.get_some(limit=2)
         reviews = response["items"]
@@ -279,7 +279,7 @@ class TestReview:
 
         self.table.put_item(Item=item)
 
-        review_repository = Review()
+        review_repository = ReviewRepository()
 
         reviews = review_repository.get_some()["items"]
 
@@ -320,7 +320,7 @@ class TestReview:
 
         assert len(response["Items"]) == 0
 
-        review_repository = Review()
+        review_repository = ReviewRepository()
 
         reviews = review_repository.get_some()["items"]
 
@@ -336,7 +336,7 @@ class TestReview:
 
         assert len(response["Items"]) == 0
 
-        review_repository = Review()
+        review_repository = ReviewRepository()
 
         review_repository.create(
             {
@@ -420,7 +420,7 @@ class TestReview:
 
         self.table.put_item(Item=item)
 
-        review_repository = Review()
+        review_repository = ReviewRepository()
 
         reviews = review_repository.get_some(conditions={"score_for_me": 3})["items"]
 
@@ -492,7 +492,7 @@ class TestReview:
 
         self.table.put_item(Item=item)
 
-        review_repository = Review()
+        review_repository = ReviewRepository()
 
         reviews = review_repository.get_some(conditions={"score_for_others": 4})[
             "items"
@@ -566,7 +566,7 @@ class TestReview:
 
         self.table.put_item(Item=item)
 
-        review_repository = Review()
+        review_repository = ReviewRepository()
 
         reviews = review_repository.get_some(
             conditions={"score_for_me": 3, "score_for_others": 5}
@@ -638,7 +638,7 @@ class TestReview:
             "book_url": "dummy_book_url_2",
         }
 
-        review_repository = Review()
+        review_repository = ReviewRepository()
 
         reviews = review_repository.get_some(conditions={"score_for_others": 1})[
             "items"
@@ -648,7 +648,7 @@ class TestReview:
         assert isinstance(reviews, list)
 
     def test_レビューを上書きできること(self):
-        review_repository = Review()
+        review_repository = ReviewRepository()
 
         review_repository.create(
             {
@@ -731,7 +731,7 @@ class TestReview:
 
         assert len(response["Items"]) == 0
 
-        review_repository = Review()
+        review_repository = ReviewRepository()
 
         review_repository.create(
             {
