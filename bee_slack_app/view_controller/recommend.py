@@ -40,7 +40,7 @@ def recommend_controller(app):  # pylint: disable=too-many-statements
             )
             return
 
-        book: SearchedBook[Optional] = recommend(logger, user)
+        book: Optional[SearchedBook] = recommend(logger, user)
 
         if book is None:
             client.views_open(
