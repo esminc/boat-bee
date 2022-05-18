@@ -8,14 +8,16 @@ from bee_slack_app.model.user import User
 from bee_slack_app.service.recommend import recommend
 from bee_slack_app.service.user import get_user
 
+from pprint import pprint
+
 app = App(process_before_response=True)
 
 
 def recommend_controller(app):  # pylint: disable=too-many-statements
-    @app.action("book_recommend")
-    def open_recommend_modal(ack, body, client, logger):
+    # @app.action("book_recommend")
+    def open_recommend_modal(body, client, logger):
         # コマンドのリクエストを確認
-        ack()
+        # ack()
         logger.info(body)
 
         user_id = body["user"]["id"]
@@ -73,11 +75,15 @@ def recommend_controller(app):  # pylint: disable=too-many-statements
 
         modal_view = generate_book_recommend_model_view(book)
 
-        client.views_open(
+        client.views_update(
             trigger_id=body["trigger_id"],
             # ビューのペイロード
             view=modal_view,
+            view_id=body["view"]["id"],
         )
+        print("body")
+        pprint(body)
+        print("view_id2", body["view"]["id"])
 
     def generate_book_recommend_model_view(book: SearchedBook):
         # TODO: 暫定で適当な画像をデフォルトに設定、S3に画像を置くようになったら自前の画像に差し替える
@@ -126,11 +132,12 @@ def recommend_controller(app):  # pylint: disable=too-many-statements
         }
         return view
 
-    def init_display(body, client, ack):
-        ack()
+    def init_display(body, client):
+        # ack()
 
         client.views_open(
             trigger_id=body["trigger_id"],
+            view_id=body["view"]["id"],
             view={
                 "type": "modal",
                 "callback_id": "recommend_book",
@@ -144,12 +151,13 @@ def recommend_controller(app):  # pylint: disable=too-many-statements
                 ],
             },
         )
+        print("view_id1", body["view"]["id"])
 
     app.action("book_recommend")(
         # こackの関数は、内部でackを使用する
         ack=init_display,
         # 非同期にしたい関数をlazyに指定する
-        lazy=[generate_book_recommend_model_view],
+        lazy=[open_recommend_modal],
     )
 
     def handler(event, context):
