@@ -3,7 +3,7 @@
 from logging import getLogger
 
 from bee_slack_app.model.user import User
-from bee_slack_app.repository.google_books import GoogleBooks
+from bee_slack_app.repository.google_books_repository import GoogleBooksRepository
 from bee_slack_app.service.recommend import recommend
 
 
@@ -17,7 +17,9 @@ def test_おすすめの本の情報を取得できること(monkeypatch):
             "image_url": "test_image_url",
         }
 
-    monkeypatch.setattr(GoogleBooks, "search_book_by_isbn", mock_search_book_by_isbn)
+    monkeypatch.setattr(
+        GoogleBooksRepository, "search_book_by_isbn", mock_search_book_by_isbn
+    )
 
     user: User = {
         "user_id": "U03B49AKZV4",
@@ -42,7 +44,9 @@ def test_おすすめの本の情報がNoneのケース(monkeypatch):  # pylint:
     def mock_search_book_by_isbn(_, __):
         return None
 
-    monkeypatch.setattr(GoogleBooks, "search_book_by_isbn", mock_search_book_by_isbn)
+    monkeypatch.setattr(
+        GoogleBooksRepository, "search_book_by_isbn", mock_search_book_by_isbn
+    )
 
     user: User = {
         "user_id": "U03B49AKZV4",
@@ -69,7 +73,9 @@ def test_おすすめ本の書影がNoneならNoneが返値に設定されるこ
             "image_url": None,
         }
 
-    monkeypatch.setattr(GoogleBooks, "search_book_by_isbn", mock_search_book_by_isbn)
+    monkeypatch.setattr(
+        GoogleBooksRepository, "search_book_by_isbn", mock_search_book_by_isbn
+    )
 
     user: User = {
         "user_id": "U03B49AKZV4",
@@ -94,7 +100,9 @@ def test_モジュール内で例外が発生した場合は返値はNoneであ�
     def mock_search_book_by_isbn(_, __):
         raise Exception("dummy exception")
 
-    monkeypatch.setattr(GoogleBooks, "search_book_by_isbn", mock_search_book_by_isbn)
+    monkeypatch.setattr(
+        GoogleBooksRepository, "search_book_by_isbn", mock_search_book_by_isbn
+    )
 
     user: User = {
         "user_id": "U03B49AKZV4",
