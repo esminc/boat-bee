@@ -27,7 +27,7 @@ def recommend(logger: Any, user: User) -> Optional[SearchedBook]:
             book = {
                 "title": book_info["title"],
                 "isbn": isbn,
-                "author": book_info.get("authors", "No Authoer"),
+                "author": book_info.get("author", "No Authoer"),
                 "google_books_url": book_info["google_books_url"],
                 "image_url": book_info["image_url"],
             }
