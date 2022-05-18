@@ -1,9 +1,14 @@
 from typing import Optional
 
+from slack_bolt import App
+from slack_bolt.adapter.aws_lambda import SlackRequestHandler
+
 from bee_slack_app.model.search import SearchedBook
 from bee_slack_app.model.user import User
 from bee_slack_app.service.recommend import recommend
 from bee_slack_app.service.user import get_user
+
+app = App(process_before_response=True)
 
 
 def recommend_controller(app):  # pylint: disable=too-many-statements
@@ -120,3 +125,32 @@ def recommend_controller(app):  # pylint: disable=too-many-statements
             ],
         }
         return view
+
+    def init_display(body, client, ack):
+        ack()
+
+        client.views_open(
+            trigger_id=body["trigger_id"],
+            view={
+                "type": "modal",
+                "callback_id": "recommend_book",
+                "title": {"type": "plain_text", "text": "あなたへのおすすめの本", "emoji": True},
+                "close": {"type": "plain_text", "text": "閉じる", "emoji": True},
+                "blocks": [
+                    {
+                        "type": "section",
+                        "text": {"type": "mrkdwn", "text": "処理中です...\nしばらくお待ちください。"},
+                    },
+                ],
+            },
+        )
+
+    app.action("book_recommend")(
+        # こackの関数は、内部でackを使用する
+        ack=init_display,
+        # 非同期にしたい関数をlazyに指定する
+        lazy=[generate_book_recommend_model_view],
+    )
+
+    def handler(event, context):
+        return SlackRequestHandler(app=app).handle(event, context)
