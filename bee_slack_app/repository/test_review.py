@@ -6,11 +6,11 @@ import os
 import boto3  # type: ignore
 from moto import mock_dynamodb  # type: ignore
 
-from bee_slack_app.repository.book_review import BookReview
+from bee_slack_app.repository.review import Review
 
 
 @mock_dynamodb
-class TestBookReview:
+class TestReview:
     def setup_method(self, _):
         dynamodb = boto3.resource("dynamodb")
 
@@ -73,9 +73,9 @@ class TestBookReview:
 
         self.table.put_item(Item=item)
 
-        book_review = BookReview()
+        review_repository = Review()
 
-        review = book_review.get(user_id="user_id_1", isbn="12345")
+        review = review_repository.get(user_id="user_id_1", isbn="12345")
 
         assert review["user_id"] == "user_id_1"
         assert review["isbn"] == "12345"
@@ -133,9 +133,9 @@ class TestBookReview:
 
         self.table.put_item(Item=item)
 
-        book_review = BookReview()
+        review_repository = Review()
 
-        review = book_review.get(user_id="user_id_not_exist", isbn="12345")
+        review = review_repository.get(user_id="user_id_not_exist", isbn="12345")
 
         assert review is None
 
@@ -185,9 +185,9 @@ class TestBookReview:
 
         self.table.put_item(Item=item)
 
-        book_review = BookReview()
+        review_repository = Review()
 
-        response = book_review.get_some(limit=2)
+        response = review_repository.get_some(limit=2)
         reviews = response["items"]
         last_key = response["last_key"]
 
@@ -215,7 +215,7 @@ class TestBookReview:
         assert reviews[1]["book_author"] == "dummy_book_author_1"
         assert reviews[1]["book_url"] == "dummy_book_url_1"
 
-        response = book_review.get_some(limit=2, start_key=last_key)
+        response = review_repository.get_some(limit=2, start_key=last_key)
         reviews = response["items"]
         last_key = response["last_key"]
 
@@ -279,9 +279,9 @@ class TestBookReview:
 
         self.table.put_item(Item=item)
 
-        book_review = BookReview()
+        review_repository = Review()
 
-        reviews = book_review.get_some()["items"]
+        reviews = review_repository.get_some()["items"]
 
         assert len(reviews) == 3
 
@@ -320,9 +320,9 @@ class TestBookReview:
 
         assert len(response["Items"]) == 0
 
-        book_review = BookReview()
+        review_repository = Review()
 
-        reviews = book_review.get_some()["items"]
+        reviews = review_repository.get_some()["items"]
 
         assert len(reviews) == 0
         assert isinstance(reviews, list)
@@ -336,9 +336,9 @@ class TestBookReview:
 
         assert len(response["Items"]) == 0
 
-        book_review = BookReview()
+        review_repository = Review()
 
-        book_review.create(
+        review_repository.create(
             {
                 "user_id": "test_user_id",
                 "isbn": "12345",
@@ -420,9 +420,9 @@ class TestBookReview:
 
         self.table.put_item(Item=item)
 
-        book_review = BookReview()
+        review_repository = Review()
 
-        reviews = book_review.get_some(conditions={"score_for_me": 3})["items"]
+        reviews = review_repository.get_some(conditions={"score_for_me": 3})["items"]
 
         assert len(reviews) == 2
 
@@ -492,9 +492,11 @@ class TestBookReview:
 
         self.table.put_item(Item=item)
 
-        book_review = BookReview()
+        review_repository = Review()
 
-        reviews = book_review.get_some(conditions={"score_for_others": 4})["items"]
+        reviews = review_repository.get_some(conditions={"score_for_others": 4})[
+            "items"
+        ]
 
         assert len(reviews) == 2
 
@@ -564,9 +566,9 @@ class TestBookReview:
 
         self.table.put_item(Item=item)
 
-        book_review = BookReview()
+        review_repository = Review()
 
-        reviews = book_review.get_some(
+        reviews = review_repository.get_some(
             conditions={"score_for_me": 3, "score_for_others": 5}
         )["items"]
 
@@ -636,17 +638,19 @@ class TestBookReview:
             "book_url": "dummy_book_url_2",
         }
 
-        book_review = BookReview()
+        review_repository = Review()
 
-        reviews = book_review.get_some(conditions={"score_for_others": 1})["items"]
+        reviews = review_repository.get_some(conditions={"score_for_others": 1})[
+            "items"
+        ]
 
         assert len(reviews) == 0
         assert isinstance(reviews, list)
 
     def test_レビューを上書きできること(self):
-        book_review = BookReview()
+        review_repository = Review()
 
-        book_review.create(
+        review_repository.create(
             {
                 "user_id": "test_user_id",
                 "isbn": "12345",
@@ -682,7 +686,7 @@ class TestBookReview:
         assert actual["book_author"] == "dummy_book_author"
         assert actual["book_url"] == "dummy_book_url"
 
-        book_review.create(
+        review_repository.create(
             {
                 "user_id": "test_user_id",
                 "isbn": "12345",
@@ -727,9 +731,9 @@ class TestBookReview:
 
         assert len(response["Items"]) == 0
 
-        book_review = BookReview()
+        review_repository = Review()
 
-        book_review.create(
+        review_repository.create(
             {
                 "user_id": "test_user_id",
                 "isbn": "12345",
@@ -744,7 +748,7 @@ class TestBookReview:
             }
         )
 
-        book_review.create(
+        review_repository.create(
             {
                 "user_id": "test_user_id",
                 "isbn": "67890",
