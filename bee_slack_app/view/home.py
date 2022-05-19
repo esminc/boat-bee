@@ -3,7 +3,8 @@ def home(
     see_more_recommended_book_action_id: str,
     read_review_action_id: str,
     post_review_action_id: str,
-    user_info_action_id: str
+    user_info_action_id: str,
+    review_count_all: int,
 ):
     """
     アプリホーム画面
@@ -74,6 +75,15 @@ def home(
             {
                 "type": "header",
                 "text": {"type": "plain_text", "text": "本のレビュー", "emoji": True},
+            },
+            {
+                "type": "section",
+                "fields": [
+                    {
+                        "type": "mrkdwn",
+                        "text": f"*　現在のレビュー投稿数 {review_count_all}件*",
+                    },  # type:ignore
+                ],
             },
             {
                 "type": "actions",
