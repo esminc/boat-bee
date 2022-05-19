@@ -14,6 +14,8 @@ def recommend_controller(app):  # pylint: disable=too-many-statements
 
         user: Optional[User] = get_user(logger, user_id)
         if not user:
+            # Lazyリスナーを使用している為、trigger_idを使用してviews_openはできない。
+            # external_idを使用してviews_updateで、show_waiting_messageモーダルを更新する。
             client.views_update(
                 external_id="recommend_external_id",
                 view={
@@ -40,6 +42,8 @@ def recommend_controller(app):  # pylint: disable=too-many-statements
         book: Optional[SearchedBook] = recommend(logger, user)
 
         if book is None:
+            # Lazyリスナーを使用している為、trigger_idを使用してviews_openはできない。
+            # external_idを使用してviews_updateで、show_waiting_messageモーダルを更新する。
             client.views_update(
                 external_id="recommend_external_id",
                 view={
