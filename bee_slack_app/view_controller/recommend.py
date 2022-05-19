@@ -79,7 +79,7 @@ def recommend_controller(app):  # pylint: disable=too-many-statements
         dummy_url = "https://pbs.twimg.com/profile_images/625633822235693056/lNGUneLX_400x400.jpg"
         image_url = book["image_url"] if book["image_url"] is not None else dummy_url
         authors = ", ".join(book["authors"])
-        
+
         view = {
             "type": "modal",
             "callback_id": "book_recommend",
