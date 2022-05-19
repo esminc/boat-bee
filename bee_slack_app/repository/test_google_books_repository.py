@@ -33,7 +33,7 @@ class TestGoogleBooks:
         assert target_book["isbn"] == "9784873118253"
         assert target_book["authors"] is not None
 
-        assert isinstance(target_book["authors"]) is list
+        assert isinstance(target_book["authors"], list)
         assert len(target_book["authors"]) == 3
 
         # テストを実行する場所により "com"と"co.jp"が変わるのでそれ以外の部分のみ比較することにする
