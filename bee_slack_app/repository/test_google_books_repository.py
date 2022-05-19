@@ -33,6 +33,9 @@ class TestGoogleBooks:
         assert target_book["isbn"] == "9784873118253"
         assert target_book["author"] is not None
 
+        assert type(target_book["author"]) is list
+        assert len(target_book["author"]) == 3
+
         # テストを実行する場所により "com"と"co.jp"が変わるのでそれ以外の部分のみ比較することにする
         assert target_book["google_books_url"].startswith("http://books.google")
         assert target_book["google_books_url"].endswith(
