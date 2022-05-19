@@ -196,7 +196,7 @@ def notify_review_post_message_blocks(review_contents: ReviewContents):
             "type": "header",
             "text": {
                 "type": "plain_text",
-                "text": "レビューが投稿されました :tada:",
+                "text": f"{review_contents['user_name']}さんがレビューを投稿しました :tada:",
                 "emoji": True,
             },
         },
