@@ -138,6 +138,11 @@ def review_list_modal(
         "callback_id": callback_id,
         "title": {"type": "plain_text", "text": "Bee"},
         "blocks": [
+            {
+                "type": "image",
+                "image_url": "https://developers.google.com/maps/documentation/images/powered_by_google_on_white.png",
+                "alt_text": "",
+            },
             {"type": "section", "text": {"type": "mrkdwn", "text": "*検索条件*"}},
             {
                 "block_id": "score_for_me_select_block",
