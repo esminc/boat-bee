@@ -5,7 +5,8 @@ from logging import getLogger
 
 from bee_slack_app.repository.review_repository import ReviewRepository
 from bee_slack_app.repository.user_repository import UserRepository
-from bee_slack_app.service.review import get_review, get_reviews
+from bee_slack_app.service.review import get_review, get_reviews, post_review
+from bee_slack_app.utils import datetime
 
 
 def test_get_reviewでレビューを取得できること(monkeypatch):
@@ -355,3 +356,67 @@ def test_get_reviewsでuser_repositoryの処理でエラーが発生した場合
     reviews = get_reviews(logger=getLogger(), limit=10, keys=[])
 
     assert reviews is None
+
+
+def test_post_reviewでレビューを投稿できること(
+    mocker,
+):  # pylint: disable=invalid-name
+    mock_review_repository_create = mocker.patch.object(ReviewRepository, "create")
+
+    mocker.patch.object(datetime, "now").return_value = "2022-04-01T00:00:00+09:00"
+
+    review = post_review(
+        logger=getLogger(),
+        review_contents={
+            "user_id": "test_user_id",
+            "isbn": "12345",
+            "book_title": "本のタイトル",
+            "score_for_me": "1",
+            "score_for_others": "3",
+            "review_comment": "レビューコメント",
+            "book_image_url": "dummy_book_author",
+            "book_author": "dummy_book_author",
+            "book_url": "dummy_book_url",
+        },
+    )
+
+    assert mock_review_repository_create.call_count == 1
+
+    assert review["user_id"] == "test_user_id"
+    assert review["isbn"] == "12345"
+    assert review["book_title"] == "本のタイトル"
+    assert review["score_for_me"] == "1"
+    assert review["score_for_others"] == "3"
+    assert review["review_comment"] == "レビューコメント"
+    assert review["updated_at"] == "2022-04-01T00:00:00+09:00"
+    assert review["book_image_url"] == "dummy_book_author"
+    assert review["book_author"] == "dummy_book_author"
+    assert review["book_url"] == "dummy_book_url"
+
+
+def test_post_reviewでreview_repositoryの処理でエラーが発生した場合Noneを返すこと(
+    mocker,
+):  # pylint: disable=invalid-name
+    mock_review_repository_create = mocker.patch.object(ReviewRepository, "create")
+    mock_review_repository_create.side_effect = Exception("dummy exception")
+
+    mocker.patch.object(datetime, "now").return_value = "2022-04-01T00:00:00+09:00"
+
+    review = post_review(
+        logger=getLogger(),
+        review_contents={
+            "user_id": "test_user_id",
+            "isbn": "12345",
+            "book_title": "本のタイトル",
+            "score_for_me": "1",
+            "score_for_others": "3",
+            "review_comment": "レビューコメント",
+            "book_image_url": "dummy_book_author",
+            "book_author": "dummy_book_author",
+            "book_url": "dummy_book_url",
+        },
+    )
+
+    assert mock_review_repository_create.call_count == 1
+
+    assert review is None

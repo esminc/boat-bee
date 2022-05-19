@@ -1,5 +1,8 @@
 import json
 
+from bee_slack_app.model.review import ReviewContents
+from bee_slack_app.utils import datetime
+
 
 def search_book_to_review_modal(*, callback_id: str):
     """
@@ -146,5 +149,95 @@ def post_review_modal(*, callback_id: str, book_section, url: str):
                     "multiline": True,
                 },
             },
+            {
+                "type": "input",
+                "block_id": "notify_review_post_in_channel_block",
+                "optional": True,
+                "label": {
+                    "type": "plain_text",
+                    "text": "レビュー投稿通知",
+                    "emoji": True,
+                },
+                "element": {
+                    "type": "checkboxes",
+                    "action_id": "notify_review_post_in_channel_action",
+                    "options": [
+                        {
+                            "text": {
+                                "type": "plain_text",
+                                "text": "レビュー投稿を チャンネル #bee に通知する",
+                                "emoji": True,
+                            },
+                            "value": "notify_review_post_in_channel",
+                        },
+                    ],
+                },
+            },
         ],
     }
+
+
+def notify_review_post_message_blocks(review_contents: ReviewContents):
+    """
+    レビュー投稿メッセージブロック
+
+    Args:
+        review_contents: 投稿したレビュー
+    """
+
+    update_datetime = (
+        datetime.parse(review_contents["updated_at"])
+        if review_contents["updated_at"]
+        else "-"
+    )
+
+    return [
+        {
+            "type": "header",
+            "text": {
+                "type": "plain_text",
+                "text": "レビューが投稿されました :tada:",
+                "emoji": True,
+            },
+        },
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": f"*{review_contents['book_title']}*\n{review_contents['book_author']}\nISBN-{review_contents['isbn']}\n<{review_contents['book_url']}|Google Booksで見る>",
+            },
+            "accessory": {
+                "type": "image",
+                "image_url": review_contents["book_image_url"],
+                "alt_text": review_contents["book_title"],
+            },
+        },
+        {
+            "type": "section",
+            "fields": [
+                {
+                    "type": "mrkdwn",
+                    "text": f"*投稿者*\n{review_contents['user_name']}",
+                },  # type:ignore
+                {
+                    "type": "mrkdwn",
+                    "text": f"*投稿日時*\n{update_datetime}",
+                },  # type:ignore
+                {  # type:ignore
+                    "type": "mrkdwn",
+                    "text": f"*自分にとっての評価*\n{review_contents['score_for_me']}",
+                },
+                {  # type:ignore
+                    "type": "mrkdwn",
+                    "text": f"*永和社員へのおすすめ度*\n{review_contents['score_for_others']}",
+                },
+            ],
+        },
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": f"*レビューコメント*\n\n{review_contents['review_comment'] or '-'}",
+            },
+        },
+    ]
