@@ -78,7 +78,8 @@ def recommend_controller(app):  # pylint: disable=too-many-statements
         # TODO: 暫定で適当な画像をデフォルトに設定、S3に画像を置くようになったら自前の画像に差し替える
         dummy_url = "https://pbs.twimg.com/profile_images/625633822235693056/lNGUneLX_400x400.jpg"
         image_url = book["image_url"] if book["image_url"] is not None else dummy_url
-
+        authors = ", ".join(book["authors"])
+        
         view = {
             "type": "modal",
             "callback_id": "book_recommend",
@@ -89,7 +90,7 @@ def recommend_controller(app):  # pylint: disable=too-many-statements
                     "type": "section",
                     "text": {
                         "type": "mrkdwn",
-                        "text": f"*{book['title']}*\n{book['authors']}\nISBN-{book['isbn']}",
+                        "text": f"*{book['title']}*\n{authors}\nISBN-{book['isbn']}",
                     },
                     "accessory": {
                         "type": "image",
