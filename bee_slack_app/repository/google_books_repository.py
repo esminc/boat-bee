@@ -15,7 +15,8 @@ class GoogleBooksRepository:
         Args:
             title : 検索したい書籍のタイトル（曖昧検索も可能）
         Returns:
-            list: ヒットした書籍の辞書形式データをリストで格納する
+            list[dict[str, Any]]  : ヒットした書籍の情報を辞書のリスト形式で返す
+                                    ヒットしなかった場合は空のリストを返す
         """
 
         # URLのパラメータ
@@ -71,7 +72,7 @@ class GoogleBooksRepository:
         Args:
             isbn : 検索したい書籍のISBN(13桁の数字、ハイフンなし)
         Returns:
-            Optional[dict[str, str]]  : ヒットした書籍の情報を辞書形式で返す
+            Optional[dict[str, Any]]  : ヒットした書籍の情報を辞書形式で返す
                                         ヒットしなかった場合はNoneを返す
         """
 
