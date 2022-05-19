@@ -98,13 +98,13 @@ def review_controller(app):  # pylint: disable=too-many-statements
 
         review = post_review(logger, review_contents)
 
-        disable_notify = bool(
+        notify = not bool(
             view["state"]["values"]["disable_notify_review_post_block"][
                 "disable_notify_review_post_action"
             ]["selected_options"]
         )
 
-        if not disable_notify:
+        if notify:
             user = get_user(logger, review["user_id"])
             review["user_name"] = user["user_name"] if user else review["user_id"]
 
