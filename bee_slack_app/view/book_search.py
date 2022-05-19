@@ -50,7 +50,7 @@ def _generate_book_block(book: SearchedBook):
         "https://pbs.twimg.com/profile_images/625633822235693056/lNGUneLX_400x400.jpg"
     )
 
-    author = ", ".join(book["author"])
+    authors = ", ".join(book["authors"])
     image_url = book["image_url"] if book["image_url"] is not None else dummy_url
 
     block = [
@@ -59,7 +59,7 @@ def _generate_book_block(book: SearchedBook):
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": f"*{book['title']}*\n{author}\nISBN-{book['isbn']}",
+                "text": f"*{book['title']}*\n{authors}\nISBN-{book['isbn']}",
             },
             "accessory": {
                 "type": "image",

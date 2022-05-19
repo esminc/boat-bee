@@ -18,21 +18,21 @@ class TestBookSearch:
                 {
                     "title": title,
                     "isbn": "1234567890123",
-                    "author": "テストの著者名_1",
+                    "authors": "テストの著者名_1",
                     "google_books_url": "http://books.google.co.jp/for_google_books_url_test_1",
                     "image_url": "http://books.google.co.jp/for_image_url_test_1",
                 },
                 {
                     "title": "テストのタイトル_2",
                     "isbn": "1234567890123",
-                    "author": "テストの著者名_2",
+                    "authors": "テストの著者名_2",
                     "google_books_url": "http://books.google.co.jp/for_google_books_url_test_2",
                     "image_url": "http://books.google.co.jp/for_image_url_test_2",
                 },
                 {
                     "title": "テストのタイトル_3",
                     "isbn": "1234567890123",
-                    "author": "テストの著者名_3",
+                    "authors": "テストの著者名_3",
                     "google_books_url": "http://books.google.co.jp/for_google_books_url_test_3",
                     "image_url": "http://books.google.co.jp/for_image_url_test_3",
                 },
@@ -55,7 +55,7 @@ class TestBookSearch:
         # 必要な要素が返ってきていること、内容の妥当性は問わない（Repository側で担保する）
         assert target_book["title"] is not None
         assert target_book["isbn"] is not None
-        assert target_book["author"] is not None
+        assert target_book["authors"] is not None
         assert target_book["google_books_url"] is not None
         assert target_book["image_url"] is not None
 
@@ -81,7 +81,7 @@ class TestBookSearch:
             book = {
                 "title": "テストのタイトル",
                 "isbn": isbn,
-                "author": "テストの著者名",
+                "authors": "テストの著者名",
                 "google_books_url": "http://books.google.co.jp/for_google_books_url_test",
                 "image_url": "http://books.google.co.jp/for_image_url_test",
             }
@@ -100,7 +100,7 @@ class TestBookSearch:
         # 必要な要素が返ってきていること、内容の妥当性は問わない（Repository側で担保する）
         assert result["title"] is not None
         assert result["isbn"] is not None
-        assert result["author"] is not None
+        assert result["authors"] is not None
         assert result["google_books_url"] is not None
         assert result["image_url"] is not None
 

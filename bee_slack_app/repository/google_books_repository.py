@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Any, Optional
 
 import requests  # type: ignore
 
@@ -56,7 +56,7 @@ class GoogleBooksRepository:
             dict_item = {
                 "title": _item["volumeInfo"]["title"],
                 "isbn": isbn_13,
-                "author": _item["volumeInfo"].get("authors", "No Authoer"),
+                "authors": _item["volumeInfo"].get("authors", "No Authoer"),
                 "google_books_url": _item["volumeInfo"]["infoLink"],
                 "image_url": image_url,
             }
@@ -95,7 +95,7 @@ class GoogleBooksRepository:
         dict_info = {
             "title": _item["volumeInfo"]["title"],
             "isbn": isbn,
-            "author": _item["volumeInfo"].get("authors", "No Authoer"),
+            "authors": _item["volumeInfo"].get("authors", "No Authoer"),
             "google_books_url": _item["volumeInfo"]["infoLink"],
             "image_url": image_url,
         }

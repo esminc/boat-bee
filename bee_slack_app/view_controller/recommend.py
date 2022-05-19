@@ -89,7 +89,7 @@ def recommend_controller(app):  # pylint: disable=too-many-statements
                     "type": "section",
                     "text": {
                         "type": "mrkdwn",
-                        "text": f"*{book['title']}*\n{book['author']}\nISBN-{book['isbn']}",
+                        "text": f"*{book['title']}*\n{book['authors']}\nISBN-{book['isbn']}",
                     },
                     "accessory": {
                         "type": "image",

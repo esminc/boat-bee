@@ -24,7 +24,7 @@ def search_book_by_title(title: str) -> list[SearchedBook]:
         book_info: SearchedBook = {
             "title": book["title"],
             "isbn": book["isbn"],
-            "author": book["author"],
+            "authors": book["authors"],
             "image_url": book["image_url"],
             "google_books_url": book["google_books_url"],
         }
@@ -53,7 +53,7 @@ def search_book_by_isbn(isbn: str) -> Optional[SearchedBook]:
     book_info: SearchedBook = {
         "title": book["title"],
         "isbn": book["isbn"],
-        "author": book["author"],
+        "authors": book["authors"],
         "image_url": book["image_url"],
         "google_books_url": book["google_books_url"],
     }
