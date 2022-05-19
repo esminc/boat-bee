@@ -98,13 +98,13 @@ def review_controller(app):  # pylint: disable=too-many-statements
 
         review = post_review(logger, review_contents)
 
-        notify_in_channel = bool(
-            view["state"]["values"]["notify_review_post_in_channel_block"][
-                "notify_review_post_in_channel_action"
+        disable_notify = bool(
+            view["state"]["values"]["disable_notify_review_post_block"][
+                "disable_notify_review_post_action"
             ]["selected_options"]
         )
 
-        if notify_in_channel:
+        if not disable_notify:
             user = get_user(logger, review["user_id"])
             review["user_name"] = user["user_name"] if user else review["user_id"]
 

@@ -151,24 +151,24 @@ def post_review_modal(*, callback_id: str, book_section, url: str):
             },
             {
                 "type": "input",
-                "block_id": "notify_review_post_in_channel_block",
+                "block_id": "disable_notify_review_post_block",
                 "optional": True,
                 "label": {
                     "type": "plain_text",
-                    "text": "レビュー投稿通知",
+                    "text": "チャンネル #bee へのレビュー投稿通知",
                     "emoji": True,
                 },
                 "element": {
                     "type": "checkboxes",
-                    "action_id": "notify_review_post_in_channel_action",
+                    "action_id": "disable_notify_review_post_action",
                     "options": [
                         {
                             "text": {
                                 "type": "plain_text",
-                                "text": "レビュー投稿を チャンネル #bee に通知する",
+                                "text": "レビュー投稿を通知しない",
                                 "emoji": True,
                             },
-                            "value": "notify_review_post_in_channel",
+                            "value": "disable_notify_review_post",
                         },
                     ],
                 },
