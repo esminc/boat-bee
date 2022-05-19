@@ -118,7 +118,7 @@ def recommend_controller(app):  # pylint: disable=too-many-statements
         }
         return view
 
-    def init_display(ack, body, client):
+    def show_waiting_message(ack, body, client):
         ack()
 
         client.views_open(
@@ -140,6 +140,6 @@ def recommend_controller(app):  # pylint: disable=too-many-statements
         )
 
     app.action("book_recommend")(
-        ack=init_display,
+        ack=show_waiting_message,
         lazy=[open_recommend_modal],
     )
