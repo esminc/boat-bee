@@ -1,7 +1,7 @@
 # pylint: disable=attribute-defined-outside-init
 # pylint: disable=non-ascii-name
 
-from bee_slack_app.repository.google_books import GoogleBooks
+from bee_slack_app.repository.google_books_repository import GoogleBooksRepository
 from bee_slack_app.service import book_search
 
 
@@ -40,7 +40,7 @@ class TestBookSearch:
             return book
 
         monkeypatch.setattr(
-            GoogleBooks, "search_book_by_title", mock_search_book_by_title
+            GoogleBooksRepository, "search_book_by_title", mock_search_book_by_title
         )
 
         target_title = "テストのタイトル_1"
@@ -65,7 +65,7 @@ class TestBookSearch:
             return book
 
         monkeypatch.setattr(
-            GoogleBooks, "search_book_by_title", mock_search_book_by_title
+            GoogleBooksRepository, "search_book_by_title", mock_search_book_by_title
         )
 
         target_title = "絶対にヒットしない検索ワード"
@@ -88,7 +88,7 @@ class TestBookSearch:
             return book
 
         monkeypatch.setattr(
-            GoogleBooks, "search_book_by_isbn", mock_search_book_by_isbn
+            GoogleBooksRepository, "search_book_by_isbn", mock_search_book_by_isbn
         )
 
         target_isbn = "9784873118253"
@@ -111,7 +111,7 @@ class TestBookSearch:
             return None
 
         monkeypatch.setattr(
-            GoogleBooks, "search_book_by_isbn", mock_search_book_by_isbn
+            GoogleBooksRepository, "search_book_by_isbn", mock_search_book_by_isbn
         )
 
         target_isbn = "1234567890123"

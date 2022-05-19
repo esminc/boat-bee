@@ -2,7 +2,7 @@ from typing import Any, Optional
 
 from bee_slack_app.model.search import SearchedBook
 from bee_slack_app.model.user import User
-from bee_slack_app.repository.google_books import GoogleBooks
+from bee_slack_app.repository.google_books_repository import GoogleBooksRepository
 
 
 def recommend(logger: Any, user: User) -> Optional[SearchedBook]:
@@ -21,7 +21,7 @@ def recommend(logger: Any, user: User) -> Optional[SearchedBook]:
     isbn = "9784873118253"
 
     try:
-        book_info = GoogleBooks().search_book_by_isbn(isbn)
+        book_info = GoogleBooksRepository().search_book_by_isbn(isbn)
         book: Optional[SearchedBook] = None
         if book_info is not None:
             book = {
