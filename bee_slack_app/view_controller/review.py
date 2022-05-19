@@ -1,4 +1,5 @@
 import json
+import os
 
 from bee_slack_app.model.review import ReviewContents
 from bee_slack_app.service.review import (
@@ -9,7 +10,10 @@ from bee_slack_app.service.review import (
 )
 from bee_slack_app.service.user import get_user
 from bee_slack_app.view.common import simple_modal
-from bee_slack_app.view.post_review import search_book_to_review_modal
+from bee_slack_app.view.post_review import (
+    notify_review_post_message_blocks,
+    search_book_to_review_modal,
+)
 from bee_slack_app.view.read_review import review_detail_modal, review_list_modal
 
 
@@ -43,7 +47,9 @@ def review_controller(app):  # pylint: disable=too-many-statements
 
     # view_submission リクエストを処理
     @app.view("view_1")
-    def handle_submission(ack, body, _, view, logger):
+    def handle_submission(
+        ack, body, _, view, logger, client
+    ):  # pylint: disable=too-many-locals
 
         # ハック的な対処なので注意
         # "*<本のタイトル>*\n<本の著者>\nISBN-<本のISBN>"のような文字列からタイトルやISBNを抜き出す
@@ -90,7 +96,22 @@ def review_controller(app):  # pylint: disable=too-many-statements
             "book_url": json.loads(view["private_metadata"])["url"],
         }
 
-        post_review(logger, review_contents)
+        review = post_review(logger, review_contents)
+
+        notify = not bool(
+            view["state"]["values"]["disable_notify_review_post_block"][
+                "disable_notify_review_post_action"
+            ]["selected_options"]
+        )
+
+        if notify:
+            user = get_user(logger, review["user_id"])
+            review["user_name"] = user["user_name"] if user else review["user_id"]
+
+            blocks = notify_review_post_message_blocks(review)
+            client.chat_postMessage(
+                channel=os.environ["NOTIFY_POST_REVIEW_CHANNEL"], blocks=blocks
+            )
 
     @app.action("read_review")
     def open_read_modal(ack, body, client, logger):

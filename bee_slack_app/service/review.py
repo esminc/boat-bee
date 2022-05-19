@@ -129,22 +129,26 @@ def fill_user_name(review_contents_list: list[ReviewContents]) -> None:
         review_contents["user_name"] = user_name
 
 
-def post_review(logger: Any, review_contents: ReviewContents) -> None:
+def post_review(
+    logger: Any, review_contents: ReviewContents
+) -> Optional[ReviewContents]:
     try:
-        review_repository.create(
-            {
-                "user_id": review_contents["user_id"],
-                "book_title": review_contents["book_title"],
-                "isbn": review_contents["isbn"],
-                "score_for_me": review_contents["score_for_me"],
-                "score_for_others": review_contents["score_for_others"],
-                "review_comment": review_contents["review_comment"],
-                "updated_at": datetime.now(),
-                "book_image_url": review_contents["book_image_url"],
-                "book_author": review_contents["book_author"],
-                "book_url": review_contents["book_url"],
-            }
-        )
+        item: ReviewContents = {
+            "user_id": review_contents["user_id"],
+            "book_title": review_contents["book_title"],
+            "isbn": review_contents["isbn"],
+            "score_for_me": review_contents["score_for_me"],
+            "score_for_others": review_contents["score_for_others"],
+            "review_comment": review_contents["review_comment"],
+            "updated_at": datetime.now(),
+            "book_image_url": review_contents["book_image_url"],
+            "book_author": review_contents["book_author"],
+            "book_url": review_contents["book_url"],
+        }
+        review_repository.create(item)
+
+        return item
 
     except Exception as error:  # pylint: disable=broad-except
         logger.exception(f"Failed to store data {error}")
+        return None
