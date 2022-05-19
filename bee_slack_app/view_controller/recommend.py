@@ -140,8 +140,6 @@ def recommend_controller(app):  # pylint: disable=too-many-statements
         )
 
     app.action("book_recommend")(
-        # こackの関数は、内部でackを使用する
         ack=init_display,
-        # 非同期にしたい関数をlazyに指定する
         lazy=[open_recommend_modal],
     )
