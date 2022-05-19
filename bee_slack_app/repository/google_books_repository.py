@@ -8,7 +8,7 @@ class GoogleBooksRepository:
         # Google API
         self.base_url_google = "https://www.googleapis.com/books/v1/volumes"
 
-    def search_book_by_title(self, title: str) -> list[dict[str, str]]:
+    def search_book_by_title(self, title: str) -> list[dict[str, Any]]:
         """
         タイトルから書籍を検索する
 
@@ -64,7 +64,7 @@ class GoogleBooksRepository:
 
         return list_result
 
-    def search_book_by_isbn(self, isbn: str) -> Optional[dict[str, str]]:
+    def search_book_by_isbn(self, isbn: str) -> Optional[dict[str, Any]]:
         """
         ISBNから書籍を検索する
 
