@@ -1,31 +1,26 @@
 from typing import Optional
 
 from slack_bolt import App
-from slack_bolt.adapter.aws_lambda import SlackRequestHandler
 
 from bee_slack_app.model.search import SearchedBook
 from bee_slack_app.model.user import User
 from bee_slack_app.service.recommend import recommend
 from bee_slack_app.service.user import get_user
 
-from pprint import pprint
-
-app = App(process_before_response=True)
-
 
 def recommend_controller(app):  # pylint: disable=too-many-statements
-    # @app.action("book_recommend")
+    app = App(process_before_response=True)
+
     def open_recommend_modal(body, client, logger):
-        # コマンドのリクエストを確認
-        # ack()
         logger.info(body)
 
         user_id = body["user"]["id"]
 
         user: Optional[User] = get_user(logger, user_id)
         if not user:
-            client.views_open(
-                trigger_id=body["trigger_id"],
+            client.views_update(
+                # trigger_id=body["trigger_id"],
+                external_id="recommend_external_id",
                 view={
                     "type": "modal",
                     "title": {
@@ -50,8 +45,9 @@ def recommend_controller(app):  # pylint: disable=too-many-statements
         book: Optional[SearchedBook] = recommend(logger, user)
 
         if book is None:
-            client.views_open(
-                trigger_id=body["trigger_id"],
+            client.views_update(
+                # trigger_id=body["trigger_id"],
+                external_id="recommend_external_id",
                 view={
                     "type": "modal",
                     "title": {
@@ -76,14 +72,10 @@ def recommend_controller(app):  # pylint: disable=too-many-statements
         modal_view = generate_book_recommend_model_view(book)
 
         client.views_update(
-            trigger_id=body["trigger_id"],
             # ビューのペイロード
             view=modal_view,
-            view_id=body["view"]["id"],
+            external_id="recommend_external_id",
         )
-        print("body")
-        pprint(body)
-        print("view_id2", body["view"]["id"])
 
     def generate_book_recommend_model_view(book: SearchedBook):
         # TODO: 暫定で適当な画像をデフォルトに設定、S3に画像を置くようになったら自前の画像に差し替える
@@ -132,8 +124,8 @@ def recommend_controller(app):  # pylint: disable=too-many-statements
         }
         return view
 
-    def init_display(body, client):
-        # ack()
+    def init_display(ack, body, client):
+        ack()
 
         client.views_open(
             trigger_id=body["trigger_id"],
@@ -141,7 +133,8 @@ def recommend_controller(app):  # pylint: disable=too-many-statements
             view={
                 "type": "modal",
                 "callback_id": "recommend_book",
-                "title": {"type": "plain_text", "text": "あなたへのおすすめの本", "emoji": True},
+                "external_id": "recommend_external_id",
+                "title": {"type": "plain_text", "text": "処理中", "emoji": True},
                 "close": {"type": "plain_text", "text": "閉じる", "emoji": True},
                 "blocks": [
                     {
@@ -151,7 +144,6 @@ def recommend_controller(app):  # pylint: disable=too-many-statements
                 ],
             },
         )
-        print("view_id1", body["view"]["id"])
 
     app.action("book_recommend")(
         # こackの関数は、内部でackを使用する
@@ -159,6 +151,3 @@ def recommend_controller(app):  # pylint: disable=too-many-statements
         # 非同期にしたい関数をlazyに指定する
         lazy=[open_recommend_modal],
     )
-
-    def handler(event, context):
-        return SlackRequestHandler(app=app).handle(event, context)
