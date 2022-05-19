@@ -49,7 +49,7 @@ def get_reviews(
     *,
     logger: Any,
     conditions: Optional[GetConditions] = None,
-    limit: int,
+    limit: Optional[int],
     keys: list[ReviewItemKey],
 ) -> Optional[GetResponse]:
     """

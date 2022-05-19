@@ -81,7 +81,7 @@ def home(
                 "fields": [
                     {
                         "type": "mrkdwn",
-                        "text": f"*　現在のレビュー投稿数 {review_count_all}件*",
+                        "text": f"*現在のレビュー投稿数 {review_count_all}件*",
                     },  # type:ignore
                 ],
             },
