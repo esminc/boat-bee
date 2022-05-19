@@ -1,7 +1,5 @@
 from typing import Optional
 
-from slack_bolt import App
-
 from bee_slack_app.model.search import SearchedBook
 from bee_slack_app.model.user import User
 from bee_slack_app.service.recommend import recommend
@@ -9,8 +7,6 @@ from bee_slack_app.service.user import get_user
 
 
 def recommend_controller(app):  # pylint: disable=too-many-statements
-    app = App(process_before_response=True)
-
     def open_recommend_modal(body, client, logger):
         logger.info(body)
 
@@ -19,7 +15,6 @@ def recommend_controller(app):  # pylint: disable=too-many-statements
         user: Optional[User] = get_user(logger, user_id)
         if not user:
             client.views_update(
-                # trigger_id=body["trigger_id"],
                 external_id="recommend_external_id",
                 view={
                     "type": "modal",
@@ -46,7 +41,6 @@ def recommend_controller(app):  # pylint: disable=too-many-statements
 
         if book is None:
             client.views_update(
-                # trigger_id=body["trigger_id"],
                 external_id="recommend_external_id",
                 view={
                     "type": "modal",
