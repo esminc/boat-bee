@@ -11,10 +11,7 @@ def home_controller(app):
 
         reviews = get_reviews(logger=getLogger(), limit=None, keys=[])
 
-        if reviews is None:
-            review_count_all = 0
-        else:
-            review_count_all = len(reviews["items"])
+        review_count_all = len(reviews["items"]) if reviews else 0
 
         client.views_publish(
             user_id=event["user"],
