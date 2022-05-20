@@ -110,7 +110,9 @@ def review_controller(app):  # pylint: disable=too-many-statements
 
             blocks = notify_review_post_message_blocks(review)
             client.chat_postMessage(
-                channel=os.environ["NOTIFY_POST_REVIEW_CHANNEL"], blocks=blocks
+                channel=os.environ["NOTIFY_POST_REVIEW_CHANNEL"],
+                blocks=blocks,
+                text=f"{review['user_name']}さんがレビューを投稿しました",
             )
 
     @app.action("read_review")
