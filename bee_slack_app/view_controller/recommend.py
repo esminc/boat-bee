@@ -7,18 +7,17 @@ from bee_slack_app.service.user import get_user
 
 
 def recommend_controller(app):  # pylint: disable=too-many-statements
-    @app.action("book_recommend")
-    def open_recommend_modal(ack, body, client, logger):
-        # コマンドのリクエストを確認
-        ack()
+    def open_recommend_modal(body, client, logger):
         logger.info(body)
 
         user_id = body["user"]["id"]
 
         user: Optional[User] = get_user(logger, user_id)
         if not user:
-            client.views_open(
-                trigger_id=body["trigger_id"],
+            # Lazyリスナーを使用している為、trigger_idを使用してviews_openはできない。
+            # external_idを使用してviews_updateで、show_waiting_messageモーダルを更新する。
+            client.views_update(
+                external_id="recommend_external_id",
                 view={
                     "type": "modal",
                     "title": {
@@ -43,8 +42,10 @@ def recommend_controller(app):  # pylint: disable=too-many-statements
         book: Optional[SearchedBook] = recommend(logger, user)
 
         if book is None:
-            client.views_open(
-                trigger_id=body["trigger_id"],
+            # Lazyリスナーを使用している為、trigger_idを使用してviews_openはできない。
+            # external_idを使用してviews_updateで、show_waiting_messageモーダルを更新する。
+            client.views_update(
+                external_id="recommend_external_id",
                 view={
                     "type": "modal",
                     "title": {
@@ -68,10 +69,10 @@ def recommend_controller(app):  # pylint: disable=too-many-statements
 
         modal_view = generate_book_recommend_model_view(book)
 
-        client.views_open(
-            trigger_id=body["trigger_id"],
+        client.views_update(
             # ビューのペイロード
             view=modal_view,
+            external_id="recommend_external_id",
         )
 
     def generate_book_recommend_model_view(book: SearchedBook):
@@ -120,3 +121,29 @@ def recommend_controller(app):  # pylint: disable=too-many-statements
             ],
         }
         return view
+
+    def show_waiting_message(ack, body, client):
+        ack()
+
+        client.views_open(
+            trigger_id=body["trigger_id"],
+            view_id=body["view"]["id"],
+            view={
+                "type": "modal",
+                "callback_id": "recommend_book",
+                "external_id": "recommend_external_id",
+                "title": {"type": "plain_text", "text": "処理中", "emoji": True},
+                "close": {"type": "plain_text", "text": "閉じる", "emoji": True},
+                "blocks": [
+                    {
+                        "type": "section",
+                        "text": {"type": "mrkdwn", "text": "処理中です...\nしばらくお待ちください。"},
+                    },
+                ],
+            },
+        )
+
+    app.action("book_recommend")(
+        ack=show_waiting_message,
+        lazy=[open_recommend_modal],
+    )
