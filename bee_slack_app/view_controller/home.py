@@ -11,7 +11,7 @@ def home_controller(app):
 
         reviews = get_reviews(logger=getLogger(), limit=None, keys=[])
 
-        review_count_all = len(reviews["items"]) if reviews else 0
+        total_review_count = len(reviews["items"]) if reviews else 0
 
         client.views_publish(
             user_id=event["user"],
@@ -20,6 +20,6 @@ def home_controller(app):
                 post_review_action_id="post_review",
                 see_more_recommended_book_action_id="book_recommend",
                 user_info_action_id="user_info",
-                review_count_all=review_count_all,
+                total_review_count=total_review_count,
             ),
         )
