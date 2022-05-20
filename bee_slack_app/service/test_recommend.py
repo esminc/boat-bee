@@ -12,7 +12,7 @@ def test_おすすめの本の情報を取得できること(monkeypatch):
         return {
             "title": "仕事ではじめる機械学習",
             "isbn": isbn,
-            "author": ["有賀康顕", "中山心太", "西林孝"],
+            "authors": ["有賀康顕", "中山心太", "西林孝"],
             "google_books_url": "test_google_books_url",
             "image_url": "test_image_url",
         }
@@ -35,7 +35,7 @@ def test_おすすめの本の情報を取得できること(monkeypatch):
 
     assert book["title"] == "仕事ではじめる機械学習"
     assert book["isbn"] == "9784873118253"
-    assert book["author"] == ["有賀康顕", "中山心太", "西林孝"]
+    assert book["authors"] == ["有賀康顕", "中山心太", "西林孝"]
     assert book["image_url"] == "test_image_url"
     assert book["google_books_url"] == "test_google_books_url"
 
@@ -68,7 +68,7 @@ def test_おすすめ本の書影がNoneならNoneが返値に設定されるこ
         return {
             "title": "仕事ではじめる機械学習",
             "isbn": isbn,
-            "author": ["有賀康顕", "中山心太", "西林孝"],
+            "authors": ["有賀康顕", "中山心太", "西林孝"],
             "google_books_url": "test_google_books_url",
             "image_url": None,
         }
@@ -91,7 +91,7 @@ def test_おすすめ本の書影がNoneならNoneが返値に設定されるこ
 
     assert book["title"] == "仕事ではじめる機械学習"
     assert book["isbn"] == "9784873118253"
-    assert book["author"] == ["有賀康顕", "中山心太", "西林孝"]
+    assert book["authors"] == ["有賀康顕", "中山心太", "西林孝"]
     assert book["image_url"] is None
     assert book["google_books_url"] == "test_google_books_url"
 

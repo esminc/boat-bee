@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Any, Optional
 
 import requests  # type: ignore
 
@@ -8,14 +8,15 @@ class GoogleBooksRepository:
         # Google API
         self.base_url_google = "https://www.googleapis.com/books/v1/volumes"
 
-    def search_book_by_title(self, title: str) -> list[dict[str, str]]:
+    def search_book_by_title(self, title: str) -> list[dict[str, Any]]:
         """
         タイトルから書籍を検索する
 
         Args:
             title : 検索したい書籍のタイトル（曖昧検索も可能）
         Returns:
-            list: ヒットした書籍の辞書形式データをリストで格納する
+            list[dict[str, Any]]  : ヒットした書籍の情報を辞書のリスト形式で返す
+                                    ヒットしなかった場合は空のリストを返す
         """
 
         # URLのパラメータ
@@ -56,7 +57,7 @@ class GoogleBooksRepository:
             dict_item = {
                 "title": _item["volumeInfo"]["title"],
                 "isbn": isbn_13,
-                "author": _item["volumeInfo"].get("authors", "No Authoer"),
+                "authors": _item["volumeInfo"].get("authors", ["No Authoer"]),
                 "google_books_url": _item["volumeInfo"]["infoLink"],
                 "image_url": image_url,
             }
@@ -64,14 +65,14 @@ class GoogleBooksRepository:
 
         return list_result
 
-    def search_book_by_isbn(self, isbn: str) -> Optional[dict[str, str]]:
+    def search_book_by_isbn(self, isbn: str) -> Optional[dict[str, Any]]:
         """
         ISBNから書籍を検索する
 
         Args:
             isbn : 検索したい書籍のISBN(13桁の数字、ハイフンなし)
         Returns:
-            Optional[dict[str, str]]  : ヒットした書籍の情報を辞書形式で返す
+            Optional[dict[str, Any]]  : ヒットした書籍の情報を辞書形式で返す
                                         ヒットしなかった場合はNoneを返す
         """
 
@@ -95,7 +96,7 @@ class GoogleBooksRepository:
         dict_info = {
             "title": _item["volumeInfo"]["title"],
             "isbn": isbn,
-            "author": _item["volumeInfo"].get("authors", "No Authoer"),
+            "authors": _item["volumeInfo"].get("authors", "No Authoer"),
             "google_books_url": _item["volumeInfo"]["infoLink"],
             "image_url": image_url,
         }
