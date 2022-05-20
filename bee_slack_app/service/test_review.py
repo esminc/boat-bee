@@ -422,7 +422,7 @@ def test_post_reviewでreview_repositoryの処理でエラーが発生した場�
     assert review is None
 
 
-def test_get_reviewsでレビューを全件一括で取得できること(monkeypatch):
+def test_get_reviewsで条件を指定しない場合はレビューを全件一括で取得できること(monkeypatch):
     def mock_review_repository_get_some(_, **__):
         return {
             "items": [
