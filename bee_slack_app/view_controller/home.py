@@ -9,7 +9,7 @@ def home_controller(app):
     def update_home_view(ack, event, client):
         ack()
 
-        reviews = get_reviews(logger=getLogger(), limit=None, keys=[])
+        reviews = get_reviews(logger=getLogger())
 
         total_review_count = len(reviews["items"]) if reviews else 0
 
