@@ -14,6 +14,7 @@ def home(
         read_review_action_id: 「レビューを閲覧する」ボタンのaction_id
         post_review_action_id: 「レビューを投稿する」ボタンのaction_id
         user_info_action_id: 「プロフィール」ボタンのaction_id
+        review_count_all: 表示する「レビュー投稿数」
     """
     return {
         "type": "home",
