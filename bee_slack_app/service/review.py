@@ -45,12 +45,12 @@ def get_review(*, logger: Any, user_id: str, isbn: str) -> Optional[ReviewConten
         return None
 
 
-def get_reviews(
+def get_reviews(  # pylint: disable=dangerous-default-value
     *,
     logger: Any,
     conditions: Optional[GetConditions] = None,
-    limit: int,
-    keys: list[ReviewItemKey],
+    limit: Optional[int] = None,
+    keys: list[ReviewItemKey] = [],
 ) -> Optional[GetResponse]:
     """
     次のlimit分のレビューを取得する
