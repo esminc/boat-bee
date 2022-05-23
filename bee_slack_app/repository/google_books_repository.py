@@ -85,7 +85,7 @@ class GoogleBooksRepository:
         # APIを実行して結果を取得する
         json_result = requests.get(self.base_url_google, param).json()
 
-        if json_result["totalItems"] != 1:
+        if json_result["totalItems"] == 0:
             return None
 
         _item = json_result["items"][0]
