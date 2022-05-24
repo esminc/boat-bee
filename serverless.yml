@@ -55,6 +55,8 @@ custom:
             sources: [database/seed/review.json]
           - table: ${self:provider.environment.DYNAMODB_TABLE}-user
             sources: [database/seed/user.json]
+          - table: ${self:provider.environment.DYNAMODB_TABLE}-book
+            sources: [database/seed/book.json]
 
 resources: # CloudFormation template syntax from here on.
   Resources:
@@ -101,6 +103,23 @@ resources: # CloudFormation template syntax from here on.
           - AttributeName: user_id
             KeyType: HASH
           - AttributeName: created_at
+            KeyType: RANGE
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+    BookTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.DYNAMODB_TABLE}-book
+        AttributeDefinitions:
+          - AttributeName: book_pk
+            AttributeType: S
+          - AttributeName: book_sk
+            AttributeType: S
+        KeySchema:
+          - AttributeName: book_pk
+            KeyType: HASH
+          - AttributeName: book_sk
             KeyType: RANGE
         ProvisionedThroughput:
           ReadCapacityUnits: 1

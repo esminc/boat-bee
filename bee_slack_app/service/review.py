@@ -1,12 +1,15 @@
 from typing import Any, Optional, TypedDict, Union
 
+from bee_slack_app.model.book import Book
 from bee_slack_app.model.review import ReviewContents
+from bee_slack_app.repository.book_repository import BookRepository
 from bee_slack_app.repository.review_repository import ReviewRepository
 from bee_slack_app.repository.user_repository import UserRepository
 from bee_slack_app.utils import datetime
 
 review_repository = ReviewRepository()
 user_repository = UserRepository()
+book_repository = BookRepository()
 
 
 class GetConditions(TypedDict):
@@ -133,6 +136,8 @@ def post_review(
     logger: Any, review_contents: ReviewContents
 ) -> Optional[ReviewContents]:
     try:
+        updated_at = datetime.now()
+
         item: ReviewContents = {
             "user_id": review_contents["user_id"],
             "book_title": review_contents["book_title"],
@@ -140,12 +145,23 @@ def post_review(
             "score_for_me": review_contents["score_for_me"],
             "score_for_others": review_contents["score_for_others"],
             "review_comment": review_contents["review_comment"],
-            "updated_at": datetime.now(),
+            "updated_at": updated_at,
             "book_image_url": review_contents["book_image_url"],
             "book_author": review_contents["book_author"],
             "book_url": review_contents["book_url"],
         }
         review_repository.create(item)
+
+        book: Book = {
+            "isbn": review_contents["isbn"],
+            "title": review_contents["book_title"],
+            "author": review_contents["book_author"],
+            "url": review_contents["book_url"],
+            "image_url": review_contents["book_image_url"],
+            "updated_at": updated_at,
+        }
+
+        book_repository.put(book=book)
 
         return item
 

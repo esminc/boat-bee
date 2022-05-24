@@ -23,6 +23,18 @@ from bee_slack_app.view.user import user_department_dict
 def review_controller(app):  # pylint: disable=too-many-statements
     review_item_limit = 10
 
+    @app.action("read_review_of_book_action")
+    def read_review_of_book_action(ack, body, client):
+        """
+        本のレビューモーダルを開く
+        """
+        ack()
+
+        client.views_open(
+            trigger_id=body["trigger_id"],
+            view=simple_modal(title="本のレビュー", text="ごめんなさい :bow: \nここは未実装です!!"),
+        )
+
     @app.action("post_review_action")
     def open_book_search_modal(ack, body, client, logger):
         """
