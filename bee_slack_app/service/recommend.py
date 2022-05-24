@@ -3,6 +3,9 @@ from typing import Any, Optional
 from bee_slack_app.model.search import SearchedBook
 from bee_slack_app.model.user import User
 from bee_slack_app.repository.google_books_repository import GoogleBooksRepository
+from bee_slack_app.repository.recommend_book_repository import RecommendBookRepository
+
+recommend_book_repository = RecommendBookRepository()
 
 
 def recommend(logger: Any, user: User) -> Optional[SearchedBook]:
@@ -15,12 +18,25 @@ def recommend(logger: Any, user: User) -> Optional[SearchedBook]:
     Returns:
         book: おすすめする本の情報。取得できない場合は、Noneが返る。
     """
-    # TODO 機械学習の部品が実装できたら、部品を呼び出す。
-    # TODO 取得したisbnから本の情報を取得する。
-    print(user)
-    isbn = "9784873118253"
-
     try:
+        # デバッグ用
+        # FDOワークスペースのユーザIDの場合、対応するITSワークスペースのユーザIDに変換する
+        user_id = user["user_id"]
+        user_id_in_fdo_workspace = {
+            "U029SGVM1AA": "U02K1KEB4U9",
+            "U029JHRHC15": "U02JP1YKX4K",
+            "U029Z9HAK6E": "U034EPH70TB",
+            "U02A5F5KXKN": "U032CTY4KD3",
+            "U01DT6X2MH8": "U02UU55VDRU",
+        }
+        user_id = user_id_in_fdo_workspace.get(user_id, user_id)
+
+        isbn = recommend_book_repository.fetch(user_id)
+
+        if not isbn:
+            logger.info("Failed to recommend book. user_id: ", user_id)
+            return None
+
         book_info = GoogleBooksRepository().search_book_by_isbn(isbn)
         book: Optional[SearchedBook] = None
         if book_info is not None:

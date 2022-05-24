@@ -55,7 +55,7 @@ def home(
                 "type": "section",
                 "text": {
                     "type": "mrkdwn",
-                    "text": "あなたにおすすめの本は...\n *「仕事ではじめる機械学習」* ",
+                    "text": "あなたにおすすめの本は... ",
                 },
             },
             {
@@ -65,7 +65,7 @@ def home(
                         "type": "button",
                         "text": {
                             "type": "plain_text",
-                            "text": "詳しく見る",
+                            "text": "おすすめの本を確認する",
                             "emoji": True,
                         },
                         "value": "dummy_value",
