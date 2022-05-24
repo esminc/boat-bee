@@ -1,3 +1,6 @@
+import os
+
+
 def home(
     *,
     see_more_recommended_book_action_id: str,
@@ -40,6 +43,11 @@ def home(
                 "text": {
                     "type": "mrkdwn",
                     "text": "Beeは、FDOが開発・提供する、本のレビュー共有アプリです。\n仕事で役立った本のレビューを投稿・共有できます。\nデータがたまればたまるほど、AIはより賢くなりあなたに合ったおすすめの本をお伝えすることができます。\n書籍購入制度で購入した本などのレビューを投稿してみましょう！！。",
+                },
+                "accessory": {
+                    "type": "image",
+                    "image_url": os.environ["ASSETS_PATH"] + "logo-fdo.png",
+                    "alt_text": "logo-fdo",
                 },
             },
             {"type": "divider"},

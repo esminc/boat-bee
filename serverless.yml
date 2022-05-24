@@ -12,6 +12,8 @@ provider:
   environment:
     SLACK_CREDENTIALS_SECRET_ID: slack_secret_${sls:stage}
     DYNAMODB_TABLE: ${self:service}-${sls:stage}
+    S3_BUCKET: ${self:service}-${sls:stage}
+    ASSETS_PATH: https://${self:service}-${sls:stage}-assets.s3.${self:provider.region}.amazonaws.com/
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -46,10 +48,15 @@ functions:
           path: /slack/events
 
 plugins:
+  - serverless-s3-sync
   - serverless-offline
   - serverless-dynamodb-local
 
 custom:
+  s3BucketName: ${self:provider.environment.DYNAMODB_TABLE}-assets
+  s3Sync:
+    - bucketName: ${self:custom.s3BucketName}
+      localDir: assets/
   dynamodb:
     stages:
       - dev
@@ -95,3 +102,22 @@ resources: # CloudFormation template syntax from here on.
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
+    StaticSite:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:custom.s3BucketName}
+        AccessControl: PublicRead
+    StaticSiteS3BucketPolicy:
+      Type: AWS::S3::BucketPolicy
+      Properties:
+        Bucket:
+          Ref: StaticSite
+        PolicyDocument:
+          Statement:
+            - Sid: PublicReadGetObject
+              Effect: Allow
+              Principal: "*"
+              Action:
+                - s3:GetObject
+              Resource:
+                Fn::Join: ["", ["arn:aws:s3:::", { "Ref": "StaticSite" }, "/*"]]
