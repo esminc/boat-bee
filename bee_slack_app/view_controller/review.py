@@ -2,6 +2,7 @@ import json
 import os
 
 from bee_slack_app.model.review import ReviewContents
+from bee_slack_app.model.user import User
 from bee_slack_app.service.review import (
     get_review,
     get_reviews,
@@ -15,6 +16,7 @@ from bee_slack_app.view.post_review import (
     search_book_to_review_modal,
 )
 from bee_slack_app.view.read_review import review_detail_modal, review_list_modal
+from bee_slack_app.view.user import user_department_dict
 
 
 def review_controller(app):  # pylint: disable=too-many-statements
@@ -106,7 +108,9 @@ def review_controller(app):  # pylint: disable=too-many-statements
 
         if notify:
             user = get_user(logger, review["user_id"])
-            review["user_name"] = user["user_name"] if user else review["user_id"]
+            review["user_name"] = (
+                _make_detailed_user_name(user) if user else review["user_id"]
+            )
 
             blocks = notify_review_post_message_blocks(review)
             client.chat_postMessage(
@@ -114,6 +118,12 @@ def review_controller(app):  # pylint: disable=too-many-statements
                 blocks=blocks,
                 text=f"{review['user_name']}さんがレビューを投稿しました",
             )
+
+    def _make_detailed_user_name(user: User) -> str:
+        """
+        ユーザー名を部署名付きのものに変換する
+        """
+        return f'{user["user_name"]}  ({user_department_dict[user["department"]]})'
 
     @app.action("read_review")
     def open_read_modal(ack, body, client, logger):
