@@ -22,7 +22,7 @@ from bee_slack_app.view.user import user_department_dict
 def review_controller(app):  # pylint: disable=too-many-statements
     review_item_limit = 10
 
-    @app.action("post_review")
+    @app.action("post_review_action")
     def open_book_search_modal(ack, body, client, logger):
         """
         本の検索モーダルを開く
@@ -120,7 +120,7 @@ def review_controller(app):  # pylint: disable=too-many-statements
         """
         return f'{user["user_name"]}  ({user_department_dict[user["department"]]})'
 
-    @app.action("read_review")
+    @app.action("read_review_action")
     def open_read_modal(ack, body, client, logger):
         ack()
 
@@ -136,7 +136,7 @@ def review_controller(app):  # pylint: disable=too-many-statements
 
         view = review_list_modal(
             callback_id="post_review_modal",
-            search_button_action_id="search_review",
+            search_button_action_id="search_review_action",
             review_contents_list=review_contents_list,
             private_metadata=metadata_str,
             show_move_to_next=bool(reviews["keys"]),
@@ -172,7 +172,7 @@ def review_controller(app):  # pylint: disable=too-many-statements
 
         view = review_list_modal(
             callback_id="post_review_modal",
-            search_button_action_id="search_review",
+            search_button_action_id="search_review_action",
             review_contents_list=review_contents_list,
             private_metadata=metadata_str,
             show_move_to_back=True,
@@ -213,7 +213,7 @@ def review_controller(app):  # pylint: disable=too-many-statements
 
         view = review_list_modal(
             callback_id="post_review_modal",
-            search_button_action_id="search_review",
+            search_button_action_id="search_review_action",
             review_contents_list=review_contents_list,
             private_metadata=metadata_str,
             show_move_to_back=not is_move_to_first,
@@ -226,7 +226,7 @@ def review_controller(app):  # pylint: disable=too-many-statements
             view=view,
         )
 
-    @app.action("search_review")
+    @app.action("search_review_action")
     def update_review_list_view(ack, body, client, logger):
         ack()
 
@@ -257,7 +257,7 @@ def review_controller(app):  # pylint: disable=too-many-statements
 
         view = review_list_modal(
             callback_id="post_review_modal",
-            search_button_action_id="search_review",
+            search_button_action_id="search_review_action",
             review_contents_list=review_contents_list,
             private_metadata=private_metadata,
             show_move_to_next=bool(reviews["keys"]),

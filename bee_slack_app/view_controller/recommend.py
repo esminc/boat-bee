@@ -7,7 +7,7 @@ from bee_slack_app.service.user import get_user
 
 
 def recommend_controller(app):  # pylint: disable=too-many-statements
-    @app.action("book_recommend")
+    @app.action("book_recommend_action")
     def open_recommend_modal(ack, body, client, logger):
         ack()
 

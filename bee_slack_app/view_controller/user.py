@@ -6,7 +6,7 @@ from bee_slack_app.view.user import user_profile_modal
 
 
 def user_controller(app):
-    @app.action("user_info")
+    @app.action("user_info_action")
     def open_user_info(ack, body, client, logger):
         ack()
         user_id = body["user"]["id"]
