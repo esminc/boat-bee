@@ -2,6 +2,47 @@ from typing import Optional
 
 from bee_slack_app.model.user import User
 
+# 表示内容と内部情報の対応を辞書形式で保持しておく
+user_department_dict = {
+    "its": "ITサービス事業部",
+    "finance": "金融システム事業部",
+    "medical": "医療システム事業部",
+    "agile": "アジャイル事業部",
+    "etec": "組み込み技術事業部",
+    "medical-education": "医学教育支援室",
+    "general": "管理部",
+    "other": "その他",
+}
+user_job_type_dict = {
+    "engineer": "開発・導入",
+    "management": "マネジメント・営業",
+    "executive": "経営",
+    "other": "その他",
+}
+user_age_range_dict = {
+    "10": "～19才",
+    "20": "20才～29才",
+    "30": "30才～39才",
+    "40": "40才～49才",
+    "50": "50才～59才",
+    "60": "60才～",
+}
+
+
+def _make_options(source: dict[str, str]) -> list[dict]:
+    """
+    変換辞書の内容から画面表示用のOptionsを生成する
+    """
+    options = []
+    for key, value in source.items():
+        item = {
+            "value": key,
+            "text": {"type": "plain_text", "text": value},
+        }
+
+        options.append(item)
+    return options
+
 
 def user_profile_modal(callback_id: str, user_name: str, user: Optional[User]):
     """
@@ -39,49 +80,7 @@ def user_profile_modal(callback_id: str, user_name: str, user: Optional[User]):
                         "text": "事業部を選択してください",
                         "emoji": True,
                     },
-                    "options": [
-                        {
-                            "value": "its",
-                            "text": {"type": "plain_text", "text": "ITサービス事業部"},
-                        },
-                        {
-                            "value": "finance",
-                            "text": {"type": "plain_text", "text": "金融システム事業部"},
-                        },
-                        {
-                            "value": "medical",
-                            "text": {"type": "plain_text", "text": "医療システム事業部"},
-                        },
-                        {
-                            "value": "agile",
-                            "text": {
-                                "type": "plain_text",
-                                "text": "アジャイル事業部",
-                            },
-                        },
-                        {
-                            "value": "etec",
-                            "text": {
-                                "type": "plain_text",
-                                "text": "組み込み技術事業部",
-                            },
-                        },
-                        {
-                            "value": "medical-education",
-                            "text": {
-                                "type": "plain_text",
-                                "text": "医学教育支援室",
-                            },
-                        },
-                        {
-                            "value": "general",
-                            "text": {"type": "plain_text", "text": "管理部"},
-                        },
-                        {
-                            "value": "other",
-                            "text": {"type": "plain_text", "text": "その他"},
-                        },
-                    ],
+                    "options": _make_options(user_department_dict),
                 },
             },
             {
@@ -96,24 +95,7 @@ def user_profile_modal(callback_id: str, user_name: str, user: Optional[User]):
                         "text": "一番近いものを選択してください",
                         "emoji": True,
                     },
-                    "options": [
-                        {
-                            "value": "engineer",
-                            "text": {"type": "plain_text", "text": "開発・導入"},
-                        },
-                        {
-                            "value": "management",
-                            "text": {"type": "plain_text", "text": "マネジメント・営業"},
-                        },
-                        {
-                            "value": "executive",
-                            "text": {"type": "plain_text", "text": "経営"},
-                        },
-                        {
-                            "value": "other",
-                            "text": {"type": "plain_text", "text": "その他"},
-                        },
-                    ],
+                    "options": _make_options(user_job_type_dict),
                 },
             },
             {
@@ -128,32 +110,7 @@ def user_profile_modal(callback_id: str, user_name: str, user: Optional[User]):
                         "text": "年齢層を選択してください",
                         "emoji": True,
                     },
-                    "options": [
-                        {
-                            "value": "10",
-                            "text": {"type": "plain_text", "text": "～19才"},
-                        },
-                        {
-                            "value": "20",
-                            "text": {"type": "plain_text", "text": "20才～29才"},
-                        },
-                        {
-                            "value": "30",
-                            "text": {"type": "plain_text", "text": "30才～39才"},
-                        },
-                        {
-                            "value": "40",
-                            "text": {"type": "plain_text", "text": "40才～49才"},
-                        },
-                        {
-                            "value": "50",
-                            "text": {"type": "plain_text", "text": "50才～59才"},
-                        },
-                        {
-                            "value": "60",
-                            "text": {"type": "plain_text", "text": "60才～"},
-                        },
-                    ],
+                    "options": _make_options(user_age_range_dict),
                 },
             },
         ],
@@ -161,43 +118,26 @@ def user_profile_modal(callback_id: str, user_name: str, user: Optional[User]):
 
     # ユーザー情報が登録されている場合に、そのユーザー情報を取得し表示する。
     if user:
-        department_dict = {
-            "its": "ITサービス事業部",
-            "finance": "金融システム事業部",
-            "medical": "医療システム事業部",
-            "agile": "アジャイル事業部",
-            "etec": "組み込み技術事業部",
-            "medical-education": "医学教育支援室",
-            "general": "管理部",
-            "other": "その他",
-        }
         view["blocks"][1]["element"]["initial_option"] = {  # type: ignore
             "value": user["department"],
-            "text": {"type": "plain_text", "text": department_dict[user["department"]]},
-        }
-
-        job_type_dict = {
-            "engineer": "開発・導入",
-            "management": "マネジメント・営業",
-            "executive": "経営",
-            "other": "その他",
+            "text": {
+                "type": "plain_text",
+                "text": user_department_dict[user["department"]],
+            },
         }
         view["blocks"][2]["element"]["initial_option"] = {  # type: ignore
             "value": user["job_type"],
-            "text": {"type": "plain_text", "text": job_type_dict[user["job_type"]]},
-        }
-
-        age_range_dict = {
-            "10": "～19才",
-            "20": "20才～29才",
-            "30": "30才～39才",
-            "40": "40才～49才",
-            "50": "50才～59才",
-            "60": "60才～",
+            "text": {
+                "type": "plain_text",
+                "text": user_job_type_dict[user["job_type"]],
+            },
         }
         view["blocks"][3]["element"]["initial_option"] = {  # type: ignore
             "value": user["age_range"],
-            "text": {"type": "plain_text", "text": age_range_dict[user["age_range"]]},
+            "text": {
+                "type": "plain_text",
+                "text": user_age_range_dict[user["age_range"]],
+            },
         }
 
     return view
