@@ -5,14 +5,14 @@ from typing import Optional
 class RecommendBookRepository:  # pylint: disable=too-few-public-methods
     recommend_book_dict = None
 
-    def fetch(self, user_id: str) -> Optional[str]:
+    def fetch(self, user_id: str) -> Optional[dict]:
         """
         おすすめの本を取得する
 
         Args:
             user_id : ユーザID
         Returns:
-           おすすめの本のISBN
+           MLモデルとおすすめの本のISBNを辞書形式で返す
         """
         if not self.recommend_book_dict:
             self.recommend_book_dict = self._load_recommend_book_dict()
