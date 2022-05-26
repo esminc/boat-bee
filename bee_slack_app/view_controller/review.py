@@ -10,6 +10,7 @@ from bee_slack_app.service.review import (
     post_review,
 )
 from bee_slack_app.service.user import get_user
+from bee_slack_app.service.user_action import record_user_action
 from bee_slack_app.view.common import simple_modal
 from bee_slack_app.view.post_review import (
     notify_review_post_message_blocks,
@@ -29,7 +30,15 @@ def review_controller(app):  # pylint: disable=too-many-statements
         """
         ack()
 
-        if not get_user(logger, body["user"]["id"]):
+        user_id = body["user"]["id"]
+
+        if not get_user(logger, user_id):
+            record_user_action(
+                user_id=user_id,
+                action_type="post_review_action",
+                status="no_user_profile_error",
+            )
+
             client.views_open(
                 trigger_id=body["trigger_id"],
                 view=simple_modal(
@@ -37,6 +46,11 @@ def review_controller(app):  # pylint: disable=too-many-statements
                 ),
             )
             return
+
+        record_user_action(
+            user_id=user_id,
+            action_type="post_review_action",
+        )
 
         client.views_open(
             trigger_id=body["trigger_id"],
@@ -101,6 +115,12 @@ def review_controller(app):  # pylint: disable=too-many-statements
             ]["selected_options"]
         )
 
+        record_user_action(
+            user_id=user_id,
+            action_type="post_review_modal",
+            payload={"review": review_contents, "notify": notify},
+        )
+
         if notify:
             user = get_user(logger, review["user_id"])
             review["user_name"] = (
@@ -140,6 +160,11 @@ def review_controller(app):  # pylint: disable=too-many-statements
             review_contents_list=review_contents_list,
             private_metadata=metadata_str,
             show_move_to_next=bool(reviews["keys"]),
+        )
+
+        record_user_action(
+            user_id=body["user"]["id"],
+            action_type="read_review_action",
         )
 
         client.views_open(
@@ -263,6 +288,12 @@ def review_controller(app):  # pylint: disable=too-many-statements
             show_move_to_next=bool(reviews["keys"]),
         )
 
+        record_user_action(
+            user_id=body["user"]["id"],
+            action_type="search_review_action",
+            payload={"scores": scores},
+        )
+
         client.views_update(
             trigger_id=body["trigger_id"],
             view_id=body["view"]["id"],
@@ -289,11 +320,23 @@ def review_controller(app):  # pylint: disable=too-many-statements
         review = get_review(logger=logger, user_id=user_id, isbn=isbn)
 
         if not review:
+            record_user_action(
+                user_id=body["user"]["id"],
+                action_type="open_review_detail_modal_action",
+                status="fetch_review_data_error",
+            )
+
             client.views_push(
                 trigger_id=body["trigger_id"],
                 view=simple_modal(title="エラー", text="レビューの取得でエラーが発生しました"),
             )
             return
+
+        record_user_action(
+            user_id=body["user"]["id"],
+            action_type="open_review_detail_modal_action",
+            payload={"review": review},
+        )
 
         client.views_push(
             trigger_id=body["trigger_id"], view=review_detail_modal(review)
