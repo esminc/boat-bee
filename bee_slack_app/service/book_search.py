@@ -1,9 +1,9 @@
 from typing import Optional
 
 from bee_slack_app.model.search import SearchedBook
-from bee_slack_app.repository.google_books import GoogleBooks
+from bee_slack_app.repository.google_books_repository import GoogleBooksRepository
 
-api_client = GoogleBooks()
+api_client = GoogleBooksRepository()
 
 
 def search_book_by_title(title: str) -> list[SearchedBook]:
@@ -13,7 +13,8 @@ def search_book_by_title(title: str) -> list[SearchedBook]:
     Args:
         title : 検索したい書籍のタイトル（曖昧検索も可能）
     Returns:
-        list: ヒットした書籍の辞書形式データをリストで格納する
+        list[SearchedBook] : ヒットした書籍の情報をSearchedBokのリスト形式で返す
+                             ヒットしなかった場合は空のリストを返す
     """
 
     books = api_client.search_book_by_title(title)
@@ -24,7 +25,7 @@ def search_book_by_title(title: str) -> list[SearchedBook]:
         book_info: SearchedBook = {
             "title": book["title"],
             "isbn": book["isbn"],
-            "author": book["author"],
+            "authors": book["authors"],
             "image_url": book["image_url"],
             "google_books_url": book["google_books_url"],
         }
@@ -41,7 +42,7 @@ def search_book_by_isbn(isbn: str) -> Optional[SearchedBook]:
     Args:
         isbn : 検索したい書籍のISBN(13桁の数字、ハイフンなし)
     Returns:
-        Optional[SearchedBook] : ヒットした書籍の情報を辞書形式で返す
+        Optional[SearchedBook] : ヒットした書籍の情報を返す
                                  ヒットしなかった場合はNoneを返す
     """
 
@@ -53,7 +54,7 @@ def search_book_by_isbn(isbn: str) -> Optional[SearchedBook]:
     book_info: SearchedBook = {
         "title": book["title"],
         "isbn": book["isbn"],
-        "author": book["author"],
+        "authors": book["authors"],
         "image_url": book["image_url"],
         "google_books_url": book["google_books_url"],
     }

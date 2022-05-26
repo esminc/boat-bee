@@ -2,6 +2,7 @@ from typing import Optional
 
 from bee_slack_app.model.search import SearchedBook
 from bee_slack_app.model.user import User
+from bee_slack_app.service.recommend import recommend
 from bee_slack_app.service.user import get_user
 
 
@@ -9,6 +10,7 @@ def recommend_controller(app):  # pylint: disable=too-many-statements
     @app.action("book_recommend")
     def open_recommend_modal(ack, body, client, logger):
         ack()
+
         logger.info(body)
 
         user_id = body["user"]["id"]
@@ -38,15 +40,7 @@ def recommend_controller(app):  # pylint: disable=too-many-statements
             )
             return
 
-        # TODO レコメンドのサービスから、おすすめのブック情報を取得する
-        # いまはモックでブック情報を代入する
-        book: SearchedBook = {
-            "title": "道は開ける",
-            "isbn": "9784422100999",
-            "author": "デールカーネギー",
-            "image_url": "http://books.google.com/books/content?id=rfVbjwEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
-            "google_books_url": "http://books.google.co.jp/books?id=rfVbjwEACAAJ&dq=isbn:9784422100999&hl=&source=gbs_api",
-        }
+        book: Optional[SearchedBook] = recommend(logger, user)
 
         if book is None:
             client.views_open(
@@ -83,6 +77,7 @@ def recommend_controller(app):  # pylint: disable=too-many-statements
         # TODO: 暫定で適当な画像をデフォルトに設定、S3に画像を置くようになったら自前の画像に差し替える
         dummy_url = "https://pbs.twimg.com/profile_images/625633822235693056/lNGUneLX_400x400.jpg"
         image_url = book["image_url"] if book["image_url"] is not None else dummy_url
+        authors = ", ".join(book["authors"])
 
         view = {
             "type": "modal",
@@ -94,7 +89,7 @@ def recommend_controller(app):  # pylint: disable=too-many-statements
                     "type": "section",
                     "text": {
                         "type": "mrkdwn",
-                        "text": f"*{book['title']}*\n{book['author']}\nISBN-{book['isbn']}",
+                        "text": f"*{book['title']}*\n{authors}\nISBN-{book['isbn']}",
                     },
                     "accessory": {
                         "type": "image",

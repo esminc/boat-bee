@@ -28,3 +28,18 @@ make init
 # デプロイ
 make deploy
 ```
+
+### 環境変数
+
+AWS 環境で環境変数を設定する場合は、AWS Secrets Manager を介して設定します。
+
+ステージ環境毎に設定できます。
+
+シークレット ID は、slack_secret\_<ステージ環境名>です。(例: slack_secret_dev)
+
+設定できる環境変数
+
+- SLACK_APP_TOKEN [Bolt 入門ガイド](https://slack.dev/bolt-python/ja-jp/tutorial/getting-started-http)を参照
+- SLACK_BOT_TOKEN [Bolt 入門ガイド](https://slack.dev/bolt-python/ja-jp/tutorial/getting-started-http)を参照
+- SLACK_SIGNING_SECRET [Bolt 入門ガイド](https://slack.dev/bolt-python/ja-jp/tutorial/getting-started-http)を参照
+- NOTIFY_POST_REVIEW_CHANNEL レビュー投稿通知を流す Slack チャンネル ID

@@ -40,7 +40,6 @@ functions:
           path: /slack/events
 
 plugins:
-  - serverless-offline
   - serverless-dynamodb-local
 
 custom:

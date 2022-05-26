@@ -1,11 +1,11 @@
 from typing import Any, Optional, TypedDict, Union
 
 from bee_slack_app.model.review import ReviewContents
-from bee_slack_app.repository.book_review import BookReview
+from bee_slack_app.repository.review_repository import ReviewRepository
 from bee_slack_app.repository.user_repository import UserRepository
 from bee_slack_app.utils import datetime
 
-book_review_repository = BookReview()
+review_repository = ReviewRepository()
 user_repository = UserRepository()
 
 
@@ -24,12 +24,33 @@ class GetResponse(TypedDict):
     keys: list[Union[ReviewItemKey, str]]
 
 
-def get_reviews(
+def get_review(*, logger: Any, user_id: str, isbn: str) -> Optional[ReviewContents]:
+    """
+    レビューを一意に指定して取得する
+    """
+    try:
+        review = review_repository.get(user_id=user_id, isbn=isbn)
+
+        if not review:
+            return None
+
+        user = user_repository.get(user_id)
+
+        review["user_name"] = user["user_name"] if user else review["user_id"]
+
+        return review
+
+    except Exception:  # pylint: disable=broad-except
+        logger.exception("Failed to get data.")
+        return None
+
+
+def get_reviews(  # pylint: disable=dangerous-default-value
     *,
     logger: Any,
     conditions: Optional[GetConditions] = None,
-    limit: int,
-    keys: list[ReviewItemKey],
+    limit: Optional[int] = None,
+    keys: list[ReviewItemKey] = [],
 ) -> Optional[GetResponse]:
     """
     次のlimit分のレビューを取得する
@@ -42,7 +63,7 @@ def get_reviews(
 
         start_key = keys[-1] if len(keys) > 0 else None
 
-        reviews = book_review_repository.get(
+        reviews = review_repository.get_some(
             conditions=conditions, limit=limit, start_key=start_key
         )
 
@@ -76,7 +97,7 @@ def get_reviews_before(
 
         start_key = None if is_move_to_first else keys[-3]
 
-        reviews = book_review_repository.get(
+        reviews = review_repository.get_some(
             conditions=conditions, limit=limit, start_key=start_key
         )
 
@@ -108,22 +129,26 @@ def fill_user_name(review_contents_list: list[ReviewContents]) -> None:
         review_contents["user_name"] = user_name
 
 
-def post_review(logger: Any, review_contents: ReviewContents) -> None:
+def post_review(
+    logger: Any, review_contents: ReviewContents
+) -> Optional[ReviewContents]:
     try:
-        book_review_repository.create(
-            {
-                "user_id": review_contents["user_id"],
-                "book_title": review_contents["book_title"],
-                "isbn": review_contents["isbn"],
-                "score_for_me": review_contents["score_for_me"],
-                "score_for_others": review_contents["score_for_others"],
-                "review_comment": review_contents["review_comment"],
-                "updated_at": datetime.now(),
-                "book_image_url": review_contents["book_image_url"],
-                "book_author": review_contents["book_author"],
-                "book_url": review_contents["book_url"],
-            }
-        )
+        item: ReviewContents = {
+            "user_id": review_contents["user_id"],
+            "book_title": review_contents["book_title"],
+            "isbn": review_contents["isbn"],
+            "score_for_me": review_contents["score_for_me"],
+            "score_for_others": review_contents["score_for_others"],
+            "review_comment": review_contents["review_comment"],
+            "updated_at": datetime.now(),
+            "book_image_url": review_contents["book_image_url"],
+            "book_author": review_contents["book_author"],
+            "book_url": review_contents["book_url"],
+        }
+        review_repository.create(item)
+
+        return item
 
     except Exception as error:  # pylint: disable=broad-except
         logger.exception(f"Failed to store data {error}")
+        return None

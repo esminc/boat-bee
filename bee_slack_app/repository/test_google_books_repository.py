@@ -2,7 +2,7 @@
 
 # pylint: disable=non-ascii-name
 
-from bee_slack_app.repository.google_books import GoogleBooks
+from bee_slack_app.repository.google_books_repository import GoogleBooksRepository
 
 # TODO:
 # このテストケースは外部に依存しているため本来の意味では
@@ -14,7 +14,7 @@ from bee_slack_app.repository.google_books import GoogleBooks
 
 class TestGoogleBooks:
     def setup_method(self, _):
-        self.api_client = GoogleBooks()
+        self.api_client = GoogleBooksRepository()
 
     def teardown_method(self, _):
         pass
@@ -31,7 +31,10 @@ class TestGoogleBooks:
 
         target_book = target_books[0]
         assert target_book["isbn"] == "9784873118253"
-        assert target_book["author"] is not None
+        assert target_book["authors"] is not None
+
+        assert isinstance(target_book["authors"], list)
+        assert len(target_book["authors"]) == 3
 
         # テストを実行する場所により "com"と"co.jp"が変わるのでそれ以外の部分のみ比較することにする
         assert target_book["google_books_url"].startswith("http://books.google")
@@ -64,7 +67,7 @@ class TestGoogleBooks:
 
         assert result is not None
         assert result["title"] == "仕事ではじめる機械学習"
-        assert result["author"] is not None
+        assert result["authors"] is not None
         assert result["isbn"] == target_isbn
 
         # テストを実行する場所により "com"と"co.jp"が変わるのでそれ以外の部分のみ比較することにする
@@ -84,7 +87,7 @@ class TestGoogleBooks:
 
         assert len(result) is not None
         assert result["title"] == "仕事ではじめる機械学習"
-        assert result["author"] is not None
+        assert result["authors"] is not None
         assert result["isbn"] == target_isbn
 
         # テストを実行する場所により "com"と"co.jp"が変わるのでそれ以外の部分のみ比較することにする

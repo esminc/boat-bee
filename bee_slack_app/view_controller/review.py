@@ -1,11 +1,22 @@
 import json
+import os
 
 from bee_slack_app.model.review import ReviewContents
-from bee_slack_app.service.review import get_reviews, get_reviews_before, post_review
+from bee_slack_app.model.user import User
+from bee_slack_app.service.review import (
+    get_review,
+    get_reviews,
+    get_reviews_before,
+    post_review,
+)
 from bee_slack_app.service.user import get_user
 from bee_slack_app.view.common import simple_modal
-from bee_slack_app.view.post_review import search_book_to_review_modal
-from bee_slack_app.view.read_review import review_list_modal
+from bee_slack_app.view.post_review import (
+    notify_review_post_message_blocks,
+    search_book_to_review_modal,
+)
+from bee_slack_app.view.read_review import review_detail_modal, review_list_modal
+from bee_slack_app.view.user import user_department_dict
 
 
 def review_controller(app):  # pylint: disable=too-many-statements
@@ -35,7 +46,9 @@ def review_controller(app):  # pylint: disable=too-many-statements
         )
 
     @app.view("post_review_modal")
-    def handle_submission(ack, body, _, view, logger):
+    def handle_submission(
+        ack, body, _, view, logger, client
+    ):  # pylint: disable=too-many-locals
 
         # ハック的な対処なので注意
         # "*<本のタイトル>*\n<本の著者>\nISBN-<本のISBN>"のような文字列からタイトルやISBNを抜き出す
@@ -80,7 +93,32 @@ def review_controller(app):  # pylint: disable=too-many-statements
             "book_url": json.loads(view["private_metadata"])["url"],
         }
 
-        post_review(logger, review_contents)
+        review = post_review(logger, review_contents)
+
+        notify = not bool(
+            view["state"]["values"]["disable_notify_review_post_block"][
+                "disable_notify_review_post_action"
+            ]["selected_options"]
+        )
+
+        if notify:
+            user = get_user(logger, review["user_id"])
+            review["user_name"] = (
+                _make_detailed_user_name(user) if user else review["user_id"]
+            )
+
+            blocks = notify_review_post_message_blocks(review)
+            client.chat_postMessage(
+                channel=os.environ["NOTIFY_POST_REVIEW_CHANNEL"],
+                blocks=blocks,
+                text=f"{review['user_name']}さんがレビューを投稿しました",
+            )
+
+    def _make_detailed_user_name(user: User) -> str:
+        """
+        ユーザー名を部署名付きのものに変換する
+        """
+        return f'{user["user_name"]}  ({user_department_dict[user["department"]]})'
 
     @app.action("read_review")
     def open_read_modal(ack, body, client, logger):
@@ -92,10 +130,14 @@ def review_controller(app):  # pylint: disable=too-many-statements
             keys=reviews["keys"]
         )
 
+        review_contents_list = _make_review_contents_list_comment_short(
+            reviews["items"]
+        )
+
         view = review_list_modal(
             callback_id="post_review_modal",
             search_button_action_id="search_review",
-            review_contents_list=reviews["items"],
+            review_contents_list=review_contents_list,
             private_metadata=metadata_str,
             show_move_to_next=bool(reviews["keys"]),
         )
@@ -124,10 +166,14 @@ def review_controller(app):  # pylint: disable=too-many-statements
             keys=reviews["keys"], conditions=conditions
         )
 
+        review_contents_list = _make_review_contents_list_comment_short(
+            reviews["items"]
+        )
+
         view = review_list_modal(
             callback_id="post_review_modal",
             search_button_action_id="search_review",
-            review_contents_list=reviews["items"],
+            review_contents_list=review_contents_list,
             private_metadata=metadata_str,
             show_move_to_back=True,
             show_move_to_next=reviews["keys"][-1] != "end",
@@ -161,10 +207,14 @@ def review_controller(app):  # pylint: disable=too-many-statements
             keys=reviews["keys"], conditions=conditions
         )
 
+        review_contents_list = _make_review_contents_list_comment_short(
+            reviews["items"]
+        )
+
         view = review_list_modal(
             callback_id="post_review_modal",
             search_button_action_id="search_review",
-            review_contents_list=reviews["items"],
+            review_contents_list=review_contents_list,
             private_metadata=metadata_str,
             show_move_to_back=not is_move_to_first,
         )
@@ -201,10 +251,14 @@ def review_controller(app):  # pylint: disable=too-many-statements
             keys=reviews["keys"], conditions=scores
         )
 
+        review_contents_list = _make_review_contents_list_comment_short(
+            reviews["items"]
+        )
+
         view = review_list_modal(
             callback_id="post_review_modal",
             search_button_action_id="search_review",
-            review_contents_list=reviews["items"],
+            review_contents_list=review_contents_list,
             private_metadata=private_metadata,
             show_move_to_next=bool(reviews["keys"]),
         )
@@ -225,6 +279,47 @@ def review_controller(app):  # pylint: disable=too-many-statements
     def score_for_others_select_action(ack):
         # 何もしない
         ack()
+
+    @app.action("open_review_detail_modal_action")
+    def open_review_detail_modal(ack, body, client, logger, action):
+        ack()
+
+        user_id, isbn = action["value"].split(":")
+
+        review = get_review(logger=logger, user_id=user_id, isbn=isbn)
+
+        if not review:
+            client.views_push(
+                trigger_id=body["trigger_id"],
+                view=simple_modal(title="エラー", text="レビューの取得でエラーが発生しました"),
+            )
+            return
+
+        client.views_push(
+            trigger_id=body["trigger_id"], view=review_detail_modal(review)
+        )
+
+
+def _make_review_contents_list_comment_short(
+    review_contents_list: list[ReviewContents],
+) -> list[ReviewContents]:
+    """
+    レビューのコメントを、一覧表示用に短くする
+    """
+    comment_len = 20
+
+    for review_contents in review_contents_list:
+        review_comment = review_contents["review_comment"]
+        if review_comment:
+            review_contents["review_comment"] = (
+                review_comment[0:comment_len] + "..."
+                if len(review_comment) > comment_len
+                else review_comment
+            )
+        else:
+            review_contents["review_comment"] = "-"
+
+    return review_contents_list
 
 
 class ReviewPrivateMetadataConvertor:

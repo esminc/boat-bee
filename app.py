@@ -18,6 +18,7 @@ secret = json.loads(secret_value["SecretString"])
 os.environ["SLACK_APP_TOKEN"] = secret["SLACK_APP_TOKEN"]
 os.environ["SLACK_BOT_TOKEN"] = secret["SLACK_BOT_TOKEN"]
 os.environ["SLACK_SIGNING_SECRET"] = secret["SLACK_SIGNING_SECRET"]
+os.environ["NOTIFY_POST_REVIEW_CHANNEL"] = secret["NOTIFY_POST_REVIEW_CHANNEL"]
 
 
 from bee_slack_app.slack import app  # pylint: disable=wrong-import-position

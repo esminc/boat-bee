@@ -18,7 +18,7 @@ class GetResponse(TypedDict):
 
 
 # This is a sample
-class BookReview:
+class ReviewRepository:
     class GetConditions(TypedDict):
         score_for_me: Optional[str]
         score_for_others: Optional[str]
@@ -28,7 +28,24 @@ class BookReview:
             os.environ["DYNAMODB_TABLE"] + "-review"
         )
 
-    def get(
+    def get(self, *, user_id: str, isbn: str) -> Optional[ReviewContents]:
+        """
+        本のレビューを取得する
+
+        Args:
+            user_id : レビューのユーザID
+            isbn : レビューのISBN
+        Returns:
+            本のレビュー。存在しない場合はNone。
+        """
+        return self.table.get_item(
+            Key={
+                "user_id": user_id,
+                "isbn": isbn,
+            }
+        ).get("Item")
+
+    def get_some(
         self,
         *,
         conditions: GetConditions = None,
@@ -36,7 +53,7 @@ class BookReview:
         start_key: Optional[ReviewItemKey] = None,
     ) -> GetResponse:
         """
-        本のレビューを取得する
+        本のレビューを複数取得する
 
         Args:
             conditions : 検索条件。省略した場合は、全てのレビューを取得する。
