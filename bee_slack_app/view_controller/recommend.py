@@ -81,7 +81,7 @@ def recommend_controller(app):  # pylint: disable=too-many-statements
 
         view = {
             "type": "modal",
-            "callback_id": "book_recommend",
+            "callback_id": "book_recommend_modal",
             "title": {"type": "plain_text", "text": "あなたへのおすすめ本"},
             "close": {"type": "plain_text", "text": "閉じる", "emoji": True},
             "blocks": [
