@@ -22,12 +22,11 @@ from bee_slack_app.view.user import user_department_dict
 def review_controller(app):  # pylint: disable=too-many-statements
     review_item_limit = 10
 
-    @app.action("post_review")
+    @app.action("post_review_action")
     def open_book_search_modal(ack, body, client, logger):
         """
         本の検索モーダルを開く
         """
-        # コマンドのリクエストを確認
         ack()
 
         if not get_user(logger, body["user"]["id"]):
@@ -43,12 +42,10 @@ def review_controller(app):  # pylint: disable=too-many-statements
             trigger_id=body["trigger_id"],
             view_id=body["view"]["id"],
             hash=body["view"]["hash"],
-            # ビューのペイロード
             view=search_book_to_review_modal(callback_id="book_search_modal"),
         )
 
-    # view_submission リクエストを処理
-    @app.view("view_1")
+    @app.view("post_review_modal")
     def handle_submission(
         ack, body, _, view, logger, client
     ):  # pylint: disable=too-many-locals
@@ -62,14 +59,12 @@ def review_controller(app):  # pylint: disable=too-many-statements
         image_url = view["blocks"][1]["accessory"]["image_url"]
 
         score_for_me = view["state"]["values"]["input_score_for_me"][
-            "action_id_score_for_me"
+            "score_for_me_action"
         ]["selected_option"]["value"]
         score_for_others = view["state"]["values"]["input_score_for_others"][
-            "action_id_score_for_others"
+            "score_for_others_action"
         ]["selected_option"]["value"]
-
-        # `input_comment`という block_id に `action_id_comment` を持つ input ブロックがある場合
-        review_comment = view["state"]["values"]["input_comment"]["action_id_comment"][
+        review_comment = view["state"]["values"]["input_comment"]["comment_action"][
             "value"
         ]
         user_id = body["user"]["id"]
@@ -125,9 +120,8 @@ def review_controller(app):  # pylint: disable=too-many-statements
         """
         return f'{user["user_name"]}  ({user_department_dict[user["department"]]})'
 
-    @app.action("read_review")
+    @app.action("read_review_action")
     def open_read_modal(ack, body, client, logger):
-        # コマンドのリクエストを確認
         ack()
 
         reviews = get_reviews(logger=logger, limit=review_item_limit, keys=[])
@@ -141,8 +135,8 @@ def review_controller(app):  # pylint: disable=too-many-statements
         )
 
         view = review_list_modal(
-            callback_id="view_1",
-            search_button_action_id="search_review",
+            callback_id="post_review_modal",
+            search_button_action_id="search_review_action",
             review_contents_list=review_contents_list,
             private_metadata=metadata_str,
             show_move_to_next=bool(reviews["keys"]),
@@ -153,7 +147,7 @@ def review_controller(app):  # pylint: disable=too-many-statements
             view=view,
         )
 
-    @app.action("move_to_next")
+    @app.action("move_to_next_action")
     def move_to_next(ack, logger, client, body):
         ack()
 
@@ -177,8 +171,8 @@ def review_controller(app):  # pylint: disable=too-many-statements
         )
 
         view = review_list_modal(
-            callback_id="view_1",
-            search_button_action_id="search_review",
+            callback_id="post_review_modal",
+            search_button_action_id="search_review_action",
             review_contents_list=review_contents_list,
             private_metadata=metadata_str,
             show_move_to_back=True,
@@ -192,7 +186,7 @@ def review_controller(app):  # pylint: disable=too-many-statements
             view=view,
         )
 
-    @app.action("move_to_back")
+    @app.action("move_to_back_action")
     def move_to_back(ack, logger, client, body):
         ack()
 
@@ -218,8 +212,8 @@ def review_controller(app):  # pylint: disable=too-many-statements
         )
 
         view = review_list_modal(
-            callback_id="view_1",
-            search_button_action_id="search_review",
+            callback_id="post_review_modal",
+            search_button_action_id="search_review_action",
             review_contents_list=review_contents_list,
             private_metadata=metadata_str,
             show_move_to_back=not is_move_to_first,
@@ -232,7 +226,7 @@ def review_controller(app):  # pylint: disable=too-many-statements
             view=view,
         )
 
-    @app.action("search_review")
+    @app.action("search_review_action")
     def update_review_list_view(ack, body, client, logger):
         ack()
 
@@ -262,8 +256,8 @@ def review_controller(app):  # pylint: disable=too-many-statements
         )
 
         view = review_list_modal(
-            callback_id="view_1",
-            search_button_action_id="search_review",
+            callback_id="post_review_modal",
+            search_button_action_id="search_review_action",
             review_contents_list=review_contents_list,
             private_metadata=private_metadata,
             show_move_to_next=bool(reviews["keys"]),
@@ -273,7 +267,6 @@ def review_controller(app):  # pylint: disable=too-many-statements
             trigger_id=body["trigger_id"],
             view_id=body["view"]["id"],
             hash=body["view"]["hash"],
-            # ビューのペイロード
             view=view,
         )
 

@@ -7,7 +7,7 @@ from bee_slack_app.service.user import get_user
 
 
 def recommend_controller(app):  # pylint: disable=too-many-statements
-    @app.action("book_recommend")
+    @app.action("book_recommend_action")
     def open_recommend_modal(ack, body, client, logger):
         ack()
 
@@ -70,7 +70,6 @@ def recommend_controller(app):  # pylint: disable=too-many-statements
 
         client.views_open(
             trigger_id=body["trigger_id"],
-            # ビューのペイロード
             view=modal_view,
         )
 
@@ -82,7 +81,7 @@ def recommend_controller(app):  # pylint: disable=too-many-statements
 
         view = {
             "type": "modal",
-            "callback_id": "book_recommend",
+            "callback_id": "book_recommend_modal",
             "title": {"type": "plain_text", "text": "あなたへのおすすめ本"},
             "close": {"type": "plain_text", "text": "閉じる", "emoji": True},
             "blocks": [
@@ -109,7 +108,7 @@ def recommend_controller(app):  # pylint: disable=too-many-statements
                                 "emoji": True,
                             },
                             "url": book["google_books_url"],
-                            "action_id": "google_books_buttons-action",
+                            "action_id": "google_books_buttons_action",
                         },
                     ],
                 },

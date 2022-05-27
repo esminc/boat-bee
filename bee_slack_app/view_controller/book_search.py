@@ -17,7 +17,7 @@ def book_search_controller(app):  # pylint: disable=too-many-statements
         検索結果のモーダルを開く
         """
         title = body["view"]["state"]["values"]["input_book_title"][
-            "action_id_book_title"
+            "book_title_action"
         ]["value"]
 
         book_results = search_book_by_title(title)
@@ -47,13 +47,13 @@ def book_search_controller(app):  # pylint: disable=too-many-statements
         ack(
             response_action="push",
             view=book_search_result_modal(
-                callback_id="view_book_search",
+                callback_id="book_search_result_modal",
                 private_metadata=private_metadata,
                 book_results=book_results,
             ),
         )
 
-    @app.action("select_buttons-action")
+    @app.action("select_book_action")
     def handle_book_selected(ack, body, _, client):
         """
         検索結果画面で選択ボタンを選択した時に行う処理
@@ -80,7 +80,7 @@ def book_search_controller(app):  # pylint: disable=too-many-statements
         client.views_update(
             view_id=body["container"]["view_id"],
             view=book_search_result_selected_modal(
-                callback_id="view_book_search",
+                callback_id="book_search_result_modal",
                 private_metadata=json.dumps(search_result),
                 book_search_result_modal_blocks=blocks,
                 isbn=isbn,
@@ -88,7 +88,7 @@ def book_search_controller(app):  # pylint: disable=too-many-statements
         )
         ack()
 
-    @app.action("google_books_buttons-action")
+    @app.action("google_books_buttons_action")
     def handle_google_books_selected(ack, body, _, logger):
         """
         検索結果画面でGoogle Booksで見るボタンを押した時に行う処理
@@ -98,8 +98,7 @@ def book_search_controller(app):  # pylint: disable=too-many-statements
         ack()
         logger.info(body)
 
-    # view_submission リクエストを処理
-    @app.view("view_book_search")
+    @app.view("book_search_result_modal")
     def handle_submission(ack, body, _, __):
         """
         検索結果画面で決定ボタンを押した時に行う処理
@@ -143,7 +142,7 @@ def book_search_controller(app):  # pylint: disable=too-many-statements
         ack(
             response_action="push",
             view=post_review_modal(
-                callback_id="view_1",
+                callback_id="post_review_modal",
                 book_section=selected_book_section,
                 url=url,
             ),

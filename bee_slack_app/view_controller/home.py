@@ -16,10 +16,10 @@ def home_controller(app):
         client.views_publish(
             user_id=event["user"],
             view=home(
-                read_review_action_id="read_review",
-                post_review_action_id="post_review",
-                see_more_recommended_book_action_id="book_recommend",
-                user_info_action_id="user_info",
+                read_review_action_id="read_review_action",
+                post_review_action_id="post_review_action",
+                see_more_recommended_book_action_id="book_recommend_action",
+                user_info_action_id="user_info_action",
                 total_review_count=total_review_count,
             ),
         )

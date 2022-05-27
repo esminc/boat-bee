@@ -119,7 +119,7 @@ def review_list_modal(
             {  # type: ignore
                 "type": "button",
                 "text": {"type": "plain_text", "text": "前へ"},
-                "action_id": "move_to_back",
+                "action_id": "move_to_back_action",
             }
         ]
 
@@ -128,7 +128,7 @@ def review_list_modal(
             {
                 "type": "button",
                 "text": {"type": "plain_text", "text": "次へ"},
-                "action_id": "move_to_next",
+                "action_id": "move_to_next_action",
             }
         ]
 

@@ -23,7 +23,7 @@ def search_book_to_review_modal(*, callback_id: str):
                 "label": {"type": "plain_text", "text": "タイトル"},
                 "element": {
                     "type": "plain_text_input",
-                    "action_id": "action_id_book_title",
+                    "action_id": "book_title_action",
                     "placeholder": {
                         "type": "plain_text",
                         "text": "本のタイトルを入力してください",
@@ -72,7 +72,7 @@ def post_review_modal(*, callback_id: str, book_section, url: str):
                 "label": {"type": "plain_text", "text": "自分にとっての評価"},
                 "element": {
                     "type": "static_select",
-                    "action_id": "action_id_score_for_me",
+                    "action_id": "score_for_me_action",
                     "placeholder": {
                         "type": "plain_text",
                         "text": "選択してください",
@@ -108,7 +108,7 @@ def post_review_modal(*, callback_id: str, book_section, url: str):
                 "label": {"type": "plain_text", "text": "永和社員へのおすすめ度"},
                 "element": {
                     "type": "static_select",
-                    "action_id": "action_id_score_for_others",
+                    "action_id": "score_for_others_action",
                     "placeholder": {
                         "type": "plain_text",
                         "text": "選択してください",
@@ -145,7 +145,7 @@ def post_review_modal(*, callback_id: str, book_section, url: str):
                 "optional": True,
                 "element": {
                     "type": "plain_text_input",
-                    "action_id": "action_id_comment",
+                    "action_id": "comment_action",
                     "multiline": True,
                 },
             },
