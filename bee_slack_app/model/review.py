@@ -16,6 +16,7 @@ class ReviewContentsRequired(TypedDict):
     book_image_url: str
     book_author: str
     book_url: str
+    description: str
 
 
 class ReviewContents(ReviewContentsRequired, total=False):
