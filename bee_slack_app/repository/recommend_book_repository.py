@@ -22,6 +22,6 @@ class RecommendBookRepository:  # pylint: disable=too-few-public-methods
     @staticmethod
     def _load_recommend_book_dict():
         with open(
-            "./models/recommended_book.json", encoding="utf-8", mode="r"
+            "./ml/models/recommended_book.json", encoding="utf-8", mode="r"
         ) as json_file:
             return json.load(json_file)

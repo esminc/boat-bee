@@ -9,6 +9,6 @@ RUN pipenv install --system
 COPY app.py ./
 COPY ./bee_slack_app/ ./bee_slack_app/
 
-COPY ./ml/models/ ./models/
+COPY ./ml/models/ ./ml/models/
 
 CMD [ "app.lambda_handler" ]
