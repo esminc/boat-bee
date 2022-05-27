@@ -2,7 +2,7 @@ from bee_slack_app.view.book import see_more_recommended_book_modal
 
 
 def book_controller(app):
-    @app.action("see_more_recommended_book")
+    @app.action("see_more_recommended_book_action")
     def open_see_more_recommended_book_modal(ack, body, client):
         """
         あなたへのおすすめ本モーダル

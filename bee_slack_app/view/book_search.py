@@ -74,7 +74,7 @@ def _generate_book_block(book: SearchedBook):
                     "type": "button",
                     "text": {"type": "plain_text", "text": "選択", "emoji": True},
                     "value": book["isbn"],
-                    "action_id": "select_buttons-action",
+                    "action_id": "select_book_action",
                 },
                 {
                     "type": "button",
@@ -84,7 +84,7 @@ def _generate_book_block(book: SearchedBook):
                         "emoji": True,
                     },
                     "url": book["google_books_url"],
-                    "action_id": "google_books_buttons-action",
+                    "action_id": "google_books_buttons_action",
                 },
             ],
         },
@@ -160,7 +160,7 @@ def _selected_book(item):
                     "emoji": True,
                 },
                 "value": item["elements"][0]["value"],
-                "action_id": "select_buttons-action",
+                "action_id": "select_book_action",
                 "style": "primary",
             },
             {
@@ -171,7 +171,7 @@ def _selected_book(item):
                     "emoji": True,
                 },
                 "url": item["elements"][1]["url"],
-                "action_id": "google_books_buttons-action",
+                "action_id": "google_books_buttons_action",
             },
         ],
     }
@@ -188,7 +188,7 @@ def _unselected_book(item):
                 "type": "button",
                 "text": {"type": "plain_text", "text": "選択", "emoji": True},
                 "value": item["elements"][0]["value"],
-                "action_id": "select_buttons-action",
+                "action_id": "select_book_action",
             },
             {
                 "type": "button",
@@ -198,7 +198,7 @@ def _unselected_book(item):
                     "emoji": True,
                 },
                 "url": item["elements"][1]["url"],
-                "action_id": "google_books_buttons-action",
+                "action_id": "google_books_buttons_action",
             },
         ],
     }
