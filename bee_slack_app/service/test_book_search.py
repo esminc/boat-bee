@@ -21,6 +21,7 @@ class TestBookSearch:
                     "authors": "テストの著者名_1",
                     "google_books_url": "http://books.google.co.jp/for_google_books_url_test_1",
                     "image_url": "http://books.google.co.jp/for_image_url_test_1",
+                    "description": "test_description_1",
                 },
                 {
                     "title": "テストのタイトル_2",
@@ -28,6 +29,7 @@ class TestBookSearch:
                     "authors": "テストの著者名_2",
                     "google_books_url": "http://books.google.co.jp/for_google_books_url_test_2",
                     "image_url": "http://books.google.co.jp/for_image_url_test_2",
+                    "description": "test_description_2",
                 },
                 {
                     "title": "テストのタイトル_3",
@@ -35,6 +37,7 @@ class TestBookSearch:
                     "authors": "テストの著者名_3",
                     "google_books_url": "http://books.google.co.jp/for_google_books_url_test_3",
                     "image_url": "http://books.google.co.jp/for_image_url_test_3",
+                    "description": "test_description_3",
                 },
             ]
             return book
@@ -58,6 +61,7 @@ class TestBookSearch:
         assert target_book["authors"] is not None
         assert target_book["google_books_url"] is not None
         assert target_book["image_url"] is not None
+        assert target_book["description"] is not None
 
     def test_検索ワードにヒットしない場合0件の結果が返ってくること(self, monkeypatch):
         def mock_search_book_by_title(_, __):
@@ -84,6 +88,7 @@ class TestBookSearch:
                 "authors": "テストの著者名",
                 "google_books_url": "http://books.google.co.jp/for_google_books_url_test",
                 "image_url": "http://books.google.co.jp/for_image_url_test",
+                "description": "test_description",
             }
             return book
 
@@ -103,6 +108,7 @@ class TestBookSearch:
         assert result["authors"] is not None
         assert result["google_books_url"] is not None
         assert result["image_url"] is not None
+        assert result["description"] is not None
 
     def test_ISBN指定でヒットしなかった場合は結果が0件であること(
         self, monkeypatch

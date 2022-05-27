@@ -7,3 +7,4 @@ class SearchedBook(TypedDict):
     authors: list[str]
     image_url: Optional[str]
     google_books_url: str
+    description: str
