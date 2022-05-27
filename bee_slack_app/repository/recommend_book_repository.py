@@ -1,11 +1,12 @@
 import json
-from typing import Optional
+
+from bee_slack_app.model.search import SearchedBook
 
 
 class RecommendBookRepository:  # pylint: disable=too-few-public-methods
     recommend_book_dict = None
 
-    def fetch(self, user_id: str) -> Optional[dict]:
+    def fetch(self, user_id: str) -> list[SearchedBook]:
         """
         おすすめの本を取得する
 
