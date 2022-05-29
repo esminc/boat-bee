@@ -81,7 +81,7 @@ def recommend_controller(app):  # pylint: disable=too-many-statements
             return
 
         modal_view = generate_book_recommend_model_view(
-            callback_id="book_recommend_modal", book=book
+            callback_id="book_recommend_modal", book_results=book
         )
 
         record_user_action(

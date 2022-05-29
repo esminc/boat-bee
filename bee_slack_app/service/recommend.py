@@ -37,11 +37,10 @@ def recommend(logger: Any, user: User) -> Optional[SearchedBook]:
             logger.info("Failed to recommend book. user_id: ", user_id)
             return None
 
-        book_info = GoogleBooksRepository().search_book_by_isbn(isbn)
-        book: Optional[SearchedBook] = None
         results = []
-        if book_info is not None:
-            for book in book_info:
+        for isbn in isbn.values():
+            book_info = GoogleBooksRepository().search_book_by_isbn(isbn)
+            if book_info is not None:
                 book = {
                     "title": book_info["title"],
                     "isbn": isbn,
