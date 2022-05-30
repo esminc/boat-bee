@@ -53,7 +53,7 @@ def _recommend_book_block(book: SearchedBook):
             "accessory": {
                 "type": "image",
                 "image_url": image_url,
-                "alt_text": "An incredibly cute kitten.",
+                "alt_text": "",
             },
         },
         {
@@ -67,7 +67,7 @@ def _recommend_book_block(book: SearchedBook):
                         "emoji": True,
                     },
                     "url": book["google_books_url"],
-                    "action_id": "google_books_buttons-action",
+                    "action_id": "google_books_buttons_action",
                 },
             ],
         },
