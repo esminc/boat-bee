@@ -27,7 +27,7 @@ class TestSuggestedBookRepository:
             ProvisionedThroughput={"ReadCapacityUnits": 1, "WriteCapacityUnits": 1},
         )
 
-    def test_ＤＢの先頭にあるおすすめされた本を取得できること(self):
+    def test_DBの先頭にあるおすすめされた本を取得できること(self):  # pylint: disable=invalid-name
         item = {
             "user_id": "test_user_id_0",
             "suggested_book_sk": "1234567890123#dummy_ml_model_0",
@@ -58,7 +58,7 @@ class TestSuggestedBookRepository:
         assert suggested_book["interested"] is True
         assert suggested_book["updated_at"] == "2022-04-01T00:00:00+09:00"
 
-    def test_ＤＢの最後尾にあるおすすめされた本を取得できること(self):
+    def test_DBの最後尾にあるおすすめされた本を取得できること(self):  # pylint: disable=invalid-name
         item = {
             "user_id": "test_user_id_0",
             "suggested_book_sk": "1234567890123#dummy_ml_model_0",
@@ -89,7 +89,7 @@ class TestSuggestedBookRepository:
         assert suggested_book["interested"] is False
         assert suggested_book["updated_at"] == "2022-04-11T09:23:04+09:00"
 
-    def test_おすすめされた本が無い場合にNoneが返ること(self):
+    def test_おすすめされた本が無い場合にNoneが返ること(self):  # pylint: disable=invalid-name
         item = {
             "user_id": "test_user_id_0",
             "suggested_book_sk": "1234567890123#dummy_ml_model_0",
