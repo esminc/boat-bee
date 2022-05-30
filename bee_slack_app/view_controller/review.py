@@ -89,7 +89,7 @@ def review_controller(app):  # pylint: disable=too-many-statements
                 else dummy_url
             )
             book_url = book_info["google_books_url"]
-            description = book_info["description"]
+            book_description = book_info["description"]
 
         score_for_me = view["state"]["values"]["input_score_for_me"][
             "score_for_me_action"
@@ -124,7 +124,7 @@ def review_controller(app):  # pylint: disable=too-many-statements
             "book_image_url": image_url,
             "book_author": author,
             "book_url": book_url,
-            "description": description,
+            "book_description": book_description,
         }
 
         review = post_review(logger, review_contents)

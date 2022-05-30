@@ -114,7 +114,7 @@ class ReviewRepository:
             "book_image_url": review["book_image_url"],
             "book_author": review["book_author"],
             "book_url": review["book_url"],
-            "description": review["description"],
+            "book_description": review["book_description"],
         }
 
         self.table.put_item(Item=item)

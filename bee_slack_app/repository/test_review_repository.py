@@ -39,7 +39,7 @@ class TestReview:
             "book_image_url": "dummy_book_image_url_0",
             "book_author": "dummy_book_author_0",
             "book_url": "dummy_book_url_0",
-            "description": "dummy_description_0",
+            "book_description": "dummy_description_0",
         }
 
         self.table.put_item(Item=item)
@@ -55,7 +55,7 @@ class TestReview:
             "book_image_url": "dummy_book_image_url_1",
             "book_author": "dummy_book_author_1",
             "book_url": "dummy_book_url_1",
-            "description": "dummy_description_1",
+            "book_description": "dummy_description_1",
         }
 
         self.table.put_item(Item=item)
@@ -71,7 +71,7 @@ class TestReview:
             "book_image_url": "dummy_book_image_url_2",
             "book_author": "dummy_book_author_2",
             "book_url": "dummy_book_url_2",
-            "description": "dummy_description_2",
+            "book_description": "dummy_description_2",
         }
 
         self.table.put_item(Item=item)
@@ -89,7 +89,7 @@ class TestReview:
         assert review["book_image_url"] == "dummy_book_image_url_1"
         assert review["book_author"] == "dummy_book_author_1"
         assert review["book_url"] == "dummy_book_url_1"
-        assert review["description"] == "dummy_description_1"
+        assert review["book_description"] == "dummy_description_1"
 
     def test_存在しないレビューを指定した場合_Noneを返すこと(self):  # pylint: disable=invalid-name
         item = {
@@ -103,7 +103,7 @@ class TestReview:
             "book_image_url": "dummy_book_image_url_0",
             "book_author": "dummy_book_author_0",
             "book_url": "dummy_book_url_0",
-            "description": "dummy_description_0",
+            "book_description": "dummy_description_0",
         }
 
         self.table.put_item(Item=item)
@@ -119,7 +119,7 @@ class TestReview:
             "book_image_url": "dummy_book_image_url_1",
             "book_author": "dummy_book_author_1",
             "book_url": "dummy_book_url_1",
-            "description": "dummy_description_1",
+            "book_description": "dummy_description_1",
         }
 
         self.table.put_item(Item=item)
@@ -135,7 +135,7 @@ class TestReview:
             "book_image_url": "dummy_book_image_url_2",
             "book_author": "dummy_book_author_2",
             "book_url": "dummy_book_url_2",
-            "description": "dummy_description_2",
+            "book_description": "dummy_description_2",
         }
 
         self.table.put_item(Item=item)
@@ -158,7 +158,7 @@ class TestReview:
             "book_image_url": "dummy_book_image_url_0",
             "book_author": "dummy_book_author_0",
             "book_url": "dummy_book_url_0",
-            "description": "dummy_description_0",
+            "book_description": "dummy_description_0",
         }
 
         self.table.put_item(Item=item)
@@ -174,7 +174,7 @@ class TestReview:
             "book_image_url": "dummy_book_image_url_1",
             "book_author": "dummy_book_author_1",
             "book_url": "dummy_book_url_1",
-            "description": "dummy_description_1",
+            "book_description": "dummy_description_1",
         }
 
         self.table.put_item(Item=item)
@@ -190,7 +190,7 @@ class TestReview:
             "book_image_url": "dummy_book_image_url_2",
             "book_author": "dummy_book_author_2",
             "book_url": "dummy_book_url_2",
-            "description": "dummy_description_2",
+            "book_description": "dummy_description_2",
         }
 
         self.table.put_item(Item=item)
@@ -214,7 +214,7 @@ class TestReview:
         assert reviews[0]["book_image_url"] == "dummy_book_image_url_0"
         assert reviews[0]["book_author"] == "dummy_book_author_0"
         assert reviews[0]["book_url"] == "dummy_book_url_0"
-        assert reviews[0]["description"] == "dummy_description_0"
+        assert reviews[0]["book_description"] == "dummy_description_0"
 
         assert reviews[1]["user_id"] == "user_id_1"
         assert reviews[1]["isbn"] == "12345"
@@ -225,7 +225,7 @@ class TestReview:
         assert reviews[1]["book_image_url"] == "dummy_book_image_url_1"
         assert reviews[1]["book_author"] == "dummy_book_author_1"
         assert reviews[1]["book_url"] == "dummy_book_url_1"
-        assert reviews[1]["description"] == "dummy_description_1"
+        assert reviews[1]["book_description"] == "dummy_description_1"
 
         response = review_repository.get_some(limit=2, start_key=last_key)
         reviews = response["items"]
@@ -244,7 +244,7 @@ class TestReview:
         assert reviews[0]["book_image_url"] == "dummy_book_image_url_2"
         assert reviews[0]["book_author"] == "dummy_book_author_2"
         assert reviews[0]["book_url"] == "dummy_book_url_2"
-        assert reviews[0]["description"] == "dummy_description_2"
+        assert reviews[0]["book_description"] == "dummy_description_2"
 
     def test_レビューを取得できること(self):
         item = {
@@ -258,7 +258,7 @@ class TestReview:
             "book_image_url": "dummy_book_image_url_0",
             "book_author": "dummy_book_author_0",
             "book_url": "dummy_book_url_0",
-            "description": "dummy_description_0",
+            "book_description": "dummy_description_0",
         }
 
         self.table.put_item(Item=item)
@@ -274,7 +274,7 @@ class TestReview:
             "book_image_url": "dummy_book_image_url_1",
             "book_author": "dummy_book_author_1",
             "book_url": "dummy_book_url_1",
-            "description": "dummy_description_1",
+            "book_description": "dummy_description_1",
         }
 
         self.table.put_item(Item=item)
@@ -290,7 +290,7 @@ class TestReview:
             "book_image_url": "dummy_book_image_url_2",
             "book_author": "dummy_book_author_2",
             "book_url": "dummy_book_url_2",
-            "description": "dummy_description_2",
+            "book_description": "dummy_description_2",
         }
 
         self.table.put_item(Item=item)
@@ -310,7 +310,7 @@ class TestReview:
         assert reviews[0]["book_image_url"] == "dummy_book_image_url_0"
         assert reviews[0]["book_author"] == "dummy_book_author_0"
         assert reviews[0]["book_url"] == "dummy_book_url_0"
-        assert reviews[0]["description"] == "dummy_description_0"
+        assert reviews[0]["book_description"] == "dummy_description_0"
 
         assert reviews[1]["user_id"] == "user_id_1"
         assert reviews[1]["isbn"] == "12345"
@@ -321,7 +321,7 @@ class TestReview:
         assert reviews[1]["book_image_url"] == "dummy_book_image_url_1"
         assert reviews[1]["book_author"] == "dummy_book_author_1"
         assert reviews[1]["book_url"] == "dummy_book_url_1"
-        assert reviews[1]["description"] == "dummy_description_1"
+        assert reviews[1]["book_description"] == "dummy_description_1"
 
         assert reviews[2]["user_id"] == "user_id_2"
         assert reviews[2]["isbn"] == "67890"
@@ -332,7 +332,7 @@ class TestReview:
         assert reviews[2]["book_image_url"] == "dummy_book_image_url_2"
         assert reviews[2]["book_author"] == "dummy_book_author_2"
         assert reviews[2]["book_url"] == "dummy_book_url_2"
-        assert reviews[2]["description"] == "dummy_description_2"
+        assert reviews[2]["book_description"] == "dummy_description_2"
 
     def test_レビューが0件の場合_空配列を返すこと(self):
         response = self.table.scan()
@@ -369,7 +369,7 @@ class TestReview:
                 "book_image_url": "dummy_book_image_url",
                 "book_author": "dummy_book_author",
                 "book_url": "dummy_book_url",
-                "description": "dummy_description",
+                "book_description": "dummy_description",
             }
         )
 
@@ -393,7 +393,7 @@ class TestReview:
         assert actual["book_image_url"] == "dummy_book_image_url"
         assert actual["book_author"] == "dummy_book_author"
         assert actual["book_url"] == "dummy_book_url"
-        assert actual["description"] == "dummy_description"
+        assert actual["book_description"] == "dummy_description"
 
     def test_自分にとっての評価を指定してレビューを取得できること(self):
         item = {
@@ -407,7 +407,7 @@ class TestReview:
             "book_image_url": "dummy_book_image_url_0",
             "book_author": "dummy_book_author_0",
             "book_url": "dummy_book_url_0",
-            "description": "dummy_description_0",
+            "book_description": "dummy_description_0",
         }
 
         self.table.put_item(Item=item)
@@ -423,7 +423,7 @@ class TestReview:
             "book_image_url": "dummy_book_image_url_1",
             "book_author": "dummy_book_author_1",
             "book_url": "dummy_book_url_1",
-            "description": "dummy_description_1",
+            "book_description": "dummy_description_1",
         }
 
         self.table.put_item(Item=item)
@@ -439,7 +439,7 @@ class TestReview:
             "book_image_url": "dummy_book_image_url_2",
             "book_author": "dummy_book_author_2",
             "book_url": "dummy_book_url_2",
-            "description": "dummy_description_2",
+            "book_description": "dummy_description_2",
         }
 
         self.table.put_item(Item=item)
@@ -459,7 +459,7 @@ class TestReview:
         assert reviews[0]["book_image_url"] == "dummy_book_image_url_0"
         assert reviews[0]["book_author"] == "dummy_book_author_0"
         assert reviews[0]["book_url"] == "dummy_book_url_0"
-        assert reviews[0]["description"] == "dummy_description_0"
+        assert reviews[0]["book_description"] == "dummy_description_0"
 
         assert reviews[1]["user_id"] == "user_id_1"
         assert reviews[1]["isbn"] == "12345"
@@ -470,7 +470,7 @@ class TestReview:
         assert reviews[1]["book_image_url"] == "dummy_book_image_url_1"
         assert reviews[1]["book_author"] == "dummy_book_author_1"
         assert reviews[1]["book_url"] == "dummy_book_url_1"
-        assert reviews[1]["description"] == "dummy_description_1"
+        assert reviews[1]["book_description"] == "dummy_description_1"
 
     def test_永和社員へのおすすめ度を指定してレビューを取得できること(self):
         item = {
@@ -484,7 +484,7 @@ class TestReview:
             "book_image_url": "dummy_book_image_url_0",
             "book_author": "dummy_book_author_0",
             "book_url": "dummy_book_url_0",
-            "description": "dummy_description_0",
+            "book_description": "dummy_description_0",
         }
 
         self.table.put_item(Item=item)
@@ -500,7 +500,7 @@ class TestReview:
             "book_image_url": "dummy_book_image_url_1",
             "book_author": "dummy_book_author_1",
             "book_url": "dummy_book_url_1",
-            "description": "dummy_description_1",
+            "book_description": "dummy_description_1",
         }
 
         self.table.put_item(Item=item)
@@ -516,7 +516,7 @@ class TestReview:
             "book_image_url": "dummy_book_image_url_2",
             "book_author": "dummy_book_author_2",
             "book_url": "dummy_book_url_2",
-            "description": "dummy_description_2",
+            "book_description": "dummy_description_2",
         }
 
         self.table.put_item(Item=item)
@@ -538,7 +538,7 @@ class TestReview:
         assert reviews[0]["book_image_url"] == "dummy_book_image_url_1"
         assert reviews[0]["book_author"] == "dummy_book_author_1"
         assert reviews[0]["book_url"] == "dummy_book_url_1"
-        assert reviews[0]["description"] == "dummy_description_1"
+        assert reviews[0]["book_description"] == "dummy_description_1"
 
         assert reviews[1]["user_id"] == "user_id_2"
         assert reviews[1]["isbn"] == "67890"
@@ -549,7 +549,7 @@ class TestReview:
         assert reviews[1]["book_image_url"] == "dummy_book_image_url_2"
         assert reviews[1]["book_author"] == "dummy_book_author_2"
         assert reviews[1]["book_url"] == "dummy_book_url_2"
-        assert reviews[1]["description"] == "dummy_description_2"
+        assert reviews[1]["book_description"] == "dummy_description_2"
 
     def test_自分にとっての評価と永和社員へのおすすめ度を指定してレビューを取得できること(self):
         item = {
@@ -563,7 +563,7 @@ class TestReview:
             "book_image_url": "dummy_book_image_url_0",
             "book_author": "dummy_book_author_0",
             "book_url": "dummy_book_url_0",
-            "description": "dummy_description_0",
+            "book_description": "dummy_description_0",
         }
 
         self.table.put_item(Item=item)
@@ -579,7 +579,7 @@ class TestReview:
             "book_image_url": "dummy_book_image_url_1",
             "book_author": "dummy_book_author_1",
             "book_url": "dummy_book_url_1",
-            "description": "dummy_description_1",
+            "book_description": "dummy_description_1",
         }
 
         self.table.put_item(Item=item)
@@ -595,7 +595,7 @@ class TestReview:
             "book_image_url": "dummy_book_image_url_2",
             "book_author": "dummy_book_author_2",
             "book_url": "dummy_book_url_2",
-            "description": "dummy_description_2",
+            "book_description": "dummy_description_2",
         }
 
         self.table.put_item(Item=item)
@@ -617,7 +617,7 @@ class TestReview:
         assert reviews[0]["book_image_url"] == "dummy_book_image_url_0"
         assert reviews[0]["book_author"] == "dummy_book_author_0"
         assert reviews[0]["book_url"] == "dummy_book_url_0"
-        assert reviews[0]["description"] == "dummy_description_0"
+        assert reviews[0]["book_description"] == "dummy_description_0"
 
         assert reviews[1]["user_id"] == "user_id_2"
         assert reviews[1]["isbn"] == "67890"
@@ -628,7 +628,7 @@ class TestReview:
         assert reviews[1]["book_image_url"] == "dummy_book_image_url_2"
         assert reviews[1]["book_author"] == "dummy_book_author_2"
         assert reviews[1]["book_url"] == "dummy_book_url_2"
-        assert reviews[1]["description"] == "dummy_description_2"
+        assert reviews[1]["book_description"] == "dummy_description_2"
 
     def test_検索条件を指定してレビューが0件の場合_空配列を返すこと(self):
         item = {
@@ -642,7 +642,7 @@ class TestReview:
             "book_image_url": "dummy_book_image_url_0",
             "book_author": "dummy_book_author_0",
             "book_url": "dummy_book_url_0",
-            "description": "dummy_description_0",
+            "book_description": "dummy_description_0",
         }
 
         self.table.put_item(Item=item)
@@ -658,7 +658,7 @@ class TestReview:
             "book_image_url": "dummy_book_image_url_1",
             "book_author": "dummy_book_author_1",
             "book_url": "dummy_book_url_1",
-            "description": "dummy_description_1",
+            "book_description": "dummy_description_1",
         }
 
         self.table.put_item(Item=item)
@@ -674,7 +674,7 @@ class TestReview:
             "book_image_url": "dummy_book_image_url_2",
             "book_author": "dummy_book_author_2",
             "book_url": "dummy_book_url_2",
-            "description": "dummy_description_2",
+            "book_description": "dummy_description_2",
         }
 
         review_repository = ReviewRepository()
@@ -701,7 +701,7 @@ class TestReview:
                 "book_image_url": "dummy_book_image_url",
                 "book_author": "dummy_book_author",
                 "book_url": "dummy_book_url",
-                "description": "dummy_description",
+                "book_description": "dummy_description",
             }
         )
 
@@ -725,7 +725,7 @@ class TestReview:
         assert actual["book_image_url"] == "dummy_book_image_url"
         assert actual["book_author"] == "dummy_book_author"
         assert actual["book_url"] == "dummy_book_url"
-        assert actual["description"] == "dummy_description"
+        assert actual["book_description"] == "dummy_description"
 
         review_repository.create(
             {
@@ -739,7 +739,7 @@ class TestReview:
                 "book_image_url": "dummy_book_image_url",
                 "book_author": "dummy_book_author",
                 "book_url": "dummy_book_url",
-                "description": "dummy_description",
+                "book_description": "dummy_description",
             }
         )
 
@@ -763,7 +763,7 @@ class TestReview:
         assert actual["book_image_url"] == "dummy_book_image_url"
         assert actual["book_author"] == "dummy_book_author"
         assert actual["book_url"] == "dummy_book_url"
-        assert actual["description"] == "dummy_description"
+        assert actual["book_description"] == "dummy_description"
 
     def test_同じuser_idで別々のisbnの場合_別々のアイテムとして登録すること(self):
         response = self.table.query(
@@ -788,7 +788,7 @@ class TestReview:
                 "book_image_url": "dummy_book_image_url_0",
                 "book_author": "dummy_book_author_0",
                 "book_url": "dummy_book_url_0",
-                "description": "dummy_description_0",
+                "book_description": "dummy_description_0",
             }
         )
 
@@ -804,7 +804,7 @@ class TestReview:
                 "book_image_url": "dummy_book_image_url_1",
                 "book_author": "dummy_book_author_1",
                 "book_url": "dummy_book_url_1",
-                "description": "dummy_description_1",
+                "book_description": "dummy_description_1",
             }
         )
 
@@ -828,7 +828,7 @@ class TestReview:
         assert actual_0["book_image_url"] == "dummy_book_image_url_0"
         assert actual_0["book_author"] == "dummy_book_author_0"
         assert actual_0["book_url"] == "dummy_book_url_0"
-        assert actual_0["description"] == "dummy_description_0"
+        assert actual_0["book_description"] == "dummy_description_0"
 
         actual_1 = response["Items"][1]
 
@@ -842,4 +842,4 @@ class TestReview:
         assert actual_1["book_image_url"] == "dummy_book_image_url_1"
         assert actual_1["book_author"] == "dummy_book_author_1"
         assert actual_1["book_url"] == "dummy_book_url_1"
-        assert actual_1["description"] == "dummy_description_1"
+        assert actual_1["book_description"] == "dummy_description_1"
