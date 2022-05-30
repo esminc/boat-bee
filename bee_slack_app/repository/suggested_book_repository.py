@@ -1,7 +1,6 @@
 """おすすめされた本を、追加・更新します
 """
 import os
-from typing import Optional
 
 from bee_slack_app.model.suggested_book import SuggestedBook
 from bee_slack_app.repository.database import get_database_client
@@ -13,7 +12,7 @@ class SuggestedBookRepository:
             os.environ["DYNAMODB_TABLE"] + "-suggested-book"
         )
 
-    def get(self, user_id: str, isbn: str, ml_model: str) -> Optional[SuggestedBook]:
+    def get(self, user_id: str, isbn: str, ml_model: str) -> SuggestedBook:
         """
         おすすめされた本を取得する
 
