@@ -6,6 +6,7 @@ from bee_slack_app.model.user import User
 from bee_slack_app.service.book_search import search_book_by_isbn
 from bee_slack_app.service.review import (
     get_review,
+    get_review_by_isbn,
     get_reviews,
     get_reviews_before,
     post_review,
@@ -17,7 +18,12 @@ from bee_slack_app.view.post_review import (
     notify_review_post_message_blocks,
     search_book_to_review_modal,
 )
-from bee_slack_app.view.read_review import review_detail_modal, review_list_modal
+from bee_slack_app.view.read_review import (
+    BookOfReview,
+    review_detail_modal,
+    review_list_modal,
+    review_modal,
+)
 from bee_slack_app.view.user import user_department_dict
 
 
@@ -25,15 +31,45 @@ def review_controller(app):  # pylint: disable=too-many-statements
     review_item_limit = 10
 
     @app.action("read_review_of_book_action")
-    def read_review_of_book_action(ack, body, client):
+    def read_review_of_book_action(ack, body, client, action):
         """
         本のレビューモーダルを開く
         """
         ack()
 
+        user_id = body["user"]["id"]
+
+        isbn = action["value"]
+
+        reviews = get_review_by_isbn(isbn=isbn)
+
+        record_user_action(
+            user_id=user_id,
+            action_name="read_review_of_book_action",
+            payload={"isbn": isbn, "reviews": reviews},
+        )
+
+        if not reviews:
+            client.views_open(
+                trigger_id=body["trigger_id"],
+                view=simple_modal(title="エラー", text="レビュー取得でエラーが発生しました"),
+            )
+            return
+
+        reviews = _make_review_contents_list_comment_short(reviews)
+
+        # 全てのレビューで対象の本は同じなので、最初の一つを取り出す
+        book: BookOfReview = {
+            "isbn": reviews[0]["isbn"],
+            "author": reviews[0]["book_author"],
+            "title": reviews[0]["book_title"],
+            "url": reviews[0]["book_url"],
+            "image_url": reviews[0]["book_image_url"],
+        }
+
         client.views_open(
             trigger_id=body["trigger_id"],
-            view=simple_modal(title="本のレビュー", text="ごめんなさい :bow: \nここは未実装です!!"),
+            view=review_modal(callback_id="review_modal", book=book, reviews=reviews),
         )
 
     @app.action("post_review_action")

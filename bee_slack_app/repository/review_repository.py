@@ -1,10 +1,12 @@
 import os
 from typing import Optional, TypedDict
 
-from boto3.dynamodb.conditions import Attr  # type: ignore
+from boto3.dynamodb.conditions import Attr, Key  # type: ignore
 
 from bee_slack_app.model.review import ReviewContents
 from bee_slack_app.repository.database import get_database_client
+
+REVIEW_ISBN_GSI = "IsbnIndex"
 
 
 class ReviewItemKey(TypedDict):
@@ -101,6 +103,20 @@ class ReviewRepository:
                 items.extend(new_items)
 
         return {"items": items, "last_key": last_key}
+
+    def get_by_isbn(self, *, isbn: str) -> list[ReviewContents]:
+        """
+        ISBNから、本のレビューを取得する
+
+        Args:
+            isbn : 取得する本のISBN
+        Returns:
+            レビューのリスト
+        """
+        return self.table.query(
+            IndexName=REVIEW_ISBN_GSI,
+            KeyConditionExpression=Key("isbn").eq(isbn),
+        )["Items"]
 
     def create(self, review):
         item = {
