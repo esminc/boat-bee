@@ -115,3 +115,38 @@ class TestSuggestedBookRepository:
         )
 
         assert suggested_book is None
+
+    def test_興味ありの本を作成できること(self):
+        response = self.table.query(
+            KeyConditionExpression=boto3.dynamodb.conditions.Key("user_id").eq(
+                "test_user_id_0"
+            ),
+        )
+
+        assert len(response["Items"]) == 0
+
+        suggested_book_repository = SuggestedBookRepository()
+
+        suggested_book_repository.create(
+            {
+                "user_id": "test_user_id_0",
+                "isbn": "1234567890123",
+                "ml_model": "dummy_ml_model_0",
+                "interested": True,
+                "updated_at": "2022-04-01T00:00:00+09:00",
+            }
+        )
+
+        response = self.table.query(
+            KeyConditionExpression=boto3.dynamodb.conditions.Key("user_id").eq(
+                "test_user_id_0"
+            ),
+        )
+        assert len(response["Items"]) == 1
+
+        actual = response["Items"][0]
+
+        assert actual["user_id"] == "test_user_id_0"
+        assert actual["suggested_book_sk"] == "1234567890123#dummy_ml_model_0"
+        assert actual["interested"] is True
+        assert actual["updated_at"] == "2022-04-01T00:00:00+09:00"

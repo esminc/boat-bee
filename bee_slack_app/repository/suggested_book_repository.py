@@ -44,3 +44,18 @@ class SuggestedBookRepository:
             "updated_at": item["updated_at"],
         }
         return suggested_book
+
+    def create(self, suggested_book: SuggestedBook) -> None:
+        """
+        データを追加および上書きします
+        """
+        item = {
+            "user_id": suggested_book["user_id"],
+            "suggested_book_sk": suggested_book["isbn"]
+            + "#"
+            + suggested_book["ml_model"],
+            "interested": suggested_book["interested"],
+            "updated_at": suggested_book["updated_at"],
+        }
+
+        self.table.put_item(Item=item)
