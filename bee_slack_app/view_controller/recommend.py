@@ -87,7 +87,7 @@ def recommend_controller(app):  # pylint: disable=too-many-statements
         record_user_action(
             user_id=user_id,
             action_name="book_recommend_action",
-            payload={"book": book},
+            payload={"book_results": book_list},
         )
 
         client.views_open(
