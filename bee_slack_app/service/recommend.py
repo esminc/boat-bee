@@ -46,6 +46,7 @@ def recommend(logger: Any, user: User) -> Optional[SearchedBook]:
                 "authors": book_info["authors"],
                 "google_books_url": book_info["google_books_url"],
                 "image_url": book_info["image_url"],
+                "description": book_info["description"],
             }
         return book
 

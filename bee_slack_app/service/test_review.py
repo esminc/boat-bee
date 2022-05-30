@@ -21,6 +21,7 @@ def test_get_reviewでレビューを取得できること(monkeypatch):
             "book_image_url": "dummy_book_image_url_0",
             "book_author": "dummy_book_author_0",
             "book_url": "dummy_book_url_0",
+            "book_description": "dummy_description_0",
         }
 
     monkeypatch.setattr(ReviewRepository, "get", mock_review_repository_get)
@@ -49,6 +50,7 @@ def test_get_reviewでレビューを取得できること(monkeypatch):
     assert review["book_image_url"] == "dummy_book_image_url_0"
     assert review["book_author"] == "dummy_book_author_0"
     assert review["book_url"] == "dummy_book_url_0"
+    assert review["book_description"] == "dummy_description_0"
 
 
 def test_get_reviewで該当するユーザ情報がない場合はユーザ名としてユーザIDを返すこと(
@@ -65,6 +67,7 @@ def test_get_reviewで該当するユーザ情報がない場合はユーザ名�
             "book_image_url": "dummy_book_image_url_0",
             "book_author": "dummy_book_author_0",
             "book_url": "dummy_book_url_0",
+            "book_description": "dummy_description_0",
         }
 
     monkeypatch.setattr(ReviewRepository, "get", mock_review_repository_get)
@@ -119,6 +122,7 @@ def test_get_reviewでuser_repositoryの処理でエラーが発生した場合N
             "book_image_url": "dummy_book_image_url_0",
             "book_author": "dummy_book_author_0",
             "book_url": "dummy_book_url_0",
+            "book_description": "dummy_description_0",
         }
 
     monkeypatch.setattr(ReviewRepository, "get", mock_review_repository_get)
@@ -147,6 +151,7 @@ def test_get_reviewsでレビューを取得できること(monkeypatch):
                     "book_image_url": "dummy_book_image_url_0",
                     "book_author": "dummy_book_author_0",
                     "book_url": "dummy_book_url_0",
+                    "book_description": "dummy_description_0",
                 },
                 {
                     "user_id": "user_id_1",
@@ -158,6 +163,7 @@ def test_get_reviewsでレビューを取得できること(monkeypatch):
                     "book_image_url": "dummy_book_image_url_1",
                     "book_author": "dummy_book_author_1",
                     "book_url": "dummy_book_url_1",
+                    "book_description": "dummy_description_1",
                 },
                 {
                     "user_id": "user_id_2",
@@ -169,6 +175,7 @@ def test_get_reviewsでレビューを取得できること(monkeypatch):
                     "book_image_url": "dummy_book_image_url_2",
                     "book_author": "dummy_book_author_2",
                     "book_url": "dummy_book_url_2",
+                    "book_description": "dummy_description_2",
                 },
             ],
             "last_key": None,
@@ -220,6 +227,7 @@ def test_get_reviewsでレビューを取得できること(monkeypatch):
     assert reviews[0]["book_image_url"] == "dummy_book_image_url_0"
     assert reviews[0]["book_author"] == "dummy_book_author_0"
     assert reviews[0]["book_url"] == "dummy_book_url_0"
+    assert reviews[0]["book_description"] == "dummy_description_0"
 
     assert reviews[1]["user_id"] == "user_id_1"
     assert reviews[1]["user_name"] == "user_name_1"
@@ -231,6 +239,7 @@ def test_get_reviewsでレビューを取得できること(monkeypatch):
     assert reviews[1]["book_image_url"] == "dummy_book_image_url_1"
     assert reviews[1]["book_author"] == "dummy_book_author_1"
     assert reviews[1]["book_url"] == "dummy_book_url_1"
+    assert reviews[1]["book_description"] == "dummy_description_1"
 
     assert reviews[2]["user_id"] == "user_id_2"
     assert reviews[2]["user_name"] == "user_name_2"
@@ -242,6 +251,7 @@ def test_get_reviewsでレビューを取得できること(monkeypatch):
     assert reviews[2]["book_image_url"] == "dummy_book_image_url_2"
     assert reviews[2]["book_author"] == "dummy_book_author_2"
     assert reviews[2]["book_url"] == "dummy_book_url_2"
+    assert reviews[2]["book_description"] == "dummy_description_2"
 
 
 def test_get_reviewsで該当するユーザ情報がない場合はユーザ名としてユーザIDを返すこと(
@@ -260,6 +270,7 @@ def test_get_reviewsで該当するユーザ情報がない場合はユーザ名
                     "book_image_url": "dummy_book_image_url_0",
                     "book_author": "dummy_book_author_0",
                     "book_url": "dummy_book_url_0",
+                    "book_description": "dummy_description_0",
                 },
                 {
                     "user_id": "user_id_1",
@@ -271,6 +282,7 @@ def test_get_reviewsで該当するユーザ情報がない場合はユーザ名
                     "book_image_url": "dummy_book_image_url_1",
                     "book_author": "dummy_book_author_1",
                     "book_url": "dummy_book_url_1",
+                    "book_description": "dummy_description_1",
                 },
                 {
                     "user_id": "user_id_2",
@@ -282,6 +294,7 @@ def test_get_reviewsで該当するユーザ情報がない場合はユーザ名
                     "book_image_url": "dummy_book_image_url_2",
                     "book_author": "dummy_book_author_2",
                     "book_url": "dummy_book_url_2",
+                    "book_description": "dummy_description_2",
                 },
             ],
             "last_key": None,
@@ -308,6 +321,7 @@ def test_get_reviewsで該当するユーザ情報がない場合はユーザ名
     assert reviews[0]["book_image_url"] == "dummy_book_image_url_0"
     assert reviews[0]["book_author"] == "dummy_book_author_0"
     assert reviews[0]["book_url"] == "dummy_book_url_0"
+    assert reviews[0]["book_description"] == "dummy_description_0"
 
     assert reviews[1]["user_id"] == "user_id_1"
     assert reviews[1]["user_name"] == "user_id_1"
@@ -319,6 +333,7 @@ def test_get_reviewsで該当するユーザ情報がない場合はユーザ名
     assert reviews[1]["book_image_url"] == "dummy_book_image_url_1"
     assert reviews[1]["book_author"] == "dummy_book_author_1"
     assert reviews[1]["book_url"] == "dummy_book_url_1"
+    assert reviews[1]["book_description"] == "dummy_description_1"
 
     assert reviews[2]["user_id"] == "user_id_2"
     assert reviews[2]["user_name"] == "user_id_2"
@@ -330,6 +345,7 @@ def test_get_reviewsで該当するユーザ情報がない場合はユーザ名
     assert reviews[2]["book_image_url"] == "dummy_book_image_url_2"
     assert reviews[2]["book_author"] == "dummy_book_author_2"
     assert reviews[2]["book_url"] == "dummy_book_url_2"
+    assert reviews[2]["book_description"] == "dummy_description_2"
 
 
 def test_get_reviewsでreview_repositoryの処理でエラーが発生した場合Noneを返すこと(
@@ -377,6 +393,7 @@ def test_post_reviewでレビューを投稿できること(
             "book_image_url": "dummy_book_author",
             "book_author": "dummy_book_author",
             "book_url": "dummy_book_url",
+            "book_description": "dummy_description",
         },
     )
 
@@ -392,6 +409,7 @@ def test_post_reviewでレビューを投稿できること(
     assert review["book_image_url"] == "dummy_book_author"
     assert review["book_author"] == "dummy_book_author"
     assert review["book_url"] == "dummy_book_url"
+    assert review["book_description"] == "dummy_description"
 
 
 def test_post_reviewでreview_repositoryの処理でエラーが発生した場合Noneを返すこと(
@@ -414,6 +432,7 @@ def test_post_reviewでreview_repositoryの処理でエラーが発生した場�
             "book_image_url": "dummy_book_author",
             "book_author": "dummy_book_author",
             "book_url": "dummy_book_url",
+            "book_description": "dummy_description",
         },
     )
 
@@ -436,6 +455,7 @@ def test_get_reviewsで条件を指定しない場合はレビューを全件一
                     "book_image_url": "dummy_book_image_url_0",
                     "book_author": "dummy_book_author_0",
                     "book_url": "dummy_book_url_0",
+                    "book_description": "dummy_description_0",
                 },
                 {
                     "user_id": "user_id_1",
@@ -447,6 +467,7 @@ def test_get_reviewsで条件を指定しない場合はレビューを全件一
                     "book_image_url": "dummy_book_image_url_1",
                     "book_author": "dummy_book_author_1",
                     "book_url": "dummy_book_url_1",
+                    "book_description": "dummy_description_1",
                 },
                 {
                     "user_id": "user_id_2",
@@ -458,6 +479,7 @@ def test_get_reviewsで条件を指定しない場合はレビューを全件一
                     "book_image_url": "dummy_book_image_url_2",
                     "book_author": "dummy_book_author_2",
                     "book_url": "dummy_book_url_2",
+                    "book_description": "dummy_description_2",
                 },
             ],
             "last_key": None,
@@ -509,6 +531,7 @@ def test_get_reviewsで条件を指定しない場合はレビューを全件一
     assert reviews[0]["book_image_url"] == "dummy_book_image_url_0"
     assert reviews[0]["book_author"] == "dummy_book_author_0"
     assert reviews[0]["book_url"] == "dummy_book_url_0"
+    assert reviews[0]["book_description"] == "dummy_description_0"
 
     assert reviews[1]["user_id"] == "user_id_1"
     assert reviews[1]["user_name"] == "user_name_1"
@@ -520,6 +543,7 @@ def test_get_reviewsで条件を指定しない場合はレビューを全件一
     assert reviews[1]["book_image_url"] == "dummy_book_image_url_1"
     assert reviews[1]["book_author"] == "dummy_book_author_1"
     assert reviews[1]["book_url"] == "dummy_book_url_1"
+    assert reviews[1]["book_description"] == "dummy_description_1"
 
     assert reviews[2]["user_id"] == "user_id_2"
     assert reviews[2]["user_name"] == "user_name_2"
@@ -531,3 +555,4 @@ def test_get_reviewsで条件を指定しない場合はレビューを全件一
     assert reviews[2]["book_image_url"] == "dummy_book_image_url_2"
     assert reviews[2]["book_author"] == "dummy_book_author_2"
     assert reviews[2]["book_url"] == "dummy_book_url_2"
+    assert reviews[2]["book_description"] == "dummy_description_2"

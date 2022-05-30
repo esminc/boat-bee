@@ -3,6 +3,7 @@ import os
 
 from bee_slack_app.model.review import ReviewContents
 from bee_slack_app.model.user import User
+from bee_slack_app.service.book_search import search_book_by_isbn
 from bee_slack_app.service.review import (
     get_review,
     get_reviews,
@@ -67,10 +68,28 @@ def review_controller(app):  # pylint: disable=too-many-statements
         # ハック的な対処なので注意
         # "*<本のタイトル>*\n<本の著者>\nISBN-<本のISBN>"のような文字列からタイトルやISBNを抜き出す
         book_title_author_isbn = view["blocks"][1]["text"]["text"]
-        book_title = book_title_author_isbn.split("*")[1]
         isbn = book_title_author_isbn.split("-")[-1]
-        author = book_title_author_isbn.split("*")[2].split("-")[-2][:-5][1:]
-        image_url = view["blocks"][1]["accessory"]["image_url"]
+
+        # ISBNが取れたらもう一度Google Books APIから本の情報を取り直す
+        # Descriptionを追加する関係で表示画面情報からだけでは足りなくなり
+        # APIから再取得することにする
+        book_info = search_book_by_isbn(isbn)
+
+        # 必ず取得できるのでelse側の考慮は不要
+        # ただしImage URLだけは例外
+        # TODO: 暫定で適当な画像をデフォルトに設定、S3に画像を置くようになったら自前の画像に差し替える
+        dummy_url = "https://pbs.twimg.com/profile_images/625633822235693056/lNGUneLX_400x400.jpg"
+
+        if book_info is not None:
+            book_title = book_info["title"]
+            author = ",".join(book_info["authors"])
+            image_url = (
+                book_info["image_url"]
+                if book_info["image_url"] is not None
+                else dummy_url
+            )
+            book_url = book_info["google_books_url"]
+            book_description = book_info["description"]
 
         score_for_me = view["state"]["values"]["input_score_for_me"][
             "score_for_me_action"
@@ -104,7 +123,8 @@ def review_controller(app):  # pylint: disable=too-many-statements
             "updated_at": None,
             "book_image_url": image_url,
             "book_author": author,
-            "book_url": json.loads(view["private_metadata"])["url"],
+            "book_url": book_url,
+            "book_description": book_description,
         }
 
         review = post_review(logger, review_contents)
