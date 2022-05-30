@@ -17,7 +17,7 @@ def test_ユーザの行動履歴を保存できること(mocker):
 
     record_user_action(
         user_id="dummy_user_id",
-        action_type="dummy_action_type",
+        action_name="dummy_action_name",
         status="dummy_status",
         payload="dummy_payload",
     )
@@ -26,7 +26,7 @@ def test_ユーザの行動履歴を保存できること(mocker):
         {
             "user_id": "dummy_user_id",
             "created_at": "2022-04-01T00:00:00+09:00",
-            "action_type": "dummy_action_type",
+            "action_name": "dummy_action_name",
             "status": "dummy_status",
             "payload": "dummy_payload",
         }

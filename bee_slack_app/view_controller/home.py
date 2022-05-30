@@ -16,7 +16,7 @@ def home_controller(app):
 
         record_user_action(
             user_id=event["user"],
-            action_type="app_home_opened",
+            action_name="app_home_opened",
             payload={"total_review_count": total_review_count},
         )
 

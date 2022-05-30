@@ -8,6 +8,6 @@ class UserAction(TypedDict):
 
     user_id: str
     created_at: str
-    action_type: str
+    action_name: str
     status: str
     payload: Any

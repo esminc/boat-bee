@@ -35,7 +35,7 @@ def review_controller(app):  # pylint: disable=too-many-statements
         if not get_user(logger, user_id):
             record_user_action(
                 user_id=user_id,
-                action_type="post_review_action",
+                action_name="post_review_action",
                 status="no_user_profile_error",
             )
 
@@ -49,7 +49,7 @@ def review_controller(app):  # pylint: disable=too-many-statements
 
         record_user_action(
             user_id=user_id,
-            action_type="post_review_action",
+            action_name="post_review_action",
         )
 
         client.views_open(
@@ -117,7 +117,7 @@ def review_controller(app):  # pylint: disable=too-many-statements
 
         record_user_action(
             user_id=user_id,
-            action_type="post_review_modal",
+            action_name="post_review_modal",
             payload={"review": review_contents, "notify": notify},
         )
 
@@ -164,7 +164,7 @@ def review_controller(app):  # pylint: disable=too-many-statements
 
         record_user_action(
             user_id=body["user"]["id"],
-            action_type="read_review_action",
+            action_name="read_review_action",
         )
 
         client.views_open(
@@ -290,7 +290,7 @@ def review_controller(app):  # pylint: disable=too-many-statements
 
         record_user_action(
             user_id=body["user"]["id"],
-            action_type="search_review_action",
+            action_name="search_review_action",
             payload={"scores": scores},
         )
 
@@ -322,7 +322,7 @@ def review_controller(app):  # pylint: disable=too-many-statements
         if not review:
             record_user_action(
                 user_id=body["user"]["id"],
-                action_type="open_review_detail_modal_action",
+                action_name="open_review_detail_modal_action",
                 status="fetch_review_data_error",
             )
 
@@ -334,7 +334,7 @@ def review_controller(app):  # pylint: disable=too-many-statements
 
         record_user_action(
             user_id=body["user"]["id"],
-            action_type="open_review_detail_modal_action",
+            action_name="open_review_detail_modal_action",
             payload={"review": review},
         )
 

@@ -29,7 +29,7 @@ def user_controller(app):
 
         record_user_action(
             user_id=user_id,
-            action_type="user_info_action",
+            action_name="user_info_action",
             payload={"user_info": user_info},
         )
 
@@ -72,6 +72,6 @@ def user_controller(app):
 
         record_user_action(
             user_id=user_id,
-            action_type="user_profile_modal",
+            action_name="user_profile_modal",
             payload={"user": user},
         )

@@ -25,7 +25,7 @@ def book_search_controller(app):  # pylint: disable=too-many-statements
 
         record_user_action(
             user_id=body["user"]["id"],
-            action_type="book_search_modal",
+            action_name="book_search_modal",
             payload={"book_results": book_results},
         )
 
@@ -142,7 +142,7 @@ def book_search_controller(app):  # pylint: disable=too-many-statements
         if not selected_book_section or not url:
             record_user_action(
                 user_id=body["user"]["id"],
-                action_type="book_search_result_modal",
+                action_name="book_search_result_modal",
                 status="fetch_book_data_error",
             )
 
@@ -154,7 +154,7 @@ def book_search_controller(app):  # pylint: disable=too-many-statements
 
         record_user_action(
             user_id=body["user"]["id"],
-            action_type="book_search_result_modal",
+            action_name="book_search_result_modal",
             payload={"selected_book_section": selected_book_section},
         )
 

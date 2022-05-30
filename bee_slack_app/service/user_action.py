@@ -9,7 +9,7 @@ user_action_repository = UserActionRepository()
 
 
 def record_user_action(
-    *, user_id: str, action_type: str, status: str = "ok", payload: Any = None
+    *, user_id: str, action_name: str, status: str = "ok", payload: Any = None
 ) -> None:
     """
     ユーザの行動履歴を保存する
@@ -21,7 +21,7 @@ def record_user_action(
         item: UserAction = {
             "user_id": user_id,
             "created_at": datetime.now(),
-            "action_type": action_type,
+            "action_name": action_name,
             "status": status,
             "payload": payload,
         }

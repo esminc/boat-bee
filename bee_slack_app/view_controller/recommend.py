@@ -21,7 +21,7 @@ def recommend_controller(app):  # pylint: disable=too-many-statements
         if not user:
             record_user_action(
                 user_id=user_id,
-                action_type="book_recommend_action",
+                action_name="book_recommend_action",
                 status="no_user_profile_error",
             )
 
@@ -53,7 +53,7 @@ def recommend_controller(app):  # pylint: disable=too-many-statements
         if book is None:
             record_user_action(
                 user_id=user_id,
-                action_type="book_recommend_action",
+                action_name="book_recommend_action",
                 status="no_recommended_book_error",
             )
 
@@ -86,7 +86,7 @@ def recommend_controller(app):  # pylint: disable=too-many-statements
 
         record_user_action(
             user_id=user_id,
-            action_type="book_recommend_action",
+            action_name="book_recommend_action",
             payload={"book": book},
         )
 

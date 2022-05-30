@@ -43,7 +43,7 @@ class TestUserActionRepository:
         item: UserAction = {
             "user_id": "dummy_user_id_0",
             "created_at": "2022-04-01T00:00:00+09:00",
-            "action_type": "dummy_action_type_0",
+            "action_name": "dummy_action_name_0",
             "status": "dummy_status_0",
             "payload": None,
         }
@@ -53,7 +53,7 @@ class TestUserActionRepository:
         item: UserAction = {
             "user_id": "dummy_user_id_1",
             "created_at": "2022-04-02T00:00:00+09:00",
-            "action_type": "dummy_action_type_1",
+            "action_name": "dummy_action_name_1",
             "status": "dummy_status_1",
             "payload": {"dummy_key": "dummy_value"},
         }
@@ -69,7 +69,7 @@ class TestUserActionRepository:
 
         assert actual["user_id"] == "dummy_user_id_0"
         assert actual["created_at"] == "2022-04-01T00:00:00+09:00"
-        assert actual["action_type"] == "dummy_action_type_0"
+        assert actual["action_name"] == "dummy_action_name_0"
         assert actual["status"] == "dummy_status_0"
         assert actual["payload"] is None
 
@@ -82,6 +82,6 @@ class TestUserActionRepository:
 
         assert actual["user_id"] == "dummy_user_id_1"
         assert actual["created_at"] == "2022-04-02T00:00:00+09:00"
-        assert actual["action_type"] == "dummy_action_type_1"
+        assert actual["action_name"] == "dummy_action_name_1"
         assert actual["status"] == "dummy_status_1"
         assert actual["payload"] == {"dummy_key": "dummy_value"}
