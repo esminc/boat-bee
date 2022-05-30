@@ -25,7 +25,7 @@ type-check:
 test: export AWS_DEFAULT_REGION := us-east-1
 test: export DYNAMODB_TABLE := bee-dev
 test:
-	pipenv run pytest
+	pipenv run pytest --verbose
 
 train:
 	cd ml && pipenv run python train.py
