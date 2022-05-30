@@ -48,9 +48,9 @@ def recommend_controller(app):  # pylint: disable=too-many-statements
             )
             return
 
-        book: Optional[SearchedBook] = recommend(logger, user)
+        book_list: Optional[SearchedBook] = recommend(logger, user)
 
-        if book is None:
+        if len(book_list) == 0:
             record_user_action(
                 user_id=user_id,
                 action_name="book_recommend_action",
@@ -81,7 +81,7 @@ def recommend_controller(app):  # pylint: disable=too-many-statements
             return
 
         modal_view = generate_book_recommend_model_view(
-            callback_id="book_recommend_modal", book_results=book
+            callback_id="book_recommend_modal", book_results=book_list
         )
 
         record_user_action(

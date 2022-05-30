@@ -1,4 +1,4 @@
-from typing import Any, Optional
+from typing import Any
 
 from bee_slack_app.model.search import SearchedBook
 from bee_slack_app.model.user import User
@@ -8,7 +8,7 @@ from bee_slack_app.repository.recommend_book_repository import RecommendBookRepo
 recommend_book_repository = RecommendBookRepository()
 
 
-def recommend(logger: Any, user: User) -> Optional[SearchedBook]:
+def recommend(logger: Any, user: User) -> list[SearchedBook]:
     """
     おすすめの本の情報を返却する
 
@@ -31,27 +31,27 @@ def recommend(logger: Any, user: User) -> Optional[SearchedBook]:
         }
         user_id = user_id_in_fdo_workspace.get(user_id, user_id)
 
-        isbn = recommend_book_repository.fetch(user_id)
+        isbn_dict = recommend_book_repository.fetch(user_id)
 
-        if not isbn:
+        if not isbn_dict:
             logger.info("Failed to recommend book. user_id: ", user_id)
-            return None
+            return []
 
         results = []
-        for isbn in isbn.values():
-            book_info = GoogleBooksRepository().search_book_by_isbn(isbn)
-            if book_info is not None:
-                book = {
-                    "title": book_info["title"],
+        for isbn in isbn_dict.values():
+            book = GoogleBooksRepository().search_book_by_isbn(isbn)
+            if book is not None:
+                book_info: SearchedBook = {
+                    "title": book["title"],
                     "isbn": isbn,
-                    "authors": book_info["authors"],
-                    "google_books_url": book_info["google_books_url"],
-                    "image_url": book_info["image_url"],
-                    "description": book_info["description"],
+                    "authors": book["authors"],
+                    "google_books_url": book["google_books_url"],
+                    "image_url": book["image_url"],
+                    "description": book["description"],
                 }
-                results.append(book)
+                results.append(book_info)
         return results
 
     except Exception:  # pylint: disable=broad-except
         logger.exception("Failed to get data.")
-        return None
+        return []

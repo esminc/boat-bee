@@ -1,13 +1,11 @@
 import json
-from typing import Any
-
-from pyparsing import Optional
+from typing import Optional
 
 
 class RecommendBookRepository:  # pylint: disable=too-few-public-methods
     recommend_book_dict = None
 
-    def fetch(self, user_id: str) -> Optional[dict[Any, Any]]:
+    def fetch(self, user_id: str) -> Optional[dict[str, str]]:
         """
         おすすめの本を取得する
 

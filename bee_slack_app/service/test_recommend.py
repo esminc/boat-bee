@@ -40,14 +40,14 @@ def test_おすすめの本の情報を取得できること(monkeypatch):
     }
 
     logger = getLogger()
-    book = recommend(logger, user)
+    book_list = recommend(logger, user)
 
-    assert book["title"] == "仕事ではじめる機械学習"
-    assert book["isbn"] == "1234567890123"
-    assert book["authors"] == ["有賀康顕", "中山心太", "西林孝"]
-    assert book["image_url"] == "test_image_url"
-    assert book["google_books_url"] == "test_google_books_url"
-    assert book["description"] == "test_description"
+    assert book_list[0]["title"] == "仕事ではじめる機械学習"
+    assert book_list[0]["isbn"] == "1234567890123"
+    assert book_list[0]["authors"] == ["有賀康顕", "中山心太", "西林孝"]
+    assert book_list[0]["image_url"] == "test_image_url"
+    assert book_list[0]["google_books_url"] == "test_google_books_url"
+    assert book_list[0]["description"] == "test_description"
 
 
 def test_おすすめの本が取得できなかったらNoneを返すこと(monkeypatch):  # pylint: disable=invalid-name
@@ -149,14 +149,14 @@ def test_おすすめ本の書影がNoneならNoneが返値に設定されるこ
     }
 
     logger = getLogger()
-    book = recommend(logger, user)
+    book_list = recommend(logger, user)
 
-    assert book["title"] == "仕事ではじめる機械学習"
-    assert book["isbn"] == "1234567890123"
-    assert book["authors"] == ["有賀康顕", "中山心太", "西林孝"]
-    assert book["image_url"] is None
-    assert book["google_books_url"] == "test_google_books_url"
-    assert book["description"] == "test_description"
+    assert book_list[0]["title"] == "仕事ではじめる機械学習"
+    assert book_list[0]["isbn"] == "1234567890123"
+    assert book_list[0]["authors"] == ["有賀康顕", "中山心太", "西林孝"]
+    assert book_list[0]["image_url"] is None
+    assert book_list[0]["google_books_url"] == "test_google_books_url"
+    assert book_list[0]["description"] == "test_description"
 
 
 def test_モジュール内で例外が発生した場合は返値はNoneであること(monkeypatch):  # pylint: disable=invalid-name
