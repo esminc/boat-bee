@@ -78,14 +78,16 @@ def review_controller(app):  # pylint: disable=too-many-statements
         # 必ず取得できるのでelse側の考慮は不要
         # ただしImage URLだけは例外
         # TODO: 暫定で適当な画像をデフォルトに設定、S3に画像を置くようになったら自前の画像に差し替える
-        dummy_url = (
-            "https://pbs.twimg.com/profile_images/625633822235693056/lNGUneLX_400x400.jpg"
-        )
+        dummy_url = "https://pbs.twimg.com/profile_images/625633822235693056/lNGUneLX_400x400.jpg"
 
         if book_info is not None:
             book_title = book_info["title"]
             author = ",".join(book_info["authors"])
-            image_url = book_info["image_url"] if book_info["image_url"] is not None else dummy_url
+            image_url = (
+                book_info["image_url"]
+                if book_info["image_url"] is not None
+                else dummy_url
+            )
             book_url = book_info["google_books_url"]
             description = book_info["description"]
 
