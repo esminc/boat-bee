@@ -23,6 +23,7 @@ def test_おすすめの本の情報を取得できること(monkeypatch):
             "authors": ["有賀康顕", "中山心太", "西林孝"],
             "google_books_url": "test_google_books_url",
             "image_url": "test_image_url",
+            "description": "test_description",
         }
 
     monkeypatch.setattr(
@@ -46,6 +47,7 @@ def test_おすすめの本の情報を取得できること(monkeypatch):
     assert book["authors"] == ["有賀康顕", "中山心太", "西林孝"]
     assert book["image_url"] == "test_image_url"
     assert book["google_books_url"] == "test_google_books_url"
+    assert book["description"] == "test_description"
 
 
 def test_おすすめの本が取得できなかったらNoneを返すこと(monkeypatch):  # pylint: disable=invalid-name
@@ -63,6 +65,7 @@ def test_おすすめの本が取得できなかったらNoneを返すこと(mon
             "authors": ["有賀康顕", "中山心太", "西林孝"],
             "google_books_url": "test_google_books_url",
             "image_url": "test_image_url",
+            "description": "test_description",
         }
 
     monkeypatch.setattr(
@@ -129,6 +132,7 @@ def test_おすすめ本の書影がNoneならNoneが返値に設定されるこ
             "authors": ["有賀康顕", "中山心太", "西林孝"],
             "google_books_url": "test_google_books_url",
             "image_url": None,
+            "description": "test_description",
         }
 
     monkeypatch.setattr(
@@ -152,6 +156,7 @@ def test_おすすめ本の書影がNoneならNoneが返値に設定されるこ
     assert book["authors"] == ["有賀康顕", "中山心太", "西林孝"]
     assert book["image_url"] is None
     assert book["google_books_url"] == "test_google_books_url"
+    assert book["description"] == "test_description"
 
 
 def test_モジュール内で例外が発生した場合は返値はNoneであること(monkeypatch):  # pylint: disable=invalid-name
