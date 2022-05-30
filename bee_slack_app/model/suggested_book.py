@@ -1,4 +1,4 @@
-from typing import Optional, TypedDict
+from typing import TypedDict
 
 
 class SuggestedBook(TypedDict):
@@ -6,4 +6,4 @@ class SuggestedBook(TypedDict):
     isbn: str
     ml_model: str
     interested: bool
-    updated_at: Optional[str]
+    updated_at: str
