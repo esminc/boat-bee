@@ -33,7 +33,7 @@ class SuggestedBookRepository:
         )
         item = response.get("Item")
         if item is None:
-            return item
+            return None
 
         suggested_book_sk = item["suggested_book_sk"].split("#")
         suggested_book: SuggestedBook = {
