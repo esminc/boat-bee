@@ -40,22 +40,18 @@ def search_book_to_review_modal(*, callback_id: str):
     }
 
 
-def post_review_modal(*, callback_id: str, book_section, url: str):
+def post_review_modal(*, callback_id: str, book_section):
     """
     レビュー投稿モーダル
 
     Args:
         callback_id: モーダルのcallback_id
         book_section: レビューを投稿する本のsection block
-        url: レビューを投稿する本のurl
     """
-
-    private_metadata = json.dumps({"url": url})
 
     return {
         "type": "modal",
         "callback_id": callback_id,
-        "private_metadata": private_metadata,
         "title": {"type": "plain_text", "text": "Bee"},
         "close": {"type": "plain_text", "text": "戻る", "emoji": True},
         "submit": {"type": "plain_text", "text": "送信"},
