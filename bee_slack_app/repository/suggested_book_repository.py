@@ -1,4 +1,4 @@
-"""興味ありのおすすめ本を追加・更新します
+"""おすすめされた本を、追加・更新します
 """
 import os
 from typing import Optional
@@ -15,15 +15,15 @@ class SuggestedBookRepository:
 
     def get(self, user_id: str, isbn: str, ml_model: str) -> Optional[SuggestedBook]:
         """
-        自分が興味ありとした本を取得する
+        おすすめされた本を取得する
 
         Args:
-            user_id : 検索する、興味あり情報のuser_id
-            isbn    : 検索する、興味あり情報のisbn
-            ml_model: 検索する、興味あり情報のml_model
+            user_id : おすすめされたユーザのuser_id
+            isbn    : おすすめされた本のisbn
+            ml_model: おすすめされた本のml_model
 
         Returns:
-            SuggestedBook: 取得した、興味ありとした本の情報。未登録の場合は、Noneを返します。
+            SuggestedBook: おすすめされた本の情報を返す。未登録の場合は、Noneを返します。
         """
         response = self.table.get_item(
             Key={

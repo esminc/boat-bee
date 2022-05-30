@@ -116,7 +116,7 @@ class TestSuggestedBookRepository:
 
         assert suggested_book is None
 
-    def test_興味ありの本を作成できること(self):
+    def test_おすすめされた本の情報を作成できること(self):
         response = self.table.query(
             KeyConditionExpression=boto3.dynamodb.conditions.Key("user_id").eq(
                 "test_user_id_0"
@@ -151,7 +151,7 @@ class TestSuggestedBookRepository:
         assert actual["interested"] is True
         assert actual["updated_at"] == "2022-04-01T00:00:00+09:00"
 
-    def test_ユーザーが同じでisbnとmlが異なる興味ありの本を追加できること(self):
+    def test_ユーザーが同じでisbnとmlが異なるおすすめされた本を追加できること(self):
         response = self.table.query(
             KeyConditionExpression=boto3.dynamodb.conditions.Key("user_id").eq(
                 "test_user_id_0"
@@ -217,7 +217,7 @@ class TestSuggestedBookRepository:
         assert actual["interested"] is True
         assert actual["updated_at"] == "2022-04-01T00:00:00+09:00"
 
-    def test_ユーザーとisbnが同じでmlが異なる興味ありの本を追加できること(self):
+    def test_ユーザーとisbnが同じでmlが異なるおすすめされた本を追加できること(self):
         response = self.table.query(
             KeyConditionExpression=boto3.dynamodb.conditions.Key("user_id").eq(
                 "test_user_id_0"
@@ -282,7 +282,7 @@ class TestSuggestedBookRepository:
         assert actual["interested"] is True
         assert actual["updated_at"] == "2022-04-01T00:00:00+09:00"
 
-    def test_ユーザーとisbnが異なるがmlが同じ興味ありの本を追加できること(self):
+    def test_ユーザーとisbnが異なるがmlが同じおすすめされた本を追加できること(self):
         response = self.table.query(
             KeyConditionExpression=boto3.dynamodb.conditions.Key("user_id").eq(
                 "test_user_id_0"
@@ -361,7 +361,7 @@ class TestSuggestedBookRepository:
         assert actual["interested"] is True
         assert actual["updated_at"] == "2022-04-01T00:00:00+09:00"
 
-    def test_ユーザーとmlが異なるがisbnが同じ興味ありの本を追加できること(self):
+    def test_ユーザーとmlが異なるがisbnが同じおすすめされた本を追加できること(self):
         response = self.table.query(
             KeyConditionExpression=boto3.dynamodb.conditions.Key("user_id").eq(
                 "test_user_id_0"
@@ -440,7 +440,7 @@ class TestSuggestedBookRepository:
         assert actual["interested"] is True
         assert actual["updated_at"] == "2022-04-01T00:00:00+09:00"
 
-    def test_ユーザーとisbnとmlが全て異なる興味ありの本を追加できること(self):
+    def test_ユーザーとisbnとmlが全て異なるおすすめされた本を追加できること(self):
         response = self.table.query(
             KeyConditionExpression=boto3.dynamodb.conditions.Key("user_id").eq(
                 "test_user_id_0"
@@ -519,7 +519,7 @@ class TestSuggestedBookRepository:
         assert actual["interested"] is True
         assert actual["updated_at"] == "2022-04-01T00:00:00+09:00"
 
-    def test_興味ありの本を上書きできること(self):
+    def test_おすすめされた本を上書きできること(self):
         suggested_book_repository = SuggestedBookRepository()
 
         # １件目のテストデータを作成
