@@ -10,7 +10,7 @@ from bee_slack_app.service.recommend import recommend
 
 def test_おすすめの本の情報を取得できること(monkeypatch):
     def mock_recommend_book_repository_fetch(_, __):
-        return "1234567890123"
+        return {"ml-a": "1234567890123"}
 
     monkeypatch.setattr(
         RecommendBookRepository, "fetch", mock_recommend_book_repository_fetch
@@ -50,9 +50,9 @@ def test_おすすめの本の情報を取得できること(monkeypatch):
     assert book_list[0]["description"] == "test_description"
 
 
-def test_おすすめの本が取得できなかったらNoneを返すこと(monkeypatch):  # pylint: disable=invalid-name
+def test_おすすめの本が取得できなかったら空のリストを返すこと(monkeypatch):  # pylint: disable=invalid-name
     def mock_recommend_book_repository_fetch(_, __):
-        return None
+        return []
 
     monkeypatch.setattr(
         RecommendBookRepository, "fetch", mock_recommend_book_repository_fetch
@@ -84,12 +84,12 @@ def test_おすすめの本が取得できなかったらNoneを返すこと(mon
     logger = getLogger()
     book = recommend(logger, user)
 
-    assert book is None
+    assert len(book) == 0
 
 
 def test_おすすめの本の情報がNoneのケース(monkeypatch):  # pylint: disable=invalid-name
     def mock_recommend_book_repository_fetch(_, __):
-        return "1234567890123"
+        return {"ml-a": "1234567890123"}
 
     monkeypatch.setattr(
         RecommendBookRepository, "fetch", mock_recommend_book_repository_fetch
@@ -114,12 +114,12 @@ def test_おすすめの本の情報がNoneのケース(monkeypatch):  # pylint:
     logger = getLogger()
     book = recommend(logger, user)
 
-    assert book is None
+    assert len(book) == 0
 
 
-def test_おすすめ本の書影がNoneならNoneが返値に設定されること(monkeypatch):  # pylint: disable=invalid-name
+def test_おすすめ本の書影がNoneなら空のリストが返値に設定されること(monkeypatch):  # pylint: disable=invalid-name
     def mock_recommend_book_repository_fetch(_, __):
-        return "1234567890123"
+        return {"ml-a": "1234567890123"}
 
     monkeypatch.setattr(
         RecommendBookRepository, "fetch", mock_recommend_book_repository_fetch
@@ -159,9 +159,9 @@ def test_おすすめ本の書影がNoneならNoneが返値に設定されるこ
     assert book_list[0]["description"] == "test_description"
 
 
-def test_モジュール内で例外が発生した場合は返値はNoneであること(monkeypatch):  # pylint: disable=invalid-name
+def test_モジュール内で例外が発生した場合は返値は空のリストであること(monkeypatch):  # pylint: disable=invalid-name
     def mock_recommend_book_repository_fetch(_, __):
-        return "1234567890123"
+        return {"ml-a": "1234567890123"}
 
     monkeypatch.setattr(
         RecommendBookRepository, "fetch", mock_recommend_book_repository_fetch
@@ -186,4 +186,59 @@ def test_モジュール内で例外が発生した場合は返値はNoneであ�
     logger = getLogger()
     book = recommend(logger, user)
 
-    assert book is None
+    assert len(book) == 0
+
+
+def test_複数のおすすめの本の情報を取得できること(monkeypatch):
+    def mock_recommend_book_repository_fetch(_, __):
+        return {"ml-a": "1234567890123", "ml-b": "9876543221098"}
+
+    monkeypatch.setattr(
+        RecommendBookRepository, "fetch", mock_recommend_book_repository_fetch
+    )
+
+    def mock_search_book_by_isbn(_, isbn):
+        if isbn == "1234567890123":
+            book = {
+                "title": "test_title_1",
+                "isbn": isbn,
+                "authors": "test_authors_1",
+                "google_books_url": "test_google_books_url_1",
+                "image_url": "test_image_url_1",
+            }
+        elif isbn == "9876543221098":
+            book = {
+                "title": "test_title_2",
+                "isbn": isbn,
+                "authors": "test_authors_2",
+                "google_books_url": "test_google_books_url_2",
+                "image_url": "test_image_url_2",
+            }
+        return book
+
+    monkeypatch.setattr(
+        GoogleBooksRepository, "search_book_by_isbn", mock_search_book_by_isbn
+    )
+
+    user: User = {
+        "user_id": "test_user_id",
+        "user_name": "test_user_name",
+        "department": "test_department",
+        "job_type": "test_job_type",
+        "age_range": "test_age_range",
+        "updated_at": None,
+    }
+
+    logger = getLogger()
+    book_list = recommend(logger, user)
+
+    assert book_list[0]["title"] == "test_title_1"
+    assert book_list[0]["isbn"] == "1234567890123"
+    assert book_list[0]["authors"] == "test_authors_1"
+    assert book_list[0]["image_url"] == "test_image_url_1"
+    assert book_list[0]["google_books_url"] == "test_google_books_url_1"
+    assert book_list[1]["title"] == "test_title_2"
+    assert book_list[1]["isbn"] == "9876543221098"
+    assert book_list[1]["authors"] == "test_authors_2"
+    assert book_list[1]["image_url"] == "test_image_url_2"
+    assert book_list[1]["google_books_url"] == "test_google_books_url_2"
