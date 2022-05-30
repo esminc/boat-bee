@@ -48,7 +48,7 @@ def recommend_controller(app):  # pylint: disable=too-many-statements
             )
             return
 
-        book_list: Optional[SearchedBook] = recommend(logger, user)
+        book_list = recommend(logger, user)
 
         if len(book_list) == 0:
             record_user_action(

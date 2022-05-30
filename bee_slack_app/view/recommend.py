@@ -69,16 +69,6 @@ def _recommend_book_block(book: SearchedBook):
                     "url": book["google_books_url"],
                     "action_id": "google_books_buttons-action",
                 },
-                {
-                    "type": "button",
-                    "text": {
-                        "type": "plain_text",
-                        "text": "Google Booksで見る",
-                        "emoji": True,
-                    },
-                    "url": book["google_books_url"],
-                    "action_id": "google_books_buttons_action",
-                },
             ],
         },
     ]

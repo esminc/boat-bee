@@ -237,6 +237,7 @@ def test_複数のおすすめの本の情報を取得できること(monkeypatc
     assert book_list[0]["authors"] == "test_authors_1"
     assert book_list[0]["image_url"] == "test_image_url_1"
     assert book_list[0]["google_books_url"] == "test_google_books_url_1"
+
     assert book_list[1]["title"] == "test_title_2"
     assert book_list[1]["isbn"] == "9876543221098"
     assert book_list[1]["authors"] == "test_authors_2"

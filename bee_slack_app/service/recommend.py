@@ -16,7 +16,7 @@ def recommend(logger: Any, user: User) -> list[SearchedBook]:
         user : おすすめ本を知りたい、利用者のユーザ情報。
 
     Returns:
-        book: おすすめする本の情報。取得できない場合は、Noneが返る。
+        book: おすすめする本の情報。
     """
     try:
         # デバッグ用
