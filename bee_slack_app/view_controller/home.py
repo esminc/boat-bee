@@ -1,6 +1,7 @@
 from logging import getLogger
 
 from bee_slack_app.service.review import get_reviews
+from bee_slack_app.service.user_action import record_user_action
 from bee_slack_app.view.home import home
 
 
@@ -12,6 +13,12 @@ def home_controller(app):
         reviews = get_reviews(logger=getLogger())
 
         total_review_count = len(reviews["items"]) if reviews else 0
+
+        record_user_action(
+            user_id=event["user"],
+            action_name="app_home_opened",
+            payload={"total_review_count": total_review_count},
+        )
 
         client.views_publish(
             user_id=event["user"],

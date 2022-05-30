@@ -2,6 +2,7 @@ from typing import Optional
 
 from bee_slack_app.model.user import User
 from bee_slack_app.service.user import add_user, get_user
+from bee_slack_app.service.user_action import record_user_action
 from bee_slack_app.view.user import user_profile_modal
 
 
@@ -24,6 +25,12 @@ def user_controller(app):
 
         modal_view = user_profile_modal(
             callback_id="user_profile_modal", user_name=user_name, user=user
+        )
+
+        record_user_action(
+            user_id=user_id,
+            action_name="user_info_action",
+            payload={"user_info": user_info},
         )
 
         client.views_open(
@@ -62,3 +69,9 @@ def user_controller(app):
         }
 
         add_user(logger, user)
+
+        record_user_action(
+            user_id=user_id,
+            action_name="user_profile_modal",
+            payload={"user": user},
+        )

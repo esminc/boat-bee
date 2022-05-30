@@ -1,6 +1,7 @@
 import json
 
 from bee_slack_app.service.book_search import search_book_by_title
+from bee_slack_app.service.user_action import record_user_action
 from bee_slack_app.view.book_search import (
     book_search_result_modal,
     book_search_result_selected_modal,
@@ -21,6 +22,12 @@ def book_search_controller(app):  # pylint: disable=too-many-statements
         ]["value"]
 
         book_results = search_book_by_title(title)
+
+        record_user_action(
+            user_id=body["user"]["id"],
+            action_name="book_search_modal",
+            payload={"book_results": book_results},
+        )
 
         if len(book_results) == 0:
             ack(
@@ -133,11 +140,23 @@ def book_search_controller(app):  # pylint: disable=too-many-statements
                 url = blocks[i]["elements"][1]["url"]
 
         if not selected_book_section or not url:
+            record_user_action(
+                user_id=body["user"]["id"],
+                action_name="book_search_result_modal",
+                status="fetch_book_data_error",
+            )
+
             ack(
                 response_action="push",
                 view=simple_modal(title="エラー", text="本のデータ取得でエラーが発生しました"),
             )
             return
+
+        record_user_action(
+            user_id=body["user"]["id"],
+            action_name="book_search_result_modal",
+            payload={"selected_book_section": selected_book_section},
+        )
 
         ack(
             response_action="push",

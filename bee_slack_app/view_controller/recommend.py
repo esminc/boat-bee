@@ -4,6 +4,7 @@ from bee_slack_app.model.search import SearchedBook
 from bee_slack_app.model.user import User
 from bee_slack_app.service.recommend import recommend
 from bee_slack_app.service.user import get_user
+from bee_slack_app.service.user_action import record_user_action
 from bee_slack_app.view.recommend import generate_book_recommend_model_view
 
 
@@ -18,6 +19,12 @@ def recommend_controller(app):  # pylint: disable=too-many-statements
 
         user: Optional[User] = get_user(logger, user_id)
         if not user:
+            record_user_action(
+                user_id=user_id,
+                action_name="book_recommend_action",
+                status="no_user_profile_error",
+            )
+
             client.views_open(
                 trigger_id=body["trigger_id"],
                 view={
@@ -44,6 +51,12 @@ def recommend_controller(app):  # pylint: disable=too-many-statements
         book: Optional[SearchedBook] = recommend(logger, user)
 
         if book is None:
+            record_user_action(
+                user_id=user_id,
+                action_name="book_recommend_action",
+                status="no_recommended_book_error",
+            )
+
             client.views_open(
                 trigger_id=body["trigger_id"],
                 view={
@@ -69,6 +82,12 @@ def recommend_controller(app):  # pylint: disable=too-many-statements
 
         modal_view = generate_book_recommend_model_view(
             callback_id="book_recommend_modal", book=book
+        )
+
+        record_user_action(
+            user_id=user_id,
+            action_name="book_recommend_action",
+            payload={"book": book},
         )
 
         client.views_open(
