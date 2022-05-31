@@ -49,10 +49,11 @@ class SuggestedBookRepository:
         if item is None:
             return None
 
+        isbn, ml_model = decode_sort_key(item["suggested_book_sk"])
         suggested_book: SuggestedBook = {
             "user_id": item["user_id"],
-            "isbn": decode_sort_key(item["suggested_book_sk"])[0],
-            "ml_model": decode_sort_key(item["suggested_book_sk"])[1],
+            "isbn": isbn,
+            "ml_model": ml_model,
             "interested": item["interested"],
             "updated_at": item["updated_at"],
         }
