@@ -1,9 +1,24 @@
 """おすすめされた本を、追加・更新します
 """
 import os
+from typing import Tuple
 
 from bee_slack_app.model.suggested_book import SuggestedBook
 from bee_slack_app.repository.database import get_database_client
+
+
+# DBソートキーの生成
+def encode_sort_key(isbn: str, ml_model: str) -> str:
+    return isbn + "#" + ml_model
+
+
+# DBソートキーの分解
+def decode_sort_key(sort_key: str) -> Tuple[str, str]:
+    # sort keyにはisbnとml_model情報が#で連結されて入っている
+    items = sort_key.split("#")
+    isbn = items[0]
+    ml_model = items[1]
+    return (isbn, ml_model)
 
 
 class SuggestedBookRepository:
@@ -34,11 +49,10 @@ class SuggestedBookRepository:
         if item is None:
             return None
 
-        suggested_book_sk = item["suggested_book_sk"].split("#")
         suggested_book: SuggestedBook = {
             "user_id": item["user_id"],
-            "isbn": suggested_book_sk[0],
-            "ml_model": suggested_book_sk[1],
+            "isbn": decode_sort_key(item["suggested_book_sk"])[0],
+            "ml_model": decode_sort_key(item["suggested_book_sk"])[1],
             "interested": item["interested"],
             "updated_at": item["updated_at"],
         }
@@ -50,9 +64,9 @@ class SuggestedBookRepository:
         """
         item = {
             "user_id": suggested_book["user_id"],
-            "suggested_book_sk": suggested_book["isbn"]
-            + "#"
-            + suggested_book["ml_model"],
+            "suggested_book_sk": encode_sort_key(
+                suggested_book["isbn"], suggested_book["ml_model"]
+            ),
             "interested": suggested_book["interested"],
             "updated_at": suggested_book["updated_at"],
         }
