@@ -111,7 +111,7 @@ class ReviewRepository:
         Args:
             isbn : 取得する本のISBN
         Returns:
-            レビューのリスト
+            レビューのリスト。指定したISBNで見つからない場合は空のリストを返す。
         """
         return self.table.query(
             IndexName=REVIEW_ISBN_GSI,
