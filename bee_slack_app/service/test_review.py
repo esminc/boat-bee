@@ -471,6 +471,7 @@ def test_post_reviewでbook_repositoryの処理でエラーが発生した場合
             "book_image_url": "dummy_book_author",
             "book_author": "dummy_book_author",
             "book_url": "dummy_book_url",
+            "book_description": "dummy_description",
         },
     )
 
