@@ -117,7 +117,7 @@ def get_reviews_before(
         return None
 
 
-def get_review_by_isbn(*, isbn: str) -> Optional[list[ReviewContents]]:
+def get_reviews_by_isbn(*, isbn: str) -> Optional[list[ReviewContents]]:
     """
     ISBNからレビューを取得する
     """

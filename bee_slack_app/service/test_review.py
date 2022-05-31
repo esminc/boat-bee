@@ -8,8 +8,8 @@ from bee_slack_app.repository.review_repository import ReviewRepository
 from bee_slack_app.repository.user_repository import UserRepository
 from bee_slack_app.service.review import (
     get_review,
-    get_review_by_isbn,
     get_reviews,
+    get_reviews_by_isbn,
     post_review,
 )
 from bee_slack_app.utils import datetime
@@ -603,7 +603,7 @@ def test_get_reviewsで条件を指定しない場合はレビューを全件一
     assert reviews[2]["book_description"] == "dummy_description_2"
 
 
-def test_get_review_by_isbnでレビューが取得できること(
+def test_get_reviews_by_isbnでレビューが取得できること(
     mocker,
 ):  # pylint: disable=invalid-name
     mock_review_repository_get_by_isbn = mocker.patch.object(
@@ -668,7 +668,7 @@ def test_get_review_by_isbnでレビューが取得できること(
         },
     ]
 
-    reviews = get_review_by_isbn(isbn="1234567890123")
+    reviews = get_reviews_by_isbn(isbn="1234567890123")
 
     assert len(reviews) == 2
 
@@ -697,7 +697,7 @@ def test_get_review_by_isbnでレビューが取得できること(
     assert reviews[1]["book_description"] == "dummy_description_1"
 
 
-def test_get_review_by_isbnでreview_repositoryの処理でエラーが発生した場合Noneを返すこと(
+def test_get_reviews_by_isbnでreview_repositoryの処理でエラーが発生した場合Noneを返すこと(
     mocker,
 ):  # pylint: disable=invalid-name
     mock_review_repository_get_by_isbn = mocker.patch.object(
@@ -737,12 +737,12 @@ def test_get_review_by_isbnでreview_repositoryの処理でエラーが発生し
         },
     ]
 
-    reviews = get_review_by_isbn(isbn="1234567890123")
+    reviews = get_reviews_by_isbn(isbn="1234567890123")
 
     assert reviews is None
 
 
-def test_get_review_by_isbnでuser_repositoryの処理でエラーが発生した場合Noneを返すこと(
+def test_get_reviews_by_isbnでuser_repositoryの処理でエラーが発生した場合Noneを返すこと(
     mocker,
 ):  # pylint: disable=invalid-name
     mock_review_repository_get_by_isbn = mocker.patch.object(
@@ -782,12 +782,12 @@ def test_get_review_by_isbnでuser_repositoryの処理でエラーが発生し�
     )
     mock_user_repository_get_all.side_effect = Exception("dummy exception")
 
-    reviews = get_review_by_isbn(isbn="1234567890123")
+    reviews = get_reviews_by_isbn(isbn="1234567890123")
 
     assert reviews is None
 
 
-def test_get_review_by_isbnで該当するユーザ情報がない場合はユーザ名としてユーザIDを返すこと(
+def test_get_reviews_by_isbnで該当するユーザ情報がない場合はユーザ名としてユーザIDを返すこと(
     mocker,
 ):  # pylint: disable=invalid-name
     mock_review_repository_get_by_isbn = mocker.patch.object(
@@ -827,7 +827,7 @@ def test_get_review_by_isbnで該当するユーザ情報がない場合はユ�
     )
     mock_user_repository_get_all.return_value = []
 
-    reviews = get_review_by_isbn(isbn="1234567890123")
+    reviews = get_reviews_by_isbn(isbn="1234567890123")
 
     assert len(reviews) == 2
 

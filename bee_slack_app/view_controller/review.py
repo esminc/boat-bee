@@ -6,9 +6,9 @@ from bee_slack_app.model.user import User
 from bee_slack_app.service.book_search import search_book_by_isbn
 from bee_slack_app.service.review import (
     get_review,
-    get_review_by_isbn,
     get_reviews,
     get_reviews_before,
+    get_reviews_by_isbn,
     post_review,
 )
 from bee_slack_app.service.user import get_user
@@ -41,7 +41,7 @@ def review_controller(app):  # pylint: disable=too-many-statements
 
         isbn = action["value"]
 
-        reviews = get_review_by_isbn(isbn=isbn)
+        reviews = get_reviews_by_isbn(isbn=isbn)
 
         record_user_action(
             user_id=user_id,
