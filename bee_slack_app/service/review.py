@@ -149,6 +149,7 @@ def post_review(
             "book_image_url": review_contents["book_image_url"],
             "book_author": review_contents["book_author"],
             "book_url": review_contents["book_url"],
+            "book_description": review_contents["book_description"],
         }
         review_repository.create(item)
 

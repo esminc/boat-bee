@@ -127,9 +127,8 @@ def book_search_controller(app):  # pylint: disable=too-many-statements
 
         blocks = body["view"]["blocks"]
 
-        # 選択された本のbook_sectionとurlを、ISBNをもとに取得する (ハック的な対処なので注意)
+        # 選択された本のbook_sectionを、ISBNをもとに取得する (ハック的な対処なので注意)
         selected_book_section = None
-        url = None
 
         for i, block in enumerate(blocks):
             if (
@@ -137,9 +136,8 @@ def book_search_controller(app):  # pylint: disable=too-many-statements
                 and block["elements"][0]["value"] == books[0]["selected_isbn"]
             ):
                 selected_book_section = blocks[i - 1]  # iは選択された本のaction blockのindex
-                url = blocks[i]["elements"][1]["url"]
 
-        if not selected_book_section or not url:
+        if not selected_book_section:
             record_user_action(
                 user_id=body["user"]["id"],
                 action_name="book_search_result_modal",
@@ -163,6 +161,5 @@ def book_search_controller(app):  # pylint: disable=too-many-statements
             view=post_review_modal(
                 callback_id="post_review_modal",
                 book_section=selected_book_section,
-                url=url,
             ),
         )

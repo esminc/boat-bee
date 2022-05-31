@@ -45,6 +45,9 @@ class TestGoogleBooks:
         assert target_book["image_url"].endswith(
             "books/content?id=q0YntAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
         )
+        assert target_book["description"].startswith(
+            "機械学習やデータ分析の道具をどのようにビジネスに生かしていけば良いのか、「仕事で使う」という観点から整理。"
+        )
 
     def test_曖昧にタイトルを指定して検索結果が得られること(self):
         target_title = "仕事ではじめる"
@@ -79,6 +82,9 @@ class TestGoogleBooks:
         assert result["image_url"].endswith(
             "books/content?id=q0YntAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
         )
+        assert result["description"].startswith(
+            "機械学習やデータ分析の道具をどのようにビジネスに生かしていけば良いのか、「仕事で使う」という観点から整理。"
+        )
 
     def test_10桁の正当なISBNを指定したら結果が1件だけ得られること(self):  # pylint: disable=invalid-name
         target_isbn = "4873118255"
@@ -98,6 +104,9 @@ class TestGoogleBooks:
         assert result["image_url"].startswith("http://books.google")
         assert result["image_url"].endswith(
             "books/content?id=q0YntAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+        )
+        assert result["description"].startswith(
+            "機械学習やデータ分析の道具をどのようにビジネスに生かしていけば良いのか、「仕事で使う」という観点から整理。"
         )
 
     def test_存在しないISBNを指定したら結果が0件であること(self):  # pylint: disable=invalid-name
