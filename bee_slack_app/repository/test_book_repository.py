@@ -117,6 +117,8 @@ class TestBookRepository:
 
         assert len(books_items) == 3
 
+        # レビュー投稿日時が新しい順にソート済み
+
         assert books_items[0]["isbn"] == "01234"
         assert books_items[0]["title"] == "dummy_title_2"
         assert books_items[0]["author"] == "dummy_author_2"
@@ -183,6 +185,8 @@ class TestBookRepository:
         books_items = books["items"]
 
         assert len(books_items) == 2
+
+        # レビュー投稿日時が新しい順にソート済み
 
         assert books_items[0]["isbn"] == "01234"
         assert books_items[0]["title"] == "dummy_title_2"
