@@ -8,8 +8,8 @@ from bee_slack_app.repository.database import get_database_client
 from bee_slack_app.utils import datetime
 
 BOOK_TABLE_PK = "book_pk"
-BOOK_TABLE_SK = "book_sk"
 BOOK_TABLE_PK_VALUE = "book_pk_value"
+BOOL_UPDATED_AT_GSI = "updatedAtIndex"
 
 
 class BookItemKey(TypedDict):
@@ -42,15 +42,14 @@ class BookRepository:
             - datetime.iso_format_to_timestamp(book["updated_at"])
         )
 
-        book_sk = _SkConverter.to_str(updated_at=updated_at, isbn=book["isbn"])
-
         item = {
             BOOK_TABLE_PK: BOOK_TABLE_PK_VALUE,
-            BOOK_TABLE_SK: book_sk,
+            "isbn": book["isbn"],
             "title": book["title"],
             "author": book["author"],
             "url": book["url"],
             "image_url": book["image_url"],
+            "updated_at": updated_at,
         }
 
         self.table.put_item(Item=item)
@@ -80,6 +79,7 @@ class BookRepository:
                 option["Limit"] = max_item_count
 
             response = self.table.query(
+                IndexName=BOOL_UPDATED_AT_GSI,
                 KeyConditionExpression=boto3.dynamodb.conditions.Key(BOOK_TABLE_PK).eq(
                     BOOK_TABLE_PK_VALUE
                 ),
@@ -101,28 +101,9 @@ class BookRepository:
                 items.extend(new_items)
 
         for item in items:
-            parsed = _SkConverter.to_dict(item[BOOK_TABLE_SK])
-            item["isbn"] = parsed["isbn"]
 
             item["updated_at"] = datetime.timestamp_to_iso_format(
-                datetime.TIMESTAMP_MAX - float(parsed["updated_at"])
+                datetime.TIMESTAMP_MAX - float(item["updated_at"])
             )
 
         return {"items": items, "last_key": last_key}
-
-
-class _SkConverter:
-    delimiter = "#"
-
-    class _SkConverterDict(TypedDict):
-        isbn: str
-        updated_at: str
-
-    @staticmethod
-    def to_str(*, isbn: str, updated_at: str) -> str:
-        return updated_at + _SkConverter.delimiter + isbn
-
-    @staticmethod
-    def to_dict(sort_key: str) -> _SkConverterDict:
-        split_sk = sort_key.split(_SkConverter.delimiter)
-        return {"isbn": split_sk[1], "updated_at": split_sk[0]}

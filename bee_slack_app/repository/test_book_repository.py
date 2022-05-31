@@ -19,13 +19,26 @@ class TestBookRepository:
             TableName=os.environ["DYNAMODB_TABLE"] + "-book",
             AttributeDefinitions=[
                 {"AttributeName": "book_pk", "AttributeType": "S"},
-                {"AttributeName": "book_sk", "AttributeType": "S"},
+                {"AttributeName": "isbn", "AttributeType": "S"},
+                {"AttributeName": "updated_at", "AttributeType": "S"},
             ],
             KeySchema=[
                 {"AttributeName": "book_pk", "KeyType": "HASH"},
-                {"AttributeName": "book_sk", "KeyType": "RANGE"},
+                {"AttributeName": "isbn", "KeyType": "RANGE"},
             ],
             ProvisionedThroughput={"ReadCapacityUnits": 1, "WriteCapacityUnits": 1},
+            GlobalSecondaryIndexes=[
+                {
+                    "IndexName": "updatedAtIndex",
+                    "KeySchema": [
+                        {"AttributeName": "book_pk", "KeyType": "HASH"},
+                        {"AttributeName": "updated_at", "KeyType": "RANGE"},
+                    ],
+                    "Projection": {
+                        "ProjectionType": "ALL",
+                    },
+                }
+            ],
         )
 
     def test_本を保存できること(self):
@@ -52,7 +65,8 @@ class TestBookRepository:
         books_items = response["Items"]
 
         assert books_items[0]["book_pk"] == "book_pk_value"
-        assert books_items[0]["book_sk"] == "251753562000.0#12345"
+        assert books_items[0]["isbn"] == "12345"
+        assert books_items[0]["updated_at"] == "251753562000.0"
         assert books_items[0]["title"] == "dummy_title"
         assert books_items[0]["author"] == "dummy_author"
         assert books_items[0]["url"] == "dummy_url"
@@ -61,7 +75,8 @@ class TestBookRepository:
     def test_本を取得できること(self):
         item = {
             "book_pk": "book_pk_value",
-            "book_sk": "251753562000.0#12345",
+            "isbn": "12345",
+            "updated_at": "251753562000.0",
             "title": "dummy_title_0",
             "author": "dummy_author_0",
             "url": "dummy_url_0",
@@ -72,7 +87,8 @@ class TestBookRepository:
 
         item = {
             "book_pk": "book_pk_value",
-            "book_sk": "251753475600.0#67890",
+            "isbn": "67890",
+            "updated_at": "251753475600.0",
             "title": "dummy_title_1",
             "author": "dummy_author_1",
             "url": "dummy_url_1",
@@ -83,7 +99,8 @@ class TestBookRepository:
 
         item = {
             "book_pk": "book_pk_value",
-            "book_sk": "251753389200.0#01234",
+            "isbn": "01234",
+            "updated_at": "251753389200.0",
             "title": "dummy_title_2",
             "author": "dummy_author_2",
             "url": "dummy_url_2",
@@ -124,7 +141,8 @@ class TestBookRepository:
     def test_複数回に分けて本を取得できること(self):
         item = {
             "book_pk": "book_pk_value",
-            "book_sk": "251753562000.0#12345",
+            "isbn": "12345",
+            "updated_at": "251753562000.0",
             "title": "dummy_title_0",
             "author": "dummy_author_0",
             "url": "dummy_url_0",
@@ -135,7 +153,8 @@ class TestBookRepository:
 
         item = {
             "book_pk": "book_pk_value",
-            "book_sk": "251753475600.0#67890",
+            "isbn": "67890",
+            "updated_at": "251753475600.0",
             "title": "dummy_title_1",
             "author": "dummy_author_1",
             "url": "dummy_url_1",
@@ -146,7 +165,8 @@ class TestBookRepository:
 
         item = {
             "book_pk": "book_pk_value",
-            "book_sk": "251753389200.0#01234",
+            "isbn": "01234",
+            "updated_at": "251753389200.0",
             "title": "dummy_title_2",
             "author": "dummy_author_2",
             "url": "dummy_url_2",

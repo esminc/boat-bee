@@ -114,13 +114,27 @@ resources: # CloudFormation template syntax from here on.
         AttributeDefinitions:
           - AttributeName: book_pk
             AttributeType: S
-          - AttributeName: book_sk
+          - AttributeName: isbn
+            AttributeType: S
+          - AttributeName: updated_at
             AttributeType: S
         KeySchema:
           - AttributeName: book_pk
             KeyType: HASH
-          - AttributeName: book_sk
+          - AttributeName: isbn
             KeyType: RANGE
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
+        GlobalSecondaryIndexes:
+          - IndexName: updatedAtIndex
+            KeySchema:
+              - AttributeName: book_pk
+                KeyType: HASH
+              - AttributeName: updated_at
+                KeyType: RANGE
+            Projection:
+              ProjectionType: "ALL"
+            ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1
