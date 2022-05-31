@@ -1,3 +1,4 @@
+from logging import getLogger
 from typing import Any, Optional, TypedDict, Union
 
 from bee_slack_app.model.book import Book
@@ -110,6 +111,26 @@ def get_reviews_before(
             "items": reviews["items"],
             "keys": [reviews["last_key"]] if is_move_to_first else keys[:-1],  # type: ignore
         }
+
+    except Exception:  # pylint: disable=broad-except
+        logger.exception("Failed to get data.")
+        return None
+
+
+def get_reviews_by_isbn(*, isbn: str) -> Optional[list[ReviewContents]]:
+    """
+    ISBNからレビューを取得する
+    """
+    try:
+        logger = getLogger(__name__)
+
+        reviews = review_repository.get_by_isbn(isbn=isbn)
+
+        fill_user_name(reviews)
+
+        logger.info({"reviews": reviews})
+
+        return reviews
 
     except Exception:  # pylint: disable=broad-except
         logger.exception("Failed to get data.")
