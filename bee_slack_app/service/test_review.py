@@ -3,6 +3,7 @@
 
 from logging import getLogger
 
+from bee_slack_app.repository.book_repository import BookRepository
 from bee_slack_app.repository.review_repository import ReviewRepository
 from bee_slack_app.repository.user_repository import UserRepository
 from bee_slack_app.service.review import get_review, get_reviews, post_review
@@ -379,6 +380,8 @@ def test_post_reviewでレビューを投稿できること(
 ):  # pylint: disable=invalid-name
     mock_review_repository_create = mocker.patch.object(ReviewRepository, "create")
 
+    mock_book_repository_put = mocker.patch.object(BookRepository, "put")
+
     mocker.patch.object(datetime, "now").return_value = "2022-04-01T00:00:00+09:00"
 
     review = post_review(
@@ -398,6 +401,8 @@ def test_post_reviewでレビューを投稿できること(
     )
 
     assert mock_review_repository_create.call_count == 1
+
+    assert mock_book_repository_put.call_count == 1
 
     assert review["user_id"] == "test_user_id"
     assert review["isbn"] == "12345"
@@ -418,6 +423,8 @@ def test_post_reviewでreview_repositoryの処理でエラーが発生した場�
     mock_review_repository_create = mocker.patch.object(ReviewRepository, "create")
     mock_review_repository_create.side_effect = Exception("dummy exception")
 
+    mock_book_repository_put = mocker.patch.object(BookRepository, "put")
+
     mocker.patch.object(datetime, "now").return_value = "2022-04-01T00:00:00+09:00"
 
     review = post_review(
@@ -437,6 +444,39 @@ def test_post_reviewでreview_repositoryの処理でエラーが発生した場�
     )
 
     assert mock_review_repository_create.call_count == 1
+    assert mock_book_repository_put.call_count == 0
+
+    assert review is None
+
+
+def test_post_reviewでbook_repositoryの処理でエラーが発生した場合Noneを返すこと(
+    mocker,
+):  # pylint: disable=invalid-name
+    mock_review_repository_create = mocker.patch.object(ReviewRepository, "create")
+
+    mock_book_repository_put = mocker.patch.object(BookRepository, "put")
+    mock_book_repository_put.side_effect = Exception("dummy exception")
+
+    mocker.patch.object(datetime, "now").return_value = "2022-04-01T00:00:00+09:00"
+
+    review = post_review(
+        logger=getLogger(),
+        review_contents={
+            "user_id": "test_user_id",
+            "isbn": "12345",
+            "book_title": "本のタイトル",
+            "score_for_me": "1",
+            "score_for_others": "3",
+            "review_comment": "レビューコメント",
+            "book_image_url": "dummy_book_author",
+            "book_author": "dummy_book_author",
+            "book_url": "dummy_book_url",
+            "book_description": "dummy_description",
+        },
+    )
+
+    assert mock_review_repository_create.call_count == 1
+    assert mock_book_repository_put.call_count == 1
 
     assert review is None
 

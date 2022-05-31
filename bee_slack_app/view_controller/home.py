@@ -1,14 +1,21 @@
+import json
 from logging import getLogger
+from typing import Any, TypedDict
 
+from bee_slack_app.service.book import get_books, get_books_before
 from bee_slack_app.service.review import get_reviews
 from bee_slack_app.service.user_action import record_user_action
 from bee_slack_app.view.home import home
+
+BOOK_NUMBER_PER_PAGE = 20
 
 
 def home_controller(app):
     @app.event("app_home_opened")
     def update_home_view(ack, event, client):
         ack()
+
+        logger = getLogger(__name__)
 
         reviews = get_reviews(logger=getLogger())
 
@@ -20,6 +27,26 @@ def home_controller(app):
             payload={"total_review_count": total_review_count},
         )
 
+        logger.info({"total_review_count": total_review_count})
+
+        books_params = None
+        metadata_str = ""
+
+        books = get_books(limit=BOOK_NUMBER_PER_PAGE, keys=[])
+
+        logger.info({"books": books})
+
+        if books:
+            books_params = {
+                "books": books.get("items"),
+                "show_move_to_back": False,
+                "show_move_to_next": books.get("has_next"),
+            }
+
+            metadata_str = _PrivateMetadataConvertor.to_private_metadata(
+                keys=books.get("keys")
+            )
+
         client.views_publish(
             user_id=event["user"],
             view=home(
@@ -28,5 +55,124 @@ def home_controller(app):
                 see_more_recommended_book_action_id="book_recommend_action",
                 user_info_action_id="user_info_action",
                 total_review_count=total_review_count,
+                books_params=books_params,
+                private_metadata=metadata_str,
             ),
         )
+
+    @app.action("home_move_to_next_action")
+    def home_move_to_next_action(ack, client, body):
+        """
+        ホーム画面で「次へ」を押下されたときの処理
+        """
+        ack()
+
+        logger = getLogger(__name__)
+
+        user_id = body["user"]["id"]
+
+        private_metadata = body["view"]["private_metadata"]
+
+        metadata_dict = _PrivateMetadataConvertor.to_dict(
+            private_metadata=private_metadata
+        )
+
+        reviews = get_reviews(logger=getLogger())
+
+        total_review_count = len(reviews["items"]) if reviews else 0
+
+        books_params = None
+        metadata_str = ""
+
+        books = get_books(limit=BOOK_NUMBER_PER_PAGE, keys=metadata_dict["keys"])
+
+        logger.info({"books": books})
+
+        if books:
+            books_params = {
+                "books": books.get("items"),
+                "show_move_to_back": True,
+                "show_move_to_next": books.get("has_next"),
+            }
+
+            metadata_str = _PrivateMetadataConvertor.to_private_metadata(
+                keys=books.get("keys")
+            )
+
+        client.views_publish(
+            user_id=user_id,
+            view=home(
+                read_review_action_id="read_review_action",
+                post_review_action_id="post_review_action",
+                see_more_recommended_book_action_id="book_recommend_action",
+                user_info_action_id="user_info_action",
+                total_review_count=total_review_count,
+                books_params=books_params,
+                private_metadata=metadata_str,
+            ),
+        )
+
+    @app.action("home_move_to_back_action")
+    def home_move_to_back_action(ack, client, body):
+        """
+        ホーム画面で「前へ」を押下されたときの処理
+        """
+        ack()
+
+        logger = getLogger(__name__)
+
+        user_id = body["user"]["id"]
+
+        private_metadata = body["view"]["private_metadata"]
+
+        reviews = get_reviews(logger=getLogger())
+
+        total_review_count = len(reviews["items"]) if reviews else 0
+
+        metadata_dict = _PrivateMetadataConvertor.to_dict(
+            private_metadata=private_metadata
+        )
+
+        books_params = None
+        metadata_str = ""
+
+        books = get_books_before(limit=BOOK_NUMBER_PER_PAGE, keys=metadata_dict["keys"])
+
+        logger.info({"books": books})
+
+        if books:
+            books_params = {
+                "books": books.get("items"),
+                "show_move_to_back": not books.get("is_move_to_first"),
+                "show_move_to_next": True,
+            }
+
+            metadata_str = _PrivateMetadataConvertor.to_private_metadata(
+                keys=books.get("keys")
+            )
+
+        client.views_publish(
+            user_id=user_id,
+            view=home(
+                read_review_action_id="read_review_action",
+                post_review_action_id="post_review_action",
+                see_more_recommended_book_action_id="book_recommend_action",
+                user_info_action_id="user_info_action",
+                total_review_count=total_review_count,
+                books_params=books_params,
+                private_metadata=metadata_str,
+            ),
+        )
+
+
+class _PrivateMetadataConvertor:
+    class _MetadataDict(TypedDict):
+        keys: Any
+
+    @staticmethod
+    def to_private_metadata(*, keys: Any) -> str:
+        return json.dumps({"keys": keys})
+
+    @staticmethod
+    def to_dict(*, private_metadata: str) -> _MetadataDict:
+        return json.loads(private_metadata)
