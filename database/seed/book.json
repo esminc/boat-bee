@@ -5,7 +5,8 @@
     "title": "仕事ではじめる機械学習",
     "author": "dummy_author_0",
     "url": "dummy_url_0",
-    "image_url": "dummy_image_url_0"
+    "image_url": "dummy_image_url_0",
+    "description": "dummy_description_0"
   },
   {
     "book_pk": "book_pk_value",
@@ -13,7 +14,8 @@
     "title": "カンバン仕事術",
     "author": "dummy_author_1",
     "url": "dummy_url_1",
-    "image_url": "dummy_image_url_1"
+    "image_url": "dummy_image_url_1",
+    "description": "dummy_description_1"
   },
   {
     "book_pk": "book_pk_value",
@@ -21,6 +23,7 @@
     "title": "iPhone／iPadではじめるファイル共有",
     "author": "dummy_author_2",
     "url": "dummy_url_2",
-    "image_url": "dummy_image_url_2"
+    "image_url": "dummy_image_url_2",
+    "description": "dummy_description_2"
   }
 ]

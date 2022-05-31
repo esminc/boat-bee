@@ -49,6 +49,7 @@ class BookRepository:
             "author": book["author"],
             "url": book["url"],
             "image_url": book["image_url"],
+            "description": book["description"],
             "updated_at": updated_at,
         }
 

@@ -159,6 +159,7 @@ def post_review(
             "author": review_contents["book_author"],
             "url": review_contents["book_url"],
             "image_url": review_contents["book_image_url"],
+            "description": review_contents["book_description"],
             "updated_at": updated_at,
         }
 

@@ -11,4 +11,5 @@ class Book(TypedDict):
     author: str
     url: str
     image_url: str
+    description: str
     updated_at: str

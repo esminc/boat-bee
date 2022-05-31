@@ -51,6 +51,7 @@ class TestBookRepository:
             "author": "dummy_author",
             "url": "dummy_url",
             "image_url": "dummy_image_url",
+            "description": "dummy_description",
             "updated_at": "2022-04-01T00:00:00+09:00",
         }
 
@@ -71,6 +72,7 @@ class TestBookRepository:
         assert books_items[0]["author"] == "dummy_author"
         assert books_items[0]["url"] == "dummy_url"
         assert books_items[0]["image_url"] == "dummy_image_url"
+        assert books_items[0]["description"] == "dummy_description"
 
     def test_本を取得できること(self):
         item = {
@@ -81,6 +83,7 @@ class TestBookRepository:
             "author": "dummy_author_0",
             "url": "dummy_url_0",
             "image_url": "dummy_image_url_0",
+            "description": "dummy_description_0",
         }
 
         self.table.put_item(Item=item)
@@ -93,6 +96,7 @@ class TestBookRepository:
             "author": "dummy_author_1",
             "url": "dummy_url_1",
             "image_url": "dummy_image_url_1",
+            "description": "dummy_description_1",
         }
 
         self.table.put_item(Item=item)
@@ -105,6 +109,7 @@ class TestBookRepository:
             "author": "dummy_author_2",
             "url": "dummy_url_2",
             "image_url": "dummy_image_url_2",
+            "description": "dummy_description_2",
         }
 
         self.table.put_item(Item=item)
@@ -124,6 +129,7 @@ class TestBookRepository:
         assert books_items[0]["author"] == "dummy_author_2"
         assert books_items[0]["url"] == "dummy_url_2"
         assert books_items[0]["image_url"] == "dummy_image_url_2"
+        assert books_items[0]["description"] == "dummy_description_2"
         assert books_items[0]["updated_at"] == "2022-04-03T00:00:00+09:00"
 
         assert books_items[1]["isbn"] == "67890"
@@ -131,6 +137,7 @@ class TestBookRepository:
         assert books_items[1]["author"] == "dummy_author_1"
         assert books_items[1]["url"] == "dummy_url_1"
         assert books_items[1]["image_url"] == "dummy_image_url_1"
+        assert books_items[1]["description"] == "dummy_description_1"
         assert books_items[1]["updated_at"] == "2022-04-02T00:00:00+09:00"
 
         assert books_items[2]["isbn"] == "12345"
@@ -138,6 +145,7 @@ class TestBookRepository:
         assert books_items[2]["author"] == "dummy_author_0"
         assert books_items[2]["url"] == "dummy_url_0"
         assert books_items[2]["image_url"] == "dummy_image_url_0"
+        assert books_items[2]["description"] == "dummy_description_0"
         assert books_items[2]["updated_at"] == "2022-04-01T00:00:00+09:00"
 
     def test_複数回に分けて本を取得できること(self):
@@ -149,6 +157,7 @@ class TestBookRepository:
             "author": "dummy_author_0",
             "url": "dummy_url_0",
             "image_url": "dummy_image_url_0",
+            "description": "dummy_description_0",
         }
 
         self.table.put_item(Item=item)
@@ -161,6 +170,7 @@ class TestBookRepository:
             "author": "dummy_author_1",
             "url": "dummy_url_1",
             "image_url": "dummy_image_url_1",
+            "description": "dummy_description_1",
         }
 
         self.table.put_item(Item=item)
@@ -173,6 +183,7 @@ class TestBookRepository:
             "author": "dummy_author_2",
             "url": "dummy_url_2",
             "image_url": "dummy_image_url_2",
+            "description": "dummy_description_2",
         }
 
         self.table.put_item(Item=item)
@@ -193,6 +204,7 @@ class TestBookRepository:
         assert books_items[0]["author"] == "dummy_author_2"
         assert books_items[0]["url"] == "dummy_url_2"
         assert books_items[0]["image_url"] == "dummy_image_url_2"
+        assert books_items[0]["description"] == "dummy_description_2"
         assert books_items[0]["updated_at"] == "2022-04-03T00:00:00+09:00"
 
         assert books_items[1]["isbn"] == "67890"
@@ -200,6 +212,7 @@ class TestBookRepository:
         assert books_items[1]["author"] == "dummy_author_1"
         assert books_items[1]["url"] == "dummy_url_1"
         assert books_items[1]["image_url"] == "dummy_image_url_1"
+        assert books_items[1]["description"] == "dummy_description_1"
         assert books_items[1]["updated_at"] == "2022-04-02T00:00:00+09:00"
 
         # 2回目
@@ -214,6 +227,7 @@ class TestBookRepository:
         assert books_items[0]["author"] == "dummy_author_0"
         assert books_items[0]["url"] == "dummy_url_0"
         assert books_items[0]["image_url"] == "dummy_image_url_0"
+        assert books_items[0]["description"] == "dummy_description_0"
         assert books_items[0]["updated_at"] == "2022-04-01T00:00:00+09:00"
 
     def test_本が存在しない場合は空配列を返すこと(self):  # pylint: disable=invalid-name
