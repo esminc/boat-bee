@@ -49,7 +49,7 @@ class TestSuggestedBookRepository:
         suggested_book_repository = SuggestedBookRepository()
 
         suggested_book = suggested_book_repository.get(
-            "test_user_id_0", "1234567890123", "dummy_ml_model_0"
+            user_id="test_user_id_0", isbn="1234567890123", ml_model="dummy_ml_model_0"
         )
 
         assert suggested_book["user_id"] == "test_user_id_0"
@@ -80,7 +80,7 @@ class TestSuggestedBookRepository:
         suggested_book_repository = SuggestedBookRepository()
 
         suggested_book = suggested_book_repository.get(
-            "test_user_id_1", "9234567890123", "dummy_ml_model_1"
+            user_id="test_user_id_1", isbn="9234567890123", ml_model="dummy_ml_model_1"
         )
 
         assert suggested_book["user_id"] == "test_user_id_1"
@@ -111,7 +111,7 @@ class TestSuggestedBookRepository:
         suggested_book_repository = SuggestedBookRepository()
 
         suggested_book = suggested_book_repository.get(
-            "test_user_id_0", "9234567890123", "dummy_ml_model_1"
+            user_id="test_user_id_0", isbn="9234567890123", ml_model="dummy_ml_model_1"
         )
 
         assert suggested_book is None
