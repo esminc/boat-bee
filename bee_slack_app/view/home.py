@@ -156,6 +156,11 @@ def home(
                     "emoji": True,
                 },
             },
+            {
+                "type": "image",
+                "image_url": "https://developers.google.com/maps/documentation/images/powered_by_google_on_white.png",
+                "alt_text": "Google Logo",
+            },
         ],
     }
 
