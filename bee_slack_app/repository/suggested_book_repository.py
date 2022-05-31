@@ -42,7 +42,7 @@ class SuggestedBookRepository:
         response = self.table.get_item(
             Key={
                 "user_id": user_id,
-                "suggested_book_sk": isbn + "#" + ml_model,
+                "suggested_book_sk": encode_sort_key(isbn, ml_model),
             }
         )
         item = response.get("Item")
