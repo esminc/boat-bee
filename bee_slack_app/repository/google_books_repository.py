@@ -100,7 +100,7 @@ class GoogleBooksRepository:
             "authors": _item["volumeInfo"].get("authors", "No Authoer"),
             "google_books_url": _item["volumeInfo"]["infoLink"],
             "image_url": image_url,
-            "description": _item["volumeInfo"].get("description", ["-"]),
+            "description": _item["volumeInfo"].get("description", "-"),
         }
 
         return dict_info
