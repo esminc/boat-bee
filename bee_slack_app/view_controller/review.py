@@ -4,13 +4,7 @@ import os
 from bee_slack_app.model.review import ReviewContents
 from bee_slack_app.model.user import User
 from bee_slack_app.service.book_search import search_book_by_isbn
-from bee_slack_app.service.review import (
-    get_review,
-    get_reviews,
-    get_reviews_before,
-    get_reviews_by_isbn,
-    post_review,
-)
+from bee_slack_app.service.review import get_review, get_reviews_by_isbn, post_review
 from bee_slack_app.service.user import get_user
 from bee_slack_app.service.user_action import record_user_action
 from bee_slack_app.view.common import simple_modal
@@ -21,15 +15,12 @@ from bee_slack_app.view.post_review import (
 from bee_slack_app.view.read_review import (
     BookOfReview,
     review_detail_modal,
-    review_list_modal,
     review_modal,
 )
 from bee_slack_app.view.user import user_department_dict
 
 
 def review_controller(app):  # pylint: disable=too-many-statements
-    review_item_limit = 10
-
     @app.action("read_review_of_book_action")
     def read_review_of_book_action(ack, body, client, action):
         """
@@ -207,177 +198,6 @@ def review_controller(app):  # pylint: disable=too-many-statements
         ユーザー名を部署名付きのものに変換する
         """
         return f'{user["user_name"]}  ({user_department_dict[user["department"]]})'
-
-    @app.action("read_review_action")
-    def open_read_modal(ack, body, client, logger):
-        ack()
-
-        reviews = get_reviews(logger=logger, limit=review_item_limit, keys=[])
-
-        metadata_str = ReviewPrivateMetadataConvertor.convert_to_private_metadata(
-            keys=reviews["keys"]
-        )
-
-        review_contents_list = _make_review_contents_list_comment_short(
-            reviews["items"]
-        )
-
-        view = review_list_modal(
-            callback_id="post_review_modal",
-            search_button_action_id="search_review_action",
-            review_contents_list=review_contents_list,
-            private_metadata=metadata_str,
-            show_move_to_next=bool(reviews["keys"]),
-        )
-
-        record_user_action(
-            user_id=body["user"]["id"],
-            action_name="read_review_action",
-        )
-
-        client.views_open(
-            trigger_id=body["trigger_id"],
-            view=view,
-        )
-
-    @app.action("move_to_next_action")
-    def move_to_next(ack, logger, client, body):
-        ack()
-
-        metadata_dict = ReviewPrivateMetadataConvertor.convert_to_dict(
-            private_metadata=body["view"]["private_metadata"]
-        )
-        keys = metadata_dict["keys"]
-
-        conditions = metadata_dict.get("conditions")
-
-        reviews = get_reviews(
-            logger=logger, limit=review_item_limit, keys=keys, conditions=conditions
-        )
-
-        metadata_str = ReviewPrivateMetadataConvertor.convert_to_private_metadata(
-            keys=reviews["keys"], conditions=conditions
-        )
-
-        review_contents_list = _make_review_contents_list_comment_short(
-            reviews["items"]
-        )
-
-        view = review_list_modal(
-            callback_id="post_review_modal",
-            search_button_action_id="search_review_action",
-            review_contents_list=review_contents_list,
-            private_metadata=metadata_str,
-            show_move_to_back=True,
-            show_move_to_next=reviews["keys"][-1] != "end",
-        )
-
-        client.views_update(
-            trigger_id=body["trigger_id"],
-            view_id=body["view"]["id"],
-            hash=body["view"]["hash"],
-            view=view,
-        )
-
-    @app.action("move_to_back_action")
-    def move_to_back(ack, logger, client, body):
-        ack()
-
-        metadata_dict = ReviewPrivateMetadataConvertor.convert_to_dict(
-            private_metadata=body["view"]["private_metadata"]
-        )
-        keys = metadata_dict["keys"]
-
-        is_move_to_first = len(keys) < 3
-
-        conditions = metadata_dict.get("conditions")
-
-        reviews = get_reviews_before(
-            logger=logger, limit=review_item_limit, keys=keys, conditions=conditions
-        )
-
-        metadata_str = ReviewPrivateMetadataConvertor.convert_to_private_metadata(
-            keys=reviews["keys"], conditions=conditions
-        )
-
-        review_contents_list = _make_review_contents_list_comment_short(
-            reviews["items"]
-        )
-
-        view = review_list_modal(
-            callback_id="post_review_modal",
-            search_button_action_id="search_review_action",
-            review_contents_list=review_contents_list,
-            private_metadata=metadata_str,
-            show_move_to_back=not is_move_to_first,
-        )
-
-        client.views_update(
-            trigger_id=body["trigger_id"],
-            view_id=body["view"]["id"],
-            hash=body["view"]["hash"],
-            view=view,
-        )
-
-    @app.action("search_review_action")
-    def update_review_list_view(ack, body, client, logger):
-        ack()
-
-        values_from_body = body["view"]["state"]["values"]
-
-        scores = {}
-
-        for label in ["score_for_me", "score_for_others"]:
-
-            select_block = values_from_body[f"{label}_select_block"]
-            selected_option = select_block[f"{label}_select_action"]["selected_option"]
-            score = selected_option and selected_option.get("value")
-
-            if score in ["1", "2", "3", "4", "5"]:
-                scores[label] = score
-
-        reviews = get_reviews(
-            logger=logger, conditions=scores, limit=review_item_limit, keys=[]
-        )
-
-        private_metadata = ReviewPrivateMetadataConvertor.convert_to_private_metadata(
-            keys=reviews["keys"], conditions=scores
-        )
-
-        review_contents_list = _make_review_contents_list_comment_short(
-            reviews["items"]
-        )
-
-        view = review_list_modal(
-            callback_id="post_review_modal",
-            search_button_action_id="search_review_action",
-            review_contents_list=review_contents_list,
-            private_metadata=private_metadata,
-            show_move_to_next=bool(reviews["keys"]),
-        )
-
-        record_user_action(
-            user_id=body["user"]["id"],
-            action_name="search_review_action",
-            payload={"scores": scores},
-        )
-
-        client.views_update(
-            trigger_id=body["trigger_id"],
-            view_id=body["view"]["id"],
-            hash=body["view"]["hash"],
-            view=view,
-        )
-
-    @app.action("score_for_me_select_action")
-    def score_for_me_select_action(ack):
-        # 何もしない
-        ack()
-
-    @app.action("score_for_others_select_action")
-    def score_for_others_select_action(ack):
-        # 何もしない
-        ack()
 
     @app.action("open_review_detail_modal_action")
     def open_review_detail_modal(ack, body, client, logger, action):
