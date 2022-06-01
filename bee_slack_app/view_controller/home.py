@@ -17,7 +17,7 @@ def home_controller(app):
 
         logger = getLogger(__name__)
 
-        reviews = get_review_all(logger=getLogger())
+        reviews = get_review_all()
 
         total_review_count = len(reviews) if reviews else 0
 
@@ -76,7 +76,7 @@ def home_controller(app):
             private_metadata=private_metadata
         )
 
-        reviews = get_review_all(logger=getLogger())
+        reviews = get_review_all()
 
         total_review_count = len(reviews) if reviews else 0
 
@@ -123,7 +123,7 @@ def home_controller(app):
 
         private_metadata = body["view"]["private_metadata"]
 
-        reviews = get_review_all(logger=getLogger())
+        reviews = get_review_all()
 
         total_review_count = len(reviews) if reviews else 0
 

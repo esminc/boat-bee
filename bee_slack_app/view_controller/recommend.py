@@ -16,7 +16,7 @@ def recommend_controller(app):  # pylint: disable=too-many-statements
 
         user_id = body["user"]["id"]
 
-        user: Optional[User] = get_user(logger, user_id)
+        user: Optional[User] = get_user(user_id)
         if not user:
             record_user_action(
                 user_id=user_id,
@@ -47,7 +47,7 @@ def recommend_controller(app):  # pylint: disable=too-many-statements
             )
             return
 
-        book_list = recommend(logger, user)
+        book_list = recommend(user)
 
         if len(book_list) == 0:
             record_user_action(

@@ -1,4 +1,4 @@
-from typing import Any
+from logging import getLogger
 
 from bee_slack_app.model.search import SearchedBook
 from bee_slack_app.model.user import User
@@ -8,7 +8,7 @@ from bee_slack_app.repository.recommend_book_repository import RecommendBookRepo
 recommend_book_repository = RecommendBookRepository()
 
 
-def recommend(logger: Any, user: User) -> list[SearchedBook]:
+def recommend(user: User) -> list[SearchedBook]:
     """
     おすすめの本の情報を返却する
 
@@ -18,6 +18,8 @@ def recommend(logger: Any, user: User) -> list[SearchedBook]:
     Returns:
         book: おすすめする本の情報。
     """
+    logger = getLogger(__name__)
+
     try:
         # デバッグ用
         # FDOワークスペースのユーザIDの場合、対応するITSワークスペースのユーザIDに変換する

@@ -1,6 +1,5 @@
 # pylint: disable=non-ascii-name
 
-from logging import getLogger
 
 from bee_slack_app.repository.user_repository import UserRepository
 from bee_slack_app.service.user import get_all_user, get_user
@@ -19,7 +18,7 @@ def test_ユーザー情報を取得できること(monkeypatch):
 
     monkeypatch.setattr(UserRepository, "get", mock_user_repository_get)
 
-    user = get_user(getLogger(), "test_user_id")
+    user = get_user("test_user_id")
 
     assert user["user_id"] == "test_user_id"
     assert user["user_name"] == "北ノ庄　肇"
@@ -60,7 +59,7 @@ def test_全てのユーザー情報を取得できること(monkeypatch):
 
     monkeypatch.setattr(UserRepository, "get_all", mock_user_repository_get_all)
 
-    users = get_all_user(getLogger())
+    users = get_all_user()
 
     assert len(users) == 3
 
@@ -92,7 +91,7 @@ def test_全取得ではユーザー情報が無い場合に空のリストを�
 
     monkeypatch.setattr(UserRepository, "get_all", mock_user_repository_get_all)
 
-    users = get_all_user(getLogger())
+    users = get_all_user()
 
     assert len(users) == 0
 
@@ -105,7 +104,7 @@ def test_全取得ではrepositoryの処理でエラーが発生した場合空�
 
     monkeypatch.setattr(UserRepository, "get_all", mock_user_repository_get_all)
 
-    users = get_all_user(getLogger())
+    users = get_all_user()
 
     assert len(users) == 0
 
@@ -116,7 +115,7 @@ def test_ユーザー情報が無い場合にNoneを返すこと(monkeypatch):  
 
     monkeypatch.setattr(UserRepository, "get", mock_user_repository_get)
 
-    user = get_user(getLogger(), "test_user_id")
+    user = get_user("test_user_id")
 
     assert user is None
 
@@ -127,6 +126,6 @@ def test_repositoryの処理でエラーが発生した場合Noneを返すこと
 
     monkeypatch.setattr(UserRepository, "get", mock_user_repository_get)
 
-    user = get_user(getLogger(), "test_user_id")
+    user = get_user("test_user_id")
 
     assert user is None
