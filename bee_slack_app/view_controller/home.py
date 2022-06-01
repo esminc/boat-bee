@@ -19,7 +19,7 @@ def home_controller(app):
 
         reviews = get_review_all(logger=getLogger())
 
-        total_review_count = len(reviews["items"]) if reviews else 0
+        total_review_count = len(reviews) if reviews else 0
 
         record_user_action(
             user_id=event["user"],
@@ -78,7 +78,7 @@ def home_controller(app):
 
         reviews = get_review_all(logger=getLogger())
 
-        total_review_count = len(reviews["items"]) if reviews else 0
+        total_review_count = len(reviews) if reviews else 0
 
         books_params = None
         metadata_str = ""
@@ -125,7 +125,7 @@ def home_controller(app):
 
         reviews = get_review_all(logger=getLogger())
 
-        total_review_count = len(reviews["items"]) if reviews else 0
+        total_review_count = len(reviews) if reviews else 0
 
         metadata_dict = _PrivateMetadataConvertor.to_dict(
             private_metadata=private_metadata
