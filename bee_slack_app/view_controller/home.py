@@ -30,9 +30,7 @@ def home_controller(app):
 
         logger.info({"total_review_count": total_review_count})
 
-        user_id = event["user"]
-        user = get_user(logger, user_id)
-        user_name = user["user_name"]
+        user_name = get_user(logger, event["user"])["user_name"]
 
         books_params = None
         metadata_str = ""
@@ -86,9 +84,7 @@ def home_controller(app):
 
         total_review_count = len(reviews) if reviews else 0
 
-        user_id = client["user"]
-        user = get_user(logger, user_id)
-        user_name = user["user_name"]
+        user_name = get_user(logger, user_id)["user_name"]
 
         books_params = None
         metadata_str = ""
@@ -138,9 +134,7 @@ def home_controller(app):
 
         total_review_count = len(reviews) if reviews else 0
 
-        user_id = client["user"]
-        user = get_user(logger, user_id)
-        user_name = user["user_name"]
+        user_name = get_user(logger, user_id)["user_name"]
 
         metadata_dict = _PrivateMetadataConvertor.to_dict(
             private_metadata=private_metadata
