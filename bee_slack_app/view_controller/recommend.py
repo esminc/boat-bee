@@ -1,9 +1,9 @@
 from typing import Optional
 
 from bee_slack_app.model.user import User
-from bee_slack_app.service.recommend import recommend
-from bee_slack_app.service.user import get_user
-from bee_slack_app.service.user_action import record_user_action
+from bee_slack_app.service.recommend import recommend_service
+from bee_slack_app.service.user import user_service
+from bee_slack_app.service.user_action import user_action_service
 from bee_slack_app.view.recommend import generate_book_recommend_model_view
 
 
@@ -16,9 +16,9 @@ def recommend_controller(app):  # pylint: disable=too-many-statements
 
         user_id = body["user"]["id"]
 
-        user: Optional[User] = get_user(user_id)
+        user: Optional[User] = user_service.get_user(user_id)
         if not user:
-            record_user_action(
+            user_action_service.record_user_action(
                 user_id=user_id,
                 action_name="book_recommend_action",
                 status="no_user_profile_error",
@@ -47,10 +47,10 @@ def recommend_controller(app):  # pylint: disable=too-many-statements
             )
             return
 
-        book_list = recommend(user)
+        book_list = recommend_service.recommend(user)
 
         if len(book_list) == 0:
-            record_user_action(
+            user_action_service.record_user_action(
                 user_id=user_id,
                 action_name="book_recommend_action",
                 status="no_recommended_book_error",
@@ -83,7 +83,7 @@ def recommend_controller(app):  # pylint: disable=too-many-statements
             callback_id="book_recommend_modal", book_results=book_list
         )
 
-        record_user_action(
+        user_action_service.record_user_action(
             user_id=user_id,
             action_name="book_recommend_action",
             payload={"book_results": book_list},

@@ -2,7 +2,7 @@
 
 
 from bee_slack_app.repository.book_repository import BookRepository
-from bee_slack_app.service.book import get_books, get_books_before
+from bee_slack_app.service.book import book_service
 
 
 def test_get_booksで本を取得できること_全件取得の場合(mocker):
@@ -40,7 +40,7 @@ def test_get_booksで本を取得できること_全件取得の場合(mocker):
         "last_key": None,
     }
 
-    books = get_books()
+    books = book_service.get_books()
 
     books_items = books["items"]
     books_keys = books["keys"]
@@ -107,7 +107,7 @@ def test_get_booksで本を取得できること_続きのデータなしの場�
         "last_key": None,
     }
 
-    books = get_books(limit=3, keys=["dummy_key_0", "dummy_key_1"])
+    books = book_service.get_books(limit=3, keys=["dummy_key_0", "dummy_key_1"])
 
     books_items = books["items"]
     books_keys = books["keys"]
@@ -174,7 +174,7 @@ def test_get_booksで本を取得できること_続きのデータありの場�
         "last_key": "dummy_last_key",
     }
 
-    books = get_books(limit=3, keys=["dummy_key_0", "dummy_key_1"])
+    books = book_service.get_books(limit=3, keys=["dummy_key_0", "dummy_key_1"])
 
     books_items = books["items"]
     books_keys = books["keys"]
@@ -215,7 +215,7 @@ def test_get_booksでbook_repositoryの処理でエラーが発生した場合No
     )
     mock_book_repository_fetch.side_effect = Exception("dummy exception")
 
-    books = get_books(limit=3, keys=["dummy_key_0", "dummy_key_1"])
+    books = book_service.get_books(limit=3, keys=["dummy_key_0", "dummy_key_1"])
 
     assert books is None
 
@@ -257,7 +257,7 @@ def test_get_books_beforeで本を取得できること_0ページへの遷移�
 
     # 0ページ、1ページのkeysがあるので、現在は1ページ
     # この状態で前に遷移すると0ページに遷移する
-    books = get_books_before(limit=3, keys=["dummy_key_0", "dummy_key_1"])
+    books = book_service.get_books_before(limit=3, keys=["dummy_key_0", "dummy_key_1"])
 
     books_items = books["items"]
     books_keys = books["keys"]
@@ -326,7 +326,7 @@ def test_get_books_beforeで本を取得できること_1ページ以降への�
 
     # 0ページ、1ページ、2ページのkeysがあるので、現在は2ページ
     # この状態で前に遷移すると1ページに遷移する
-    books = get_books_before(
+    books = book_service.get_books_before(
         limit=3, keys=["dummy_key_0", "dummy_key_1", "dummy_key_2"]
     )
 
@@ -369,7 +369,7 @@ def test_get_books_beforeでbook_repositoryの処理でエラーが発生した�
     )
     mock_book_repository_fetch.side_effect = Exception("dummy exception")
 
-    books = get_books_before(
+    books = book_service.get_books_before(
         limit=3, keys=["dummy_key_0", "dummy_key_1", "dummy_key_2"]
     )
 

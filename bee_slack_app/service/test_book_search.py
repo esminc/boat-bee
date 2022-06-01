@@ -2,16 +2,10 @@
 # pylint: disable=non-ascii-name
 
 from bee_slack_app.repository.google_books_repository import GoogleBooksRepository
-from bee_slack_app.service import book_search
+from bee_slack_app.service.book_search import book_search_service
 
 
 class TestBookSearch:
-    def setup_method(self, _):
-        self.book_search = book_search
-
-    def teardown_method(self, _):
-        pass
-
     def test_タイトル指定でヒットした場合は結果が1件以上返ってくること(self, monkeypatch):
         def mock_search_book_by_title(_, title):
             book = [
@@ -48,7 +42,7 @@ class TestBookSearch:
 
         target_title = "テストのタイトル_1"
 
-        result = self.book_search.search_book_by_title(target_title)
+        result = book_search_service.search_book_by_title(target_title)
 
         assert len(result) > 0
 
@@ -74,7 +68,7 @@ class TestBookSearch:
 
         target_title = "絶対にヒットしない検索ワード"
 
-        result = self.book_search.search_book_by_title(target_title)
+        result = book_search_service.search_book_by_title(target_title)
 
         assert len(result) == 0
 
@@ -98,7 +92,7 @@ class TestBookSearch:
 
         target_isbn = "9784873118253"
 
-        result = self.book_search.search_book_by_isbn(target_isbn)
+        result = book_search_service.search_book_by_isbn(target_isbn)
 
         assert result is not None
 
@@ -122,6 +116,6 @@ class TestBookSearch:
 
         target_isbn = "1234567890123"
 
-        result = self.book_search.search_book_by_isbn(target_isbn)
+        result = book_search_service.search_book_by_isbn(target_isbn)
 
         assert result is None

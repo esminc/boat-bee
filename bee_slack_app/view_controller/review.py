@@ -3,10 +3,10 @@ import os
 
 from bee_slack_app.model.review import ReviewContents
 from bee_slack_app.model.user import User
-from bee_slack_app.service.book_search import search_book_by_isbn
-from bee_slack_app.service.review import get_review, get_reviews_by_isbn, post_review
-from bee_slack_app.service.user import get_user
-from bee_slack_app.service.user_action import record_user_action
+from bee_slack_app.service.book_search import book_search_service
+from bee_slack_app.service.review import review_service
+from bee_slack_app.service.user import user_service
+from bee_slack_app.service.user_action import user_action_service
 from bee_slack_app.view.common import simple_modal
 from bee_slack_app.view.post_review import (
     notify_review_post_message_blocks,
@@ -32,9 +32,9 @@ def review_controller(app):  # pylint: disable=too-many-statements
 
         isbn = action["value"]
 
-        reviews = get_reviews_by_isbn(isbn=isbn)
+        reviews = review_service.get_reviews_by_isbn(isbn=isbn)
 
-        record_user_action(
+        user_action_service.record_user_action(
             user_id=user_id,
             action_name="read_review_of_book_action",
             payload={"isbn": isbn, "reviews": reviews},
@@ -72,8 +72,8 @@ def review_controller(app):  # pylint: disable=too-many-statements
 
         user_id = body["user"]["id"]
 
-        if not get_user(user_id):
-            record_user_action(
+        if not user_service.get_user(user_id):
+            user_action_service.record_user_action(
                 user_id=user_id,
                 action_name="post_review_action",
                 status="no_user_profile_error",
@@ -87,7 +87,7 @@ def review_controller(app):  # pylint: disable=too-many-statements
             )
             return
 
-        record_user_action(
+        user_action_service.record_user_action(
             user_id=user_id,
             action_name="post_review_action",
         )
@@ -112,7 +112,7 @@ def review_controller(app):  # pylint: disable=too-many-statements
         # ISBNが取れたらもう一度Google Books APIから本の情報を取り直す
         # Descriptionを追加する関係で表示画面情報からだけでは足りなくなり
         # APIから再取得することにする
-        book_info = search_book_by_isbn(isbn)
+        book_info = book_search_service.search_book_by_isbn(isbn)
 
         # 必ず取得できるのでelse側の考慮は不要
         # ただしImage URLだけは例外
@@ -166,7 +166,7 @@ def review_controller(app):  # pylint: disable=too-many-statements
             "book_description": book_description,
         }
 
-        review = post_review(review_contents)
+        review = review_service.post_review(review_contents)
 
         notify = not bool(
             view["state"]["values"]["disable_notify_review_post_block"][
@@ -174,14 +174,14 @@ def review_controller(app):  # pylint: disable=too-many-statements
             ]["selected_options"]
         )
 
-        record_user_action(
+        user_action_service.record_user_action(
             user_id=user_id,
             action_name="post_review_modal",
             payload={"review": review_contents, "notify": notify},
         )
 
         if notify:
-            user = get_user(review["user_id"])
+            user = user_service.get_user(review["user_id"])
             review["user_name"] = (
                 _make_detailed_user_name(user) if user else review["user_id"]
             )
@@ -205,10 +205,10 @@ def review_controller(app):  # pylint: disable=too-many-statements
 
         user_id, isbn = action["value"].split(":")
 
-        review = get_review(user_id=user_id, isbn=isbn)
+        review = review_service.get_review(user_id=user_id, isbn=isbn)
 
         if not review:
-            record_user_action(
+            user_action_service.record_user_action(
                 user_id=body["user"]["id"],
                 action_name="open_review_detail_modal_action",
                 status="fetch_review_data_error",
@@ -220,7 +220,7 @@ def review_controller(app):  # pylint: disable=too-many-statements
             )
             return
 
-        record_user_action(
+        user_action_service.record_user_action(
             user_id=body["user"]["id"],
             action_name="open_review_detail_modal_action",
             payload={"review": review},

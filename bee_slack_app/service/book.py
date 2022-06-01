@@ -1,111 +1,125 @@
 from logging import getLogger
 from typing import Any, Optional, TypedDict
 
+from injector import Injector, inject
+
 from bee_slack_app.model.book import Book
 from bee_slack_app.repository.book_repository import BookRepository
 
-book_repository = BookRepository()
 
+class BookService:
+    @inject
+    def __init__(
+        self,
+        book_repository: BookRepository,
+    ):
+        self.book_repository = book_repository
 
-class GetBooksResponse(TypedDict):
-    items: list[Book]
-    keys: Any
-    has_next: bool
+    class GetBooksResponse(TypedDict):
+        items: list[Book]
+        keys: Any
+        has_next: bool
 
+    def get_books(
+        self,
+        *,
+        limit: Optional[int] = None,
+        keys: Any = None,
+    ) -> Optional[GetBooksResponse]:
+        """
+        レビューが投稿されている本のリストを取得する
 
-def get_books(
-    *,
-    limit: Optional[int] = None,
-    keys: Any = None,
-) -> Optional[GetBooksResponse]:
-    """
-    レビューが投稿されている本のリストを取得する
+        Args:
+            limit: 一度に取得する本の数
+            keys: 読み込みキーのリスト
 
-    Args:
-        limit: 一度に取得する本の数
-        keys: 読み込みキーのリスト
+        Returns
+            items: 取得した本のリスト
+            keys: 更新された読み込みキーのリスト
+            has_next: さらに読み込む要素があるか
+        """
+        try:
+            logger = getLogger(__name__)
 
-    Returns
-        items: 取得した本のリスト
-        keys: 更新された読み込みキーのリスト
-        has_next: さらに読み込む要素があるか
-    """
-    try:
-        logger = getLogger(__name__)
+            if not keys:
+                keys = []
 
-        if not keys:
-            keys = []
+            if not self._is_valid_key(keys):
+                logger.info({"keys": keys})
+                return None
 
-        if not _is_valid_key(keys):
-            logger.info({"keys": keys})
+            start_key = keys[-1] if len(keys) > 0 else None
+
+            books = self.book_repository.fetch(limit=limit, start_key=start_key)
+
+            logger.info(books)
+
+            last_key = [books["last_key"]] if books["last_key"] else ["end"]  # type: ignore
+            has_next = last_key != ["end"]
+
+            return {
+                "items": books["items"],
+                "keys": keys + last_key,
+                "has_next": has_next,
+            }
+
+        except Exception:  # pylint: disable=broad-except
+            logger.exception("Failed to get data.")
             return None
 
-        start_key = keys[-1] if len(keys) > 0 else None
+    class GetBooksBeforeResponse(TypedDict):
+        items: list[Book]
+        keys: Any
+        is_move_to_first: bool
 
-        books = book_repository.fetch(limit=limit, start_key=start_key)
+    def get_books_before(
+        self,
+        *,
+        limit: int,
+        keys: Any = None,
+    ) -> Optional[GetBooksBeforeResponse]:
+        """
+        レビューが投稿されている本のリストを取得する（前への移動）
 
-        logger.info(books)
+        keysの状態より1ページ前の本のリストを取得する。
+        例えば、keysが3ページ目を指しているならば、2ページ目の本のリストを取得する。
 
-        last_key = [books["last_key"]] if books["last_key"] else ["end"]  # type: ignore
-        has_next = last_key != ["end"]
+        Returns
+            items: 取得した本のリスト
+            keys: 更新された読み込みキーのリスト
+            is_move_to_first: 0ページへの遷移か
+        """
+        try:
+            logger = getLogger(__name__)
 
-        return {"items": books["items"], "keys": keys + last_key, "has_next": has_next}
+            if not keys:
+                keys = []
 
-    except Exception:  # pylint: disable=broad-except
-        logger.exception("Failed to get data.")
-        return None
+            if not self._is_valid_key(keys):
+                logger.info({"keys": keys})
+                return None
 
+            is_move_to_first = len(keys) < 3
 
-class GetBooksBeforeResponse(TypedDict):
-    items: list[Book]
-    keys: Any
-    is_move_to_first: bool
+            start_key = None if is_move_to_first else keys[-3]
 
+            books = self.book_repository.fetch(limit=limit, start_key=start_key)
 
-def get_books_before(
-    *,
-    limit: int,
-    keys: Any = None,
-) -> Optional[GetBooksBeforeResponse]:
-    """
-    レビューが投稿されている本のリストを取得する（前への移動）
+            logger.info(books)
 
-    keysの状態より1ページ前の本のリストを取得する。
-    例えば、keysが3ページ目を指しているならば、2ページ目の本のリストを取得する。
+            return {
+                "items": books["items"],
+                "keys": [books["last_key"]] if is_move_to_first else keys[:-1],
+                "is_move_to_first": is_move_to_first,
+            }
 
-    Returns
-        items: 取得した本のリスト
-        keys: 更新された読み込みキーのリスト
-        is_move_to_first: 0ページへの遷移か
-    """
-    try:
-        logger = getLogger(__name__)
-
-        if not keys:
-            keys = []
-
-        if not _is_valid_key(keys):
-            logger.info({"keys": keys})
+        except Exception:  # pylint: disable=broad-except
+            logger.exception("Failed to get data.")
             return None
 
-        is_move_to_first = len(keys) < 3
-
-        start_key = None if is_move_to_first else keys[-3]
-
-        books = book_repository.fetch(limit=limit, start_key=start_key)
-
-        logger.info(books)
-
-        return {
-            "items": books["items"],
-            "keys": [books["last_key"]] if is_move_to_first else keys[:-1],
-            "is_move_to_first": is_move_to_first,
-        }
-
-    except Exception:  # pylint: disable=broad-except
-        logger.exception("Failed to get data.")
-        return None
+    @staticmethod
+    def _is_valid_key(target) -> bool:
+        return isinstance(target, list)
 
 
-def _is_valid_key(target) -> bool:
-    return isinstance(target, list)
+book_service = Injector().get(BookService)

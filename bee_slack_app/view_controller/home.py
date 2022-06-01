@@ -2,9 +2,9 @@ import json
 from logging import getLogger
 from typing import Any, TypedDict
 
-from bee_slack_app.service.book import get_books, get_books_before
-from bee_slack_app.service.review import get_review_all
-from bee_slack_app.service.user_action import record_user_action
+from bee_slack_app.service.book import book_service
+from bee_slack_app.service.review import review_service
+from bee_slack_app.service.user_action import user_action_service
 from bee_slack_app.view.home import home
 
 BOOK_NUMBER_PER_PAGE = 20
@@ -17,11 +17,11 @@ def home_controller(app):
 
         logger = getLogger(__name__)
 
-        reviews = get_review_all()
+        reviews = review_service.get_review_all()
 
         total_review_count = len(reviews) if reviews else 0
 
-        record_user_action(
+        user_action_service.record_user_action(
             user_id=event["user"],
             action_name="app_home_opened",
             payload={"total_review_count": total_review_count},
@@ -32,7 +32,7 @@ def home_controller(app):
         books_params = None
         metadata_str = ""
 
-        books = get_books(limit=BOOK_NUMBER_PER_PAGE, keys=[])
+        books = book_service.get_books(limit=BOOK_NUMBER_PER_PAGE, keys=[])
 
         logger.info({"books": books})
 
@@ -76,14 +76,16 @@ def home_controller(app):
             private_metadata=private_metadata
         )
 
-        reviews = get_review_all()
+        reviews = review_service.get_review_all()
 
         total_review_count = len(reviews) if reviews else 0
 
         books_params = None
         metadata_str = ""
 
-        books = get_books(limit=BOOK_NUMBER_PER_PAGE, keys=metadata_dict["keys"])
+        books = book_service.get_books(
+            limit=BOOK_NUMBER_PER_PAGE, keys=metadata_dict["keys"]
+        )
 
         logger.info({"books": books})
 
@@ -123,7 +125,7 @@ def home_controller(app):
 
         private_metadata = body["view"]["private_metadata"]
 
-        reviews = get_review_all()
+        reviews = review_service.get_review_all()
 
         total_review_count = len(reviews) if reviews else 0
 
@@ -134,7 +136,9 @@ def home_controller(app):
         books_params = None
         metadata_str = ""
 
-        books = get_books_before(limit=BOOK_NUMBER_PER_PAGE, keys=metadata_dict["keys"])
+        books = book_service.get_books_before(
+            limit=BOOK_NUMBER_PER_PAGE, keys=metadata_dict["keys"]
+        )
 
         logger.info({"books": books})
 
