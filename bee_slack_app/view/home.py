@@ -38,7 +38,7 @@ def home(
                 "type": "header",
                 "text": {
                     "type": "plain_text",
-                    "text": "読書レビュー共有アプリ「Bee（Book Erabu Eiwa）」",
+                    "text": "読書レビュー共有アプリ「Bee（Book Erabu Eiwa）」 :bee:",
                     "emoji": True,
                 },
             },
