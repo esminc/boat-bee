@@ -1,22 +1,12 @@
 import os
 from typing import Optional, TypedDict
 
-from boto3.dynamodb.conditions import Attr, Key  # type: ignore
+from boto3.dynamodb.conditions import Key  # type: ignore
 
 from bee_slack_app.model.review import ReviewContents
 from bee_slack_app.repository.database import get_database_client
 
 REVIEW_ISBN_GSI = "IsbnIndex"
-
-
-class ReviewItemKey(TypedDict):
-    user_id: str
-    isbn: str
-
-
-class GetResponse(TypedDict):
-    items: list[ReviewContents]
-    last_key: Optional[ReviewItemKey]
 
 
 # This is a sample
@@ -47,62 +37,31 @@ class ReviewRepository:
             }
         ).get("Item")
 
-    def get_some(
-        self,
-        *,
-        conditions: GetConditions = None,
-        limit: Optional[int] = None,
-        start_key: Optional[ReviewItemKey] = None,
-    ) -> GetResponse:
+    def get_all(self) -> list[ReviewContents]:
         """
-        本のレビューを複数取得する
+        本のレビューを全て取得する
 
-        Args:
-            conditions : 検索条件。省略した場合は、全てのレビューを取得する。
-            limit : 取得するアイテムの上限数
-            start_key: 読み込み位置を表すキー
-        Returns:
-            items: 本のレビューのリスト
-            last_key: 読み込んだ最後のキー
+        Returns: 本のレビューのリスト
         """
 
-        def scan(exclusive_start_key=None, filter_expression=None, max_item_count=None):
+        def scan(exclusive_start_key=None):
             option = {}
-            if filter_expression:
-                option["FilterExpression"] = filter_expression
             if exclusive_start_key:
                 option["ExclusiveStartKey"] = exclusive_start_key
-            if max_item_count:
-                option["Limit"] = max_item_count
 
             response = self.table.scan(**option)
 
             return response["Items"], response.get("LastEvaluatedKey")
 
-        filter_expression = None
+        items, last_key = scan()
 
-        if conditions:
-            for condition_key, condition_value in conditions.items():
-                filter_expression = (
-                    filter_expression & Attr(condition_key).eq(str(condition_value))
-                    if filter_expression
-                    else Attr(condition_key).eq(str(condition_value))
-                )
+        # レスポンスに LastEvaluatedKey が含まれなくなるまでループ処理を実行する
+        # see https://dev.classmethod.jp/articles/hot-to-get-more-than-1mb-of-data-from-dynamodb-when-using-scan/
+        while last_key is not None:
+            new_items, last_key = scan(exclusive_start_key=last_key)
+            items.extend(new_items)
 
-        items, last_key = scan(
-            filter_expression=filter_expression,
-            exclusive_start_key=start_key,
-            max_item_count=limit,
-        )
-
-        if not limit:
-            # レスポンスに LastEvaluatedKey が含まれなくなるまでループ処理を実行する
-            # see https://dev.classmethod.jp/articles/hot-to-get-more-than-1mb-of-data-from-dynamodb-when-using-scan/
-            while last_key is not None:
-                new_items, last_key = scan(exclusive_start_key=last_key)
-                items.extend(new_items)
-
-        return {"items": items, "last_key": last_key}
+        return items
 
     def get_by_isbn(self, *, isbn: str) -> list[ReviewContents]:
         """
