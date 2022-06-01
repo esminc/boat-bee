@@ -17,6 +17,7 @@ def test_複数のおすすめ本を取得できること(mocker):
                     "ML-a": "9876543210987",
                     "ML-b": "8765432109876",
                 },
+                "metadata": {"created_at": "2022-06-01T18:06:04+09:00"},
             }
         },
     )
@@ -37,6 +38,7 @@ def test_おすすめ本の取得で存在しないユーザIDに対してはNon
         "_load_recommend_info",
         return_value={
             "result": {"user_id_0": "1234567890123", "user_id_1": "1234567890456"},
+            "metadata": {"created_at": "2022-06-01T18:06:04+09:00"},
         },
     )
 
@@ -60,7 +62,8 @@ def test_ひとつのMLがNoneでもおすすめ本を取得できること(mock
                     "ML-a": "9876543210987",
                     "ML-b": "8765432109876",
                 },
-            }
+            },
+            "metadata": {"created_at": "2022-06-01T18:06:04+09:00"},
         },
     )
 
@@ -71,3 +74,30 @@ def test_ひとつのMLがNoneでもおすすめ本を取得できること(mock
     assert recommend_book_isbn == {
         "ML-b": "2345678901234",
     }
+
+
+def test_JSONの生成時刻が取得できること(mocker):
+    mocker.patch.object(
+        RecommendBookRepository,
+        "_load_recommend_info",
+        return_value={
+            "result": {
+                "user_id_0": {
+                    "ML-a": "1234567890123",
+                    "ML-b": "2345678901234",
+                },
+                "user_id_1": {
+                    "ML-a": "9876543210987",
+                    "ML-b": "8765432109876",
+                },
+            },
+            "metadata": {"created_at": "2022-06-01T18:06:04+09:00"},
+        },
+    )
+
+    recommend_book_repository = RecommendBookRepository()
+
+    timestamp = recommend_book_repository.created_at()
+
+    assert timestamp is not None
+    assert timestamp == "2022-06-01T18:06:04+09:00"
