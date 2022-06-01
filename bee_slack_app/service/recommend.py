@@ -36,7 +36,8 @@ def recommend(user: User) -> list[SearchedBook]:
         isbn_dict = recommend_book_repository.fetch(user_id)
 
         if not isbn_dict:
-            logger.info("Failed to recommend book. user_id: ", user_id)
+            logger.info("Failed to recommend book")
+            logger.info({"user_id": user_id})
             return []
 
         results = []

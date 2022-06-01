@@ -129,6 +129,6 @@ def post_review(review_contents: ReviewContents) -> Optional[ReviewContents]:
 
         return item
 
-    except Exception as error:  # pylint: disable=broad-except
-        logger.exception(f"Failed to store data {error}")
+    except Exception:  # pylint: disable=broad-except
+        logger.exception("Failed to store data")
         return None
