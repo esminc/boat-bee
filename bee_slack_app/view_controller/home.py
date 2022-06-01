@@ -4,6 +4,7 @@ from typing import Any, TypedDict
 
 from bee_slack_app.service.book import get_books, get_books_before
 from bee_slack_app.service.review import get_review_all
+from bee_slack_app.service.user import get_user
 from bee_slack_app.service.user_action import record_user_action
 from bee_slack_app.view.home import home
 
@@ -28,6 +29,10 @@ def home_controller(app):
         )
 
         logger.info({"total_review_count": total_review_count})
+
+        user_id = client["user"]
+        user = get_user(logger, user_id)
+        user_name = user["user_name"]
 
         books_params = None
         metadata_str = ""
@@ -54,6 +59,7 @@ def home_controller(app):
                 see_more_recommended_book_action_id="book_recommend_action",
                 user_info_action_id="user_info_action",
                 total_review_count=total_review_count,
+                user_name=user_name,
                 books_params=books_params,
                 private_metadata=metadata_str,
             ),
@@ -80,6 +86,10 @@ def home_controller(app):
 
         total_review_count = len(reviews) if reviews else 0
 
+        user_id = client["user"]
+        user = get_user(logger, user_id)
+        user_name = user["user_name"]
+
         books_params = None
         metadata_str = ""
 
@@ -105,6 +115,7 @@ def home_controller(app):
                 see_more_recommended_book_action_id="book_recommend_action",
                 user_info_action_id="user_info_action",
                 total_review_count=total_review_count,
+                user_name=user_name,
                 books_params=books_params,
                 private_metadata=metadata_str,
             ),
@@ -126,6 +137,10 @@ def home_controller(app):
         reviews = get_review_all()
 
         total_review_count = len(reviews) if reviews else 0
+
+        user_id = client["user"]
+        user = get_user(logger, user_id)
+        user_name = user["user_name"]
 
         metadata_dict = _PrivateMetadataConvertor.to_dict(
             private_metadata=private_metadata
@@ -156,6 +171,7 @@ def home_controller(app):
                 see_more_recommended_book_action_id="book_recommend_action",
                 user_info_action_id="user_info_action",
                 total_review_count=total_review_count,
+                user_name=user_name,
                 books_params=books_params,
                 private_metadata=metadata_str,
             ),
