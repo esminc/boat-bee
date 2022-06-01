@@ -127,6 +127,8 @@ def post_review(review_contents: ReviewContents) -> Optional[ReviewContents]:
 
         book_repository.put(book=book)
 
+        user_repository.update_posted_review(review_contents["user_id"], True)
+
         return item
 
     except Exception:  # pylint: disable=broad-except

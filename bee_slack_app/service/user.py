@@ -46,6 +46,18 @@ def get_all_user() -> list[User]:
         return []
 
 
+def get_users_posted_review():
+    """
+    レビューを投稿しているユーザを取得する
+    """
+    try:
+        return user_repository.get_by_posted_review()
+
+    except Exception:  # pylint: disable=broad-except
+        # logger.exception("Failed to get data.")
+        return []
+
+
 def add_user(user: User) -> None:
     """
     ユーザ情報の登録・更新をする

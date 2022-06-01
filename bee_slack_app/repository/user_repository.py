@@ -3,6 +3,7 @@
 import os
 from typing import Optional
 
+from boto3.dynamodb.conditions import Key  # type: ignore
 from bee_slack_app.model.user import User
 from bee_slack_app.repository.database import get_database_client
 
@@ -21,8 +22,21 @@ class UserRepository:
         Returns:
             User: 取得したユーザー情報。未登録の場合は、Noneを返します。
         """
-        response = self.table.get_item(Key={"user_id": user_id})
-        return response.get("Item")
+
+        items = self.table.query(
+            KeyConditionExpression=Key("user_id").eq(user_id),
+        )["Items"]
+
+        if not items:
+            return None
+
+        user = {
+            item["user_attribute_key"]: item["user_attribute_value"] for item in items
+        }
+
+        user["user_id"] = user_id
+
+        return user
 
     def get_all(self) -> list[User]:
         """
@@ -31,22 +45,58 @@ class UserRepository:
         Returns:
             list[User]: 取得した全てユーザー情報のリスト。未登録の場合は、空のリストを返す
         """
-        response = self.table.scan()
-        users = response["Items"]
+        items = self.table.scan()["Items"]
 
-        # レスポンスに LastEvaluatedKey が含まれなくなるまでループ処理を実行する
-        while "LastEvaluatedKey" in response:
-            response = self.table.scan(ExclusiveStartKey=response["LastEvaluatedKey"])
-            users.extend(response["Items"])
+        users = {}
+
+        for item in items:
+            user_id = item["user_id"]
+
+            user = users.get(user_id)
+            if not user:
+                users[user_id] = {}
+                user = users.get(user_id)
+
+            user_attribute_key = item["user_attribute_key"]
+            user[user_attribute_key] = item["user_attribute_value"]
+
+        return [{"user_id": k, **v} for k, v in users.items()]
+
+    def get_by_posted_review(self) -> list[User]:
+        """
+        レビューを投稿しているユーザを取得する
+        """
+
+        items = self.table.query(
+            IndexName="UserTableGSI0",
+            KeyConditionExpression=Key("user_attribute_value").eq("post_review_true"),
+        )["Items"]
+
+        users = [self.get(item["user_id"]) for item in items]
 
         return users
+
+    def update_posted_review(self, *, user_id: str, posted_review: bool):
+        """
+        レビューを投稿しているか、を更新する
+        """
+        user_attribute_value = (
+            "post_review_true" if posted_review else "post_review_false"
+        )
+
+        self.table.put_item(
+            Item={
+                "user_id": user_id,
+                "user_attribute_key": "post_review",
+                "user_attribute_value": user_attribute_value,
+            }
+        )
 
     def create(self, user: User) -> None:
         """
         データを追加および上書きします
         """
         item = {
-            "user_id": user["user_id"],
             "user_name": user["user_name"],
             "department": user["department"],
             "job_type": user["job_type"],
@@ -54,7 +104,14 @@ class UserRepository:
             "updated_at": user["updated_at"],
         }
 
-        self.table.put_item(Item=item)
+        for k, v in item.items():
+            self.table.put_item(
+                Item={
+                    "user_id": user["user_id"],
+                    "user_attribute_key": k,
+                    "user_attribute_value": v,
+                }
+            )
 
     def delete(self):
         """
