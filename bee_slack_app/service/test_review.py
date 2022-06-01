@@ -1,8 +1,6 @@
 # pylint: disable=non-ascii-name
 
 
-from logging import getLogger
-
 from bee_slack_app.repository.book_repository import BookRepository
 from bee_slack_app.repository.review_repository import ReviewRepository
 from bee_slack_app.repository.user_repository import UserRepository
@@ -44,7 +42,7 @@ def test_get_reviewでレビューを取得できること(monkeypatch):
 
     monkeypatch.setattr(UserRepository, "get", mock_user_repository_get)
 
-    review = get_review(logger=getLogger(), user_id="user_id_0", isbn="12345")
+    review = get_review(user_id="user_id_0", isbn="12345")
 
     assert review["user_id"] == "user_id_0"
     assert review["user_name"] == "user_name_0"
@@ -83,7 +81,7 @@ def test_get_reviewで該当するユーザ情報がない場合はユーザ名�
 
     monkeypatch.setattr(UserRepository, "get", mock_user_repository_get)
 
-    review = get_review(logger=getLogger(), user_id="user_id_0", isbn="12345")
+    review = get_review(user_id="user_id_0", isbn="12345")
 
     assert review["user_id"] == "user_id_0"
     assert review["user_name"] == "user_id_0"
@@ -109,7 +107,7 @@ def test_get_reviewでreview_repositoryの処理でエラーが発生した場�
 
     monkeypatch.setattr(UserRepository, "get", mock_user_repository_get)
 
-    review = get_review(logger=getLogger(), user_id="user_id_0", isbn="12345")
+    review = get_review(user_id="user_id_0", isbn="12345")
 
     assert review is None
 
@@ -138,7 +136,7 @@ def test_get_reviewでuser_repositoryの処理でエラーが発生した場合N
 
     monkeypatch.setattr(UserRepository, "get", mock_user_repository_get)
 
-    review = get_review(logger=getLogger(), user_id="user_id_0", isbn="12345")
+    review = get_review(user_id="user_id_0", isbn="12345")
 
     assert review is None
 
@@ -216,7 +214,7 @@ def test_get_review_allでレビューを取得できること(monkeypatch):
 
     monkeypatch.setattr(UserRepository, "get_all", mock_user_repository_get_all)
 
-    reviews = get_review_all(logger=getLogger())
+    reviews = get_review_all()
 
     assert len(reviews) == 3
 
@@ -307,7 +305,7 @@ def test_get_reviewsで該当するユーザ情報がない場合はユーザ名
 
     monkeypatch.setattr(UserRepository, "get_all", mock_user_repository_get_all)
 
-    reviews = get_review_all(logger=getLogger())
+    reviews = get_review_all()
 
     assert len(reviews) == 3
 
@@ -356,7 +354,7 @@ def test_get_review_allでreview_repositoryの処理でエラーが発生した�
 
     monkeypatch.setattr(UserRepository, "get_all", mock_review_repository_get_all)
 
-    reviews = get_review_all(logger=getLogger())
+    reviews = get_review_all()
 
     assert reviews is None
 
@@ -369,7 +367,7 @@ def test_get_review_allでuser_repositoryの処理でエラーが発生した場
 
     monkeypatch.setattr(ReviewRepository, "get", mock_user_repository_get_all)
 
-    reviews = get_review_all(logger=getLogger())
+    reviews = get_review_all()
 
     assert reviews is None
 
@@ -384,7 +382,6 @@ def test_post_reviewでレビューを投稿できること(
     mocker.patch.object(datetime, "now").return_value = "2022-04-01T00:00:00+09:00"
 
     review = post_review(
-        logger=getLogger(),
         review_contents={
             "user_id": "test_user_id",
             "isbn": "12345",
@@ -427,7 +424,6 @@ def test_post_reviewでreview_repositoryの処理でエラーが発生した場�
     mocker.patch.object(datetime, "now").return_value = "2022-04-01T00:00:00+09:00"
 
     review = post_review(
-        logger=getLogger(),
         review_contents={
             "user_id": "test_user_id",
             "isbn": "12345",
@@ -459,7 +455,6 @@ def test_post_reviewでbook_repositoryの処理でエラーが発生した場合
     mocker.patch.object(datetime, "now").return_value = "2022-04-01T00:00:00+09:00"
 
     review = post_review(
-        logger=getLogger(),
         review_contents={
             "user_id": "test_user_id",
             "isbn": "12345",

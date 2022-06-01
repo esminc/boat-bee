@@ -1,5 +1,5 @@
 from logging import getLogger
-from typing import Any, Optional
+from typing import Optional
 
 from bee_slack_app.model.book import Book
 from bee_slack_app.model.review import ReviewContents
@@ -13,10 +13,12 @@ user_repository = UserRepository()
 book_repository = BookRepository()
 
 
-def get_review(*, logger: Any, user_id: str, isbn: str) -> Optional[ReviewContents]:
+def get_review(*, user_id: str, isbn: str) -> Optional[ReviewContents]:
     """
     レビューを一意に指定して取得する
     """
+    logger = getLogger(__name__)
+
     try:
         review = review_repository.get(user_id=user_id, isbn=isbn)
 
@@ -34,15 +36,14 @@ def get_review(*, logger: Any, user_id: str, isbn: str) -> Optional[ReviewConten
         return None
 
 
-def get_review_all(  # pylint: disable=dangerous-default-value
-    *,
-    logger: Any,
-) -> Optional[list[ReviewContents]]:
+def get_review_all() -> Optional[list[ReviewContents]]:
     """
     全てのレビューを取得する
 
     Returns: 取得したレビューのリスト
     """
+    logger = getLogger(__name__)
+
     try:
 
         reviews = review_repository.get_all()
@@ -92,9 +93,10 @@ def fill_user_name(review_contents_list: list[ReviewContents]) -> None:
         review_contents["user_name"] = user_name
 
 
-def post_review(
-    logger: Any, review_contents: ReviewContents
-) -> Optional[ReviewContents]:
+def post_review(review_contents: ReviewContents) -> Optional[ReviewContents]:
+
+    logger = getLogger(__name__)
+
     try:
         updated_at = datetime.now()
 

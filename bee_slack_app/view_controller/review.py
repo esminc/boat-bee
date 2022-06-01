@@ -64,7 +64,7 @@ def review_controller(app):  # pylint: disable=too-many-statements
         )
 
     @app.action("post_review_action")
-    def open_book_search_modal(ack, body, client, logger):
+    def open_book_search_modal(ack, body, client):
         """
         本の検索モーダルを開く
         """
@@ -72,7 +72,7 @@ def review_controller(app):  # pylint: disable=too-many-statements
 
         user_id = body["user"]["id"]
 
-        if not get_user(logger, user_id):
+        if not get_user(user_id):
             record_user_action(
                 user_id=user_id,
                 action_name="post_review_action",
@@ -101,7 +101,7 @@ def review_controller(app):  # pylint: disable=too-many-statements
 
     @app.view("post_review_modal")
     def handle_submission(
-        ack, body, _, view, logger, client
+        ack, body, _, view, client
     ):  # pylint: disable=too-many-locals
 
         # ハック的な対処なので注意
@@ -166,7 +166,7 @@ def review_controller(app):  # pylint: disable=too-many-statements
             "book_description": book_description,
         }
 
-        review = post_review(logger, review_contents)
+        review = post_review(review_contents)
 
         notify = not bool(
             view["state"]["values"]["disable_notify_review_post_block"][
@@ -181,7 +181,7 @@ def review_controller(app):  # pylint: disable=too-many-statements
         )
 
         if notify:
-            user = get_user(logger, review["user_id"])
+            user = get_user(review["user_id"])
             review["user_name"] = (
                 _make_detailed_user_name(user) if user else review["user_id"]
             )
@@ -200,12 +200,12 @@ def review_controller(app):  # pylint: disable=too-many-statements
         return f'{user["user_name"]}  ({user_department_dict[user["department"]]})'
 
     @app.action("open_review_detail_modal_action")
-    def open_review_detail_modal(ack, body, client, logger, action):
+    def open_review_detail_modal(ack, body, client, action):
         ack()
 
         user_id, isbn = action["value"].split(":")
 
-        review = get_review(logger=logger, user_id=user_id, isbn=isbn)
+        review = get_review(user_id=user_id, isbn=isbn)
 
         if not review:
             record_user_action(

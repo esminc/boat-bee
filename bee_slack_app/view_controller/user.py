@@ -8,12 +8,12 @@ from bee_slack_app.view.user import user_profile_modal
 
 def user_controller(app):
     @app.action("user_info_action")
-    def open_user_info(ack, body, client, logger):
+    def open_user_info(ack, body, client):
         ack()
         user_id = body["user"]["id"]
 
         # ユーザー情報の取得
-        user: Optional[User] = get_user(logger, user_id)
+        user: Optional[User] = get_user(user_id)
 
         # slackアカウントから名前（Display Name）Display Nameを取得する
         # display_nameを設定していない場合は、設定必須のreal_nameをユーザ名とすることで、対応する
@@ -39,7 +39,7 @@ def user_controller(app):
         )
 
     @app.view("user_profile_modal")
-    def handle_submission(ack, body, _, view, logger):
+    def handle_submission(ack, body, _, view):
 
         user_name = view["blocks"][0]["text"]["text"]
 
@@ -68,7 +68,7 @@ def user_controller(app):
             "updated_at": None,
         }
 
-        add_user(logger, user)
+        add_user(user)
 
         record_user_action(
             user_id=user_id,

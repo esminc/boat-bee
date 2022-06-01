@@ -1,4 +1,5 @@
-from typing import Any, Optional
+from logging import getLogger
+from typing import Optional
 
 from bee_slack_app.model.user import User
 from bee_slack_app.repository.user_repository import UserRepository
@@ -7,7 +8,7 @@ from bee_slack_app.utils import datetime
 user_repository = UserRepository()
 
 
-def get_user(logger: Any, user_id: str) -> Optional[User]:
+def get_user(user_id: str) -> Optional[User]:
     """
     ユーザ情報を取得する
 
@@ -17,6 +18,8 @@ def get_user(logger: Any, user_id: str) -> Optional[User]:
     Returns:
         User: 取得したユーザー情報。未登録の場合は、Noneが返る。
     """
+    logger = getLogger(__name__)
+
     try:
         return user_repository.get(user_id)
 
@@ -25,7 +28,7 @@ def get_user(logger: Any, user_id: str) -> Optional[User]:
         return None
 
 
-def get_all_user(logger: Any) -> list[User]:
+def get_all_user() -> list[User]:
     """
     ユーザ情報を取得する
 
@@ -33,6 +36,8 @@ def get_all_user(logger: Any) -> list[User]:
     Returns:
         User: 取得したユーザー情報。未登録の場合は、空のリストが返る。
     """
+    logger = getLogger(__name__)
+
     try:
         return user_repository.get_all()
 
@@ -41,10 +46,11 @@ def get_all_user(logger: Any) -> list[User]:
         return []
 
 
-def add_user(logger: Any, user: User) -> None:
+def add_user(user: User) -> None:
     """
     ユーザ情報の登録・更新をする
     """
+    logger = getLogger(__name__)
 
     try:
         user_repository.create(
