@@ -40,15 +40,15 @@ def test_おすすめの本の情報を取得できること(monkeypatch):
     }
 
     logger = getLogger()
-    book_list, ml_model_list = recommend(logger, user)
+    recommended_books = recommend(logger, user)
 
-    assert book_list[0]["title"] == "仕事ではじめる機械学習"
-    assert book_list[0]["isbn"] == "1234567890123"
-    assert book_list[0]["authors"] == ["有賀康顕", "中山心太", "西林孝"]
-    assert book_list[0]["image_url"] == "test_image_url"
-    assert book_list[0]["google_books_url"] == "test_google_books_url"
-    assert book_list[0]["description"] == "test_description"
-    assert ml_model_list[0]["ml_model"] == "ml-a"
+    assert recommended_books[0][0]["title"] == "仕事ではじめる機械学習"
+    assert recommended_books[0][0]["isbn"] == "1234567890123"
+    assert recommended_books[0][0]["authors"] == ["有賀康顕", "中山心太", "西林孝"]
+    assert recommended_books[0][0]["image_url"] == "test_image_url"
+    assert recommended_books[0][0]["google_books_url"] == "test_google_books_url"
+    assert recommended_books[0][0]["description"] == "test_description"
+    assert recommended_books[0][1] == "ml-a"
 
 
 def test_おすすめの本が取得できなかったら空のリストを返すこと(monkeypatch):  # pylint: disable=invalid-name
@@ -83,9 +83,9 @@ def test_おすすめの本が取得できなかったら空のリストを返�
     }
 
     logger = getLogger()
-    book = recommend(logger, user)
+    recommended_books = recommend(logger, user)
 
-    assert len(book) == 0
+    assert len(recommended_books) == 0
 
 
 def test_おすすめの本の情報がNoneのケース(monkeypatch):  # pylint: disable=invalid-name
@@ -113,10 +113,9 @@ def test_おすすめの本の情報がNoneのケース(monkeypatch):  # pylint:
     }
 
     logger = getLogger()
-    book_list, ml_model_list = recommend(logger, user)
+    recommended_books = recommend(logger, user)
 
-    assert len(book_list) == 0
-    assert len(ml_model_list) == 0
+    assert len(recommended_books) == 0
 
 
 def test_おすすめ本の書影がNoneなら空のリストが返値に設定されること(monkeypatch):  # pylint: disable=invalid-name
@@ -151,15 +150,15 @@ def test_おすすめ本の書影がNoneなら空のリストが返値に設定�
     }
 
     logger = getLogger()
-    book_list, ml_model_list = recommend(logger, user)
+    recommended_books = recommend(logger, user)
 
-    assert book_list[0]["title"] == "仕事ではじめる機械学習"
-    assert book_list[0]["isbn"] == "1234567890123"
-    assert book_list[0]["authors"] == ["有賀康顕", "中山心太", "西林孝"]
-    assert book_list[0]["image_url"] is None
-    assert book_list[0]["google_books_url"] == "test_google_books_url"
-    assert book_list[0]["description"] == "test_description"
-    assert ml_model_list[0]["ml_model"] == "ml-a"
+    assert recommended_books[0][0]["title"] == "仕事ではじめる機械学習"
+    assert recommended_books[0][0]["isbn"] == "1234567890123"
+    assert recommended_books[0][0]["authors"] == ["有賀康顕", "中山心太", "西林孝"]
+    assert recommended_books[0][0]["image_url"] is None
+    assert recommended_books[0][0]["google_books_url"] == "test_google_books_url"
+    assert recommended_books[0][0]["description"] == "test_description"
+    assert recommended_books[0][1] == "ml-a"
 
 
 def test_モジュール内で例外が発生した場合は返値は空のリストであること(monkeypatch):  # pylint: disable=invalid-name
@@ -235,20 +234,20 @@ def test_複数のおすすめの本の情報を取得できること(monkeypatc
     }
 
     logger = getLogger()
-    book_list, ml_model_list = recommend(logger, user)
+    recommended_books = recommend(logger, user)
 
-    assert book_list[0]["title"] == "test_title_1"
-    assert book_list[0]["isbn"] == "1234567890123"
-    assert book_list[0]["authors"] == "test_authors_1"
-    assert book_list[0]["image_url"] == "test_image_url_1"
-    assert book_list[0]["google_books_url"] == "test_google_books_url_1"
-    assert book_list[0]["description"] == "test_description_1"
-    assert ml_model_list[0]["ml_model"] == "ml-a"
+    assert recommended_books[0][0]["title"] == "test_title_1"
+    assert recommended_books[0][0]["isbn"] == "1234567890123"
+    assert recommended_books[0][0]["authors"] == "test_authors_1"
+    assert recommended_books[0][0]["image_url"] == "test_image_url_1"
+    assert recommended_books[0][0]["google_books_url"] == "test_google_books_url_1"
+    assert recommended_books[0][0]["description"] == "test_description_1"
+    assert recommended_books[0][1] == "ml-a"
 
-    assert book_list[1]["title"] == "test_title_2"
-    assert book_list[1]["isbn"] == "9876543221098"
-    assert book_list[1]["authors"] == "test_authors_2"
-    assert book_list[1]["image_url"] == "test_image_url_2"
-    assert book_list[1]["google_books_url"] == "test_google_books_url_2"
-    assert book_list[1]["description"] == "test_description_2"
-    assert ml_model_list[1]["ml_model"] == "ml-b"
+    assert recommended_books[1][0]["title"] == "test_title_2"
+    assert recommended_books[1][0]["isbn"] == "9876543221098"
+    assert recommended_books[1][0]["authors"] == "test_authors_2"
+    assert recommended_books[1][0]["image_url"] == "test_image_url_2"
+    assert recommended_books[1][0]["google_books_url"] == "test_google_books_url_2"
+    assert recommended_books[1][0]["description"] == "test_description_2"
+    assert recommended_books[1][1] == "ml-b"

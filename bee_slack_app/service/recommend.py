@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Tuple
 
 from bee_slack_app.model.search import SearchedBook
 from bee_slack_app.model.user import User
@@ -8,7 +8,7 @@ from bee_slack_app.repository.recommend_book_repository import RecommendBookRepo
 recommend_book_repository = RecommendBookRepository()
 
 
-def recommend(logger: Any, user: User) -> Any:
+def recommend(logger: Any, user: User) -> list[Tuple[SearchedBook, str]]:
     """
     おすすめの本の情報を返却する
 
@@ -38,8 +38,7 @@ def recommend(logger: Any, user: User) -> Any:
             logger.info("Failed to recommend book. user_id: ", user_id)
             return []
 
-        searched_books = []
-        ml_models = []
+        recommended_books = []
         for ml_model, isbn in recommended_book_dict.items():
             book = GoogleBooksRepository().search_book_by_isbn(isbn)
             if book is not None:
@@ -51,9 +50,9 @@ def recommend(logger: Any, user: User) -> Any:
                     "image_url": book["image_url"],
                     "description": book["description"],
                 }
-                searched_books.append(book_info)
-                ml_models.append({"ml_model": ml_model})
-        return searched_books, ml_models
+                item = (book_info, ml_model)
+                recommended_books.append(item)
+        return recommended_books
 
     except Exception:  # pylint: disable=broad-except
         logger.exception("Failed to get data.")
