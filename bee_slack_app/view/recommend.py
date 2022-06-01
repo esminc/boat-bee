@@ -1,4 +1,5 @@
 from typing import Tuple
+
 from bee_slack_app.model.search import SearchedBook
 
 
