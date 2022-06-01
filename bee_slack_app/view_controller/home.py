@@ -30,7 +30,7 @@ def home_controller(app):
 
         logger.info({"total_review_count": total_review_count})
 
-        user_id = client["user"]
+        user_id = event["user"]
         user = get_user(logger, user_id)
         user_name = user["user_name"]
 
