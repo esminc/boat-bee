@@ -8,7 +8,7 @@ from bee_slack_app.repository.recommend_book_repository import RecommendBookRepo
 recommend_book_repository = RecommendBookRepository()
 
 
-def recommend(logger: Any, user: User) -> list[SearchedBook]:
+def recommend(logger: Any, user: User) -> Any:
     """
     おすすめの本の情報を返却する
 
@@ -17,6 +17,7 @@ def recommend(logger: Any, user: User) -> list[SearchedBook]:
 
     Returns:
         book: おすすめする本の情報。
+        ml_model:おすすめした機械学習のモデル
     """
     try:
         # デバッグ用
@@ -31,14 +32,15 @@ def recommend(logger: Any, user: User) -> list[SearchedBook]:
         }
         user_id = user_id_in_fdo_workspace.get(user_id, user_id)
 
-        isbn_dict = recommend_book_repository.fetch(user_id)
+        recommended_book_dict = recommend_book_repository.fetch(user_id)
 
-        if not isbn_dict:
+        if not recommended_book_dict:
             logger.info("Failed to recommend book. user_id: ", user_id)
             return []
 
-        results = []
-        for isbn in isbn_dict.values():
+        searched_books = []
+        ml_models = []
+        for ml_model, isbn in recommended_book_dict.items():
             book = GoogleBooksRepository().search_book_by_isbn(isbn)
             if book is not None:
                 book_info: SearchedBook = {
@@ -49,9 +51,11 @@ def recommend(logger: Any, user: User) -> list[SearchedBook]:
                     "image_url": book["image_url"],
                     "description": book["description"],
                 }
-                results.append(book_info)
-        return results
+                searched_books.append(book_info)
+                ml_models.append({"ml_model": ml_model})
+        return searched_books, ml_models
 
     except Exception:  # pylint: disable=broad-except
         logger.exception("Failed to get data.")
+        # return []
         return []
