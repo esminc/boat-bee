@@ -3,9 +3,11 @@ from logging import getLogger
 from typing import Any, TypedDict
 
 from bee_slack_app.service.book import get_books, get_books_before
+from bee_slack_app.service.recommend import created_at
 from bee_slack_app.service.review import get_review_all
 from bee_slack_app.service.user import get_user
 from bee_slack_app.service.user_action import record_user_action
+from bee_slack_app.utils.datetime import parse
 from bee_slack_app.view.home import home
 
 BOOK_NUMBER_PER_PAGE = 20
@@ -21,6 +23,7 @@ def home_controller(app):  # pylint: disable=too-many-statements
         reviews = get_review_all()
 
         total_review_count = len(reviews) if reviews else 0
+        recommend_timestamp = parse(created_at())
 
         record_user_action(
             user_id=event["user"],
@@ -59,6 +62,7 @@ def home_controller(app):  # pylint: disable=too-many-statements
                 user_info_action_id="user_info_action",
                 total_review_count=total_review_count,
                 user_name=user_name,
+                recommend_timestamp=recommend_timestamp,
                 books_params=books_params,
                 private_metadata=metadata_str,
             ),
@@ -84,6 +88,7 @@ def home_controller(app):  # pylint: disable=too-many-statements
         reviews = get_review_all()
 
         total_review_count = len(reviews) if reviews else 0
+        recommend_timestamp = parse(created_at())
 
         user = get_user(user_id)
         user_name = f"{user['user_name']}さん" if user is not None else "あなた"
@@ -114,6 +119,7 @@ def home_controller(app):  # pylint: disable=too-many-statements
                 user_info_action_id="user_info_action",
                 total_review_count=total_review_count,
                 user_name=user_name,
+                recommend_timestamp=recommend_timestamp,
                 books_params=books_params,
                 private_metadata=metadata_str,
             ),
@@ -135,6 +141,7 @@ def home_controller(app):  # pylint: disable=too-many-statements
         reviews = get_review_all()
 
         total_review_count = len(reviews) if reviews else 0
+        recommend_timestamp = parse(created_at())
 
         user = get_user(user_id)
         user_name = f"{user['user_name']}さん" if user is not None else "あなた"
@@ -169,6 +176,7 @@ def home_controller(app):  # pylint: disable=too-many-statements
                 user_info_action_id="user_info_action",
                 total_review_count=total_review_count,
                 user_name=user_name,
+                recommend_timestamp=recommend_timestamp,
                 books_params=books_params,
                 private_metadata=metadata_str,
             ),

@@ -16,6 +16,7 @@ def home(
     user_info_action_id: str,
     total_review_count: int,
     user_name: str,
+    recommend_timestamp: str,
     books_params: Optional[BooksParam] = None,
     private_metadata: str = "",
 ):
@@ -57,6 +58,13 @@ def home(
                 "text": {
                     "type": "mrkdwn",
                     "text": "Beeは、FDOが開発・提供する、本のレビュー共有アプリです。\n仕事で役立った本のレビューを投稿・共有できます。\nデータがたまればたまるほど、AIはより賢くなりあなたに合ったおすすめの本をお伝えすることができます。\n書籍購入制度で購入した本などのレビューを投稿してみましょう！！。",
+                },
+            },
+            {
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": f"*最新の推薦データ* : {recommend_timestamp}",
                 },
             },
             {"type": "divider"},
