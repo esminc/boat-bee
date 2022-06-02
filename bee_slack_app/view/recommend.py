@@ -21,7 +21,8 @@ def generate_book_recommend_model_view(
     )
 
     for recommended_book in recommended_books:
-        blocks.extend(_recommend_book_block(recommended_book[0]))
+        book = recommended_book[0]
+        blocks.extend(_recommend_book_block(book))
 
     view = {
         "type": "modal",

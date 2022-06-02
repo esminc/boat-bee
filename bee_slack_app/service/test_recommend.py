@@ -42,6 +42,7 @@ def test_おすすめの本の情報を取得できること(monkeypatch):
     logger = getLogger()
     recommended_books = recommend(logger, user)
 
+    # タプルの1番目は、本情報。２番目はモデル情報が格納されている。
     assert recommended_books[0][0]["title"] == "仕事ではじめる機械学習"
     assert recommended_books[0][0]["isbn"] == "1234567890123"
     assert recommended_books[0][0]["authors"] == ["有賀康顕", "中山心太", "西林孝"]
@@ -118,7 +119,7 @@ def test_おすすめの本の情報がNoneのケース(monkeypatch):  # pylint:
     assert len(recommended_books) == 0
 
 
-def test_おすすめ本の書影がNoneなら空のリストが返値に設定されること(monkeypatch):  # pylint: disable=invalid-name
+def test_おすすめ本の情報がNoneなら空のリストが返値に設定されること(monkeypatch):  # pylint: disable=invalid-name
     def mock_recommend_book_repository_fetch(_, __):
         return {"ml-a": "1234567890123"}
 
@@ -152,6 +153,7 @@ def test_おすすめ本の書影がNoneなら空のリストが返値に設定�
     logger = getLogger()
     recommended_books = recommend(logger, user)
 
+    # タプルの1番目は、本情報。２番目はモデル情報が格納されている。
     assert recommended_books[0][0]["title"] == "仕事ではじめる機械学習"
     assert recommended_books[0][0]["isbn"] == "1234567890123"
     assert recommended_books[0][0]["authors"] == ["有賀康顕", "中山心太", "西林孝"]
@@ -235,6 +237,8 @@ def test_複数のおすすめの本の情報を取得できること(monkeypatc
 
     logger = getLogger()
     recommended_books = recommend(logger, user)
+
+    # タプルの1番目は、本情報。２番目はモデル情報が格納されている。
 
     assert recommended_books[0][0]["title"] == "test_title_1"
     assert recommended_books[0][0]["isbn"] == "1234567890123"
