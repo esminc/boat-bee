@@ -56,5 +56,4 @@ def recommend(logger: Any, user: User) -> list[Tuple[SearchedBook, str]]:
 
     except Exception:  # pylint: disable=broad-except
         logger.exception("Failed to get data.")
-        # return []
         return []
