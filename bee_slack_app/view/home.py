@@ -64,7 +64,7 @@ def home(
                 "type": "header",
                 "text": {
                     "type": "plain_text",
-                    "text": f"{user_name}さんへのおすすめ本",
+                    "text": f"{user_name}へのおすすめ本",
                     "emoji": True,
                 },
             },
