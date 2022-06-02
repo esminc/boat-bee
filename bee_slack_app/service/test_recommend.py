@@ -115,7 +115,7 @@ def test_おすすめの本の情報がNoneのケース(monkeypatch):  # pylint:
     assert len(recommended_books) == 0
 
 
-def test_おすすめ本の情報がNoneなら空のリストが返値に設定されること(monkeypatch):  # pylint: disable=invalid-name
+def test_書影が取得できない場合に書影にNone返値に設定されること(monkeypatch):  # pylint: disable=invalid-name
     def mock_recommend_book_repository_fetch(_, __):
         return {"ml-a": "1234567890123"}
 
