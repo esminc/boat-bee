@@ -1,7 +1,7 @@
 """おすすめされた本を、追加・更新します
 """
 import os
-from typing import Optional, Tuple
+from typing import Optional
 
 from bee_slack_app.model.suggested_book import SuggestedBook
 from bee_slack_app.repository.database import get_database_client
@@ -13,7 +13,7 @@ def encode_sort_key(isbn: str, ml_model: str) -> str:
 
 
 # DBソートキーの分解
-def decode_sort_key(sort_key: str) -> Tuple[str, str]:
+def decode_sort_key(sort_key: str) -> tuple[str, str]:
     # sort keyにはisbnとml_model情報が#で連結されて入っている
     items = sort_key.split("#")
     isbn = items[0]
