@@ -2,7 +2,7 @@ from bee_slack_app.model.search import SearchedBook
 
 
 def generate_book_recommend_model_view(
-    callback_id: str, book_results: list[SearchedBook]
+    callback_id: str, recommended_books: list[tuple[SearchedBook, str]]
 ):
     """
     おすすめ本モーダル
@@ -20,7 +20,8 @@ def generate_book_recommend_model_view(
         },
     )
 
-    for book in book_results:
+    for recommended_book in recommended_books:
+        book = recommended_book[0]
         blocks.extend(_recommend_book_block(book))
 
     view = {
