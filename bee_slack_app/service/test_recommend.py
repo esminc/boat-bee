@@ -81,7 +81,7 @@ def test_おすすめの本が取得できなかったら空のリストを返�
         "updated_at": None,
     }
 
-    recommended_books = recommend(logger, user)
+    recommended_books = recommend(user)
 
     assert len(recommended_books) == 0
 
@@ -110,7 +110,7 @@ def test_おすすめの本の情報がNoneのケース(monkeypatch):  # pylint:
         "updated_at": None,
     }
 
-    recommended_books = recommend(logger, user)
+    recommended_books = recommend(user)
 
     assert len(recommended_books) == 0
 
