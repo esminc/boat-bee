@@ -1,4 +1,4 @@
-from typing import Any
+from logging import getLogger
 
 from bee_slack_app.model.search import SearchedBook
 from bee_slack_app.model.user import User
@@ -8,7 +8,7 @@ from bee_slack_app.repository.recommend_book_repository import RecommendBookRepo
 recommend_book_repository = RecommendBookRepository()
 
 
-def recommend(logger: Any, user: User) -> list[tuple[SearchedBook, str]]:
+def recommend(user: User) -> list[tuple[SearchedBook, str]]:
     """
     おすすめの本の情報を返却する
 
@@ -19,6 +19,8 @@ def recommend(logger: Any, user: User) -> list[tuple[SearchedBook, str]]:
         book: おすすめする本の情報。
         ml_model:おすすめした機械学習のモデル
     """
+    logger = getLogger(__name__)
+
     try:
         # デバッグ用
         # FDOワークスペースのユーザIDの場合、対応するITSワークスペースのユーザIDに変換する
@@ -35,7 +37,8 @@ def recommend(logger: Any, user: User) -> list[tuple[SearchedBook, str]]:
         recommended_book_dict = recommend_book_repository.fetch(user_id)
 
         if not recommended_book_dict:
-            logger.info("Failed to recommend book. user_id: ", user_id)
+            logger.info("Failed to recommend book")
+            logger.info({"user_id": user_id})
             return []
 
         recommended_books = []

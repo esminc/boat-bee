@@ -1,6 +1,5 @@
 # pylint: disable=non-ascii-name
 
-from logging import getLogger
 
 from bee_slack_app.model.user import User
 from bee_slack_app.repository.google_books_repository import GoogleBooksRepository
@@ -39,8 +38,7 @@ def test_おすすめの本の情報を取得できること(monkeypatch):
         "updated_at": None,
     }
 
-    logger = getLogger()
-    recommended_books = recommend(logger, user)
+    recommended_books = recommend(user)
 
     # タプルの1番目は、本情報。２番目はモデル情報が格納されている。
     assert recommended_books[0][0]["title"] == "仕事ではじめる機械学習"
@@ -83,7 +81,6 @@ def test_おすすめの本が取得できなかったら空のリストを返�
         "updated_at": None,
     }
 
-    logger = getLogger()
     recommended_books = recommend(logger, user)
 
     assert len(recommended_books) == 0
@@ -113,7 +110,6 @@ def test_おすすめの本の情報がNoneのケース(monkeypatch):  # pylint:
         "updated_at": None,
     }
 
-    logger = getLogger()
     recommended_books = recommend(logger, user)
 
     assert len(recommended_books) == 0
@@ -150,8 +146,7 @@ def test_おすすめ本の情報がNoneなら空のリストが返値に設定�
         "updated_at": None,
     }
 
-    logger = getLogger()
-    recommended_books = recommend(logger, user)
+    recommended_books = recommend(user)
 
     # タプルの1番目は、本情報。２番目はモデル情報が格納されている。
     assert recommended_books[0][0]["title"] == "仕事ではじめる機械学習"
@@ -187,8 +182,7 @@ def test_モジュール内で例外が発生した場合は返値は空のリ�
         "updated_at": None,
     }
 
-    logger = getLogger()
-    book = recommend(logger, user)
+    book = recommend(user)
 
     assert len(book) == 0
 
@@ -235,8 +229,7 @@ def test_複数のおすすめの本の情報を取得できること(monkeypatc
         "updated_at": None,
     }
 
-    logger = getLogger()
-    recommended_books = recommend(logger, user)
+    recommended_books = recommend(user)
 
     # タプルの1番目は、本情報。２番目はモデル情報が格納されている。
 
