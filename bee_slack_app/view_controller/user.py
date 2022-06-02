@@ -1,8 +1,7 @@
 from typing import Optional
 
 from bee_slack_app.model.user import User
-from bee_slack_app.service.user import add_user, get_user
-from bee_slack_app.service.user_action import record_user_action
+from bee_slack_app.service import user_action_service, user_service
 from bee_slack_app.view.user import user_profile_modal
 
 
@@ -13,7 +12,7 @@ def user_controller(app):
         user_id = body["user"]["id"]
 
         # ユーザー情報の取得
-        user: Optional[User] = get_user(user_id)
+        user: Optional[User] = user_service.get_user(user_id)
 
         # slackアカウントから名前（Display Name）Display Nameを取得する
         # display_nameを設定していない場合は、設定必須のreal_nameをユーザ名とすることで、対応する
@@ -27,7 +26,7 @@ def user_controller(app):
             callback_id="user_profile_modal", user_name=user_name, user=user
         )
 
-        record_user_action(
+        user_action_service.record_user_action(
             user_id=user_id,
             action_name="user_info_action",
             payload={"user_info": user_info},
@@ -68,9 +67,9 @@ def user_controller(app):
             "updated_at": None,
         }
 
-        add_user(user)
+        user_service.add_user(user)
 
-        record_user_action(
+        user_action_service.record_user_action(
             user_id=user_id,
             action_name="user_profile_modal",
             payload={"user": user},
