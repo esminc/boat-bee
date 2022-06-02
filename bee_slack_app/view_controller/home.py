@@ -3,7 +3,7 @@ from logging import getLogger
 from typing import Any, TypedDict
 
 from bee_slack_app.service.book import get_books, get_books_before
-from bee_slack_app.service.review import get_reviews
+from bee_slack_app.service.review import get_review_all
 from bee_slack_app.service.user_action import record_user_action
 from bee_slack_app.view.home import home
 
@@ -17,9 +17,9 @@ def home_controller(app):
 
         logger = getLogger(__name__)
 
-        reviews = get_reviews(logger=getLogger())
+        reviews = get_review_all(logger=getLogger())
 
-        total_review_count = len(reviews["items"]) if reviews else 0
+        total_review_count = len(reviews) if reviews else 0
 
         record_user_action(
             user_id=event["user"],
@@ -50,7 +50,6 @@ def home_controller(app):
         client.views_publish(
             user_id=event["user"],
             view=home(
-                read_review_action_id="read_review_action",
                 post_review_action_id="post_review_action",
                 see_more_recommended_book_action_id="book_recommend_action",
                 user_info_action_id="user_info_action",
@@ -77,9 +76,9 @@ def home_controller(app):
             private_metadata=private_metadata
         )
 
-        reviews = get_reviews(logger=getLogger())
+        reviews = get_review_all(logger=getLogger())
 
-        total_review_count = len(reviews["items"]) if reviews else 0
+        total_review_count = len(reviews) if reviews else 0
 
         books_params = None
         metadata_str = ""
@@ -102,7 +101,6 @@ def home_controller(app):
         client.views_publish(
             user_id=user_id,
             view=home(
-                read_review_action_id="read_review_action",
                 post_review_action_id="post_review_action",
                 see_more_recommended_book_action_id="book_recommend_action",
                 user_info_action_id="user_info_action",
@@ -125,9 +123,9 @@ def home_controller(app):
 
         private_metadata = body["view"]["private_metadata"]
 
-        reviews = get_reviews(logger=getLogger())
+        reviews = get_review_all(logger=getLogger())
 
-        total_review_count = len(reviews["items"]) if reviews else 0
+        total_review_count = len(reviews) if reviews else 0
 
         metadata_dict = _PrivateMetadataConvertor.to_dict(
             private_metadata=private_metadata
@@ -154,7 +152,6 @@ def home_controller(app):
         client.views_publish(
             user_id=user_id,
             view=home(
-                read_review_action_id="read_review_action",
                 post_review_action_id="post_review_action",
                 see_more_recommended_book_action_id="book_recommend_action",
                 user_info_action_id="user_info_action",

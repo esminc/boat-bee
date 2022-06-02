@@ -1,5 +1,5 @@
 from logging import getLogger
-from typing import Any, Optional, TypedDict, Union
+from typing import Any, Optional
 
 from bee_slack_app.model.book import Book
 from bee_slack_app.model.review import ReviewContents
@@ -11,21 +11,6 @@ from bee_slack_app.utils import datetime
 review_repository = ReviewRepository()
 user_repository = UserRepository()
 book_repository = BookRepository()
-
-
-class GetConditions(TypedDict):
-    score_for_me: Optional[str]
-    score_for_others: Optional[str]
-
-
-class ReviewItemKey(TypedDict):
-    user_id: str
-    isbn: str
-
-
-class GetResponse(TypedDict):
-    items: list[ReviewContents]
-    keys: list[Union[ReviewItemKey, str]]
 
 
 def get_review(*, logger: Any, user_id: str, isbn: str) -> Optional[ReviewContents]:
@@ -49,68 +34,22 @@ def get_review(*, logger: Any, user_id: str, isbn: str) -> Optional[ReviewConten
         return None
 
 
-def get_reviews(  # pylint: disable=dangerous-default-value
+def get_review_all(  # pylint: disable=dangerous-default-value
     *,
     logger: Any,
-    conditions: Optional[GetConditions] = None,
-    limit: Optional[int] = None,
-    keys: list[ReviewItemKey] = [],
-) -> Optional[GetResponse]:
+) -> Optional[list[ReviewContents]]:
     """
-    次のlimit分のレビューを取得する
+    全てのレビューを取得する
 
-    Returns
-        items: 取得したレビューのリスト
-        keys: 更新された読み込みキーのリスト。これ以上アイテムが存在しない場合は、リストの最後の要素が"end"となる。
+    Returns: 取得したレビューのリスト
     """
     try:
 
-        start_key = keys[-1] if len(keys) > 0 else None
+        reviews = review_repository.get_all()
 
-        reviews = review_repository.get_some(
-            conditions=conditions, limit=limit, start_key=start_key
-        )
+        fill_user_name(reviews)
 
-        fill_user_name(reviews["items"])
-
-        last_key = [reviews["last_key"]] if reviews["last_key"] else ["end"]  # type: ignore
-
-        return {"items": reviews["items"], "keys": keys + last_key}  # type: ignore
-
-    except Exception:  # pylint: disable=broad-except
-        logger.exception("Failed to get data.")
-        return None
-
-
-def get_reviews_before(
-    *,
-    logger: Any,
-    conditions: Optional[GetConditions] = None,
-    limit: int,
-    keys: list[ReviewItemKey],
-) -> Optional[GetResponse]:
-    """
-    前のlimit分のレビューを取得する
-
-    Returns
-        items: 取得したレビューのリスト
-        keys: 更新された読み込みキーのリスト
-    """
-    try:
-        is_move_to_first = len(keys) < 3
-
-        start_key = None if is_move_to_first else keys[-3]
-
-        reviews = review_repository.get_some(
-            conditions=conditions, limit=limit, start_key=start_key
-        )
-
-        fill_user_name(reviews["items"])
-
-        return {
-            "items": reviews["items"],
-            "keys": [reviews["last_key"]] if is_move_to_first else keys[:-1],  # type: ignore
-        }
+        return reviews
 
     except Exception:  # pylint: disable=broad-except
         logger.exception("Failed to get data.")

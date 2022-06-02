@@ -12,7 +12,6 @@ class BooksParam(TypedDict):
 def home(
     *,
     see_more_recommended_book_action_id: str,
-    read_review_action_id: str,
     post_review_action_id: str,
     user_info_action_id: str,
     total_review_count: int,
@@ -24,7 +23,6 @@ def home(
 
     Args:
         see_more_recommended_book_action_id: 「詳しく見る」ボタンのaction_id
-        read_review_action_id: 「レビューを閲覧する」ボタンのaction_id
         post_review_action_id: 「レビューを投稿する」ボタンのaction_id
         user_info_action_id: 「プロフィール」ボタンのaction_id
         total_review_count: 表示する「レビュー投稿数」
@@ -106,16 +104,6 @@ def home(
             {
                 "type": "actions",
                 "elements": [
-                    {
-                        "type": "button",
-                        "text": {
-                            "type": "plain_text",
-                            "text": "レビューを閲覧する :eyes:",
-                            "emoji": True,
-                        },
-                        "value": "dummy_value",
-                        "action_id": read_review_action_id,
-                    },
                     {
                         "type": "button",
                         "text": {
