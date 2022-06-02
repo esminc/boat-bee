@@ -11,6 +11,7 @@ class BooksParam(TypedDict):
 
 def home(
     *,
+    test_home_action_id: str,
     see_more_recommended_book_action_id: str,
     post_review_action_id: str,
     user_info_action_id: str,
@@ -22,6 +23,7 @@ def home(
     アプリホーム画面
 
     Args:
+        test_home_action_id:「テスト」ボタンのaction_id
         see_more_recommended_book_action_id: 「詳しく見る」ボタンのaction_id
         post_review_action_id: 「レビューを投稿する」ボタンのaction_id
         user_info_action_id: 「プロフィール」ボタンのaction_id
@@ -41,6 +43,22 @@ def home(
                     "text": "読書レビュー共有アプリ「Bee（Book Erabu Eiwa）」 :bee:",
                     "emoji": True,
                 },
+            },
+            {"type": "divider"},
+            {
+                "type": "actions",
+                "elements": [
+                    {
+                        "type": "button",
+                        "text": {
+                            "type": "plain_text",
+                            "text": "テスト",
+                            "emoji": True,
+                        },
+                        "value": "dummy_value",
+                        "action_id": test_home_action_id,
+                    }
+                ],
             },
             {"type": "divider"},
             {
