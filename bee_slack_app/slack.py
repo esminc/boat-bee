@@ -6,6 +6,7 @@ from bee_slack_app.view_controller import (
     home,
     recommend,
     review,
+    test_home_button,
     user,
 )
 
@@ -17,3 +18,4 @@ home.home_controller(app)
 book_search.book_search_controller(app)
 user.user_controller(app)
 recommend.recommend_controller(app)
+test_home_button.test_home_button_controller(app)

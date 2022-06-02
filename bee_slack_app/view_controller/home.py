@@ -50,6 +50,7 @@ def home_controller(app):
         client.views_publish(
             user_id=event["user"],
             view=home(
+                test_home_action_id="test_home_button_action",
                 post_review_action_id="post_review_action",
                 see_more_recommended_book_action_id="book_recommend_action",
                 user_info_action_id="user_info_action",
@@ -101,6 +102,7 @@ def home_controller(app):
         client.views_publish(
             user_id=user_id,
             view=home(
+                test_home_action_id="test_home_action_id",
                 post_review_action_id="post_review_action",
                 see_more_recommended_book_action_id="book_recommend_action",
                 user_info_action_id="user_info_action",
@@ -152,6 +154,7 @@ def home_controller(app):
         client.views_publish(
             user_id=user_id,
             view=home(
+                test_home_action_id="test_home_action_id",
                 post_review_action_id="post_review_action",
                 see_more_recommended_book_action_id="book_recommend_action",
                 user_info_action_id="user_info_action",
