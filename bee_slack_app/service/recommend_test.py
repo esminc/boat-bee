@@ -1,10 +1,10 @@
 # pylint: disable=non-ascii-name
-
+# pylint: disable=invalid-name
 
 from bee_slack_app.model.user import User
 from bee_slack_app.repository.google_books_repository import GoogleBooksRepository
 from bee_slack_app.repository.recommend_book_repository import RecommendBookRepository
-from bee_slack_app.service.recommend import recommend
+from bee_slack_app.service.recommend import created_at, recommend
 
 
 def test_おすすめの本の情報を取得できること(monkeypatch):
@@ -248,3 +248,66 @@ def test_複数のおすすめの本の情報を取得できること(monkeypatc
     assert recommended_books[1][0]["google_books_url"] == "test_google_books_url_2"
     assert recommended_books[1][0]["description"] == "test_description_2"
     assert recommended_books[1][1] == "ml-b"
+
+
+def test_おすすめ情報の生成時刻を取得できること(monkeypatch):
+    def mock_recommend_book_repository_fetch_metadata(_):
+        return {"created_at": "2022/04/01 00:00:00"}
+
+    monkeypatch.setattr(
+        RecommendBookRepository,
+        "fetch_metadata",
+        mock_recommend_book_repository_fetch_metadata,
+    )
+
+    timestamp = created_at()
+
+    assert timestamp == "2022/04/01 00:00:00"
+
+
+def test_メタデータが存在しない場合はNoneが返ること(monkeypatch):
+    def mock_recommend_book_repository_fetch_metadata(_):
+        return None
+
+    monkeypatch.setattr(
+        RecommendBookRepository,
+        "fetch_metadata",
+        mock_recommend_book_repository_fetch_metadata,
+    )
+
+    timestamp = created_at()
+
+    assert timestamp is None
+
+
+def test_メタデータにタイムスタンプ情報が存在しない場合はNoneが返ること(monkeypatch):
+    def mock_recommend_book_repository_fetch_metadata(_):
+        return {
+            "hoge": "hoge_value",
+            "fuga": "fuga_value",
+        }
+
+    monkeypatch.setattr(
+        RecommendBookRepository,
+        "fetch_metadata",
+        mock_recommend_book_repository_fetch_metadata,
+    )
+
+    timestamp = created_at()
+
+    assert timestamp is None
+
+
+def test_メタデータ取得中にエラーが発生した場合はNoneが返ること(monkeypatch):
+    def mock_recommend_book_repository_fetch_metadata(_):
+        raise Exception("dummy exception")
+
+    monkeypatch.setattr(
+        RecommendBookRepository,
+        "fetch_metadata",
+        mock_recommend_book_repository_fetch_metadata,
+    )
+
+    timestamp = created_at()
+
+    assert timestamp is None

@@ -1,4 +1,5 @@
 from logging import getLogger
+from typing import Optional
 
 from bee_slack_app.model.search import SearchedBook
 from bee_slack_app.model.user import User
@@ -60,3 +61,23 @@ def recommend(user: User) -> list[tuple[SearchedBook, str]]:
     except Exception:  # pylint: disable=broad-except
         logger.exception("Failed to get data.")
         return []
+
+
+def created_at() -> Optional[str]:
+    """
+    おすすめ情報の生成時刻をISO 8601形式で取得する
+    ISO 8601形式であることは情報を格納するbee-ml側で担保すること
+
+    Returns:
+        str : YYYY/mm/dd HH:MM:SSの時刻文字列。例 2022/04/01 00:00:00
+    """
+    logger = getLogger(__name__)
+
+    try:
+        metadata = RecommendBookRepository().fetch_metadata()
+
+        return metadata.get("created_at")
+
+    except Exception:  # pylint: disable=broad-except
+        logger.exception("Failed to get data.")
+        return None
