@@ -1,10 +1,8 @@
-from typing import Tuple
-
 from bee_slack_app.model.search import SearchedBook
 
 
 def generate_book_recommend_model_view(
-    callback_id: str, recommended_books: list[Tuple[SearchedBook, str]]
+    callback_id: str, recommended_books: list[tuple[SearchedBook, str]]
 ):
     """
     おすすめ本モーダル
