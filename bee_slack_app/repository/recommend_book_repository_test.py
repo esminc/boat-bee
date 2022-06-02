@@ -17,7 +17,10 @@ def test_複数のおすすめ本を取得できること(mocker):
                     "ML-a": "9876543210987",
                     "ML-b": "8765432109876",
                 },
-                "metadata": {"created_at": "2022-06-01T18:06:04+09:00"},
+                "metadata": {
+                    "hoge": "hoge_value",
+                    "fuga": "fuga_value",
+                },
             }
         },
     )
@@ -38,7 +41,10 @@ def test_おすすめ本の取得で存在しないユーザIDに対してはNon
         "_load_recommend_info",
         return_value={
             "result": {"user_id_0": "1234567890123", "user_id_1": "1234567890456"},
-            "metadata": {"created_at": "2022-06-01T18:06:04+09:00"},
+            "metadata": {
+                "hoge": "hoge_value",
+                "fuga": "fuga_value",
+            },
         },
     )
 
@@ -63,7 +69,10 @@ def test_ひとつのMLがNoneでもおすすめ本を取得できること(mock
                     "ML-b": "8765432109876",
                 },
             },
-            "metadata": {"created_at": "2022-06-01T18:06:04+09:00"},
+            "metadata": {
+                "hoge": "hoge_value",
+                "fuga": "fuga_value",
+            },
         },
     )
 
@@ -76,7 +85,7 @@ def test_ひとつのMLがNoneでもおすすめ本を取得できること(mock
     }
 
 
-def test_JSONの生成時刻が取得できること(mocker):
+def test_JSONのメタデータが辞書形式で取得できること(mocker):  # pylint: disable=invalid-name
     mocker.patch.object(
         RecommendBookRepository,
         "_load_recommend_info",
@@ -91,13 +100,19 @@ def test_JSONの生成時刻が取得できること(mocker):
                     "ML-b": "8765432109876",
                 },
             },
-            "metadata": {"created_at": "2022-06-01T18:06:04+09:00"},
+            "metadata": {
+                "hoge": "hoge_value",
+                "fuga": "fuga_value",
+            },
         },
     )
 
     recommend_book_repository = RecommendBookRepository()
 
-    timestamp = recommend_book_repository.created_at()
+    metadata = recommend_book_repository.fetch_metadata()
 
-    assert timestamp is not None
-    assert timestamp == "2022-06-01T18:06:04+09:00"
+    assert isinstance(metadata, dict)
+    assert metadata == {
+        "hoge": "hoge_value",
+        "fuga": "fuga_value",
+    }
