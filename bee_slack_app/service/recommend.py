@@ -76,7 +76,7 @@ def created_at() -> Optional[str]:
     try:
         metadata = RecommendBookRepository().fetch_metadata()
 
-        return metadata.get("created_at")
+        return metadata.get("created_at") if metadata is not None else None
 
     except Exception:  # pylint: disable=broad-except
         logger.exception("Failed to get data.")
