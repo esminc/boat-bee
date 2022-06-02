@@ -11,7 +11,6 @@ from bee_slack_app.view.home import home
 BOOK_NUMBER_PER_PAGE = 20
 
 
-# TODO: disable=too-many-statementsを取り消す
 def home_controller(app):  # pylint: disable=too-many-statements
     @app.event("app_home_opened")
     def update_home_view(ack, event, client):
@@ -31,8 +30,10 @@ def home_controller(app):  # pylint: disable=too-many-statements
 
         logger.info({"total_review_count": total_review_count})
 
-        user_profile = get_user(event["user"])["user_name"]
-        user_name = f"{user_profile}さん" if user_profile is not None else "あなた"
+        user_profile = get_user(event["user"])
+        user_name = (
+            f"{user_profile['user_name']}さん" if user_profile is not None else "あなた"
+        )
 
         books_params = None
         metadata_str = ""
@@ -86,8 +87,10 @@ def home_controller(app):  # pylint: disable=too-many-statements
 
         total_review_count = len(reviews) if reviews else 0
 
-        user_profile = get_user(user_id)["user_name"]
-        user_name = f"{user_profile}さん" if user_profile is not None else "あなた"
+        user_profile = get_user(user_id)
+        user_name = (
+            f"{user_profile['user_name']}さん" if user_profile is not None else "あなた"
+        )
 
         books_params = None
         metadata_str = ""
@@ -137,8 +140,10 @@ def home_controller(app):  # pylint: disable=too-many-statements
 
         total_review_count = len(reviews) if reviews else 0
 
-        user_profile = get_user(user_id)["user_name"]
-        user_name = f"{user_profile}さん" if user_profile is not None else "あなた"
+        user_profile = get_user(user_id)
+        user_name = (
+            f"{user_profile['user_name']}さん" if user_profile is not None else "あなた"
+        )
 
         metadata_dict = _PrivateMetadataConvertor.to_dict(
             private_metadata=private_metadata
