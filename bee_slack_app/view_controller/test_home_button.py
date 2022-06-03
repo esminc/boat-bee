@@ -18,14 +18,13 @@ def test_home_button_controller(app):  # pylint: disable=too-many-statements
 
     @app.action("test_button_switch_action")
     def handle_some_action(ack, body, logger, client):
-        print("body=", body)
+        private_metadata = body["view"]["private_metadata"]
         ack()
         logger.info(body)
-        print("button_test_print")
         modal_view = generate_test_button_model_view(
-            # 興味ありボタンを表示
+            # 興味ありボタンの表示を切り替える
             callback_id="test_button_modal",
-            interested=True,
+            interested=True if private_metadata == "興味なし１" else False,
         )
         client.views_update(
             view_id=body["container"]["view_id"],
