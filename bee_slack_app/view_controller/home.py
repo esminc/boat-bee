@@ -3,7 +3,7 @@ from logging import getLogger
 from typing import Any, TypedDict
 
 from bee_slack_app.service.book import get_books, get_books_before
-from bee_slack_app.service.recommend import created_at
+from bee_slack_app.service.recommend import created_at, recommend
 from bee_slack_app.service.review import get_review_all
 from bee_slack_app.service.user import get_user
 from bee_slack_app.service.user_action import record_user_action
@@ -36,6 +36,8 @@ def home_controller(app):  # pylint: disable=too-many-statements
         user = get_user(event["user"])
         user_name = f"{user['user_name']}さん" if user is not None else "あなた"
 
+        recommended_books = recommend(user)
+
         books_params = None
         metadata_str = ""
 
@@ -58,7 +60,7 @@ def home_controller(app):  # pylint: disable=too-many-statements
             user_id=event["user"],
             view=home(
                 post_review_action_id="post_review_action",
-                see_more_recommended_book_action_id="book_recommend_action",
+                recommended_books=recommended_books,
                 user_info_action_id="user_info_action",
                 total_review_count=total_review_count,
                 user_name=user_name,
@@ -93,6 +95,8 @@ def home_controller(app):  # pylint: disable=too-many-statements
         user = get_user(user_id)
         user_name = f"{user['user_name']}さん" if user is not None else "あなた"
 
+        recommended_books = recommend(user)
+
         books_params = None
         metadata_str = ""
 
@@ -115,7 +119,7 @@ def home_controller(app):  # pylint: disable=too-many-statements
             user_id=user_id,
             view=home(
                 post_review_action_id="post_review_action",
-                see_more_recommended_book_action_id="book_recommend_action",
+                recommended_books=recommended_books,
                 user_info_action_id="user_info_action",
                 total_review_count=total_review_count,
                 user_name=user_name,
@@ -146,6 +150,8 @@ def home_controller(app):  # pylint: disable=too-many-statements
         user = get_user(user_id)
         user_name = f"{user['user_name']}さん" if user is not None else "あなた"
 
+        recommended_books = recommend(user)
+
         metadata_dict = _PrivateMetadataConvertor.to_dict(
             private_metadata=private_metadata
         )
@@ -172,7 +178,7 @@ def home_controller(app):  # pylint: disable=too-many-statements
             user_id=user_id,
             view=home(
                 post_review_action_id="post_review_action",
-                see_more_recommended_book_action_id="book_recommend_action",
+                recommended_books=recommended_books,
                 user_info_action_id="user_info_action",
                 total_review_count=total_review_count,
                 user_name=user_name,
