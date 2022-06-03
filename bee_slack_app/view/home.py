@@ -15,6 +15,7 @@ def home(
     post_review_action_id: str,
     user_info_action_id: str,
     total_review_count: int,
+    user_name: str,
     books_params: Optional[BooksParam] = None,
     private_metadata: str = "",
 ):
@@ -26,6 +27,7 @@ def home(
         post_review_action_id: 「レビューを投稿する」ボタンのaction_id
         user_info_action_id: 「プロフィール」ボタンのaction_id
         total_review_count: 表示する「レビュー投稿数」
+        user_name:表示する「ユーザ名」
         books_param: 「レビューが投稿されている本」のデータ
         private_metadata: private_metadata
     """
@@ -62,7 +64,7 @@ def home(
                 "type": "header",
                 "text": {
                     "type": "plain_text",
-                    "text": "あなたへのおすすめ本",
+                    "text": f"{user_name}へのおすすめ本",
                     "emoji": True,
                 },
             },

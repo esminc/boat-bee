@@ -4,13 +4,14 @@ from typing import Any, TypedDict
 
 from bee_slack_app.service.book import get_books, get_books_before
 from bee_slack_app.service.review import get_review_all
+from bee_slack_app.service.user import get_user
 from bee_slack_app.service.user_action import record_user_action
 from bee_slack_app.view.home import home
 
 BOOK_NUMBER_PER_PAGE = 20
 
 
-def home_controller(app):
+def home_controller(app):  # pylint: disable=too-many-statements
     @app.event("app_home_opened")
     def update_home_view(ack, event, client):
         ack()
@@ -28,6 +29,9 @@ def home_controller(app):
         )
 
         logger.info({"total_review_count": total_review_count})
+
+        user = get_user(event["user"])
+        user_name = f"{user['user_name']}さん" if user is not None else "あなた"
 
         books_params = None
         metadata_str = ""
@@ -54,6 +58,7 @@ def home_controller(app):
                 see_more_recommended_book_action_id="book_recommend_action",
                 user_info_action_id="user_info_action",
                 total_review_count=total_review_count,
+                user_name=user_name,
                 books_params=books_params,
                 private_metadata=metadata_str,
             ),
@@ -80,6 +85,9 @@ def home_controller(app):
 
         total_review_count = len(reviews) if reviews else 0
 
+        user = get_user(user_id)
+        user_name = f"{user['user_name']}さん" if user is not None else "あなた"
+
         books_params = None
         metadata_str = ""
 
@@ -105,6 +113,7 @@ def home_controller(app):
                 see_more_recommended_book_action_id="book_recommend_action",
                 user_info_action_id="user_info_action",
                 total_review_count=total_review_count,
+                user_name=user_name,
                 books_params=books_params,
                 private_metadata=metadata_str,
             ),
@@ -126,6 +135,9 @@ def home_controller(app):
         reviews = get_review_all()
 
         total_review_count = len(reviews) if reviews else 0
+
+        user = get_user(user_id)
+        user_name = f"{user['user_name']}さん" if user is not None else "あなた"
 
         metadata_dict = _PrivateMetadataConvertor.to_dict(
             private_metadata=private_metadata
@@ -156,6 +168,7 @@ def home_controller(app):
                 see_more_recommended_book_action_id="book_recommend_action",
                 user_info_action_id="user_info_action",
                 total_review_count=total_review_count,
+                user_name=user_name,
                 books_params=books_params,
                 private_metadata=metadata_str,
             ),
