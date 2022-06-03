@@ -51,15 +51,66 @@ custom:
     seed:
       development:
         sources:
-          - table: ${self:provider.environment.DYNAMODB_TABLE}-review
-            sources: [database/seed/review.json]
-          - table: ${self:provider.environment.DYNAMODB_TABLE}-user
-            sources: [database/seed/user.json]
-          - table: ${self:provider.environment.DYNAMODB_TABLE}-book
-            sources: [database/seed/book.json]
+          - table: ${self:provider.environment.DYNAMODB_TABLE}
+            sources: [database/seed/bee_table.json]
 
 resources: # CloudFormation template syntax from here on.
   Resources:
+    BeeMainTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.DYNAMODB_TABLE}
+        AttributeDefinitions:
+          - AttributeName: PK
+            AttributeType: S
+          - AttributeName: GSI_PK
+            AttributeType: S
+          - AttributeName: GSI_0_SK
+            AttributeType: S
+          - AttributeName: GSI_1_SK
+            AttributeType: S
+          - AttributeName: GSI_2_SK
+            AttributeType: S
+        KeySchema:
+          - AttributeName: PK
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        GlobalSecondaryIndexes:
+          - IndexName: GSI_0
+            KeySchema:
+              - AttributeName: GSI_PK
+                KeyType: HASH
+              - AttributeName: GSI_0_SK
+                KeyType: RANGE
+            Projection:
+              ProjectionType: "ALL"
+            ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1
+          - IndexName: GSI_1
+            KeySchema:
+              - AttributeName: GSI_PK
+                KeyType: HASH
+              - AttributeName: GSI_1_SK
+                KeyType: RANGE
+            Projection:
+              ProjectionType: "ALL"
+            ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1
+          - IndexName: GSI_2
+            KeySchema:
+              - AttributeName: GSI_PK
+                KeyType: HASH
+              - AttributeName: GSI_2_SK
+                KeyType: RANGE
+            Projection:
+              ProjectionType: "ALL"
+            ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1
     BeeTable:
       Type: AWS::DynamoDB::Table
       Properties:

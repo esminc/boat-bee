@@ -1,42 +1,32 @@
 # pylint: disable=attribute-defined-outside-init
 # pylint: disable=non-ascii-name
 
-import os
 
-import boto3  # type: ignore
 from moto import mock_dynamodb  # type: ignore
 
 from bee_slack_app.model.user_action import UserAction
+from bee_slack_app.repository.database import create_table
 from bee_slack_app.repository.user_action_repository import UserActionRepository
 
 
 @mock_dynamodb
 class TestUserActionRepository:
     def setup_method(self, _):
-        dynamodb = boto3.resource("dynamodb")
-
-        self.table = dynamodb.create_table(
-            TableName=os.environ["DYNAMODB_TABLE"] + "-user-action",
-            AttributeDefinitions=[
-                {"AttributeName": "user_id", "AttributeType": "S"},
-                {"AttributeName": "created_at", "AttributeType": "S"},
-            ],
-            KeySchema=[
-                {"AttributeName": "user_id", "KeyType": "HASH"},
-                {"AttributeName": "created_at", "KeyType": "RANGE"},
-            ],
-            ProvisionedThroughput={"ReadCapacityUnits": 1, "WriteCapacityUnits": 1},
-        )
+        self.table = create_table()
 
     def test_ユーザの行動履歴を保存できること(self):
 
-        response = self.table.query(
-            KeyConditionExpression=boto3.dynamodb.conditions.Key("user_id").eq(
-                "dummy_user_id_0"
-            ),
-        )
+        item = self.table.get_item(
+            Key={"PK": "user_action#dummy_user_id_0#2022-04-01T00:00:00+09:00"}
+        ).get("Item")
 
-        assert len(response["Items"]) == 0
+        assert item is None
+
+        item = self.table.get_item(
+            Key={"PK": "user_action#dummy_user_id_1#2022-04-02T00:00:00+09:00"}
+        ).get("Item")
+
+        assert item is None
 
         user_action_repository = UserActionRepository()
 
@@ -62,11 +52,14 @@ class TestUserActionRepository:
 
         actual = self.table.get_item(
             Key={
-                "user_id": "dummy_user_id_0",
-                "created_at": "2022-04-01T00:00:00+09:00",
+                "PK": "user_action#dummy_user_id_0#2022-04-01T00:00:00+09:00",
             }
         )["Item"]
 
+        assert actual["PK"] == "user_action#dummy_user_id_0#2022-04-01T00:00:00+09:00"
+        assert actual["GSI_PK"] == "user_action"
+        assert actual["GSI_0_SK"] == "2022-04-01T00:00:00+09:00"
+        assert actual["GSI_1_SK"] == "dummy_user_id_0"
         assert actual["user_id"] == "dummy_user_id_0"
         assert actual["created_at"] == "2022-04-01T00:00:00+09:00"
         assert actual["action_name"] == "dummy_action_name_0"
@@ -75,11 +68,14 @@ class TestUserActionRepository:
 
         actual = self.table.get_item(
             Key={
-                "user_id": "dummy_user_id_1",
-                "created_at": "2022-04-02T00:00:00+09:00",
+                "PK": "user_action#dummy_user_id_1#2022-04-02T00:00:00+09:00",
             }
         )["Item"]
 
+        assert actual["PK"] == "user_action#dummy_user_id_1#2022-04-02T00:00:00+09:00"
+        assert actual["GSI_PK"] == "user_action"
+        assert actual["GSI_0_SK"] == "2022-04-02T00:00:00+09:00"
+        assert actual["GSI_1_SK"] == "dummy_user_id_1"
         assert actual["user_id"] == "dummy_user_id_1"
         assert actual["created_at"] == "2022-04-02T00:00:00+09:00"
         assert actual["action_name"] == "dummy_action_name_1"

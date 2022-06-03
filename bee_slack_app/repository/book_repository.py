@@ -1,15 +1,16 @@
-import os
 from typing import Optional, TypedDict
 
 import boto3  # type: ignore
 
 from bee_slack_app.model.book import Book
-from bee_slack_app.repository.database import get_database_client
+from bee_slack_app.repository import database
 from bee_slack_app.utils import datetime
 
-BOOK_TABLE_PK = "book_pk"
-BOOK_TABLE_PK_VALUE = "book_pk_value"
-BOOL_UPDATED_AT_GSI = "updatedAtIndex"
+GSI_PK_VALUE = "book"
+
+
+def _encode_partition_key(*, isbn: str) -> str:
+    return f"book#{isbn}"
 
 
 class BookItemKey(TypedDict):
@@ -27,7 +28,7 @@ class BookRepository:
         score_for_others: Optional[str]
 
     def __init__(self):
-        self.table = get_database_client().Table(os.environ["DYNAMODB_TABLE"] + "-book")
+        self.table = database.get_table()
 
     def put(self, *, book: Book) -> None:
         """
@@ -43,7 +44,9 @@ class BookRepository:
         )
 
         item = {
-            BOOK_TABLE_PK: BOOK_TABLE_PK_VALUE,
+            database.PK: _encode_partition_key(isbn=book["isbn"]),
+            database.GSI_PK: GSI_PK_VALUE,
+            database.GSI_0_SK: updated_at,
             "isbn": book["isbn"],
             "title": book["title"],
             "author": book["author"],
@@ -80,10 +83,10 @@ class BookRepository:
                 option["Limit"] = max_item_count
 
             response = self.table.query(
-                IndexName=BOOL_UPDATED_AT_GSI,
-                KeyConditionExpression=boto3.dynamodb.conditions.Key(BOOK_TABLE_PK).eq(
-                    BOOK_TABLE_PK_VALUE
-                ),
+                IndexName=database.GSI_0,
+                KeyConditionExpression=boto3.dynamodb.conditions.Key(
+                    database.GSI_PK
+                ).eq(GSI_PK_VALUE),
                 **option,
             )
 
