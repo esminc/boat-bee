@@ -30,10 +30,8 @@ def home_controller(app):  # pylint: disable=too-many-statements
 
         logger.info({"total_review_count": total_review_count})
 
-        user_profile = get_user(event["user"])
-        user_name = (
-            f"{user_profile['user_name']}さん" if user_profile is not None else "あなた"
-        )
+        user = get_user(event["user"])
+        user_name = f"{user['user_name']}さん" if user is not None else "あなた"
 
         books_params = None
         metadata_str = ""
