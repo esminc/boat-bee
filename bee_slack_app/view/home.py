@@ -60,13 +60,6 @@ def home(
                     "text": "Beeは、FDOが開発・提供する、本のレビュー共有アプリです。\n仕事で役立った本のレビューを投稿・共有できます。\nデータがたまればたまるほど、AIはより賢くなりあなたに合ったおすすめの本をお伝えすることができます。\n書籍購入制度で購入した本などのレビューを投稿してみましょう！！。",
                 },
             },
-            {
-                "type": "section",
-                "text": {
-                    "type": "mrkdwn",
-                    "text": f"*最新の推薦データ* : {recommend_timestamp}",
-                },
-            },
             {"type": "divider"},
             {
                 "type": "header",
@@ -74,6 +67,13 @@ def home(
                     "type": "plain_text",
                     "text": f"{user_name}へのおすすめ本",
                     "emoji": True,
+                },
+            },
+            {
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": f"*最新の推薦データ* : {recommend_timestamp}",
                 },
             },
             {
