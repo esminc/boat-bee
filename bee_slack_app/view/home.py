@@ -130,7 +130,7 @@ def home(
     }
     view["blocks"].extend(recommended_book_sections)  # type: ignore
 
-    view["blocks"].append(
+    following_blocks = [
         {"type": "divider"},
         {
             "type": "header",
@@ -193,9 +193,9 @@ def home(
             "image_url": "https://developers.google.com/maps/documentation/images/powered_by_google_on_white.png",
             "alt_text": "Google Logo",
         },
-    )
+    ]
 
-    # view["blocks"].extend(following_blocks)  # type: ignore
+    view["blocks"].extend(following_blocks)  # type: ignore
 
     book_sections = []
 
