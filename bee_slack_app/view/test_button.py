@@ -19,7 +19,7 @@ def generate_test_button_model_view(callback_id: str, interested: bool):
                         "emoji": True,
                     },
                     "value": "dummy_value",
-                    "action_id": "test_button_non_1_action",
+                    "action_id": "test_button_switch_action",
                 },
             ],
         },
