@@ -17,11 +17,11 @@ def test_複数のおすすめ本を取得できること(mocker):
                     "ML-a": "9876543210987",
                     "ML-b": "8765432109876",
                 },
-                "metadata": {
-                    "hoge": "hoge_value",
-                    "fuga": "fuga_value",
-                },
-            }
+            },
+            "metadata": {
+                "hoge": "hoge_value",
+                "fuga": "fuga_value",
+            },
         },
     )
 
