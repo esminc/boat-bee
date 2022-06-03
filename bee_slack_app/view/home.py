@@ -16,6 +16,7 @@ def home(
     user_info_action_id: str,
     total_review_count: int,
     user_name: str,
+    recommend_timestamp: str,
     books_params: Optional[BooksParam] = None,
     private_metadata: str = "",
 ):
@@ -66,6 +67,13 @@ def home(
                     "type": "plain_text",
                     "text": f"{user_name}へのおすすめ本",
                     "emoji": True,
+                },
+            },
+            {
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": f"*最新の推薦データ* : {recommend_timestamp}",
                 },
             },
             {
