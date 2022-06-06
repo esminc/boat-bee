@@ -15,7 +15,7 @@ BOOK_NUMBER_PER_PAGE = 20
 
 def home_controller(app):  # pylint: disable=too-many-statements
     @app.event("app_home_opened")
-    def update_home_view(ack, event, client, body):
+    def update_home_view(ack, event, client):
         ack()
 
         logger = getLogger(__name__)
@@ -72,6 +72,7 @@ def home_controller(app):  # pylint: disable=too-many-statements
 
     @app.action("home_move_to_next_action")
     def home_move_to_next_action(ack, client, body):
+        # pylint: disable=too-many-locals
         """
         ホーム画面で「次へ」を押下されたときの処理
         """
@@ -130,6 +131,7 @@ def home_controller(app):  # pylint: disable=too-many-statements
         )
 
     @app.action("home_move_to_back_action")
+    # pylint: disable=too-many-locals
     def home_move_to_back_action(ack, client, body):
         """
         ホーム画面で「前へ」を押下されたときの処理
