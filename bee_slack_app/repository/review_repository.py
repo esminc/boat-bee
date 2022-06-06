@@ -78,6 +78,21 @@ class ReviewRepository:
             & Key(database.GSI_2_SK).eq(isbn),
         )["Items"]
 
+    def get_by_user_id(self, *, user_id: str) -> list[ReviewContents]:
+        """
+        ユーザIDから、本のレビューを取得する
+
+        Args:
+            user_id : 取得する本のユーザID
+        Returns:
+            レビューのリスト。指定したユーザIDで見つからない場合は空のリストを返す。
+        """
+        return self.table.query(
+            IndexName=database.GSI_1,
+            KeyConditionExpression=Key(database.GSI_PK).eq(GSI_PK_VALUE)
+            & Key(database.GSI_1_SK).eq(user_id),
+        )["Items"]
+
     def create(self, review):
         partition_key = _encode_partition_key(
             user_id=review["user_id"], isbn=review["isbn"]

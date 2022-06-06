@@ -71,6 +71,8 @@ resources: # CloudFormation template syntax from here on.
             AttributeType: S
           - AttributeName: GSI_2_SK
             AttributeType: S
+          - AttributeName: GSI_3_SK
+            AttributeType: N
         KeySchema:
           - AttributeName: PK
             KeyType: HASH
@@ -105,6 +107,17 @@ resources: # CloudFormation template syntax from here on.
               - AttributeName: GSI_PK
                 KeyType: HASH
               - AttributeName: GSI_2_SK
+                KeyType: RANGE
+            Projection:
+              ProjectionType: "ALL"
+            ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1
+          - IndexName: GSI_3
+            KeySchema:
+              - AttributeName: GSI_PK
+                KeyType: HASH
+              - AttributeName: GSI_3_SK
                 KeyType: RANGE
             Projection:
               ProjectionType: "ALL"

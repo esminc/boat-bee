@@ -43,6 +43,16 @@ class UserRepository:
             KeyConditionExpression=Key(database.GSI_PK).eq(GSI_PK_VALUE),
         )["Items"]
 
+    def get_by_posted_review(self) -> list[User]:
+        """
+        レビューを投稿しているユーザを取得する
+        """
+        return self.table.query(
+            IndexName=database.GSI_3,
+            KeyConditionExpression=Key(database.GSI_PK).eq(GSI_PK_VALUE)
+            & Key(database.GSI_3_SK).gt(0),
+        )["Items"]
+
     def create(self, user: User) -> None:
         """
         データを追加および上書きします
@@ -53,15 +63,34 @@ class UserRepository:
             database.PK: partition_key,
             database.GSI_PK: GSI_PK_VALUE,
             database.GSI_0_SK: user["updated_at"],
+            database.GSI_3_SK: user["post_review_count"],
             "user_id": user["user_id"],
             "user_name": user["user_name"],
             "department": user["department"],
             "job_type": user["job_type"],
             "age_range": user["age_range"],
             "updated_at": user["updated_at"],
+            "post_review_count": user["post_review_count"],
         }
 
         self.table.put_item(Item=item)
+
+    def update_post_review_count(self, *, user_id: str, count: int):
+        """
+        投稿したレビューの数を更新する
+        """
+        partition_key = _encode_partition_key(user_id=user_id)
+
+        option = {
+            "Key": {database.PK: partition_key},
+            "UpdateExpression": "set #post_review_count = :count, #GSI_3_SK = :count",
+            "ExpressionAttributeNames": {
+                "#GSI_3_SK": "GSI_3_SK",
+                "#post_review_count": "post_review_count",
+            },
+            "ExpressionAttributeValues": {":count": count},
+        }
+        self.table.update_item(**option)
 
     def delete(self):
         """
