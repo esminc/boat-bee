@@ -8,7 +8,7 @@ from bee_slack_app.utils import datetime
 suggested_book_repository = SuggestedBookRepository()
 
 
-def get_suggested(*, user_id: str, isbn: str, ml_model: str) -> Optional[SuggestedBook]:
+def get_suggested_status(*, user_id: str, isbn: str, ml_model: str) -> Optional[bool]:
     """
     おすすめされた本の情報（履歴）を取得する
 
@@ -19,14 +19,16 @@ def get_suggested(*, user_id: str, isbn: str, ml_model: str) -> Optional[Suggest
 
 
     Returns:
-        SuggestedBook: おすすめされた本の情報（履歴）。未登録の場合は、Noneが返る。
+        SuggestedBook: おすすめされた本が興味ありか否かの情報。未登録の場合は、Noneが返る。
+        興味あり:True、興味なし:False
     """
     logger = getLogger(__name__)
 
     try:
-        return suggested_book_repository.get(
+        result: Optional[SuggestedBook] = suggested_book_repository.get(
             user_id=user_id, isbn=isbn, ml_model=ml_model
         )
+        return result["interested"]  # type: ignore
 
     except Exception:  # pylint: disable=broad-except
         logger.exception("Failed to get data.")
