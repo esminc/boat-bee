@@ -28,7 +28,7 @@ def test_おすすめ本の情報を取得を取得できること(monkeypatch):
     assert suggested["updated_at"] == "2022-05-02T16:43:25+09:00"
 
 
-def test_おすすめ本の情報がない場合はノンを返す(monkeypatch):
+def test_おすすめ本の情報がない場合はNoneを返す(monkeypatch):  # pylint: disable=invalid-name
     def mock_suggested_repository_get(_, **__):
         return None
 
