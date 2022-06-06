@@ -77,7 +77,7 @@ def home(
                 "type": "section",
                 "text": {
                     "type": "plain_text",
-                    "text": "本の取得に失敗しました :expressionless:",
+                    "text": "おすすめ本を見るには、レビュー投稿をお願いします :pray:",
                     "emoji": True,
                 },
             },

@@ -15,7 +15,7 @@ BOOK_NUMBER_PER_PAGE = 20
 
 def home_controller(app):  # pylint: disable=too-many-statements
     @app.event("app_home_opened")
-    def update_home_view(ack, event, client):
+    def update_home_view(ack, event, client, body):
         ack()
 
         logger = getLogger(__name__)
