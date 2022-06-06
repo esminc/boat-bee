@@ -19,7 +19,6 @@ def test_おすすめ本の情報を取得を取得できること(monkeypatch):
     suggested = get_suggested(
         user_id="test_user_id", isbn="1234567890123", ml_model="test_ml_model"
     )
-    print(suggested)
 
     assert suggested["user_id"] == "test_user_id"
     assert suggested["isbn"] == "1234567890123"
