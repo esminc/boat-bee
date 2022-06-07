@@ -8,7 +8,7 @@ from bee_slack_app.utils import datetime
 suggested_book_repository = SuggestedBookRepository()
 
 
-def get_suggested_status(*, user_id: str, isbn: str, ml_model: str) -> Optional[bool]:
+def get_is_interested(*, user_id: str, isbn: str, ml_model: str) -> Optional[bool]:
     """
     おすすめされた本の情報（履歴）を取得する
 
