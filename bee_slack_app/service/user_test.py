@@ -108,7 +108,7 @@ class Test_get_all_user:
         assert users[2]["age_range"] == "30"
         assert users[2]["updated_at"] == "2022-05-02T16:43:25+09:00"
 
-    def test_全取得ではユーザー情報が無い場合に空のリストを返すこと(self, monkeypatch):
+    def test_ユーザー情報が無い場合に空のリストを返すこと(self, monkeypatch):
         def mock_user_repository_get_all(_):
             return []
 
@@ -118,7 +118,7 @@ class Test_get_all_user:
 
         assert len(users) == 0
 
-    def test_全取得ではrepositoryの処理でエラーが発生した場合空のリストを返すこと(
+    def test_repositoryの処理でエラーが発生した場合空のリストを返すこと(
         self,
         monkeypatch,
     ):

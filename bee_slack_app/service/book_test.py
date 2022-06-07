@@ -7,7 +7,7 @@ from bee_slack_app.service.book import get_books, get_books_before
 
 
 class Test_get_books:
-    def test_get_booksで本を取得できること_全件取得の場合(self, mocker):
+    def test_本を取得できること_全件取得の場合(self, mocker):
         mock_book_repository_fetch = mocker.patch.object(
             BookRepository,
             "fetch",
@@ -73,7 +73,7 @@ class Test_get_books:
         assert books_items[2]["image_url"] == "dummy_image_url_0"
         assert books_items[2]["updated_at"] == "2022-04-01T00:00:00+09:00"
 
-    def test_get_booksで本を取得できること_続きのデータなしの場合(self, mocker):
+    def test_本を取得できること_続きのデータなしの場合(self, mocker):
         mock_book_repository_fetch = mocker.patch.object(
             BookRepository,
             "fetch",
@@ -139,7 +139,7 @@ class Test_get_books:
         assert books_items[2]["image_url"] == "dummy_image_url_0"
         assert books_items[2]["updated_at"] == "2022-04-01T00:00:00+09:00"
 
-    def test_get_booksで本を取得できること_続きのデータありの場合(self, mocker):
+    def test_本を取得できること_続きのデータありの場合(self, mocker):
         mock_book_repository_fetch = mocker.patch.object(
             BookRepository,
             "fetch",
@@ -205,7 +205,7 @@ class Test_get_books:
         assert books_items[2]["image_url"] == "dummy_image_url_0"
         assert books_items[2]["updated_at"] == "2022-04-01T00:00:00+09:00"
 
-    def test_get_booksでbook_repositoryの処理でエラーが発生した場合Noneを返すこと(
+    def test_book_repositoryの処理でエラーが発生した場合Noneを返すこと(
         self,
         mocker,
     ):
@@ -221,7 +221,7 @@ class Test_get_books:
 
 
 class Test_get_books_before:
-    def test_get_books_beforeで本を取得できること_0ページへの遷移の場合(self, mocker):
+    def test_本を取得できること_0ページへの遷移の場合(self, mocker):
         mock_book_repository_fetch = mocker.patch.object(
             BookRepository,
             "fetch",
@@ -289,7 +289,7 @@ class Test_get_books_before:
         assert books_items[2]["image_url"] == "dummy_image_url_0"
         assert books_items[2]["updated_at"] == "2022-04-01T00:00:00+09:00"
 
-    def test_get_books_beforeで本を取得できること_1ページ以降への遷移の場合(self, mocker):
+    def test_本を取得できること_1ページ以降への遷移の場合(self, mocker):
         mock_book_repository_fetch = mocker.patch.object(
             BookRepository,
             "fetch",
@@ -359,7 +359,7 @@ class Test_get_books_before:
         assert books_items[2]["image_url"] == "dummy_image_url_0"
         assert books_items[2]["updated_at"] == "2022-04-01T00:00:00+09:00"
 
-    def test_get_books_beforeでbook_repositoryの処理でエラーが発生した場合Noneを返すこと(
+    def test_book_repositoryの処理でエラーが発生した場合Noneを返すこと(
         self,
         mocker,
     ):

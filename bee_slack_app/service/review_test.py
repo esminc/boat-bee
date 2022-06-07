@@ -15,7 +15,7 @@ from bee_slack_app.utils import datetime
 
 
 class Test_get_review:
-    def test_get_reviewでレビューを取得できること(self, monkeypatch):
+    def test_レビューを取得できること(self, monkeypatch):
         def mock_review_repository_get(_, **__):
             return {
                 "user_id": "user_id_0",
@@ -58,7 +58,7 @@ class Test_get_review:
         assert review["book_url"] == "dummy_book_url_0"
         assert review["book_description"] == "dummy_description_0"
 
-    def test_get_reviewで該当するユーザ情報がない場合はユーザ名としてユーザIDを返すこと(
+    def test_該当するユーザ情報がない場合はユーザ名としてユーザIDを返すこと(
         self,
         monkeypatch,
     ):
@@ -88,7 +88,7 @@ class Test_get_review:
         assert review["user_id"] == "user_id_0"
         assert review["user_name"] == "user_id_0"
 
-    def test_get_reviewでreview_repositoryの処理でエラーが発生した場合Noneを返すこと(
+    def test_review_repositoryの処理でエラーが発生した場合Noneを返すこと(
         self,
         monkeypatch,
     ):
@@ -113,7 +113,7 @@ class Test_get_review:
 
         assert review is None
 
-    def test_get_reviewでuser_repositoryの処理でエラーが発生した場合Noneを返すこと(
+    def test_user_repositoryの処理でエラーが発生した場合Noneを返すこと(
         self,
         monkeypatch,
     ):
@@ -144,7 +144,7 @@ class Test_get_review:
 
 
 class Test_get_review_all:
-    def test_get_review_allでレビューを取得できること(self, monkeypatch):
+    def test_レビューを取得できること(self, monkeypatch):
         def mock_review_repository_get_all(_, **__):
             return [
                 {
@@ -257,7 +257,7 @@ class Test_get_review_all:
         assert reviews[2]["book_url"] == "dummy_book_url_2"
         assert reviews[2]["book_description"] == "dummy_description_2"
 
-    def test_get_reviewsで該当するユーザ情報がない場合はユーザ名としてユーザIDを返すこと(
+    def test_該当するユーザ情報がない場合はユーザ名としてユーザIDを返すこと(
         self,
         monkeypatch,
     ):
@@ -348,7 +348,7 @@ class Test_get_review_all:
         assert reviews[2]["book_url"] == "dummy_book_url_2"
         assert reviews[2]["book_description"] == "dummy_description_2"
 
-    def test_get_review_allでreview_repositoryの処理でエラーが発生した場合Noneを返すこと(
+    def test_review_repositoryの処理でエラーが発生した場合Noneを返すこと(
         self,
         monkeypatch,
     ):
@@ -361,7 +361,7 @@ class Test_get_review_all:
 
         assert reviews is None
 
-    def test_get_review_allでuser_repositoryの処理でエラーが発生した場合Noneを返すこと(
+    def test_user_repositoryの処理でエラーが発生した場合Noneを返すこと(
         self,
         monkeypatch,
     ):
@@ -376,7 +376,7 @@ class Test_get_review_all:
 
 
 class Test_post_review:
-    def test_post_reviewでレビューを投稿できること(
+    def test_レビューを投稿できること(
         self,
         mocker,
     ):
@@ -417,7 +417,7 @@ class Test_post_review:
         assert review["book_url"] == "dummy_book_url"
         assert review["book_description"] == "dummy_description"
 
-    def test_post_reviewでreview_repositoryの処理でエラーが発生した場合Noneを返すこと(
+    def test_review_repositoryの処理でエラーが発生した場合Noneを返すこと(
         self,
         mocker,
     ):
@@ -448,7 +448,7 @@ class Test_post_review:
 
         assert review is None
 
-    def test_post_reviewでbook_repositoryの処理でエラーが発生した場合Noneを返すこと(
+    def test_book_repositoryの処理でエラーが発生した場合Noneを返すこと(
         self,
         mocker,
     ):
@@ -479,7 +479,7 @@ class Test_post_review:
 
         assert review is None
 
-    def test_get_reviews_by_isbnでレビューが取得できること(
+    def test_レビューが取得できること(
         self,
         mocker,
     ):
@@ -575,7 +575,7 @@ class Test_post_review:
 
 
 class Test_get_reviews_by_isbn:
-    def test_get_reviews_by_isbnでreview_repositoryの処理でエラーが発生した場合Noneを返すこと(
+    def test_review_repositoryの処理でエラーが発生した場合Noneを返すこと(
         self,
         mocker,
     ):
@@ -620,7 +620,7 @@ class Test_get_reviews_by_isbn:
 
         assert reviews is None
 
-    def test_get_reviews_by_isbnでuser_repositoryの処理でエラーが発生した場合Noneを返すこと(
+    def test_user_repositoryの処理でエラーが発生した場合Noneを返すこと(
         self,
         mocker,
     ):
@@ -665,7 +665,7 @@ class Test_get_reviews_by_isbn:
 
         assert reviews is None
 
-    def test_get_reviews_by_isbnで該当するユーザ情報がない場合はユーザ名としてユーザIDを返すこと(
+    def test_該当するユーザ情報がない場合はユーザ名としてユーザIDを返すこと(
         self,
         mocker,
     ):
