@@ -1,45 +1,18 @@
 # pylint: disable=attribute-defined-outside-init
 # pylint: disable=non-ascii-name
 
-import os
 
-import boto3  # type: ignore
 from moto import mock_dynamodb  # type: ignore
 
 from bee_slack_app.model.book import Book
 from bee_slack_app.repository.book_repository import BookRepository
+from bee_slack_app.repository.database import create_table
 
 
 @mock_dynamodb
 class TestBookRepository:
     def setup_method(self, _):
-        dynamodb = boto3.resource("dynamodb")
-
-        self.table = dynamodb.create_table(
-            TableName=os.environ["DYNAMODB_TABLE"] + "-book",
-            AttributeDefinitions=[
-                {"AttributeName": "book_pk", "AttributeType": "S"},
-                {"AttributeName": "isbn", "AttributeType": "S"},
-                {"AttributeName": "updated_at", "AttributeType": "S"},
-            ],
-            KeySchema=[
-                {"AttributeName": "book_pk", "KeyType": "HASH"},
-                {"AttributeName": "isbn", "KeyType": "RANGE"},
-            ],
-            ProvisionedThroughput={"ReadCapacityUnits": 1, "WriteCapacityUnits": 1},
-            GlobalSecondaryIndexes=[
-                {
-                    "IndexName": "updatedAtIndex",
-                    "KeySchema": [
-                        {"AttributeName": "book_pk", "KeyType": "HASH"},
-                        {"AttributeName": "updated_at", "KeyType": "RANGE"},
-                    ],
-                    "Projection": {
-                        "ProjectionType": "ALL",
-                    },
-                }
-            ],
-        )
+        self.table = create_table()
 
     def test_本を保存できること(self):
 
@@ -57,26 +30,26 @@ class TestBookRepository:
 
         book_repository.put(book=item)
 
-        response = self.table.query(
-            KeyConditionExpression=boto3.dynamodb.conditions.Key("book_pk").eq(
-                "book_pk_value"
-            ),
-        )
+        response = self.table.get_item(Key={"PK": "book#12345"})
 
-        books_items = response["Items"]
+        books_item = response["Item"]
 
-        assert books_items[0]["book_pk"] == "book_pk_value"
-        assert books_items[0]["isbn"] == "12345"
-        assert books_items[0]["updated_at"] == "251753562000.0"
-        assert books_items[0]["title"] == "dummy_title"
-        assert books_items[0]["author"] == "dummy_author"
-        assert books_items[0]["url"] == "dummy_url"
-        assert books_items[0]["image_url"] == "dummy_image_url"
-        assert books_items[0]["description"] == "dummy_description"
+        assert books_item["PK"] == "book#12345"
+        assert books_item["GSI_PK"] == "book"
+        assert books_item["GSI_0_SK"] == "251753562000.0"
+        assert books_item["isbn"] == "12345"
+        assert books_item["updated_at"] == "251753562000.0"
+        assert books_item["title"] == "dummy_title"
+        assert books_item["author"] == "dummy_author"
+        assert books_item["url"] == "dummy_url"
+        assert books_item["image_url"] == "dummy_image_url"
+        assert books_item["description"] == "dummy_description"
 
     def test_本を取得できること(self):
         item = {
-            "book_pk": "book_pk_value",
+            "PK": "book#12345",
+            "GSI_PK": "book",
+            "GSI_0_SK": "251753562000.0",
             "isbn": "12345",
             "updated_at": "251753562000.0",
             "title": "dummy_title_0",
@@ -89,7 +62,9 @@ class TestBookRepository:
         self.table.put_item(Item=item)
 
         item = {
-            "book_pk": "book_pk_value",
+            "PK": "book#67890",
+            "GSI_PK": "book",
+            "GSI_0_SK": "251753475600.0",
             "isbn": "67890",
             "updated_at": "251753475600.0",
             "title": "dummy_title_1",
@@ -102,7 +77,9 @@ class TestBookRepository:
         self.table.put_item(Item=item)
 
         item = {
-            "book_pk": "book_pk_value",
+            "PK": "book#01234",
+            "GSI_PK": "book",
+            "GSI_0_SK": "251753389200.0",
             "isbn": "01234",
             "updated_at": "251753389200.0",
             "title": "dummy_title_2",
@@ -150,7 +127,9 @@ class TestBookRepository:
 
     def test_複数回に分けて本を取得できること(self):
         item = {
-            "book_pk": "book_pk_value",
+            "PK": "book#12345",
+            "GSI_PK": "book",
+            "GSI_0_SK": "251753562000.0",
             "isbn": "12345",
             "updated_at": "251753562000.0",
             "title": "dummy_title_0",
@@ -163,7 +142,9 @@ class TestBookRepository:
         self.table.put_item(Item=item)
 
         item = {
-            "book_pk": "book_pk_value",
+            "PK": "book#67890",
+            "GSI_PK": "book",
+            "GSI_0_SK": "251753475600.0",
             "isbn": "67890",
             "updated_at": "251753475600.0",
             "title": "dummy_title_1",
@@ -176,7 +157,9 @@ class TestBookRepository:
         self.table.put_item(Item=item)
 
         item = {
-            "book_pk": "book_pk_value",
+            "PK": "book#01234",
+            "GSI_PK": "book",
+            "GSI_0_SK": "251753389200.0",
             "isbn": "01234",
             "updated_at": "251753389200.0",
             "title": "dummy_title_2",
@@ -231,11 +214,7 @@ class TestBookRepository:
         assert books_items[0]["updated_at"] == "2022-04-01T00:00:00+09:00"
 
     def test_本が存在しない場合は空配列を返すこと(self):  # pylint: disable=invalid-name
-        response = self.table.query(
-            KeyConditionExpression=boto3.dynamodb.conditions.Key("book_pk").eq(
-                "book_pk_value"
-            ),
-        )
+        response = self.table.scan()
 
         assert len(response["Items"]) == 0
 

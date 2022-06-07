@@ -1,44 +1,26 @@
 # pylint: disable=attribute-defined-outside-init
 # pylint: disable=non-ascii-name
 
-import os
 
 import boto3  # type: ignore
 from moto import mock_dynamodb  # type: ignore
 
+from bee_slack_app.repository.database import create_table
 from bee_slack_app.repository.review_repository import ReviewRepository
 
 
 @mock_dynamodb
 class TestReview:
     def setup_method(self, _):
-        dynamodb = boto3.resource("dynamodb")
-
-        self.table = dynamodb.create_table(
-            TableName=os.environ["DYNAMODB_TABLE"] + "-review",
-            AttributeDefinitions=[
-                {"AttributeName": "user_id", "AttributeType": "S"},
-                {"AttributeName": "isbn", "AttributeType": "S"},
-            ],
-            KeySchema=[
-                {"AttributeName": "user_id", "KeyType": "HASH"},
-                {"AttributeName": "isbn", "KeyType": "RANGE"},
-            ],
-            GlobalSecondaryIndexes=[
-                {
-                    "IndexName": "IsbnIndex",
-                    "KeySchema": [
-                        {"AttributeName": "isbn", "KeyType": "HASH"},
-                        {"AttributeName": "user_id", "KeyType": "RANGE"},
-                    ],
-                    "Projection": {"ProjectionType": "ALL"},
-                }
-            ],
-            ProvisionedThroughput={"ReadCapacityUnits": 1, "WriteCapacityUnits": 1},
-        )
+        self.table = create_table()
 
     def test_ISBNからレビューを取得できること(self):  # pylint: disable=invalid-name
         item = {
+            "PK": "review#user_id_0#12345",
+            "GSI_PK": "review",
+            "GSI_0_SK": "2022-04-01T00:00:00+09:00",
+            "GSI_1_SK": "user_id_0",
+            "GSI_2_SK": "12345",
             "user_id": "user_id_0",
             "book_title": "仕事ではじめる機械学習",
             "isbn": "12345",
@@ -54,6 +36,11 @@ class TestReview:
         self.table.put_item(Item=item)
 
         item = {
+            "PK": "review#user_id_1#12345",
+            "GSI_PK": "review",
+            "GSI_0_SK": "2022-04-01T00:00:00+09:00",
+            "GSI_1_SK": "user_id_1",
+            "GSI_2_SK": "12345",
             "user_id": "user_id_1",
             "book_title": "仕事ではじめる機械学習",
             "isbn": "12345",
@@ -69,6 +56,11 @@ class TestReview:
         self.table.put_item(Item=item)
 
         item = {
+            "PK": "review#user_id_2#67890",
+            "GSI_PK": "review",
+            "GSI_0_SK": "2022-04-01T00:00:00+09:00",
+            "GSI_1_SK": "user_id_2",
+            "GSI_2_SK": "67890",
             "user_id": "user_id_2",
             "book_title": "Python チュートリアル",
             "isbn": "67890",
@@ -111,6 +103,11 @@ class TestReview:
 
     def test_テーブルに存在しないレビューのISBNを指定した場合_空配列を返すこと(self):  # pylint: disable=invalid-name
         item = {
+            "PK": "review#user_id_0#12345",
+            "GSI_PK": "review",
+            "GSI_0_SK": "2022-04-01T00:00:00+09:00",
+            "GSI_1_SK": "user_id_0",
+            "GSI_2_SK": "12345",
             "user_id": "user_id_0",
             "book_title": "仕事ではじめる機械学習",
             "isbn": "12345",
@@ -126,6 +123,11 @@ class TestReview:
         self.table.put_item(Item=item)
 
         item = {
+            "PK": "review#user_id_1#12345",
+            "GSI_PK": "review",
+            "GSI_0_SK": "2022-04-01T00:00:00+09:00",
+            "GSI_1_SK": "user_id_1",
+            "GSI_2_SK": "12345",
             "user_id": "user_id_1",
             "book_title": "仕事ではじめる機械学習",
             "isbn": "12345",
@@ -141,6 +143,11 @@ class TestReview:
         self.table.put_item(Item=item)
 
         item = {
+            "PK": "review#user_id_2#67890",
+            "GSI_PK": "review",
+            "GSI_0_SK": "2022-04-01T00:00:00+09:00",
+            "GSI_1_SK": "user_id_2",
+            "GSI_2_SK": "67890",
             "user_id": "user_id_2",
             "book_title": "Python チュートリアル",
             "isbn": "67890",
@@ -164,6 +171,11 @@ class TestReview:
 
     def test_レビューを一意に指定して取得できること(self):
         item = {
+            "PK": "review#user_id_0#12345",
+            "GSI_PK": "review",
+            "GSI_0_SK": "2022-04-01T00:00:00+09:00",
+            "GSI_1_SK": "user_id_0",
+            "GSI_2_SK": "12345",
             "user_id": "user_id_0",
             "book_title": "仕事ではじめる機械学習",
             "isbn": "12345",
@@ -180,6 +192,11 @@ class TestReview:
         self.table.put_item(Item=item)
 
         item = {
+            "PK": "review#user_id_1#12345",
+            "GSI_PK": "review",
+            "GSI_0_SK": "2022-04-01T00:00:00+09:00",
+            "GSI_1_SK": "user_id_1",
+            "GSI_2_SK": "12345",
             "user_id": "user_id_1",
             "book_title": "仕事ではじめる機械学習",
             "isbn": "12345",
@@ -196,6 +213,11 @@ class TestReview:
         self.table.put_item(Item=item)
 
         item = {
+            "PK": "review#user_id_2#67890",
+            "GSI_PK": "review",
+            "GSI_0_SK": "2022-04-01T00:00:00+09:00",
+            "GSI_1_SK": "user_id_2",
+            "GSI_2_SK": "67890",
             "user_id": "user_id_2",
             "book_title": "Python チュートリアル",
             "isbn": "67890",
@@ -228,6 +250,11 @@ class TestReview:
 
     def test_存在しないレビューを指定した場合_Noneを返すこと(self):  # pylint: disable=invalid-name
         item = {
+            "PK": "review#user_id_0#12345",
+            "GSI_PK": "review",
+            "GSI_0_SK": "2022-04-01T00:00:00+09:00",
+            "GSI_1_SK": "user_id_0",
+            "GSI_2_SK": "12345",
             "user_id": "user_id_0",
             "book_title": "仕事ではじめる機械学習",
             "isbn": "12345",
@@ -244,6 +271,11 @@ class TestReview:
         self.table.put_item(Item=item)
 
         item = {
+            "PK": "review#user_id_1#12345",
+            "GSI_PK": "review",
+            "GSI_0_SK": "2022-04-01T00:00:00+09:00",
+            "GSI_1_SK": "user_id_1",
+            "GSI_2_SK": "12345",
             "user_id": "user_id_1",
             "book_title": "仕事ではじめる機械学習",
             "isbn": "12345",
@@ -260,6 +292,11 @@ class TestReview:
         self.table.put_item(Item=item)
 
         item = {
+            "PK": "review#user_id_2#67890",
+            "GSI_PK": "review",
+            "GSI_0_SK": "2022-04-01T00:00:00+09:00",
+            "GSI_1_SK": "user_id_2",
+            "GSI_2_SK": "67890",
             "user_id": "user_id_2",
             "book_title": "Python チュートリアル",
             "isbn": "67890",
@@ -283,6 +320,11 @@ class TestReview:
 
     def test_全件取得でレビューを取得できること(self):
         item = {
+            "PK": "review#user_id_0#12345",
+            "GSI_PK": "review",
+            "GSI_0_SK": "2022-04-01T00:00:00+09:00",
+            "GSI_1_SK": "user_id_0",
+            "GSI_2_SK": "12345",
             "user_id": "user_id_0",
             "book_title": "仕事ではじめる機械学習",
             "isbn": "12345",
@@ -299,6 +341,11 @@ class TestReview:
         self.table.put_item(Item=item)
 
         item = {
+            "PK": "review#user_id_1#12345",
+            "GSI_PK": "review",
+            "GSI_0_SK": "2022-04-01T00:00:00+09:00",
+            "GSI_1_SK": "user_id_1",
+            "GSI_2_SK": "12345",
             "user_id": "user_id_1",
             "book_title": "仕事ではじめる機械学習",
             "isbn": "12345",
@@ -315,6 +362,11 @@ class TestReview:
         self.table.put_item(Item=item)
 
         item = {
+            "PK": "review#user_id_2#67890",
+            "GSI_PK": "review",
+            "GSI_0_SK": "2022-04-02T00:00:00+09:00",
+            "GSI_1_SK": "user_id_2",
+            "GSI_2_SK": "67890",
             "user_id": "user_id_2",
             "book_title": "Python チュートリアル",
             "isbn": "67890",
@@ -382,13 +434,9 @@ class TestReview:
         assert isinstance(reviews, list)
 
     def test_レビューを作成できること(self):
-        response = self.table.query(
-            KeyConditionExpression=boto3.dynamodb.conditions.Key("user_id").eq(
-                "test_user_id"
-            ),
-        )
+        item = self.table.get_item(Key={"PK": "review#test_user_id#12345"}).get("Item")
 
-        assert len(response["Items"]) == 0
+        assert item is None
 
         review_repository = ReviewRepository()
 
@@ -408,16 +456,14 @@ class TestReview:
             }
         )
 
-        response = self.table.query(
-            KeyConditionExpression=boto3.dynamodb.conditions.Key("user_id").eq(
-                "test_user_id"
-            ),
+        actual = self.table.get_item(Key={"PK": "review#test_user_id#12345"}).get(
+            "Item"
         )
-
-        assert len(response["Items"]) == 1
-
-        actual = response["Items"][0]
-
+        assert actual["PK"] == "review#test_user_id#12345"
+        assert actual["GSI_PK"] == "review"
+        assert actual["GSI_0_SK"] == "2022-04-01T00:00:00+09:00"
+        assert actual["GSI_1_SK"] == "test_user_id"
+        assert actual["GSI_2_SK"] == "12345"
         assert actual["user_id"] == "test_user_id"
         assert actual["isbn"] == "12345"
         assert actual["book_title"] == "本のタイトル"
@@ -449,16 +495,15 @@ class TestReview:
             }
         )
 
-        response = self.table.query(
-            KeyConditionExpression=boto3.dynamodb.conditions.Key("user_id").eq(
-                "test_user_id"
-            ),
+        actual = self.table.get_item(Key={"PK": "review#test_user_id#12345"}).get(
+            "Item"
         )
 
-        assert len(response["Items"]) == 1
-
-        actual = response["Items"][0]
-
+        assert actual["PK"] == "review#test_user_id#12345"
+        assert actual["GSI_PK"] == "review"
+        assert actual["GSI_0_SK"] == "2022-04-01T00:00:00+09:00"
+        assert actual["GSI_1_SK"] == "test_user_id"
+        assert actual["GSI_2_SK"] == "12345"
         assert actual["user_id"] == "test_user_id"
         assert actual["isbn"] == "12345"
         assert actual["book_title"] == "最初のレビューのタイトル"
@@ -487,16 +532,15 @@ class TestReview:
             }
         )
 
-        response = self.table.query(
-            KeyConditionExpression=boto3.dynamodb.conditions.Key("user_id").eq(
-                "test_user_id"
-            ),
+        actual = self.table.get_item(Key={"PK": "review#test_user_id#12345"}).get(
+            "Item"
         )
 
-        assert len(response["Items"]) == 1
-
-        actual = response["Items"][0]
-
+        assert actual["PK"] == "review#test_user_id#12345"
+        assert actual["GSI_PK"] == "review"
+        assert actual["GSI_0_SK"] == "2022-04-02T00:00:00+09:00"
+        assert actual["GSI_1_SK"] == "test_user_id"
+        assert actual["GSI_2_SK"] == "12345"
         assert actual["user_id"] == "test_user_id"
         assert actual["isbn"] == "12345"
         assert actual["book_title"] == "上書き後のレビューのタイトル"
@@ -552,16 +596,15 @@ class TestReview:
             }
         )
 
-        response = self.table.query(
-            KeyConditionExpression=boto3.dynamodb.conditions.Key("user_id").eq(
-                "test_user_id"
-            ),
+        actual_0 = self.table.get_item(Key={"PK": "review#test_user_id#12345"}).get(
+            "Item"
         )
 
-        assert len(response["Items"]) == 2
-
-        actual_0 = response["Items"][0]
-
+        assert actual_0["PK"] == "review#test_user_id#12345"
+        assert actual_0["GSI_PK"] == "review"
+        assert actual_0["GSI_0_SK"] == "2022-04-01T00:00:00+09:00"
+        assert actual_0["GSI_1_SK"] == "test_user_id"
+        assert actual_0["GSI_2_SK"] == "12345"
         assert actual_0["user_id"] == "test_user_id"
         assert actual_0["isbn"] == "12345"
         assert actual_0["book_title"] == "本のタイトル"
@@ -574,8 +617,15 @@ class TestReview:
         assert actual_0["book_url"] == "dummy_book_url_0"
         assert actual_0["book_description"] == "dummy_description_0"
 
-        actual_1 = response["Items"][1]
+        actual_1 = self.table.get_item(Key={"PK": "review#test_user_id#67890"}).get(
+            "Item"
+        )
 
+        assert actual_1["PK"] == "review#test_user_id#67890"
+        assert actual_1["GSI_PK"] == "review"
+        assert actual_1["GSI_0_SK"] == "2022-05-01T00:00:00+09:00"
+        assert actual_1["GSI_1_SK"] == "test_user_id"
+        assert actual_1["GSI_2_SK"] == "67890"
         assert actual_1["user_id"] == "test_user_id"
         assert actual_1["isbn"] == "67890"
         assert actual_1["book_title"] == "本のタイトル"
