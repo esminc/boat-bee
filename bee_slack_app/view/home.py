@@ -11,7 +11,7 @@ class BooksParam(TypedDict):
 
 def home(
     *,
-    see_more_recommended_book_action_id: str,
+    recommended_books: list,
     post_review_action_id: str,
     user_info_action_id: str,
     total_review_count: int,
@@ -24,14 +24,64 @@ def home(
     アプリホーム画面
 
     Args:
-        see_more_recommended_book_action_id: 「詳しく見る」ボタンのaction_id
+        recommended_books: 「おすすめ本」のデータ
         post_review_action_id: 「レビューを投稿する」ボタンのaction_id
         user_info_action_id: 「プロフィール」ボタンのaction_id
         total_review_count: 表示する「レビュー投稿数」
         user_name:表示する「ユーザ名」
+        recommend_timestamp:MLのjsonファイルを作成した日時
         books_param: 「レビューが投稿されている本」のデータ
         private_metadata: private_metadata
     """
+    recommended_book_sections = []
+
+    if recommended_books:
+
+        for recommended_book in recommended_books:
+
+            recommended_book_sections.append(
+                {
+                    "type": "section",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": f"*{recommended_book[0]['title']}*\n{','.join(recommended_book[0]['authors'])}\nISBN-{recommended_book[0]['isbn']}\n<{recommended_book[0]['google_books_url']}|Google Booksで見る>",
+                    },
+                    "accessory": {
+                        "type": "image",
+                        "image_url": recommended_book[0]["image_url"],
+                        "alt_text": recommended_book[0]["title"],
+                    },
+                },
+            )
+
+            recommended_book_sections.append(
+                {
+                    "type": "actions",
+                    "elements": [
+                        {  # type: ignore
+                            "type": "button",
+                            "text": {
+                                "type": "plain_text",
+                                "text": "この本のレビューを見る",
+                                "emoji": True,
+                            },
+                            "value": recommended_book[0]["isbn"],
+                            "action_id": "read_review_of_book_action",
+                        }
+                    ],
+                },
+            )
+    else:
+        recommended_book_sections.append(
+            {
+                "type": "section",
+                "text": {
+                    "type": "plain_text",
+                    "text": "おすすめ本を見るには、レビュー投稿をお願いします :pray:",
+                    "emoji": True,
+                },
+            },
+        )
 
     view = {
         "type": "home",
@@ -76,91 +126,76 @@ def home(
                     "text": f"*最新の推薦データ* : {recommend_timestamp}",
                 },
             },
-            {
-                "type": "section",
-                "text": {
-                    "type": "mrkdwn",
-                    "text": "あなたにおすすめの本は... ",
-                },
-            },
-            {
-                "type": "actions",
-                "elements": [
-                    {
-                        "type": "button",
-                        "text": {
-                            "type": "plain_text",
-                            "text": "おすすめの本を確認する",
-                            "emoji": True,
-                        },
-                        "value": "dummy_value",
-                        "action_id": see_more_recommended_book_action_id,
-                    }
-                ],
-            },
-            {
-                "type": "header",
-                "text": {"type": "plain_text", "text": "本のレビュー", "emoji": True},
-            },
-            {
-                "type": "section",
-                "fields": [
-                    {
-                        "type": "mrkdwn",
-                        "text": f"*現在のレビュー投稿数 {total_review_count}件*",
-                    },  # type:ignore
-                ],
-            },
-            {
-                "type": "actions",
-                "elements": [
-                    {
-                        "type": "button",
-                        "text": {
-                            "type": "plain_text",
-                            "text": "レビューを投稿する :memo:",
-                            "emoji": True,
-                        },
-                        "value": "dummy_value",
-                        "action_id": post_review_action_id,
-                    },
-                ],
-            },
-            {
-                "type": "header",
-                "text": {"type": "plain_text", "text": "ユーザ情報", "emoji": True},
-            },
-            {
-                "type": "actions",
-                "elements": [
-                    {
-                        "type": "button",
-                        "text": {
-                            "type": "plain_text",
-                            "text": "プロフィール",
-                            "emoji": True,
-                        },
-                        "value": "dummy_value",
-                        "action_id": user_info_action_id,
-                    },
-                ],
-            },
-            {"type": "divider"},
-            {
-                "type": "header",
-                "text": {
-                    "type": "plain_text",
-                    "text": "レビューが投稿されている本",
-                    "emoji": True,
-                },
-            },
-            {
-                "type": "image",
-                "image_url": "https://developers.google.com/maps/documentation/images/powered_by_google_on_white.png",
-                "alt_text": "Google Logo",
-            },
         ],
     }
+    view["blocks"].extend(recommended_book_sections)  # type: ignore
+
+    following_blocks = [
+        {"type": "divider"},
+        {
+            "type": "header",
+            "text": {"type": "plain_text", "text": "本のレビュー", "emoji": True},
+        },
+        {
+            "type": "section",
+            "fields": [
+                {
+                    "type": "mrkdwn",
+                    "text": f"*現在のレビュー投稿数 {total_review_count}件*",
+                },  # type:ignore
+            ],
+        },
+        {
+            "type": "actions",
+            "elements": [
+                {
+                    "type": "button",
+                    "text": {
+                        "type": "plain_text",
+                        "text": "レビューを投稿する :memo:",
+                        "emoji": True,
+                    },
+                    "value": "dummy_value",
+                    "action_id": post_review_action_id,
+                },
+            ],
+        },
+        {
+            "type": "header",
+            "text": {"type": "plain_text", "text": "ユーザ情報", "emoji": True},
+        },
+        {
+            "type": "actions",
+            "elements": [
+                {
+                    "type": "button",
+                    "text": {
+                        "type": "plain_text",
+                        "text": "プロフィール",
+                        "emoji": True,
+                    },
+                    "value": "dummy_value",
+                    "action_id": user_info_action_id,
+                },
+            ],
+        },
+        {"type": "divider"},
+        {
+            "type": "header",
+            "text": {
+                "type": "plain_text",
+                "text": "レビューが投稿されている本",
+                "emoji": True,
+            },
+        },
+        {
+            "type": "image",
+            "image_url": "https://developers.google.com/maps/documentation/images/powered_by_google_on_white.png",
+            "alt_text": "Google Logo",
+        },
+    ]
+
+    view["blocks"].extend(following_blocks)  # type: ignore
 
     book_sections = []
 
