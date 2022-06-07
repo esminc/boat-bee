@@ -12,7 +12,6 @@ def _encode_partition_key(*, user_id: str, isbn: str) -> str:
     return f"review#{user_id}#{isbn}"
 
 
-# This is a sample
 class ReviewRepository:
     class GetConditions(TypedDict):
         score_for_me: Optional[str]
