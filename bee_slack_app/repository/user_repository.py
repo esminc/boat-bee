@@ -46,11 +46,14 @@ class UserRepository:
     def get_by_posted_review(self) -> list[User]:
         """
         レビューを投稿しているユーザを取得する
+
+        ユーザは、レビュー投稿数が多い順でソート済み
         """
         return self.table.query(
             IndexName=database.GSI_3,
             KeyConditionExpression=Key(database.GSI_PK).eq(GSI_PK_VALUE)
             & Key(database.GSI_3_SK).gt(0),
+            ScanIndexForward=False,
         )["Items"]
 
     def create(self, user: User) -> None:

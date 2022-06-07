@@ -244,14 +244,14 @@ class TestUserRepository:
             "PK": "user#test_user_id_1",
             "GSI_PK": "user",
             "GSI_0_SK": "2022-04-11T09:23:04+09:00",
-            "GSI_3_SK": 0,
+            "GSI_3_SK": 2,
             "user_id": "test_user_id_1",
             "user_name": "問屋町　花子",
             "department": "ＩＴＳ事業部",
             "job_type": "管理職",
             "age_range": "50",
             "updated_at": "2022-04-11T09:23:04+09:00",
-            "post_review_count": 0,
+            "post_review_count": 2,
         }
 
         self.table.put_item(Item=item)
@@ -276,14 +276,25 @@ class TestUserRepository:
 
         users = user_repository.get_by_posted_review()
 
-        assert users[0]["user_id"] == "test_user_id_0"
-        assert users[0]["user_name"] == "永和　太郎"
+        assert len(users) == 2
+
+        # レビュー投稿数が多い順でソート済み
+
+        assert users[0]["user_id"] == "test_user_id_1"
+        assert users[0]["user_name"] == "問屋町　花子"
         assert users[0]["department"] == "ＩＴＳ事業部"
-        assert users[0]["job_type"] == "技術職"
-        assert users[0]["age_range"] == "20"
-        assert users[0]["updated_at"] == "2022-04-01T00:00:00+09:00"
-        assert users[0]["updated_at"] == "2022-04-01T00:00:00+09:00"
-        assert users[0]["post_review_count"] == 1
+        assert users[0]["job_type"] == "管理職"
+        assert users[0]["age_range"] == "50"
+        assert users[0]["updated_at"] == "2022-04-11T09:23:04+09:00"
+        assert users[0]["post_review_count"] == 2
+
+        assert users[1]["user_id"] == "test_user_id_0"
+        assert users[1]["user_name"] == "永和　太郎"
+        assert users[1]["department"] == "ＩＴＳ事業部"
+        assert users[1]["job_type"] == "技術職"
+        assert users[1]["age_range"] == "20"
+        assert users[1]["updated_at"] == "2022-04-01T00:00:00+09:00"
+        assert users[1]["post_review_count"] == 1
 
     def test_レビューを投稿したユーザが0件の場合に空配列を返すこと(self):  # pylint: disable=invalid-name
         item = {
