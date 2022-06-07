@@ -70,7 +70,7 @@ def home_controller(app):  # pylint: disable=too-many-statements
         client.views_publish(
             user_id=event["user"],
             view=home(
-                callback_id="suggested_button_modal",
+                suggested_callback_id="suggested_button_modal",
                 button_status_list=button_status_list,
                 post_review_action_id="post_review_action",
                 recommended_books=recommended_books,
@@ -133,7 +133,7 @@ def home_controller(app):  # pylint: disable=too-many-statements
         client.views_publish(
             user_id=user_id,
             view=home(
-                callback_id="suggested_button_modal",
+                suggested_callback_id="suggested_button_modal",
                 button_status_list=button_status_list,
                 post_review_action_id="post_review_action",
                 recommended_books=recommended_books,
@@ -196,7 +196,7 @@ def home_controller(app):  # pylint: disable=too-many-statements
         client.views_publish(
             user_id=user_id,
             view=home(
-                callback_id="suggested_button_modal",
+                suggested_callback_id="suggested_button_modal",
                 button_status_list=button_status_list,
                 post_review_action_id="post_review_action",
                 recommended_books=recommended_books,
@@ -210,7 +210,9 @@ def home_controller(app):  # pylint: disable=too-many-statements
         )
 
     @app.action("button_switch_action")
-    def handle_updete_button_action(ack, body, event, client):
+    def handle_updete_button_action(
+        ack, body, client
+    ):  # pylint: disable=too-many-locals
 
         ack()
         logger = getLogger(__name__)
@@ -259,7 +261,7 @@ def home_controller(app):  # pylint: disable=too-many-statements
 
         # 興味ありボタンの表示を切り替える
         modal_view = home(
-            callback_id="suggested_button_modal",
+            suggested_callback_id="suggested_button_modal",
             button_status_list=button_status_list,
             post_review_action_id="post_review_action",
             recommended_books=recommended_books,

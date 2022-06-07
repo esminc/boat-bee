@@ -1,3 +1,4 @@
+import json
 from typing import Optional, TypedDict
 
 from bee_slack_app.model.book import Book
@@ -11,6 +12,8 @@ class BooksParam(TypedDict):
 
 def home(
     *,
+    suggested_callback_id: str,
+    button_status_list: list[bool],
     recommended_books: list,
     post_review_action_id: str,
     user_info_action_id: str,
@@ -19,11 +22,13 @@ def home(
     recommend_timestamp: str,
     books_params: Optional[BooksParam] = None,
     private_metadata: str = "",
-):
+):  # pylint: disable=too-many-locals
     """
     アプリホーム画面
 
     Args:
+        suggested_callback_id:「興味ありなし」ボタンのある画面のcallback_id
+        button_status_list: 「興味ありなし」のフラグ
         recommended_books: 「おすすめ本」のデータ
         post_review_action_id: 「レビューを投稿する」ボタンのaction_id
         user_info_action_id: 「プロフィール」ボタンのaction_id
@@ -37,7 +42,13 @@ def home(
 
     if recommended_books:
 
-        for recommended_book in recommended_books:
+        for i, recommended_book in enumerate(recommended_books):
+
+            button_status = button_status_list[i]
+
+            button_info = {"interested": button_status_list}
+            # private_metadataに格納するために文字列に変換する
+            private_metadata = json.dumps(button_info)
 
             recommended_book_sections.append(
                 {
@@ -54,6 +65,7 @@ def home(
                 },
             )
 
+            recommended_book_sections.append(create_button(button_status, i))
             recommended_book_sections.append(
                 {
                     "type": "actions",
@@ -85,6 +97,7 @@ def home(
 
     view = {
         "type": "home",
+        "callback_id": suggested_callback_id,
         "private_metadata": private_metadata,
         "blocks": [
             {
@@ -273,3 +286,24 @@ def home(
     view["blocks"].extend(book_sections)  # type: ignore
 
     return view
+
+
+def create_button(interested: bool, button_value: int) -> dict:
+    button_name = "❤️興味あり" if interested else "🤍興味なし"
+    return {
+        "type": "actions",
+        "elements": [
+            {
+                "type": "button",
+                "text": {
+                    "type": "plain_text",
+                    "text": button_name,
+                    "emoji": True,
+                },
+                # valueにはstrしか格納できないため変換する
+                # 取り出した側でintに戻して利用する
+                "value": str(button_value),
+                "action_id": "button_switch_action",
+            },
+        ],
+    }
