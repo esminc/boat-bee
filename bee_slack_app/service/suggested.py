@@ -19,8 +19,7 @@ def get_suggested_status(*, user_id: str, isbn: str, ml_model: str) -> Optional[
 
 
     Returns:
-        SuggestedBook: おすすめされた本が興味ありか否かの情報。未登録の場合は、Noneが返る。
-        興味あり:True、興味なし:False
+        興味あり:True、興味なし:False、未登録の場合は、None
     """
     logger = getLogger(__name__)
 
