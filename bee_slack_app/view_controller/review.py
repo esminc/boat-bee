@@ -65,7 +65,7 @@ def review_controller(app):  # pylint: disable=too-many-statements
             view=review_modal(callback_id="review_modal", book=book, reviews=reviews),
         )
 
-    @app.action("review_service.post_review_action")
+    @app.action("post_review_action")
     def open_book_search_modal(ack, body, client):
         """
         本の検索モーダルを開く
@@ -77,7 +77,7 @@ def review_controller(app):  # pylint: disable=too-many-statements
         if not user_service.get_user(user_id):
             user_action_service.record_user_action(
                 user_id=user_id,
-                action_name="review_service.post_review_action",
+                action_name="post_review_action",
                 status="no_user_profile_error",
             )
 
@@ -91,7 +91,7 @@ def review_controller(app):  # pylint: disable=too-many-statements
 
         user_action_service.record_user_action(
             user_id=user_id,
-            action_name="review_service.post_review_action",
+            action_name="post_review_action",
         )
 
         client.views_open(
@@ -101,7 +101,7 @@ def review_controller(app):  # pylint: disable=too-many-statements
             view=search_book_to_review_modal(callback_id="book_search_modal"),
         )
 
-    @app.view("review_service.post_review_modal")
+    @app.view("post_review_modal")
     def handle_submission(
         ack, body, _, view, client
     ):  # pylint: disable=too-many-locals
@@ -178,7 +178,7 @@ def review_controller(app):  # pylint: disable=too-many-statements
 
         user_action_service.record_user_action(
             user_id=user_id,
-            action_name="review_service.post_review_modal",
+            action_name="post_review_modal",
             payload={"review": review_contents, "notify": notify},
         )
 
