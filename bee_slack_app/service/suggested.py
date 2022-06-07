@@ -27,7 +27,7 @@ def get_is_interested(*, user_id: str, isbn: str, ml_model: str) -> Optional[boo
         result: Optional[SuggestedBook] = suggested_book_repository.get(
             user_id=user_id, isbn=isbn, ml_model=ml_model
         )
-        return result["interested"]  # type: ignore
+        return None if result is None else result["interested"]
 
     except Exception:  # pylint: disable=broad-except
         logger.exception("Failed to get data.")

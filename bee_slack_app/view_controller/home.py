@@ -1,11 +1,12 @@
 import json
 from logging import getLogger
-from typing import Any, TypedDict
+from typing import Any, Optional, TypedDict
 
 from bee_slack_app.service.book import get_books, get_books_before
 from bee_slack_app.service.recommend import created_at, recommend
 from bee_slack_app.service.review import get_review_all
 from bee_slack_app.service.user import get_user
+from bee_slack_app.service.suggested import get_is_interested, add_suggested
 from bee_slack_app.service.user_action import record_user_action
 from bee_slack_app.utils.datetime import parse
 from bee_slack_app.view.home import home
@@ -38,15 +39,17 @@ def home_controller(app):  # pylint: disable=too-many-statements
 
         recommended_books = recommend(user)
 
-        # TODO: ボタン状態はDBから読み出す
-        # とりあえず今は固定値で始める
-        # button_status_list = [False, False, False]
+        # 興味ありボタンの状態をDBから取り出す
         button_status_list = []
-        print("recommended_user=", event["user"])
         for recommended_book in recommended_books:
-            print("recommended_isbn=", recommended_book[0]["isbn"])
-            print("recommended_ml_model=", recommended_book[1])
-            button_status_list.append(False)
+            interested_status: Optional[bool] = get_is_interested(
+                user_id=event["user"],
+                isbn=recommended_book[0]["isbn"],
+                ml_model=recommended_book[1],
+            )
+            button_status_list.append(
+                False if interested_status is None else interested_status
+            )
         print("recommended_status=", button_status_list)
 
         books_params = None
@@ -169,7 +172,19 @@ def home_controller(app):  # pylint: disable=too-many-statements
 
         recommended_books = recommend(user)
 
-        button_status_list = [False, False, False]
+        # 興味ありボタンの状態をDBから取り出す
+        button_status_list = []
+        for recommended_book in recommended_books:
+            interested_status: Optional[bool] = get_is_interested(
+                user_id=user_id,
+                isbn=recommended_book[0]["isbn"],
+                ml_model=recommended_book[1],
+                # print("print_interested=",str(interested_status))
+            )
+            button_status_list.append(
+                False if interested_status is None else interested_status
+            )
+        print("recommended_status=", button_status_list)
 
         metadata_dict = _PrivateMetadataConvertor.to_dict(
             private_metadata=private_metadata
@@ -229,6 +244,19 @@ def home_controller(app):  # pylint: disable=too-many-statements
 
         recommended_books = recommend(user)
 
+        # 興味ありボタンの状態をDBから取り出す
+        button_status_list = []
+        for recommended_book in recommended_books:
+            interested_status: Optional[bool] = get_is_interested(
+                user_id=body["user"]["id"],
+                isbn=recommended_book[0]["isbn"],
+                ml_model=recommended_book[1],
+            )
+            button_status_list.append(
+                False if interested_status is None else interested_status
+            )
+        print("recommended_status=", button_status_list)
+
         books_params = None
         metadata_str = ""
 
@@ -278,7 +306,7 @@ def home_controller(app):  # pylint: disable=too-many-statements
         )
 
         # TODO: 最新のボタン状態をDBに格納する
-        print("recommended_status=", button_status_list)
+        print("recommended_status_write=", button_status_list)
 
 
 class _PrivateMetadataConvertor:
