@@ -10,7 +10,7 @@ from bee_slack_app.repository.review_repository import ReviewRepository
 
 
 @mock_dynamodb
-class TestReview:
+class TestReviewRepository:
     def setup_method(self, _):
         self.table = create_table()
 
