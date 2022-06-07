@@ -1,11 +1,13 @@
 # pylint: disable=attribute-defined-outside-init
 # pylint: disable=non-ascii-name
+# pylint: disable=invalid-name
+# pylint: disable=no-self-use
 
 from bee_slack_app.repository.google_books_repository import GoogleBooksRepository
 from bee_slack_app.service import book_search
 
 
-class TestBookSearch:
+class Test_search_book_by_title:
     def setup_method(self, _):
         self.book_search = book_search
 
@@ -78,9 +80,15 @@ class TestBookSearch:
 
         assert len(result) == 0
 
-    def test_ISBN指定でヒットした場合は結果が1件であること(
-        self, monkeypatch
-    ):  # pylint: disable=invalid-name
+
+class Test_search_book_by_isbn:
+    def setup_method(self, _):
+        self.book_search = book_search
+
+    def teardown_method(self, _):
+        pass
+
+    def test_ISBN指定でヒットした場合は結果が1件であること(self, monkeypatch):
         def mock_search_book_by_isbn(_, isbn):
             book = {
                 "title": "テストのタイトル",
@@ -110,9 +118,7 @@ class TestBookSearch:
         assert result["image_url"] is not None
         assert result["description"] is not None
 
-    def test_ISBN指定でヒットしなかった場合は結果が0件であること(
-        self, monkeypatch
-    ):  # pylint: disable=invalid-name
+    def test_ISBN指定でヒットしなかった場合は結果が0件であること(self, monkeypatch):
         def mock_search_book_by_isbn(_, __):
             return None
 
