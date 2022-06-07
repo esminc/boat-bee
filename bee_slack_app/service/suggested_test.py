@@ -1,7 +1,7 @@
 # pylint: disable=non-ascii-name
 
 from bee_slack_app.repository.suggested_book_repository import SuggestedBookRepository
-from bee_slack_app.service.suggested import get_suggested_status
+from bee_slack_app.service.suggested import get_is_interested
 
 
 def test_おすすめ本の情報を取得を取得できること(monkeypatch):
@@ -16,7 +16,7 @@ def test_おすすめ本の情報を取得を取得できること(monkeypatch):
 
     monkeypatch.setattr(SuggestedBookRepository, "get", mock_suggested_repository_get)
 
-    result = get_suggested_status(
+    result = get_is_interested(
         user_id="test_user_id", isbn="1234567890123", ml_model="test_ml_model"
     )
     assert result is False
@@ -28,7 +28,7 @@ def test_おすすめ本の情報がない場合はNoneを返す(monkeypatch):  
 
     monkeypatch.setattr(SuggestedBookRepository, "get", mock_suggested_repository_get)
 
-    result = get_suggested_status(
+    result = get_is_interested(
         user_id="test_user_id", isbn="1234567890123", ml_model="test_ml_model"
     )
 
