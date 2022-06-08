@@ -8,10 +8,7 @@
       "dockerDashComposeVersion": "v1"
     }
   },
-  "containerEnv": {
-    "AWS_ACCESS_KEY_ID": "${localEnv:AWS_ACCESS_KEY_ID}",
-    "AWS_SECRET_ACCESS_KEY": "${localEnv:AWS_SECRET_ACCESS_KEY}"
-  },
+  "runArgs": ["--env-file", ".env"],
   "postCreateCommand": "make init",
   "settings": {
     "editor.defaultFormatter": "esbenp.prettier-vscode",
