@@ -1,4 +1,5 @@
-from typing import Optional
+import json
+from typing import Optional, TypedDict
 
 from bee_slack_app.model.user import User
 from bee_slack_app.service import user_action_service, user_service
@@ -22,8 +23,17 @@ def user_controller(app):
             or user_info["user"]["profile"]["real_name"]
         )
 
+        post_review_count = str(user["post_review_count"]) if user else "0"
+
+        private_metadata = _PrivateMetadataConvertor.to_private_metadata(
+            post_review_count=post_review_count
+        )
+
         modal_view = user_profile_modal(
-            callback_id="user_profile_modal", user_name=user_name, user=user
+            callback_id="user_profile_modal",
+            private_metadata=private_metadata,
+            user_name=user_name,
+            user=user,
         )
 
         user_action_service.record_user_action(
@@ -56,6 +66,12 @@ def user_controller(app):
 
         user_id = body["user"]["id"]
 
+        private_metadata = body["view"]["private_metadata"]
+
+        metadata_dict = _PrivateMetadataConvertor.to_dict(
+            private_metadata=private_metadata
+        )
+
         ack()
 
         user: User = {
@@ -65,6 +81,7 @@ def user_controller(app):
             "job_type": job_type,
             "age_range": age_range,
             "updated_at": None,
+            "post_review_count": int(metadata_dict["post_review_count"]),
         }
 
         user_service.add_user(user)
@@ -74,3 +91,16 @@ def user_controller(app):
             action_name="user_profile_modal",
             payload={"user": user},
         )
+
+
+class _PrivateMetadataConvertor:
+    class _MetadataDict(TypedDict):
+        post_review_count: str
+
+    @staticmethod
+    def to_private_metadata(*, post_review_count: str) -> str:
+        return json.dumps({"post_review_count": post_review_count})
+
+    @staticmethod
+    def to_dict(*, private_metadata: str) -> _MetadataDict:
+        return json.loads(private_metadata)

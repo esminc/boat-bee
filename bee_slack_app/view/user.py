@@ -44,18 +44,22 @@ def _make_options(source: dict[str, str]) -> list[dict]:
     return options
 
 
-def user_profile_modal(callback_id: str, user_name: str, user: Optional[User]):
+def user_profile_modal(
+    callback_id: str, private_metadata: str, user_name: str, user: Optional[User]
+):
     """
     ユーザプロフィールモーダル
 
     Args:
         callback_id: モーダルのcallback_id
+        private_metadata: モーダルのprivate_metadata
         user_name: ユーザ名
         user: ユーザ
     """
     view = {
         "type": "modal",
         "callback_id": callback_id,
+        "private_metadata": private_metadata,
         "title": {"type": "plain_text", "text": "プロフィール"},
         "submit": {"type": "plain_text", "text": "更新" if user else "登録", "emoji": True},
         "close": {"type": "plain_text", "text": "閉じる", "emoji": True},

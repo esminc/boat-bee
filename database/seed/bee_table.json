@@ -21,12 +21,14 @@
     "PK": "user#U03BAUEM5QS",
     "GSI_PK": "user",
     "GSI_0_SK": "2022-05-13T15:08:25+09:00",
+    "GSI_3_SK": 1,
     "job_type": "engineer",
     "age_range": "40",
     "department": "its",
     "updated_at": "2022-05-13T15:08:25+09:00",
     "user_id": "U03BAUEM5QS",
-    "user_name": "岡本卓也"
+    "user_name": "岡本卓也",
+    "post_review_count": 1
   },
   {
     "PK": "book#9784873118253",

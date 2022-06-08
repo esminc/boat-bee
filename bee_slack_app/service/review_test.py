@@ -1,4 +1,5 @@
 # pylint: disable=non-ascii-name
+# pylint: disable=too-many-lines
 
 
 from bee_slack_app.repository.book_repository import BookRepository
@@ -8,6 +9,7 @@ from bee_slack_app.service.review import (
     get_review,
     get_review_all,
     get_reviews_by_isbn,
+    get_reviews_by_user_id,
     post_review,
 )
 from bee_slack_app.utils import datetime
@@ -379,6 +381,14 @@ def test_post_reviewでレビューを投稿できること(
 
     mock_book_repository_put = mocker.patch.object(BookRepository, "put")
 
+    mock_review_repository_get_by_user_id = mocker.patch.object(
+        ReviewRepository, "get_by_user_id"
+    )
+
+    mock_user_repository_update_post_review_count = mocker.patch.object(
+        UserRepository, "update_post_review_count"
+    )
+
     mocker.patch.object(datetime, "now").return_value = "2022-04-01T00:00:00+09:00"
 
     review = post_review(
@@ -399,6 +409,10 @@ def test_post_reviewでレビューを投稿できること(
     assert mock_review_repository_create.call_count == 1
 
     assert mock_book_repository_put.call_count == 1
+
+    assert mock_review_repository_get_by_user_id.call_count == 1
+
+    assert mock_user_repository_update_post_review_count.call_count == 1
 
     assert review["user_id"] == "test_user_id"
     assert review["isbn"] == "12345"
@@ -421,6 +435,14 @@ def test_post_reviewでreview_repositoryの処理でエラーが発生した場�
 
     mock_book_repository_put = mocker.patch.object(BookRepository, "put")
 
+    mock_review_repository_get_by_user_id = mocker.patch.object(
+        ReviewRepository, "get_by_user_id"
+    )
+
+    mock_user_repository_update_post_review_count = mocker.patch.object(
+        UserRepository, "update_post_review_count"
+    )
+
     mocker.patch.object(datetime, "now").return_value = "2022-04-01T00:00:00+09:00"
 
     review = post_review(
@@ -440,6 +462,8 @@ def test_post_reviewでreview_repositoryの処理でエラーが発生した場�
 
     assert mock_review_repository_create.call_count == 1
     assert mock_book_repository_put.call_count == 0
+    assert mock_review_repository_get_by_user_id.call_count == 0
+    assert mock_user_repository_update_post_review_count.call_count == 0
 
     assert review is None
 
@@ -451,6 +475,14 @@ def test_post_reviewでbook_repositoryの処理でエラーが発生した場合
 
     mock_book_repository_put = mocker.patch.object(BookRepository, "put")
     mock_book_repository_put.side_effect = Exception("dummy exception")
+
+    mock_review_repository_get_by_user_id = mocker.patch.object(
+        ReviewRepository, "get_by_user_id"
+    )
+
+    mock_user_repository_update_post_review_count = mocker.patch.object(
+        UserRepository, "update_post_review_count"
+    )
 
     mocker.patch.object(datetime, "now").return_value = "2022-04-01T00:00:00+09:00"
 
@@ -471,6 +503,51 @@ def test_post_reviewでbook_repositoryの処理でエラーが発生した場合
 
     assert mock_review_repository_create.call_count == 1
     assert mock_book_repository_put.call_count == 1
+    assert mock_review_repository_get_by_user_id.call_count == 0
+    assert mock_user_repository_update_post_review_count.call_count == 0
+
+    assert review is None
+
+
+def test_post_reviewでuser_repositoryの処理でエラーが発生した場合Noneを返すこと(
+    mocker,
+):  # pylint: disable=invalid-name
+    mock_review_repository_create = mocker.patch.object(ReviewRepository, "create")
+
+    mock_book_repository_put = mocker.patch.object(BookRepository, "put")
+
+    mock_review_repository_get_by_user_id = mocker.patch.object(
+        ReviewRepository, "get_by_user_id"
+    )
+
+    mock_user_repository_update_post_review_count = mocker.patch.object(
+        UserRepository, "update_post_review_count"
+    )
+    mock_user_repository_update_post_review_count.side_effect = Exception(
+        "dummy exception"
+    )
+
+    mocker.patch.object(datetime, "now").return_value = "2022-04-01T00:00:00+09:00"
+
+    review = post_review(
+        review_contents={
+            "user_id": "test_user_id",
+            "isbn": "12345",
+            "book_title": "本のタイトル",
+            "score_for_me": "1",
+            "score_for_others": "3",
+            "review_comment": "レビューコメント",
+            "book_image_url": "dummy_book_author",
+            "book_author": "dummy_book_author",
+            "book_url": "dummy_book_url",
+            "book_description": "dummy_description",
+        },
+    )
+
+    assert mock_review_repository_create.call_count == 1
+    assert mock_book_repository_put.call_count == 1
+    assert mock_review_repository_get_by_user_id.call_count == 1
+    assert mock_user_repository_update_post_review_count.call_count == 1
 
     assert review is None
 
@@ -717,6 +794,259 @@ def test_get_reviews_by_isbnで該当するユーザ情報がない場合はユ�
 
     assert reviews[1]["user_id"] == "user_id_1"
     assert reviews[1]["user_name"] == "user_id_1"
+    assert reviews[1]["isbn"] == "1234567890123"
+    assert reviews[1]["book_title"] == "仕事ではじめる機械学習"
+    assert reviews[1]["score_for_me"] == "3"
+    assert reviews[1]["score_for_others"] == "4"
+    assert reviews[1]["review_comment"] == "まあまあです"
+    assert reviews[1]["book_image_url"] == "dummy_book_image_url_1"
+    assert reviews[1]["book_author"] == "dummy_book_author_1"
+    assert reviews[1]["book_url"] == "dummy_book_url_1"
+    assert reviews[1]["book_description"] == "dummy_description_1"
+
+
+def test_get_reviews_by_user_idでレビューが取得できること(
+    mocker,
+):  # pylint: disable=invalid-name
+    mock_review_repository_get_by_user_id = mocker.patch.object(
+        ReviewRepository,
+        "get_by_user_id",
+    )
+    mock_review_repository_get_by_user_id.return_value = [
+        {
+            "user_id": "user_id_0",
+            "book_title": "仕事ではじめる機械学習",
+            "isbn": "1234567890123",
+            "score_for_me": "1",
+            "score_for_others": "5",
+            "review_comment": "とても良いです",
+            "book_image_url": "dummy_book_image_url_0",
+            "book_author": "dummy_book_author_0",
+            "book_url": "dummy_book_url_0",
+            "book_description": "dummy_description_0",
+        },
+        {
+            "user_id": "user_id_0",
+            "book_title": "仕事ではじめる機械学習",
+            "isbn": "1234567890123",
+            "score_for_me": "3",
+            "score_for_others": "4",
+            "review_comment": "まあまあです",
+            "book_image_url": "dummy_book_image_url_1",
+            "book_author": "dummy_book_author_1",
+            "book_url": "dummy_book_url_1",
+            "book_description": "dummy_description_1",
+        },
+    ]
+
+    mock_user_repository_get_all = mocker.patch.object(
+        UserRepository,
+        "get_all",
+    )
+    mock_user_repository_get_all.return_value = [
+        {
+            "user_id": "user_id_0",
+            "department": "department_0",
+            "job_type": "job_type_0",
+            "age_range": "age_range_0",
+            "updated_at": "2022-04-11T09:23:04+09:00",
+            "user_name": "user_name_0",
+        },
+        {
+            "user_id": "user_id_1",
+            "department": "department_1",
+            "job_type": "job_type_1",
+            "age_range": "age_range_1",
+            "updated_at": "2022-04-12T09:23:04+09:00",
+            "user_name": "user_name_1",
+        },
+        {
+            "user_id": "user_id_2",
+            "department": "department_2",
+            "job_type": "job_type_2",
+            "age_range": "age_range_2",
+            "updated_at": "2022-04-12T09:23:04+09:00",
+            "user_name": "user_name_2",
+        },
+    ]
+
+    reviews = get_reviews_by_user_id(user_id="user_id_0")
+
+    assert len(reviews) == 2
+
+    assert reviews[0]["user_id"] == "user_id_0"
+    assert reviews[0]["user_name"] == "user_name_0"
+    assert reviews[0]["isbn"] == "1234567890123"
+    assert reviews[0]["book_title"] == "仕事ではじめる機械学習"
+    assert reviews[0]["score_for_me"] == "1"
+    assert reviews[0]["score_for_others"] == "5"
+    assert reviews[0]["review_comment"] == "とても良いです"
+    assert reviews[0]["book_image_url"] == "dummy_book_image_url_0"
+    assert reviews[0]["book_author"] == "dummy_book_author_0"
+    assert reviews[0]["book_url"] == "dummy_book_url_0"
+    assert reviews[0]["book_description"] == "dummy_description_0"
+
+    assert reviews[1]["user_id"] == "user_id_0"
+    assert reviews[1]["user_name"] == "user_name_0"
+    assert reviews[1]["isbn"] == "1234567890123"
+    assert reviews[1]["book_title"] == "仕事ではじめる機械学習"
+    assert reviews[1]["score_for_me"] == "3"
+    assert reviews[1]["score_for_others"] == "4"
+    assert reviews[1]["review_comment"] == "まあまあです"
+    assert reviews[1]["book_image_url"] == "dummy_book_image_url_1"
+    assert reviews[1]["book_author"] == "dummy_book_author_1"
+    assert reviews[1]["book_url"] == "dummy_book_url_1"
+    assert reviews[1]["book_description"] == "dummy_description_1"
+
+
+def test_get_reviews_by_user_idでreview_repositoryの処理でエラーが発生した場合Noneを返すこと(
+    mocker,
+):  # pylint: disable=invalid-name
+    mock_review_repository_get_by_user_id = mocker.patch.object(
+        ReviewRepository,
+        "get_by_user_id",
+    )
+    mock_review_repository_get_by_user_id.side_effect = Exception("dummy exception")
+
+    mock_user_repository_get_all = mocker.patch.object(
+        UserRepository,
+        "get_all",
+    )
+    mock_user_repository_get_all.return_value = [
+        {
+            "user_id": "user_id_0",
+            "department": "department_0",
+            "job_type": "job_type_0",
+            "age_range": "age_range_0",
+            "updated_at": "2022-04-11T09:23:04+09:00",
+            "user_name": "user_name_0",
+        },
+        {
+            "user_id": "user_id_1",
+            "department": "department_1",
+            "job_type": "job_type_1",
+            "age_range": "age_range_1",
+            "updated_at": "2022-04-12T09:23:04+09:00",
+            "user_name": "user_name_1",
+        },
+        {
+            "user_id": "user_id_2",
+            "department": "department_2",
+            "job_type": "job_type_2",
+            "age_range": "age_range_2",
+            "updated_at": "2022-04-12T09:23:04+09:00",
+            "user_name": "user_name_2",
+        },
+    ]
+
+    reviews = get_reviews_by_user_id(user_id="user_id_0")
+
+    assert reviews is None
+
+
+def test_get_reviews_by_user_idでuser_repositoryの処理でエラーが発生した場合Noneを返すこと(
+    mocker,
+):  # pylint: disable=invalid-name
+    mock_review_repository_get_by_user_id = mocker.patch.object(
+        ReviewRepository,
+        "get_by_user_id",
+    )
+    mock_review_repository_get_by_user_id.return_value = [
+        {
+            "user_id": "user_id_0",
+            "book_title": "仕事ではじめる機械学習",
+            "isbn": "1234567890123",
+            "score_for_me": "1",
+            "score_for_others": "5",
+            "review_comment": "とても良いです",
+            "book_image_url": "dummy_book_image_url_0",
+            "book_author": "dummy_book_author_0",
+            "book_url": "dummy_book_url_0",
+            "book_description": "dummy_description_0",
+        },
+        {
+            "user_id": "user_id_0",
+            "book_title": "仕事ではじめる機械学習",
+            "isbn": "1234567890123",
+            "score_for_me": "3",
+            "score_for_others": "4",
+            "review_comment": "まあまあです",
+            "book_image_url": "dummy_book_image_url_1",
+            "book_author": "dummy_book_author_1",
+            "book_url": "dummy_book_url_1",
+            "book_description": "dummy_description_1",
+        },
+    ]
+
+    mock_user_repository_get_all = mocker.patch.object(
+        UserRepository,
+        "get_all",
+    )
+    mock_user_repository_get_all.side_effect = Exception("dummy exception")
+
+    reviews = get_reviews_by_user_id(user_id="user_id_0")
+
+    assert reviews is None
+
+
+def test_get_reviews_by_user_idで該当するユーザ情報がない場合はユーザ名としてユーザIDを返すこと(
+    mocker,
+):  # pylint: disable=invalid-name
+    mock_review_repository_get_by_user_id = mocker.patch.object(
+        ReviewRepository,
+        "get_by_user_id",
+    )
+    mock_review_repository_get_by_user_id.return_value = [
+        {
+            "user_id": "user_id_0",
+            "book_title": "仕事ではじめる機械学習",
+            "isbn": "1234567890123",
+            "score_for_me": "1",
+            "score_for_others": "5",
+            "review_comment": "とても良いです",
+            "book_image_url": "dummy_book_image_url_0",
+            "book_author": "dummy_book_author_0",
+            "book_url": "dummy_book_url_0",
+            "book_description": "dummy_description_0",
+        },
+        {
+            "user_id": "user_id_0",
+            "book_title": "仕事ではじめる機械学習",
+            "isbn": "1234567890123",
+            "score_for_me": "3",
+            "score_for_others": "4",
+            "review_comment": "まあまあです",
+            "book_image_url": "dummy_book_image_url_1",
+            "book_author": "dummy_book_author_1",
+            "book_url": "dummy_book_url_1",
+            "book_description": "dummy_description_1",
+        },
+    ]
+
+    mock_user_repository_get_all = mocker.patch.object(
+        UserRepository,
+        "get_all",
+    )
+    mock_user_repository_get_all.return_value = []
+
+    reviews = get_reviews_by_user_id(user_id="user_id_0")
+
+    assert len(reviews) == 2
+
+    assert reviews[0]["user_id"] == "user_id_0"
+    assert reviews[0]["user_name"] == "user_id_0"
+    assert reviews[0]["isbn"] == "1234567890123"
+    assert reviews[0]["book_title"] == "仕事ではじめる機械学習"
+    assert reviews[0]["score_for_me"] == "1"
+    assert reviews[0]["score_for_others"] == "5"
+    assert reviews[0]["review_comment"] == "とても良いです"
+    assert reviews[0]["book_image_url"] == "dummy_book_image_url_0"
+    assert reviews[0]["book_author"] == "dummy_book_author_0"
+    assert reviews[0]["book_url"] == "dummy_book_url_0"
+    assert reviews[0]["book_description"] == "dummy_description_0"
+
+    assert reviews[1]["user_id"] == "user_id_0"
+    assert reviews[1]["user_name"] == "user_id_0"
     assert reviews[1]["isbn"] == "1234567890123"
     assert reviews[1]["book_title"] == "仕事ではじめる機械学習"
     assert reviews[1]["score_for_me"] == "3"

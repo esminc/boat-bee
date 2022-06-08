@@ -18,6 +18,7 @@ from bee_slack_app.view.read_review import (
     BookOfReview,
     review_detail_modal,
     review_modal,
+    review_of_user_modal,
 )
 from bee_slack_app.view.user import user_department_dict
 
@@ -63,6 +64,41 @@ def review_controller(app):  # pylint: disable=too-many-statements
         client.views_open(
             trigger_id=body["trigger_id"],
             view=review_modal(callback_id="review_modal", book=book, reviews=reviews),
+        )
+
+    @app.action("read_review_of_user_action")
+    def read_review_of_user_action(ack, body, client, action):
+        """
+        ユーザのレビューモーダルを開く
+        """
+        ack()
+
+        user_id = body["user"]["id"]
+
+        user_id_of_review = action["value"]
+
+        reviews = review_service.get_reviews_by_user_id(user_id=user_id_of_review)
+
+        user_action_service.record_user_action(
+            user_id=user_id,
+            action_name="read_review_of_user_action",
+            payload={"user_id_of_review": user_id_of_review, "reviews": reviews},
+        )
+
+        if not reviews:
+            client.views_push(
+                trigger_id=body["trigger_id"],
+                view=simple_modal(title="エラー", text="レビュー取得でエラーが発生しました"),
+            )
+            return
+
+        reviews = _make_review_contents_list_comment_short(reviews)
+
+        client.views_push(
+            trigger_id=body["trigger_id"],
+            view=review_of_user_modal(
+                callback_id="review_of_user_modal", reviews=reviews
+            ),
         )
 
     @app.action("post_review_action")

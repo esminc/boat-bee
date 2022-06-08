@@ -7,10 +7,12 @@ PK = "PK"
 GSI_0 = "GSI_0"
 GSI_1 = "GSI_1"
 GSI_2 = "GSI_2"
+GSI_3 = "GSI_3"
 GSI_PK = "GSI_PK"
 GSI_0_SK = "GSI_0_SK"
 GSI_1_SK = "GSI_1_SK"
 GSI_2_SK = "GSI_2_SK"
+GSI_3_SK = "GSI_3_SK"
 
 
 def get_database_client():
@@ -42,6 +44,7 @@ def create_table():
             {"AttributeName": "GSI_0_SK", "AttributeType": "S"},
             {"AttributeName": "GSI_1_SK", "AttributeType": "S"},
             {"AttributeName": "GSI_2_SK", "AttributeType": "S"},
+            {"AttributeName": "GSI_3_SK", "AttributeType": "N"},
         ],
         KeySchema=[
             {"AttributeName": "PK", "KeyType": "HASH"},
@@ -69,6 +72,14 @@ def create_table():
                 "KeySchema": [
                     {"AttributeName": "GSI_PK", "KeyType": "HASH"},
                     {"AttributeName": "GSI_2_SK", "KeyType": "RANGE"},
+                ],
+                "Projection": {"ProjectionType": "ALL"},
+            },
+            {
+                "IndexName": "GSI_3",
+                "KeySchema": [
+                    {"AttributeName": "GSI_PK", "KeyType": "HASH"},
+                    {"AttributeName": "GSI_3_SK", "KeyType": "RANGE"},
                 ],
                 "Projection": {"ProjectionType": "ALL"},
             },

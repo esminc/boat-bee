@@ -46,6 +46,20 @@ def get_all_user() -> list[User]:
         return []
 
 
+def get_users_posted_review() -> list[User]:
+    """
+    レビューを投稿しているユーザを取得する
+    """
+    logger = getLogger(__name__)
+
+    try:
+        return user_repository.get_by_posted_review()
+
+    except Exception:  # pylint: disable=broad-except
+        logger.exception("Failed to get data.")
+        return []
+
+
 def add_user(user: User) -> None:
     """
     ユーザ情報の登録・更新をする
@@ -61,6 +75,7 @@ def add_user(user: User) -> None:
                 "job_type": user["job_type"],
                 "age_range": user["age_range"],
                 "updated_at": datetime.now(),
+                "post_review_count": user["post_review_count"],
             }
         )
 

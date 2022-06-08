@@ -9,10 +9,11 @@ class BooksParam(TypedDict):
     show_move_to_next: bool
 
 
-def home(
+def home(  # pylint: disable=too-many-locals
     *,
     recommended_books: list,
     post_review_action_id: str,
+    list_user_posted_review_action_id: str,
     user_info_action_id: str,
     total_review_count: int,
     user_name: str,
@@ -26,6 +27,7 @@ def home(
     Args:
         recommended_books: 「おすすめ本」のデータ
         post_review_action_id: 「レビューを投稿する」ボタンのaction_id
+        list_user_posted_review_action_id: 「レビューを投稿したユーザ」ボタンのaction_id
         user_info_action_id: 「プロフィール」ボタンのaction_id
         total_review_count: 表示する「レビュー投稿数」
         user_name:表示する「ユーザ名」
@@ -157,6 +159,16 @@ def home(
                     },
                     "value": "dummy_value",
                     "action_id": post_review_action_id,
+                },
+                {
+                    "type": "button",
+                    "text": {
+                        "type": "plain_text",
+                        "text": "レビューを投稿したユーザ",
+                        "emoji": True,
+                    },
+                    "value": "dummy_value",
+                    "action_id": list_user_posted_review_action_id,
                 },
             ],
         },
