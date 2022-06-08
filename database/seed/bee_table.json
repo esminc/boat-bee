@@ -14,7 +14,8 @@
     "score_for_others": "5",
     "book_image_url": "dummy_book_image_url",
     "book_author": "dummy_book_author",
-    "book_url": "dummy_book_url"
+    "book_url": "dummy_book_url",
+    "book_description": "dummy_book_description"
   },
   {
     "PK": "user#U03BAUEM5QS",
@@ -30,13 +31,15 @@
     "post_review_count": 1
   },
   {
-    "PK": "book#251753562000",
+    "PK": "book#9784873118253",
     "GSI_PK": "book",
-    "GSI_0_SK": "9784873118253",
+    "GSI_0_SK": "251753562000",
+    "isbn": "9784873118253",
     "title": "仕事ではじめる機械学習",
     "author": "dummy_author_0",
     "url": "dummy_url_0",
     "image_url": "dummy_image_url_0",
-    "description": "dummy_description_0"
+    "description": "dummy_description_0",
+    "updated_at": "251753562000"
   }
 ]
