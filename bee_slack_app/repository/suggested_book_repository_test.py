@@ -1,36 +1,28 @@
 # pylint: disable=attribute-defined-outside-init
 # pylint: disable=non-ascii-name
 
-import os
 
-import boto3  # type: ignore
 from moto import mock_dynamodb  # type: ignore
 
+from bee_slack_app.repository import database
 from bee_slack_app.repository.suggested_book_repository import SuggestedBookRepository
 
 
 @mock_dynamodb
 class TestSuggestedBookRepository:
     def setup_method(self, _):
-        dynamodb = boto3.resource("dynamodb")
-
-        self.table = dynamodb.create_table(
-            TableName=os.environ["DYNAMODB_TABLE"] + "-suggested-book",
-            AttributeDefinitions=[
-                {"AttributeName": "user_id", "AttributeType": "S"},
-                {"AttributeName": "suggested_book_sk", "AttributeType": "S"},
-            ],
-            KeySchema=[
-                {"AttributeName": "user_id", "KeyType": "HASH"},
-                {"AttributeName": "suggested_book_sk", "KeyType": "RANGE"},
-            ],
-            ProvisionedThroughput={"ReadCapacityUnits": 1, "WriteCapacityUnits": 1},
-        )
+        self.table = database.create_table()
 
     def test_DBの先頭にあるおすすめされた本を取得できること(self):  # pylint: disable=invalid-name
         item = {
+            "PK": "suggested_book#test_user_id_0#1234567890123#dummy_ml_model_0",
+            "GSI_PK": "suggested_book",
+            "GSI_0_SK": "test_user_id_0",
+            "GSI_1_SK": "1234567890123",
+            "GSI_2_SK": "dummy_ml_model_0",
             "user_id": "test_user_id_0",
-            "suggested_book_sk": "1234567890123#dummy_ml_model_0",
+            "isbn": "1234567890123",
+            "ml_model": "dummy_ml_model_0",
             "interested": True,
             "updated_at": "2022-04-01T00:00:00+09:00",
         }
@@ -38,8 +30,14 @@ class TestSuggestedBookRepository:
         self.table.put_item(Item=item)
 
         item = {
+            "PK": "suggested_book#test_user_id_1#9234567890123#dummy_ml_model_1",
+            "GSI_PK": "suggested_book",
+            "GSI_0_SK": "test_user_id_1",
+            "GSI_1_SK": "9234567890123",
+            "GSI_2_SK": "dummy_ml_model_1",
             "user_id": "test_user_id_1",
-            "suggested_book_sk": "9234567890123#dummy_ml_model_1",
+            "isbn": "1234567890123",
+            "ml_model": "dummy_ml_model_1",
             "interested": True,
             "updated_at": "2022-04-11T09:23:04+09:00",
         }
@@ -60,8 +58,14 @@ class TestSuggestedBookRepository:
 
     def test_DBの最後尾にあるおすすめされた本を取得できること(self):  # pylint: disable=invalid-name
         item = {
+            "PK": "suggested_book#test_user_id_0#1234567890123#dummy_ml_model_0",
+            "GSI_PK": "suggested_book",
+            "GSI_0_SK": "test_user_id_0",
+            "GSI_1_SK": "1234567890123",
+            "GSI_2_SK": "dummy_ml_model_0",
             "user_id": "test_user_id_0",
-            "suggested_book_sk": "1234567890123#dummy_ml_model_0",
+            "isbn": "1234567890123",
+            "ml_model": "dummy_ml_model_0",
             "interested": True,
             "updated_at": "2022-04-01T00:00:00+09:00",
         }
@@ -69,8 +73,14 @@ class TestSuggestedBookRepository:
         self.table.put_item(Item=item)
 
         item = {
+            "PK": "suggested_book#test_user_id_1#9234567890123#dummy_ml_model_1",
+            "GSI_PK": "suggested_book",
+            "GSI_0_SK": "test_user_id_1",
+            "GSI_1_SK": "9234567890123",
+            "GSI_2_SK": "dummy_ml_model_1",
             "user_id": "test_user_id_1",
-            "suggested_book_sk": "9234567890123#dummy_ml_model_1",
+            "isbn": "9234567890123",
+            "ml_model": "dummy_ml_model_1",
             "interested": False,
             "updated_at": "2022-04-11T09:23:04+09:00",
         }
@@ -91,8 +101,14 @@ class TestSuggestedBookRepository:
 
     def test_おすすめされた本が無い場合にNoneが返ること(self):  # pylint: disable=invalid-name
         item = {
+            "PK": "suggested_book#test_user_id_0#1234567890123#dummy_ml_model_0",
+            "GSI_PK": "suggested_book",
+            "GSI_0_SK": "test_user_id_0",
+            "GSI_1_SK": "1234567890123",
+            "GSI_2_SK": "dummy_ml_model_0",
             "user_id": "test_user_id_0",
-            "suggested_book_sk": "1234567890123#dummy_ml_model_0",
+            "isbn": "1234567890123",
+            "ml_model": "dummy_ml_model_0",
             "interested": True,
             "updated_at": "2022-04-01T00:00:00+09:00",
         }
@@ -100,8 +116,14 @@ class TestSuggestedBookRepository:
         self.table.put_item(Item=item)
 
         item = {
+            "PK": "suggested_book#test_user_id_1#9234567890123#dummy_ml_model_1",
+            "GSI_PK": "suggested_book",
+            "GSI_0_SK": "test_user_id_1",
+            "GSI_1_SK": "9234567890123",
+            "GSI_2_SK": "dummy_ml_model_1",
             "user_id": "test_user_id_1",
-            "suggested_book_sk": "9234567890123#dummy_ml_model_1",
+            "isbn": "1234567890123",
+            "ml_model": "dummy_ml_model_1",
             "interested": False,
             "updated_at": "2022-04-11T09:23:04+09:00",
         }
@@ -117,13 +139,11 @@ class TestSuggestedBookRepository:
         assert suggested_book is None
 
     def test_おすすめされた本の情報を作成できること(self):
-        response = self.table.query(
-            KeyConditionExpression=boto3.dynamodb.conditions.Key("user_id").eq(
-                "test_user_id_0"
-            ),
-        )
+        actual = self.table.get_item(
+            Key={"PK": "suggested_book#test_user_id_0#1234567890123#dummy_ml_model_0"}
+        ).get("Item")
 
-        assert len(response["Items"]) == 0
+        assert actual is None
 
         suggested_book_repository = SuggestedBookRepository()
 
@@ -137,28 +157,30 @@ class TestSuggestedBookRepository:
             }
         )
 
-        response = self.table.query(
-            KeyConditionExpression=boto3.dynamodb.conditions.Key("user_id").eq(
-                "test_user_id_0"
-            ),
+        actual = self.table.get_item(
+            Key={"PK": "suggested_book#test_user_id_0#1234567890123#dummy_ml_model_0"}
+        ).get("Item")
+
+        assert (
+            actual["PK"]
+            == "suggested_book#test_user_id_0#1234567890123#dummy_ml_model_0"
         )
-        assert len(response["Items"]) == 1
-
-        actual = response["Items"][0]
-
+        assert actual["GSI_PK"] == "suggested_book"
+        assert actual["GSI_0_SK"] == "test_user_id_0"
+        assert actual["GSI_1_SK"] == "1234567890123"
+        assert actual["GSI_2_SK"] == "dummy_ml_model_0"
         assert actual["user_id"] == "test_user_id_0"
-        assert actual["suggested_book_sk"] == "1234567890123#dummy_ml_model_0"
+        assert actual["isbn"] == "1234567890123"
+        assert actual["ml_model"] == "dummy_ml_model_0"
         assert actual["interested"] is True
         assert actual["updated_at"] == "2022-04-01T00:00:00+09:00"
 
     def test_ユーザーが同じでisbnとmlが異なるおすすめされた本を追加できること(self):
-        response = self.table.query(
-            KeyConditionExpression=boto3.dynamodb.conditions.Key("user_id").eq(
-                "test_user_id_0"
-            ),
-        )
+        actual = self.table.get_item(
+            Key={"PK": "suggested_book#test_user_id_0#1234567890123#dummy_ml_model_0"}
+        ).get("Item")
 
-        assert len(response["Items"]) == 0
+        assert actual is None
 
         suggested_book_repository = SuggestedBookRepository()
 
@@ -172,17 +194,22 @@ class TestSuggestedBookRepository:
                 "updated_at": "2022-04-01T00:00:00+09:00",
             }
         )
-        response = self.table.query(
-            KeyConditionExpression=boto3.dynamodb.conditions.Key("user_id").eq(
-                "test_user_id_0"
-            ),
+
+        actual = self.table.get_item(
+            Key={"PK": "suggested_book#test_user_id_0#1234567890123#dummy_ml_model_0"}
+        ).get("Item")
+
+        assert (
+            actual["PK"]
+            == "suggested_book#test_user_id_0#1234567890123#dummy_ml_model_0"
         )
-        assert len(response["Items"]) == 1
-
-        actual = response["Items"][0]
-
+        assert actual["GSI_PK"] == "suggested_book"
+        assert actual["GSI_0_SK"] == "test_user_id_0"
+        assert actual["GSI_1_SK"] == "1234567890123"
+        assert actual["GSI_2_SK"] == "dummy_ml_model_0"
         assert actual["user_id"] == "test_user_id_0"
-        assert actual["suggested_book_sk"] == "1234567890123#dummy_ml_model_0"
+        assert actual["isbn"] == "1234567890123"
+        assert actual["ml_model"] == "dummy_ml_model_0"
         assert actual["interested"] is True
         assert actual["updated_at"] == "2022-04-01T00:00:00+09:00"
 
@@ -196,34 +223,48 @@ class TestSuggestedBookRepository:
                 "updated_at": "2022-04-01T00:00:00+09:00",
             }
         )
-        response = self.table.query(
-            KeyConditionExpression=boto3.dynamodb.conditions.Key("user_id").eq(
-                "test_user_id_0"
-            ),
+        actual = self.table.get_item(
+            Key={"PK": "suggested_book#test_user_id_0#1234567890123#dummy_ml_model_0"}
+        ).get("Item")
+
+        assert (
+            actual["PK"]
+            == "suggested_book#test_user_id_0#1234567890123#dummy_ml_model_0"
         )
-        assert len(response["Items"]) == 2
-
-        actual = response["Items"][0]
-
+        assert actual["GSI_PK"] == "suggested_book"
+        assert actual["GSI_0_SK"] == "test_user_id_0"
+        assert actual["GSI_1_SK"] == "1234567890123"
+        assert actual["GSI_2_SK"] == "dummy_ml_model_0"
         assert actual["user_id"] == "test_user_id_0"
-        assert actual["suggested_book_sk"] == "1234567890123#dummy_ml_model_0"
+        assert actual["isbn"] == "1234567890123"
+        assert actual["ml_model"] == "dummy_ml_model_0"
         assert actual["interested"] is True
         assert actual["updated_at"] == "2022-04-01T00:00:00+09:00"
 
-        actual = response["Items"][1]
+        actual = self.table.get_item(
+            Key={"PK": "suggested_book#test_user_id_0#9234567890123#dummy_ml_model_1"}
+        ).get("Item")
 
+        assert (
+            actual["PK"]
+            == "suggested_book#test_user_id_0#9234567890123#dummy_ml_model_1"
+        )
+        assert actual["GSI_PK"] == "suggested_book"
+        assert actual["GSI_0_SK"] == "test_user_id_0"
+        assert actual["GSI_1_SK"] == "9234567890123"
+        assert actual["GSI_2_SK"] == "dummy_ml_model_1"
         assert actual["user_id"] == "test_user_id_0"
-        assert actual["suggested_book_sk"] == "9234567890123#dummy_ml_model_1"
+        assert actual["isbn"] == "9234567890123"
+        assert actual["ml_model"] == "dummy_ml_model_1"
         assert actual["interested"] is True
         assert actual["updated_at"] == "2022-04-01T00:00:00+09:00"
 
     def test_ユーザーとisbnが同じでmlが異なるおすすめされた本を追加できること(self):
-        response = self.table.query(
-            KeyConditionExpression=boto3.dynamodb.conditions.Key("user_id").eq(
-                "test_user_id_0"
-            ),
-        )
-        assert len(response["Items"]) == 0
+        actual = self.table.get_item(
+            Key={"PK": "suggested_book#test_user_id_0#1234567890123#dummy_ml_model_0"}
+        ).get("Item")
+
+        assert actual is None
 
         suggested_book_repository = SuggestedBookRepository()
 
@@ -237,17 +278,21 @@ class TestSuggestedBookRepository:
                 "updated_at": "2022-04-01T00:00:00+09:00",
             }
         )
-        response = self.table.query(
-            KeyConditionExpression=boto3.dynamodb.conditions.Key("user_id").eq(
-                "test_user_id_0"
-            ),
+        actual = self.table.get_item(
+            Key={"PK": "suggested_book#test_user_id_0#1234567890123#dummy_ml_model_0"}
+        ).get("Item")
+
+        assert (
+            actual["PK"]
+            == "suggested_book#test_user_id_0#1234567890123#dummy_ml_model_0"
         )
-        assert len(response["Items"]) == 1
-
-        actual = response["Items"][0]
-
+        assert actual["GSI_PK"] == "suggested_book"
+        assert actual["GSI_0_SK"] == "test_user_id_0"
+        assert actual["GSI_1_SK"] == "1234567890123"
+        assert actual["GSI_2_SK"] == "dummy_ml_model_0"
         assert actual["user_id"] == "test_user_id_0"
-        assert actual["suggested_book_sk"] == "1234567890123#dummy_ml_model_0"
+        assert actual["isbn"] == "1234567890123"
+        assert actual["ml_model"] == "dummy_ml_model_0"
         assert actual["interested"] is True
         assert actual["updated_at"] == "2022-04-01T00:00:00+09:00"
 
@@ -261,34 +306,48 @@ class TestSuggestedBookRepository:
                 "updated_at": "2022-04-01T00:00:00+09:00",
             }
         )
-        response = self.table.query(
-            KeyConditionExpression=boto3.dynamodb.conditions.Key("user_id").eq(
-                "test_user_id_0"
-            ),
+        actual = self.table.get_item(
+            Key={"PK": "suggested_book#test_user_id_0#1234567890123#dummy_ml_model_0"}
+        ).get("Item")
+
+        assert (
+            actual["PK"]
+            == "suggested_book#test_user_id_0#1234567890123#dummy_ml_model_0"
         )
-        assert len(response["Items"]) == 2
-
-        actual = response["Items"][0]
-
+        assert actual["GSI_PK"] == "suggested_book"
+        assert actual["GSI_0_SK"] == "test_user_id_0"
+        assert actual["GSI_1_SK"] == "1234567890123"
+        assert actual["GSI_2_SK"] == "dummy_ml_model_0"
         assert actual["user_id"] == "test_user_id_0"
-        assert actual["suggested_book_sk"] == "1234567890123#dummy_ml_model_0"
+        assert actual["isbn"] == "1234567890123"
+        assert actual["ml_model"] == "dummy_ml_model_0"
         assert actual["interested"] is True
         assert actual["updated_at"] == "2022-04-01T00:00:00+09:00"
 
-        actual = response["Items"][1]
+        actual = self.table.get_item(
+            Key={"PK": "suggested_book#test_user_id_0#1234567890123#dummy_ml_model_1"}
+        ).get("Item")
 
+        assert (
+            actual["PK"]
+            == "suggested_book#test_user_id_0#1234567890123#dummy_ml_model_1"
+        )
+        assert actual["GSI_PK"] == "suggested_book"
+        assert actual["GSI_0_SK"] == "test_user_id_0"
+        assert actual["GSI_1_SK"] == "1234567890123"
+        assert actual["GSI_2_SK"] == "dummy_ml_model_1"
         assert actual["user_id"] == "test_user_id_0"
-        assert actual["suggested_book_sk"] == "1234567890123#dummy_ml_model_1"
+        assert actual["isbn"] == "1234567890123"
+        assert actual["ml_model"] == "dummy_ml_model_1"
         assert actual["interested"] is True
         assert actual["updated_at"] == "2022-04-01T00:00:00+09:00"
 
     def test_ユーザーとisbnが異なるがmlが同じおすすめされた本を追加できること(self):
-        response = self.table.query(
-            KeyConditionExpression=boto3.dynamodb.conditions.Key("user_id").eq(
-                "test_user_id_0"
-            ),
-        )
-        assert len(response["Items"]) == 0
+        actual = self.table.get_item(
+            Key={"PK": "suggested_book#test_user_id_0#1234567890123#dummy_ml_model_0"}
+        ).get("Item")
+
+        assert actual is None
 
         suggested_book_repository = SuggestedBookRepository()
 
@@ -302,27 +361,30 @@ class TestSuggestedBookRepository:
                 "updated_at": "2022-04-01T00:00:00+09:00",
             }
         )
-        response = self.table.query(
-            KeyConditionExpression=boto3.dynamodb.conditions.Key("user_id").eq(
-                "test_user_id_0"
-            ),
+        actual = self.table.get_item(
+            Key={"PK": "suggested_book#test_user_id_0#1234567890123#dummy_ml_model_0"}
+        ).get("Item")
+
+        assert (
+            actual["PK"]
+            == "suggested_book#test_user_id_0#1234567890123#dummy_ml_model_0"
         )
-        assert len(response["Items"]) == 1
-
-        actual = response["Items"][0]
-
+        assert actual["GSI_PK"] == "suggested_book"
+        assert actual["GSI_0_SK"] == "test_user_id_0"
+        assert actual["GSI_1_SK"] == "1234567890123"
+        assert actual["GSI_2_SK"] == "dummy_ml_model_0"
         assert actual["user_id"] == "test_user_id_0"
-        assert actual["suggested_book_sk"] == "1234567890123#dummy_ml_model_0"
+        assert actual["isbn"] == "1234567890123"
+        assert actual["ml_model"] == "dummy_ml_model_0"
         assert actual["interested"] is True
         assert actual["updated_at"] == "2022-04-01T00:00:00+09:00"
 
         # ２件目のテストデータを作成（user_idとisbnが異なる。mlが同じ。）
-        response = self.table.query(
-            KeyConditionExpression=boto3.dynamodb.conditions.Key("user_id").eq(
-                "test_user_id_1"
-            ),
-        )
-        assert len(response["Items"]) == 0
+        actual = self.table.get_item(
+            Key={"PK": "suggested_book#test_user_id_1#9234567890123#dummy_ml_model_0"}
+        ).get("Item")
+
+        assert actual is None
 
         suggested_book_repository.create(
             {
@@ -333,41 +395,48 @@ class TestSuggestedBookRepository:
                 "updated_at": "2022-04-01T00:00:00+09:00",
             }
         )
-        response = self.table.query(
-            KeyConditionExpression=boto3.dynamodb.conditions.Key("user_id").eq(
-                "test_user_id_0"
-            ),
+        actual = self.table.get_item(
+            Key={"PK": "suggested_book#test_user_id_0#1234567890123#dummy_ml_model_0"}
+        ).get("Item")
+
+        assert (
+            actual["PK"]
+            == "suggested_book#test_user_id_0#1234567890123#dummy_ml_model_0"
         )
-        assert len(response["Items"]) == 1
-
-        actual = response["Items"][0]
-
+        assert actual["GSI_PK"] == "suggested_book"
+        assert actual["GSI_0_SK"] == "test_user_id_0"
+        assert actual["GSI_1_SK"] == "1234567890123"
+        assert actual["GSI_2_SK"] == "dummy_ml_model_0"
         assert actual["user_id"] == "test_user_id_0"
-        assert actual["suggested_book_sk"] == "1234567890123#dummy_ml_model_0"
+        assert actual["isbn"] == "1234567890123"
+        assert actual["ml_model"] == "dummy_ml_model_0"
         assert actual["interested"] is True
         assert actual["updated_at"] == "2022-04-01T00:00:00+09:00"
 
-        response = self.table.query(
-            KeyConditionExpression=boto3.dynamodb.conditions.Key("user_id").eq(
-                "test_user_id_1"
-            ),
+        actual = self.table.get_item(
+            Key={"PK": "suggested_book#test_user_id_1#9234567890123#dummy_ml_model_0"}
+        ).get("Item")
+
+        assert (
+            actual["PK"]
+            == "suggested_book#test_user_id_1#9234567890123#dummy_ml_model_0"
         )
-        assert len(response["Items"]) == 1
-
-        actual = response["Items"][0]
-
+        assert actual["GSI_PK"] == "suggested_book"
+        assert actual["GSI_0_SK"] == "test_user_id_1"
+        assert actual["GSI_1_SK"] == "9234567890123"
+        assert actual["GSI_2_SK"] == "dummy_ml_model_0"
         assert actual["user_id"] == "test_user_id_1"
-        assert actual["suggested_book_sk"] == "9234567890123#dummy_ml_model_0"
+        assert actual["isbn"] == "9234567890123"
+        assert actual["ml_model"] == "dummy_ml_model_0"
         assert actual["interested"] is True
         assert actual["updated_at"] == "2022-04-01T00:00:00+09:00"
 
     def test_ユーザーとmlが異なるがisbnが同じおすすめされた本を追加できること(self):
-        response = self.table.query(
-            KeyConditionExpression=boto3.dynamodb.conditions.Key("user_id").eq(
-                "test_user_id_0"
-            ),
-        )
-        assert len(response["Items"]) == 0
+        actual = self.table.get_item(
+            Key={"PK": "suggested_book#test_user_id_0#1234567890123#dummy_ml_model_0"}
+        ).get("Item")
+
+        assert actual is None
 
         suggested_book_repository = SuggestedBookRepository()
 
@@ -381,27 +450,30 @@ class TestSuggestedBookRepository:
                 "updated_at": "2022-04-01T00:00:00+09:00",
             }
         )
-        response = self.table.query(
-            KeyConditionExpression=boto3.dynamodb.conditions.Key("user_id").eq(
-                "test_user_id_0"
-            ),
+        actual = self.table.get_item(
+            Key={"PK": "suggested_book#test_user_id_0#1234567890123#dummy_ml_model_0"}
+        ).get("Item")
+
+        assert (
+            actual["PK"]
+            == "suggested_book#test_user_id_0#1234567890123#dummy_ml_model_0"
         )
-        assert len(response["Items"]) == 1
-
-        actual = response["Items"][0]
-
+        assert actual["GSI_PK"] == "suggested_book"
+        assert actual["GSI_0_SK"] == "test_user_id_0"
+        assert actual["GSI_1_SK"] == "1234567890123"
+        assert actual["GSI_2_SK"] == "dummy_ml_model_0"
         assert actual["user_id"] == "test_user_id_0"
-        assert actual["suggested_book_sk"] == "1234567890123#dummy_ml_model_0"
+        assert actual["isbn"] == "1234567890123"
+        assert actual["ml_model"] == "dummy_ml_model_0"
         assert actual["interested"] is True
         assert actual["updated_at"] == "2022-04-01T00:00:00+09:00"
 
         # ２件目のテストデータを作成（user_idとmlが異なる。isbnが同じ。）
-        response = self.table.query(
-            KeyConditionExpression=boto3.dynamodb.conditions.Key("user_id").eq(
-                "test_user_id_1"
-            ),
-        )
-        assert len(response["Items"]) == 0
+        actual = self.table.get_item(
+            Key={"PK": "suggested_book#test_user_id_1#1234567890123#dummy_ml_model_1"}
+        ).get("Item")
+
+        assert actual is None
 
         suggested_book_repository.create(
             {
@@ -412,41 +484,47 @@ class TestSuggestedBookRepository:
                 "updated_at": "2022-04-01T00:00:00+09:00",
             }
         )
-        response = self.table.query(
-            KeyConditionExpression=boto3.dynamodb.conditions.Key("user_id").eq(
-                "test_user_id_0"
-            ),
+        actual = self.table.get_item(
+            Key={"PK": "suggested_book#test_user_id_0#1234567890123#dummy_ml_model_0"}
+        ).get("Item")
+
+        assert (
+            actual["PK"]
+            == "suggested_book#test_user_id_0#1234567890123#dummy_ml_model_0"
         )
-        assert len(response["Items"]) == 1
-
-        actual = response["Items"][0]
-
+        assert actual["GSI_PK"] == "suggested_book"
+        assert actual["GSI_0_SK"] == "test_user_id_0"
+        assert actual["GSI_1_SK"] == "1234567890123"
+        assert actual["GSI_2_SK"] == "dummy_ml_model_0"
         assert actual["user_id"] == "test_user_id_0"
-        assert actual["suggested_book_sk"] == "1234567890123#dummy_ml_model_0"
+        assert actual["isbn"] == "1234567890123"
+        assert actual["ml_model"] == "dummy_ml_model_0"
         assert actual["interested"] is True
         assert actual["updated_at"] == "2022-04-01T00:00:00+09:00"
 
-        response = self.table.query(
-            KeyConditionExpression=boto3.dynamodb.conditions.Key("user_id").eq(
-                "test_user_id_1"
-            ),
+        actual = self.table.get_item(
+            Key={"PK": "suggested_book#test_user_id_1#1234567890123#dummy_ml_model_1"}
+        ).get("Item")
+
+        assert (
+            actual["PK"]
+            == "suggested_book#test_user_id_1#1234567890123#dummy_ml_model_1"
         )
-        assert len(response["Items"]) == 1
-
-        actual = response["Items"][0]
-
+        assert actual["GSI_PK"] == "suggested_book"
+        assert actual["GSI_0_SK"] == "test_user_id_1"
+        assert actual["GSI_1_SK"] == "1234567890123"
+        assert actual["GSI_2_SK"] == "dummy_ml_model_1"
         assert actual["user_id"] == "test_user_id_1"
-        assert actual["suggested_book_sk"] == "1234567890123#dummy_ml_model_1"
+        assert actual["isbn"] == "1234567890123"
+        assert actual["ml_model"] == "dummy_ml_model_1"
         assert actual["interested"] is True
         assert actual["updated_at"] == "2022-04-01T00:00:00+09:00"
 
     def test_ユーザーとisbnとmlが全て異なるおすすめされた本を追加できること(self):
-        response = self.table.query(
-            KeyConditionExpression=boto3.dynamodb.conditions.Key("user_id").eq(
-                "test_user_id_0"
-            ),
-        )
-        assert len(response["Items"]) == 0
+        actual = self.table.get_item(
+            Key={"PK": "suggested_book#test_user_id_0#1234567890123#dummy_ml_model_0"}
+        ).get("Item")
+        assert actual is None
 
         suggested_book_repository = SuggestedBookRepository()
 
@@ -460,27 +538,29 @@ class TestSuggestedBookRepository:
                 "updated_at": "2022-04-01T00:00:00+09:00",
             }
         )
-        response = self.table.query(
-            KeyConditionExpression=boto3.dynamodb.conditions.Key("user_id").eq(
-                "test_user_id_0"
-            ),
+        actual = self.table.get_item(
+            Key={"PK": "suggested_book#test_user_id_0#1234567890123#dummy_ml_model_0"}
+        ).get("Item")
+
+        assert (
+            actual["PK"]
+            == "suggested_book#test_user_id_0#1234567890123#dummy_ml_model_0"
         )
-        assert len(response["Items"]) == 1
-
-        actual = response["Items"][0]
-
+        assert actual["GSI_PK"] == "suggested_book"
+        assert actual["GSI_0_SK"] == "test_user_id_0"
+        assert actual["GSI_1_SK"] == "1234567890123"
+        assert actual["GSI_2_SK"] == "dummy_ml_model_0"
         assert actual["user_id"] == "test_user_id_0"
-        assert actual["suggested_book_sk"] == "1234567890123#dummy_ml_model_0"
+        assert actual["isbn"] == "1234567890123"
+        assert actual["ml_model"] == "dummy_ml_model_0"
         assert actual["interested"] is True
         assert actual["updated_at"] == "2022-04-01T00:00:00+09:00"
 
         # ２件目のテストデータを作成（user_idとisbnとmlが異なる。）
-        response = self.table.query(
-            KeyConditionExpression=boto3.dynamodb.conditions.Key("user_id").eq(
-                "test_user_id_1"
-            ),
-        )
-        assert len(response["Items"]) == 0
+        actual = self.table.get_item(
+            Key={"PK": "suggested_book#test_user_id_1#9234567890123#dummy_ml_model_1"}
+        ).get("Item")
+        assert actual is None
 
         suggested_book_repository.create(
             {
@@ -491,31 +571,39 @@ class TestSuggestedBookRepository:
                 "updated_at": "2022-04-01T00:00:00+09:00",
             }
         )
-        response = self.table.query(
-            KeyConditionExpression=boto3.dynamodb.conditions.Key("user_id").eq(
-                "test_user_id_0"
-            ),
+        actual = self.table.get_item(
+            Key={"PK": "suggested_book#test_user_id_0#1234567890123#dummy_ml_model_0"}
+        ).get("Item")
+
+        assert (
+            actual["PK"]
+            == "suggested_book#test_user_id_0#1234567890123#dummy_ml_model_0"
         )
-        assert len(response["Items"]) == 1
-
-        actual = response["Items"][0]
-
+        assert actual["GSI_PK"] == "suggested_book"
+        assert actual["GSI_0_SK"] == "test_user_id_0"
+        assert actual["GSI_1_SK"] == "1234567890123"
+        assert actual["GSI_2_SK"] == "dummy_ml_model_0"
         assert actual["user_id"] == "test_user_id_0"
-        assert actual["suggested_book_sk"] == "1234567890123#dummy_ml_model_0"
+        assert actual["isbn"] == "1234567890123"
+        assert actual["ml_model"] == "dummy_ml_model_0"
         assert actual["interested"] is True
         assert actual["updated_at"] == "2022-04-01T00:00:00+09:00"
 
-        response = self.table.query(
-            KeyConditionExpression=boto3.dynamodb.conditions.Key("user_id").eq(
-                "test_user_id_1"
-            ),
+        actual = self.table.get_item(
+            Key={"PK": "suggested_book#test_user_id_1#9234567890123#dummy_ml_model_1"}
+        ).get("Item")
+
+        assert (
+            actual["PK"]
+            == "suggested_book#test_user_id_1#9234567890123#dummy_ml_model_1"
         )
-        assert len(response["Items"]) == 1
-
-        actual = response["Items"][0]
-
+        assert actual["GSI_PK"] == "suggested_book"
+        assert actual["GSI_0_SK"] == "test_user_id_1"
+        assert actual["GSI_1_SK"] == "9234567890123"
+        assert actual["GSI_2_SK"] == "dummy_ml_model_1"
         assert actual["user_id"] == "test_user_id_1"
-        assert actual["suggested_book_sk"] == "9234567890123#dummy_ml_model_1"
+        assert actual["isbn"] == "9234567890123"
+        assert actual["ml_model"] == "dummy_ml_model_1"
         assert actual["interested"] is True
         assert actual["updated_at"] == "2022-04-01T00:00:00+09:00"
 
@@ -532,17 +620,21 @@ class TestSuggestedBookRepository:
                 "updated_at": "2022-04-01T00:00:00+09:00",
             }
         )
-        response = self.table.query(
-            KeyConditionExpression=boto3.dynamodb.conditions.Key("user_id").eq(
-                "test_user_id_0"
-            ),
+        actual = self.table.get_item(
+            Key={"PK": "suggested_book#test_user_id_0#1234567890123#dummy_ml_model_0"}
+        ).get("Item")
+
+        assert (
+            actual["PK"]
+            == "suggested_book#test_user_id_0#1234567890123#dummy_ml_model_0"
         )
-        assert len(response["Items"]) == 1
-
-        actual = response["Items"][0]
-
+        assert actual["GSI_PK"] == "suggested_book"
+        assert actual["GSI_0_SK"] == "test_user_id_0"
+        assert actual["GSI_1_SK"] == "1234567890123"
+        assert actual["GSI_2_SK"] == "dummy_ml_model_0"
         assert actual["user_id"] == "test_user_id_0"
-        assert actual["suggested_book_sk"] == "1234567890123#dummy_ml_model_0"
+        assert actual["isbn"] == "1234567890123"
+        assert actual["ml_model"] == "dummy_ml_model_0"
         assert actual["interested"] is True
         assert actual["updated_at"] == "2022-04-01T00:00:00+09:00"
 
@@ -556,16 +648,20 @@ class TestSuggestedBookRepository:
                 "updated_at": "2022-04-01T10:00:05+09:00",
             }
         )
-        response = self.table.query(
-            KeyConditionExpression=boto3.dynamodb.conditions.Key("user_id").eq(
-                "test_user_id_0"
-            ),
+        actual = self.table.get_item(
+            Key={"PK": "suggested_book#test_user_id_0#1234567890123#dummy_ml_model_0"}
+        ).get("Item")
+
+        assert (
+            actual["PK"]
+            == "suggested_book#test_user_id_0#1234567890123#dummy_ml_model_0"
         )
-        assert len(response["Items"]) == 1
-
-        actual = response["Items"][0]
-
+        assert actual["GSI_PK"] == "suggested_book"
+        assert actual["GSI_0_SK"] == "test_user_id_0"
+        assert actual["GSI_1_SK"] == "1234567890123"
+        assert actual["GSI_2_SK"] == "dummy_ml_model_0"
         assert actual["user_id"] == "test_user_id_0"
-        assert actual["suggested_book_sk"] == "1234567890123#dummy_ml_model_0"
+        assert actual["isbn"] == "1234567890123"
+        assert actual["ml_model"] == "dummy_ml_model_0"
         assert actual["interested"] is False
         assert actual["updated_at"] == "2022-04-01T10:00:05+09:00"

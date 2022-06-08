@@ -2,12 +2,14 @@ import json
 from logging import getLogger
 from typing import Any, Optional, TypedDict
 
-from bee_slack_app.service.book import get_books, get_books_before
-from bee_slack_app.service.recommend import created_at, recommend
-from bee_slack_app.service.review import get_review_all
-from bee_slack_app.service.user import get_user
 from bee_slack_app.service.suggested import get_is_interested, add_suggested
-from bee_slack_app.service.user_action import record_user_action
+from bee_slack_app.service import (
+    book_service,
+    recommend_service,
+    review_service,
+    user_action_service,
+    user_service,
+)
 from bee_slack_app.utils.datetime import parse
 from bee_slack_app.view.home import home
 
@@ -21,12 +23,12 @@ def home_controller(app):  # pylint: disable=too-many-statements
 
         logger = getLogger(__name__)
 
-        reviews = get_review_all()
+        reviews = review_service.get_review_all()
 
         total_review_count = len(reviews) if reviews else 0
-        recommend_timestamp = parse(created_at())
+        recommend_timestamp = parse(recommend_service.created_at())
 
-        record_user_action(
+        user_action_service.record_user_action(
             user_id=event["user"],
             action_name="app_home_opened",
             payload={"total_review_count": total_review_count},
@@ -34,10 +36,10 @@ def home_controller(app):  # pylint: disable=too-many-statements
 
         logger.info({"total_review_count": total_review_count})
 
-        user = get_user(event["user"])
+        user = user_service.get_user(event["user"])
         user_name = f"{user['user_name']}さん" if user is not None else "あなた"
 
-        recommended_books = recommend(user)
+        recommended_books = recommend_service.recommend(user)
 
         # 興味ありボタンの状態をDBから取り出す
         button_status_list = []
@@ -55,7 +57,7 @@ def home_controller(app):  # pylint: disable=too-many-statements
         books_params = None
         metadata_str = ""
 
-        books = get_books(limit=BOOK_NUMBER_PER_PAGE, keys=[])
+        books = book_service.get_books(limit=BOOK_NUMBER_PER_PAGE, keys=[])
 
         logger.info({"books": books})
 
@@ -77,6 +79,7 @@ def home_controller(app):  # pylint: disable=too-many-statements
                 button_status_list=button_status_list,
                 post_review_action_id="post_review_action",
                 recommended_books=recommended_books,
+                list_user_posted_review_action_id="list_user_posted_review_action",
                 user_info_action_id="user_info_action",
                 total_review_count=total_review_count,
                 user_name=user_name,
@@ -103,22 +106,24 @@ def home_controller(app):  # pylint: disable=too-many-statements
             private_metadata=private_metadata
         )
 
-        reviews = get_review_all()
+        reviews = review_service.get_review_all()
 
         total_review_count = len(reviews) if reviews else 0
-        recommend_timestamp = parse(created_at())
+        recommend_timestamp = parse(recommend_service.created_at())
 
-        user = get_user(user_id)
+        user = user_service.get_user(user_id)
         user_name = f"{user['user_name']}さん" if user is not None else "あなた"
 
-        recommended_books = recommend(user)
+        recommended_books = recommend_service.recommend(user)
 
         button_status_list = [False, False, False]
 
         books_params = None
         metadata_str = ""
 
-        books = get_books(limit=BOOK_NUMBER_PER_PAGE, keys=metadata_dict["keys"])
+        books = book_service.get_books(
+            limit=BOOK_NUMBER_PER_PAGE, keys=metadata_dict["keys"]
+        )
 
         logger.info({"books": books})
 
@@ -140,6 +145,7 @@ def home_controller(app):  # pylint: disable=too-many-statements
                 button_status_list=button_status_list,
                 post_review_action_id="post_review_action",
                 recommended_books=recommended_books,
+                list_user_posted_review_action_id="list_user_posted_review_action",
                 user_info_action_id="user_info_action",
                 total_review_count=total_review_count,
                 user_name=user_name,
@@ -162,15 +168,15 @@ def home_controller(app):  # pylint: disable=too-many-statements
 
         private_metadata = body["view"]["private_metadata"]
 
-        reviews = get_review_all()
+        reviews = review_service.get_review_all()
 
         total_review_count = len(reviews) if reviews else 0
-        recommend_timestamp = parse(created_at())
+        recommend_timestamp = parse(recommend_service.created_at())
 
-        user = get_user(user_id)
+        user = user_service.get_user(user_id)
         user_name = f"{user['user_name']}さん" if user is not None else "あなた"
 
-        recommended_books = recommend(user)
+        recommended_books = recommend_service.recommend(user)
 
         # 興味ありボタンの状態をDBから取り出す
         button_status_list = []
@@ -193,7 +199,9 @@ def home_controller(app):  # pylint: disable=too-many-statements
         books_params = None
         metadata_str = ""
 
-        books = get_books_before(limit=BOOK_NUMBER_PER_PAGE, keys=metadata_dict["keys"])
+        books = book_service.get_books_before(
+            limit=BOOK_NUMBER_PER_PAGE, keys=metadata_dict["keys"]
+        )
 
         logger.info({"books": books})
 
@@ -215,6 +223,7 @@ def home_controller(app):  # pylint: disable=too-many-statements
                 button_status_list=button_status_list,
                 post_review_action_id="post_review_action",
                 recommended_books=recommended_books,
+                list_user_posted_review_action_id="list_user_posted_review_action",
                 user_info_action_id="user_info_action",
                 total_review_count=total_review_count,
                 user_name=user_name,
@@ -232,17 +241,17 @@ def home_controller(app):  # pylint: disable=too-many-statements
         ack()
         logger = getLogger(__name__)
 
-        reviews = get_review_all()
+        reviews = review_service.get_review_all()
 
         total_review_count = len(reviews) if reviews else 0
-        recommend_timestamp = parse(created_at())
+        recommend_timestamp = parse(recommend_service.created_at())
 
         logger.info({"total_review_count": total_review_count})
 
-        user = get_user(body["user"]["id"])
+        user = user_service.get_user(body["user"]["id"])
         user_name = f"{user['user_name']}さん" if user is not None else "あなた"
 
-        recommended_books = recommend(user)
+        recommended_books = recommend_service.recommend(user)
 
         # 興味ありボタンの状態をDBから取り出す
         button_status_list = []
@@ -260,7 +269,7 @@ def home_controller(app):  # pylint: disable=too-many-statements
         books_params = None
         metadata_str = ""
 
-        books = get_books(limit=BOOK_NUMBER_PER_PAGE, keys=[])
+        books = book_service.get_books(limit=BOOK_NUMBER_PER_PAGE, keys=[])
 
         logger.info({"books": books})
 

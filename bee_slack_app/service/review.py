@@ -77,6 +77,26 @@ def get_reviews_by_isbn(*, isbn: str) -> Optional[list[ReviewContents]]:
         return None
 
 
+def get_reviews_by_user_id(*, user_id: str) -> Optional[list[ReviewContents]]:
+    """
+    ユーザIDからレビューを取得する
+    """
+    try:
+        logger = getLogger(__name__)
+
+        reviews = review_repository.get_by_user_id(user_id=user_id)
+
+        fill_user_name(reviews)
+
+        logger.info({"reviews": reviews})
+
+        return reviews
+
+    except Exception:  # pylint: disable=broad-except
+        logger.exception("Failed to get data.")
+        return None
+
+
 def fill_user_name(review_contents_list: list[ReviewContents]) -> None:
     # 対応するユーザ情報からユーザ名を取得してレビュー情報に追加する
     users = user_repository.get_all()
@@ -126,6 +146,14 @@ def post_review(review_contents: ReviewContents) -> Optional[ReviewContents]:
         }
 
         book_repository.put(book=book)
+
+        post_review_count = len(
+            review_repository.get_by_user_id(user_id=review_contents["user_id"])
+        )
+
+        user_repository.update_post_review_count(
+            user_id=review_contents["user_id"], count=post_review_count
+        )
 
         return item
 

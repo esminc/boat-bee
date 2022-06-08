@@ -36,6 +36,7 @@ def test_おすすめの本の情報を取得できること(monkeypatch):
         "job_type": "engineer",
         "age_range": "60",
         "updated_at": None,
+        "post_review_count": 1,
     }
 
     recommended_books = recommend(user)
@@ -79,6 +80,7 @@ def test_おすすめの本が取得できなかったら空のリストを返�
         "job_type": "engineer",
         "age_range": "60",
         "updated_at": None,
+        "post_review_count": 1,
     }
 
     recommended_books = recommend(user)
@@ -108,6 +110,7 @@ def test_おすすめの本の情報がNoneのケース(monkeypatch):  # pylint:
         "job_type": "engineer",
         "age_range": "60",
         "updated_at": None,
+        "post_review_count": 1,
     }
 
     recommended_books = recommend(user)
@@ -144,6 +147,7 @@ def test_書影が取得できない場合に書影にNone返値に設定され�
         "job_type": "engineer",
         "age_range": "60",
         "updated_at": None,
+        "post_review_count": 1,
     }
 
     recommended_books = recommend(user)
@@ -180,6 +184,7 @@ def test_モジュール内で例外が発生した場合は返値は空のリ�
         "job_type": "engineer",
         "age_range": "60",
         "updated_at": None,
+        "post_review_count": 1,
     }
 
     book = recommend(user)
@@ -227,6 +232,7 @@ def test_複数のおすすめの本の情報を取得できること(monkeypatc
         "job_type": "test_job_type",
         "age_range": "test_age_range",
         "updated_at": None,
+        "post_review_count": 1,
     }
 
     recommended_books = recommend(user)

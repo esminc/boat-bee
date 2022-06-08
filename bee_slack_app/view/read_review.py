@@ -117,6 +117,111 @@ def review_modal(
     return view
 
 
+def review_of_user_modal(*, callback_id: str, reviews: list[ReviewContents]):
+    """
+    ユーザのレビューモーダル
+
+    Args:
+        callback_id: モーダルのcallback_id
+        reviews: 表示するレビューのリスト
+    """
+
+    view = {
+        "type": "modal",
+        "callback_id": callback_id,
+        "title": {"type": "plain_text", "text": "本のレビュー"},
+        "blocks": [
+            {
+                "type": "image",
+                "image_url": "https://developers.google.com/maps/documentation/images/powered_by_google_on_white.png",
+                "alt_text": "Google Logo",
+            },
+            {"type": "divider"},
+        ],
+    }
+
+    review_blocks = []
+
+    for review in reviews:
+
+        update_datetime = (
+            datetime.parse(review["updated_at"]) if review["updated_at"] else "-"
+        )
+
+        review_blocks.append(
+            {
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": f"*{review['book_title']}*\n{review['book_author']}\nISBN-{review['isbn']}\n<{review['book_url']}|Google Booksで見る>",
+                },
+                "accessory": {
+                    "type": "image",
+                    "image_url": review["book_image_url"],
+                    "alt_text": review["book_title"],
+                },
+            },
+        )
+
+        review_blocks.append(
+            {
+                "type": "section",
+                "fields": [
+                    {
+                        "type": "mrkdwn",
+                        "text": f"*投稿者*\n{review['user_name']}",
+                    },  # type:ignore
+                    {
+                        "type": "mrkdwn",
+                        "text": f"*投稿日時*\n{update_datetime}",
+                    },  # type:ignore
+                    {  # type:ignore
+                        "type": "mrkdwn",
+                        "text": f"*自分にとっての評価*\n{review['score_for_me']}",
+                    },
+                    {  # type:ignore
+                        "type": "mrkdwn",
+                        "text": f"*永和社員へのおすすめ度*\n{review['score_for_others']}",
+                    },
+                ],
+            }
+        )
+
+        review_blocks.append(
+            {
+                "type": "section",
+                "text": {  # type:ignore
+                    "type": "mrkdwn",
+                    "text": f"*レビューコメント*\n\n{review['review_comment'] or '-'}",
+                },
+            }
+        )
+
+        review_blocks.append(
+            {  # pylint: disable=duplicate-code
+                "type": "actions",
+                "elements": [
+                    {  # type: ignore
+                        "type": "button",
+                        "text": {
+                            "type": "plain_text",
+                            "text": "もっと見る",
+                            "emoji": True,
+                        },
+                        "value": review["user_id"] + ":" + review["isbn"],
+                        "action_id": "open_review_detail_modal_action",
+                    }
+                ],
+            },
+        )
+
+        review_blocks.append({"type": "divider"})
+
+    view["blocks"].extend(review_blocks)  # type: ignore
+
+    return view
+
+
 def review_detail_modal(review_contents: ReviewContents):
     """
     レビュー詳細モーダル

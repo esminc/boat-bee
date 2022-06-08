@@ -1,170 +1,170 @@
 {
-  "metadata": { "created_at": "2022-06-05T17:05:52+09:00" },
+  "metadata": { "created_at": "2022-06-07T22:07:46+09:00" },
   "result": {
-    "U034EF28W2D": {
-      "random_recommendation": "9784799108420",
-      "contents_based_filtering": "9784873118253",
-      "collaborative_filtering": "9780525536239"
+    "U031ZFAQ6UF": {
+      "random_recommendation": "9784798167466",
+      "contents_based_filtering": "9784478105573",
+      "collaborative_filtering": "9784295004905"
     },
-    "U032H7CQGE8": {
-      "random_recommendation": "9784799108420",
-      "contents_based_filtering": "9784774188775",
-      "collaborative_filtering": "9784022618450"
-    },
-    "U033MUHNWDV": {
-      "random_recommendation": "9784797352436",
-      "contents_based_filtering": "9784478000342",
-      "collaborative_filtering": "9784822284657"
-    },
-    "U02K1KECM17": {
-      "random_recommendation": "9784492558034",
-      "contents_based_filtering": "9784798167466",
-      "collaborative_filtering": "9780525536239"
-    },
-    "U02JP1YKX4K": {
-      "random_recommendation": "9784798155661",
-      "contents_based_filtering": "9784315523614",
-      "collaborative_filtering": "9784798167466"
+    "U033HEJHT5W": {
+      "random_recommendation": "9784152095428",
+      "contents_based_filtering": "9784526054105",
+      "collaborative_filtering": "9784274217883"
     },
     "U02VDCBBS81": {
-      "random_recommendation": "9784873119656",
-      "contents_based_filtering": "9784822281113",
+      "random_recommendation": "9784297108434",
+      "contents_based_filtering": "9784492522325",
       "collaborative_filtering": "9780525536239"
     },
-    "U032YL37DFW": {
-      "random_recommendation": "9784822285487",
+    "U02JR7TM8UU": {
+      "random_recommendation": "9784906638017",
+      "contents_based_filtering": "9784320025639",
+      "collaborative_filtering": "9784621066089"
+    },
+    "U02JXABE8DD": {
+      "random_recommendation": "9784844365174",
+      "contents_based_filtering": "9784910063058",
+      "collaborative_filtering": "9784817160577"
+    },
+    "U032CTY4KD3": {
+      "random_recommendation": "9784873119038",
       "contents_based_filtering": "9784802612494",
+      "collaborative_filtering": "9784802612494"
+    },
+    "U0329RXUF62": {
+      "random_recommendation": "9784822281861",
+      "contents_based_filtering": "9784798167466",
       "collaborative_filtering": "9780525536239"
     },
     "U029SGVM1AA": {
-      "random_recommendation": "9784820729631",
-      "contents_based_filtering": "9784478000342",
-      "collaborative_filtering": "9784822284657"
+      "random_recommendation": "9784478006658",
+      "contents_based_filtering": "9784761273910",
+      "collaborative_filtering": "9784478006658"
     },
-    "U033HEJHT5W": {
-      "random_recommendation": "9784478000342",
-      "contents_based_filtering": "9784492532706",
-      "collaborative_filtering": "9784274217883"
+    "U0335QG6SAU": {
+      "random_recommendation": "9784297108434",
+      "contents_based_filtering": "9784314011532",
+      "collaborative_filtering": "9784798167466"
     },
-    "U032CTY4KD3": {
-      "random_recommendation": "9784621066089",
-      "contents_based_filtering": "9784798159294",
-      "collaborative_filtering": "9784802612494"
+    "U02JP1YKX4K": {
+      "random_recommendation": "9784526054105",
+      "contents_based_filtering": "9784297107567",
+      "collaborative_filtering": "9784798153346"
     },
     "U036L9R65H8": {
-      "random_recommendation": "9784478009833",
-      "contents_based_filtering": "9784873118253",
+      "random_recommendation": "9784797352436",
+      "contents_based_filtering": "9784873117744",
       "collaborative_filtering": "9780525536239"
     },
-    "U02JVGDQTQT": {
-      "random_recommendation": "9784152086129",
-      "contents_based_filtering": "9784798107950",
-      "collaborative_filtering": "9784798167282"
+    "U033S6NU6RW": {
+      "random_recommendation": "9784274064067",
+      "contents_based_filtering": "9784526054105",
+      "collaborative_filtering": "9784274217883"
     },
-    "U0342EM7QDC": {
-      "random_recommendation": "9784295406259",
-      "contents_based_filtering": "9784798159294",
-      "collaborative_filtering": "9780525536239"
+    "U03B6PEKV52": {
+      "random_recommendation": "9784774190877",
+      "contents_based_filtering": "9784761273910",
+      "collaborative_filtering": "9784478006658"
     },
     "U02K1KEB4U9": {
-      "random_recommendation": "9784894712638",
-      "contents_based_filtering": "9784478006658",
+      "random_recommendation": "9784798151847",
+      "contents_based_filtering": "9784478105573",
       "collaborative_filtering": "9784802612494"
     },
     "U02JP20NG02": {
-      "random_recommendation": "9784798169521",
-      "contents_based_filtering": "9784478105573",
-      "collaborative_filtering": "9784822281861"
-    },
-    "U030GNDA4SC": {
-      "random_recommendation": "9784822281113",
-      "contents_based_filtering": "9780525536239",
-      "collaborative_filtering": "9784797325546"
-    },
-    "U02JXABE8DD": {
       "random_recommendation": "9784621066089",
-      "contents_based_filtering": "9784802612494",
-      "collaborative_filtering": "9784798130088"
-    },
-    "U0329RXUF62": {
-      "random_recommendation": "9784274069321",
-      "contents_based_filtering": "9784295011248",
+      "contents_based_filtering": "9784478009833",
       "collaborative_filtering": "9780525536239"
     },
-    "U0335QG6SAU": {
-      "random_recommendation": "9784274068560",
-      "contents_based_filtering": "9784873117744",
-      "collaborative_filtering": "9784022618450"
-    },
-    "U03B6PEKV52": {
-      "random_recommendation": "9784817160577",
-      "contents_based_filtering": "9784478000342",
-      "collaborative_filtering": "9784822284657"
-    },
-    "U03AB5R87TJ": {
-      "random_recommendation": "9784297107567",
-      "contents_based_filtering": "9784844336389",
+    "U02K1KECM17": {
+      "random_recommendation": "9784866510507",
+      "contents_based_filtering": "9784873114996",
       "collaborative_filtering": "9780525536239"
-    },
-    "U03B4DHS727": {
-      "random_recommendation": "9784274217883",
-      "contents_based_filtering": "9784478000342",
-      "collaborative_filtering": "9784822284657"
-    },
-    "U02UU55VDRU": {
-      "random_recommendation": "9784873119045",
-      "contents_based_filtering": "9784797325546",
-      "collaborative_filtering": "9784822281113"
-    },
-    "U033S6NU6RW": {
-      "random_recommendation": "9784774187297",
-      "contents_based_filtering": "9784492532706",
-      "collaborative_filtering": "9784274217883"
     },
     "U02NCN5CV0E": {
-      "random_recommendation": "9784295004905",
-      "contents_based_filtering": "9784798150727",
+      "random_recommendation": "9784798153346",
+      "contents_based_filtering": "9784798153346",
+      "collaborative_filtering": "9780525536239"
+    },
+    "U02JVGDQTQT": {
+      "random_recommendation": "9784774144290",
+      "contents_based_filtering": "9784798149349",
+      "collaborative_filtering": "9784798167466"
+    },
+    "U033MUHNWDV": {
+      "random_recommendation": "9784295406259",
+      "contents_based_filtering": "9784761273910",
+      "collaborative_filtering": "9784478006658"
+    },
+    "U032H7CQGE8": {
+      "random_recommendation": "9784798150727",
+      "contents_based_filtering": "9784774190877",
+      "collaborative_filtering": "9784798167466"
+    },
+    "U0337SQHSQH": {
+      "random_recommendation": "9784478009833",
+      "contents_based_filtering": "9784295406259",
+      "collaborative_filtering": "9780525536239"
+    },
+    "U03AB5R87TJ": {
+      "random_recommendation": "9784873117744",
+      "contents_based_filtering": "9784873119380",
+      "collaborative_filtering": "9780525536239"
+    },
+    "U034EF28W2D": {
+      "random_recommendation": "9784820748724",
+      "contents_based_filtering": "9784873118253",
+      "collaborative_filtering": "9780525536239"
+    },
+    "U032PF2RHP0": {
+      "random_recommendation": "9784839970277",
+      "contents_based_filtering": "9784478000342",
+      "collaborative_filtering": "9784798167466"
+    },
+    "U02KDPS2TME": {
+      "random_recommendation": "9784844339632",
+      "contents_based_filtering": "9784798063409",
       "collaborative_filtering": "9780525536239"
     },
     "U034EPH70TB": {
-      "random_recommendation": "9784296110919",
-      "contents_based_filtering": "9784798167466",
-      "collaborative_filtering": "9784274217623"
+      "random_recommendation": "9784873119038",
+      "contents_based_filtering": "9784774172286",
+      "collaborative_filtering": "9784621066089"
     },
-    "U032PF2RHP0": {
-      "random_recommendation": "9784798130088",
-      "contents_based_filtering": "9784774144290",
+    "U032YL37DFW": {
+      "random_recommendation": "9784478000342",
+      "contents_based_filtering": "9784817160577",
       "collaborative_filtering": "9780525536239"
     },
-    "U0337SQHSQH": {
-      "random_recommendation": "9784621066089",
-      "contents_based_filtering": "9784873116303",
+    "U0342EM7QDC": {
+      "random_recommendation": "9784798153346",
+      "contents_based_filtering": "9784798150727",
       "collaborative_filtering": "9780525536239"
+    },
+    "U03B4DHS727": {
+      "random_recommendation": "9784022618450",
+      "contents_based_filtering": "9784761273910",
+      "collaborative_filtering": "9784478006658"
     },
     "U02K1MGV7QX": {
-      "random_recommendation": "9784844339632",
-      "contents_based_filtering": "9784822281861",
-      "collaborative_filtering": "9784798159294"
+      "random_recommendation": "9784320025370",
+      "contents_based_filtering": "9784478420409",
+      "collaborative_filtering": "9784478006658"
+    },
+    "U030GNDA4SC": {
+      "random_recommendation": "9784822281113",
+      "contents_based_filtering": "9784873117744",
+      "collaborative_filtering": "9784822281113"
+    },
+    "U02UU55VDRU": {
+      "random_recommendation": "9784055012942",
+      "contents_based_filtering": "9784478006658",
+      "collaborative_filtering": "9784802612494"
     },
     "U03AXPHUXF0": {
-      "random_recommendation": "9784820728245",
-      "contents_based_filtering": "9784798104188",
-      "collaborative_filtering": "9780525536239"
-    },
-    "U031ZFAQ6UF": {
-      "random_recommendation": "9784274064067",
-      "contents_based_filtering": "9784478006658",
-      "collaborative_filtering": "9784295004905"
-    },
-    "U02JR7TM8UU": {
-      "random_recommendation": "9784822280536",
-      "contents_based_filtering": "9784295004905",
-      "collaborative_filtering": "9784798130088"
-    },
-    "U02KDPS2TME": {
-      "random_recommendation": "9784822285241",
-      "contents_based_filtering": "9784797325546",
-      "collaborative_filtering": "9780525536239"
+      "random_recommendation": "9784065149089",
+      "contents_based_filtering": "9784873119502",
+      "collaborative_filtering": "9784822284657"
     }
   }
 }

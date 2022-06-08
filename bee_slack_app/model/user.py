@@ -8,3 +8,4 @@ class User(TypedDict):
     job_type: str
     age_range: str
     updated_at: Optional[str]
+    post_review_count: int
