@@ -57,7 +57,7 @@ class GoogleBooksRepository:
             dict_item = {
                 "title": _item["volumeInfo"]["title"],
                 "isbn": isbn_13,
-                "authors": _item["volumeInfo"].get("authors", ["No Authoer"]),
+                "authors": _item["volumeInfo"].get("authors", ["No Author"]),
                 "google_books_url": _item["volumeInfo"]["infoLink"],
                 "image_url": image_url,
                 "description": _item["volumeInfo"].get("description", ["-"]),
@@ -97,7 +97,7 @@ class GoogleBooksRepository:
         dict_info = {
             "title": _item["volumeInfo"]["title"],
             "isbn": isbn,
-            "authors": _item["volumeInfo"].get("authors", "No Authoer"),
+            "authors": _item["volumeInfo"].get("authors", "No Author"),
             "google_books_url": _item["volumeInfo"]["infoLink"],
             "image_url": image_url,
             "description": _item["volumeInfo"].get("description", "-"),
