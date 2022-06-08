@@ -1,7 +1,6 @@
 import json
 
-from bee_slack_app.service.book_search import search_book_by_title
-from bee_slack_app.service.user_action import record_user_action
+from bee_slack_app.service import book_search_service, user_action_service
 from bee_slack_app.view.book_search import (
     book_search_result_modal,
     book_search_result_selected_modal,
@@ -21,9 +20,9 @@ def book_search_controller(app):  # pylint: disable=too-many-statements
             "book_title_action"
         ]["value"]
 
-        book_results = search_book_by_title(title)
+        book_results = book_search_service.search_book_by_title(title)
 
-        record_user_action(
+        user_action_service.record_user_action(
             user_id=body["user"]["id"],
             action_name="book_search_modal",
             payload={"book_results": book_results},
@@ -138,7 +137,7 @@ def book_search_controller(app):  # pylint: disable=too-many-statements
                 selected_book_section = blocks[i - 1]  # iは選択された本のaction blockのindex
 
         if not selected_book_section:
-            record_user_action(
+            user_action_service.record_user_action(
                 user_id=body["user"]["id"],
                 action_name="book_search_result_modal",
                 status="fetch_book_data_error",
@@ -150,7 +149,7 @@ def book_search_controller(app):  # pylint: disable=too-many-statements
             )
             return
 
-        record_user_action(
+        user_action_service.record_user_action(
             user_id=body["user"]["id"],
             action_name="book_search_result_modal",
             payload={"selected_book_section": selected_book_section},

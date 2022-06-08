@@ -2,11 +2,13 @@ import json
 from logging import getLogger
 from typing import Any, TypedDict
 
-from bee_slack_app.service.book import get_books, get_books_before
-from bee_slack_app.service.recommend import created_at, recommend
-from bee_slack_app.service.review import get_review_all
-from bee_slack_app.service.user import get_user
-from bee_slack_app.service.user_action import record_user_action
+from bee_slack_app.service import (
+    book_service,
+    recommend_service,
+    review_service,
+    user_action_service,
+    user_service,
+)
 from bee_slack_app.utils.datetime import parse
 from bee_slack_app.view.home import home
 
@@ -20,12 +22,12 @@ def home_controller(app):  # pylint: disable=too-many-statements
 
         logger = getLogger(__name__)
 
-        reviews = get_review_all()
+        reviews = review_service.get_review_all()
 
         total_review_count = len(reviews) if reviews else 0
-        recommend_timestamp = parse(created_at())
+        recommend_timestamp = parse(recommend_service.created_at())
 
-        record_user_action(
+        user_action_service.record_user_action(
             user_id=event["user"],
             action_name="app_home_opened",
             payload={"total_review_count": total_review_count},
@@ -33,15 +35,15 @@ def home_controller(app):  # pylint: disable=too-many-statements
 
         logger.info({"total_review_count": total_review_count})
 
-        user = get_user(event["user"])
+        user = user_service.get_user(event["user"])
         user_name = f"{user['user_name']}さん" if user is not None else "あなた"
 
-        recommended_books = recommend(user)
+        recommended_books = recommend_service.recommend(user)
 
         books_params = None
         metadata_str = ""
 
-        books = get_books(limit=BOOK_NUMBER_PER_PAGE, keys=[])
+        books = book_service.get_books(limit=BOOK_NUMBER_PER_PAGE, keys=[])
 
         logger.info({"books": books})
 
@@ -87,20 +89,22 @@ def home_controller(app):  # pylint: disable=too-many-statements
             private_metadata=private_metadata
         )
 
-        reviews = get_review_all()
+        reviews = review_service.get_review_all()
 
         total_review_count = len(reviews) if reviews else 0
-        recommend_timestamp = parse(created_at())
+        recommend_timestamp = parse(recommend_service.created_at())
 
-        user = get_user(user_id)
+        user = user_service.get_user(user_id)
         user_name = f"{user['user_name']}さん" if user is not None else "あなた"
 
-        recommended_books = recommend(user)
+        recommended_books = recommend_service.recommend(user)
 
         books_params = None
         metadata_str = ""
 
-        books = get_books(limit=BOOK_NUMBER_PER_PAGE, keys=metadata_dict["keys"])
+        books = book_service.get_books(
+            limit=BOOK_NUMBER_PER_PAGE, keys=metadata_dict["keys"]
+        )
 
         logger.info({"books": books})
 
@@ -142,15 +146,15 @@ def home_controller(app):  # pylint: disable=too-many-statements
 
         private_metadata = body["view"]["private_metadata"]
 
-        reviews = get_review_all()
+        reviews = review_service.get_review_all()
 
         total_review_count = len(reviews) if reviews else 0
-        recommend_timestamp = parse(created_at())
+        recommend_timestamp = parse(recommend_service.created_at())
 
-        user = get_user(user_id)
+        user = user_service.get_user(user_id)
         user_name = f"{user['user_name']}さん" if user is not None else "あなた"
 
-        recommended_books = recommend(user)
+        recommended_books = recommend_service.recommend(user)
 
         metadata_dict = _PrivateMetadataConvertor.to_dict(
             private_metadata=private_metadata
@@ -159,7 +163,9 @@ def home_controller(app):  # pylint: disable=too-many-statements
         books_params = None
         metadata_str = ""
 
-        books = get_books_before(limit=BOOK_NUMBER_PER_PAGE, keys=metadata_dict["keys"])
+        books = book_service.get_books_before(
+            limit=BOOK_NUMBER_PER_PAGE, keys=metadata_dict["keys"]
+        )
 
         logger.info({"books": books})
 
