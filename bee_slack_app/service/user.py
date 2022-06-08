@@ -2,7 +2,7 @@ from logging import getLogger
 from typing import Optional
 
 from bee_slack_app.model.user import User
-from bee_slack_app.repository.user_repository import UserRepository
+from bee_slack_app.repository import UserRepository
 from bee_slack_app.utils import datetime
 
 user_repository = UserRepository()

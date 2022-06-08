@@ -3,8 +3,7 @@ from typing import Optional
 
 from bee_slack_app.model.search import SearchedBook
 from bee_slack_app.model.user import User
-from bee_slack_app.repository.google_books_repository import GoogleBooksRepository
-from bee_slack_app.repository.recommend_book_repository import RecommendBookRepository
+from bee_slack_app.repository import GoogleBooksRepository, RecommendBookRepository
 
 recommend_book_repository = RecommendBookRepository()
 

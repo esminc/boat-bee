@@ -2,7 +2,7 @@ from logging import getLogger
 from typing import Optional
 
 from bee_slack_app.model.suggested_book import SuggestedBook
-from bee_slack_app.repository.suggested_book_repository import SuggestedBookRepository
+from bee_slack_app.repository import SuggestedBookRepository
 from bee_slack_app.utils import datetime
 
 suggested_book_repository = SuggestedBookRepository()
