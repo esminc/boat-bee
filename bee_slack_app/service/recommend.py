@@ -24,7 +24,7 @@ def recommend(user: User) -> list[tuple[SearchedBook, str]]:
 
     try:
         # デバッグ用
-        # FDOワークスペースのユーザIDの場合、対応するITSワークスペースのユーザIDに変換する
+        # FDOワークスペース及びBEE_TESTのユーザIDの場合、対応するITSワークスペースのユーザIDに変換する
         user_id = user["user_id"]
         user_id_in_fdo_workspace = {
             "U029SGVM1AA": "U02K1KEB4U9",
@@ -32,6 +32,10 @@ def recommend(user: User) -> list[tuple[SearchedBook, str]]:
             "U029Z9HAK6E": "U034EPH70TB",
             "U02A5F5KXKN": "U032CTY4KD3",
             "U01DT6X2MH8": "U02UU55VDRU",
+            "U03BD92HA76": "U02K1KEB4U9",  # BEE_TEST 坂部
+            "U03BAUEM5QS": "U02JP1YKX4K",  # BEE_TEST 岡本
+            "U03B49AKZV4": "U034EPH70TB",  # BEE_TEST 三田村
+            "U03B822P6S1": "U032CTY4KD3",  # BEE_TEST 見澤
         }
         user_id = user_id_in_fdo_workspace.get(user_id, user_id)
 

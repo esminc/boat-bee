@@ -12,7 +12,7 @@ from bee_slack_app.repository.google_books_repository import GoogleBooksReposito
 # 変更などによりこちらのコードに手を加えなくてもFAILするリスクがあることに注意
 
 
-class TestGoogleBooks:
+class TestGoogleBooksRepository:
     def setup_method(self, _):
         self.api_client = GoogleBooksRepository()
 
