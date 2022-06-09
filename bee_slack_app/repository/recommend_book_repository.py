@@ -1,5 +1,6 @@
-import json
 from typing import Optional
+
+import requests  # type: ignore
 
 
 class RecommendBookRepository:  # pylint: disable=too-few-public-methods
@@ -41,7 +42,5 @@ class RecommendBookRepository:  # pylint: disable=too-few-public-methods
 
     @staticmethod
     def _load_recommend_info():
-        with open(
-            "./ml/models/recommended_book.json", encoding="utf-8", mode="r"
-        ) as json_file:
-            return json.load(json_file)
+        url = "https://bee-ml-prod-bucket.s3.ap-northeast-1.amazonaws.com/recommended_book.json"
+        return requests.get(url).json()
