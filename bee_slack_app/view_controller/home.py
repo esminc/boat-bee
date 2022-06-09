@@ -3,7 +3,6 @@ from logging import getLogger
 from typing import Any, Optional, TypedDict
 
 from bee_slack_app.model.suggested_book import SuggestedBook
-from bee_slack_app.service.suggested import add_suggested, get_is_interested
 from bee_slack_app.service import (
     book_service,
     recommend_service,
@@ -11,6 +10,7 @@ from bee_slack_app.service import (
     user_action_service,
     user_service,
 )
+from bee_slack_app.service.suggested import add_suggested, get_is_interested
 from bee_slack_app.utils.datetime import parse
 from bee_slack_app.view.home import home
 
@@ -46,8 +46,6 @@ def home_controller(app):  # pylint: disable=too-many-statements
             user_id=event["user"],
             recommended_books_tuple=recommend_service.recommend(user),
         )
-
-        print("button_value_list_1=", button_value_list)
 
         books_params = None
         metadata_str = ""
@@ -116,8 +114,6 @@ def home_controller(app):  # pylint: disable=too-many-statements
             recommended_books_tuple=recommend_service.recommend(user),
         )
 
-        print("button_value_list_4=", button_value_list)
-
         books_params = None
         metadata_str = ""
 
@@ -182,8 +178,6 @@ def home_controller(app):  # pylint: disable=too-many-statements
             user_id=user_id,
             recommended_books_tuple=recommend_service.recommend(user),
         )
-
-        print("button_value_list_2=", button_value_list)
 
         metadata_dict = _PrivateMetadataConvertor.to_dict(
             private_metadata=private_metadata
@@ -253,8 +247,6 @@ def home_controller(app):  # pylint: disable=too-many-statements
             recommended_books_tuple=recommend_service.recommend(user),
         )
 
-        print("button_value_list_3=", button_value_list)
-
         books_params = None
         metadata_str = ""
 
@@ -304,18 +296,19 @@ def home_controller(app):  # pylint: disable=too-many-statements
             view=modal_view,
         )
 
+        """
         # 最新のボタン状態をDBに格納する
         suggested_book: SuggestedBook = {
             "user_id": body["user"]["id"],
             "isbn": recommended_books[button_position][0]["isbn"],
             "ml_model": recommended_books[button_position][1],
             "interested": recommended_books[button_position][2],
+            "updated_at": None,
         }
         add_suggested(suggested_book)
+        """
 
-    def add_button_recommmended(
-        *, user_id: str, recommended_books_tuple: tuple
-    ) -> list:
+    def add_button_recommmended(*, user_id: str, recommended_books_tuple: tuple) -> Any:
         # おすすめ本の情報に興味ありボタンの状態を追加する
         recommended_books = []
         button_value_list = []
@@ -338,7 +331,6 @@ def home_controller(app):  # pylint: disable=too-many-statements
             button_value_list.append(
                 f'{recommended_book_list[0]["isbn"]}#{recommended_book_list[1]}'
             )
-
         return recommended_books, button_value_list
 
 
