@@ -1,6 +1,7 @@
 from typing import Optional, TypedDict
 
 from bee_slack_app.model.book import Book
+from bee_slack_app.model.search import SearchedBook
 
 
 class BooksParam(TypedDict):
@@ -12,7 +13,7 @@ class BooksParam(TypedDict):
 def home(  # pylint: disable=too-many-locals
     *,
     suggested_callback_id: str,
-    recommended_books: list,
+    recommended_books: list[tuple[SearchedBook, str, bool]],
     post_review_action_id: str,
     list_user_posted_review_action_id: str,
     user_info_action_id: str,
