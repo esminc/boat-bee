@@ -44,7 +44,7 @@ def home_controller(app):  # pylint: disable=too-many-statements
         recommended_books = recommend_service.recommend(user)
         # ＤＢにある興味ありボタンの状態をおすすめ本の情報に追加する
         # ボタンのviewにあるvalue値(isbn + ml_model)をlistで作る
-        recommended_books_interested = add_button_recommended(
+        recommended_books_interested = add_interested_status(
             user_id=event["user"], recommended_books_tuple=recommended_books
         )
 
@@ -110,7 +110,7 @@ def home_controller(app):  # pylint: disable=too-many-statements
         recommended_books = recommend_service.recommend(user)
         # ＤＢにある興味ありボタンの状態をおすすめ本の情報に追加する
         # ボタンのviewにあるvalue値(isbn + ml_model)をlistで作る
-        recommended_books_interested = add_button_recommended(
+        recommended_books_interested = add_interested_status(
             user_id=user_id, recommended_books_tuple=recommended_books
         )
 
@@ -174,7 +174,7 @@ def home_controller(app):  # pylint: disable=too-many-statements
         recommended_books = recommend_service.recommend(user)
         # ＤＢにある興味ありボタンの状態をおすすめ本の情報に追加する
         # ボタンのviewにあるvalue値(isbn + ml_model)をlistで作る
-        recommended_books_interested = add_button_recommended(
+        recommended_books_interested = add_interested_status(
             user_id=user_id, recommended_books_tuple=recommended_books
         )
 
@@ -239,7 +239,7 @@ def home_controller(app):  # pylint: disable=too-many-statements
         recommended_books = recommend_service.recommend(user)
         # ＤＢにある興味ありボタンの状態をおすすめ本の情報に追加する
         # ボタンのviewにあるvalue値(isbn + ml_model)をlistで作る
-        recommended_books_interested = add_button_recommended(
+        recommended_books_interested = add_interested_status(
             user_id=body["user"]["id"], recommended_books_tuple=recommended_books
         )
 
@@ -303,7 +303,7 @@ def home_controller(app):  # pylint: disable=too-many-statements
         }
         add_suggested(suggested_book)
 
-    def add_button_recommended(
+    def add_interested_status(
         *, user_id: str, recommended_books_tuple: list[tuple[SearchedBook, str]]
     ) -> list[list[SearchedBook, str, bool]]:
         # おすすめ本の情報に興味ありボタンの状態を追加する
