@@ -65,23 +65,6 @@ def home(  # pylint: disable=too-many-locals
                 "interested": recommended_book[2],
             }
             recommended_book_sections.append(create_button(suggested_button_value))
-            recommended_book_sections.append(
-                {
-                    "type": "actions",
-                    "elements": [
-                        {  # type: ignore
-                            "type": "button",
-                            "text": {
-                                "type": "plain_text",
-                                "text": "この本のレビューを見る",
-                                "emoji": True,
-                            },
-                            "value": recommended_book[0]["isbn"],
-                            "action_id": "read_review_of_book_action",
-                        }
-                    ],
-                },
-            )
     else:
         recommended_book_sections.append(
             {
@@ -311,6 +294,16 @@ def create_button(suggested_book_value: dict) -> dict:
                 },
                 "value": f'{suggested_book_value["isbn"]}#{suggested_book_value["ml_model"]}',
                 "action_id": "button_switch_action",
+            },
+            {  # type: ignore
+                "type": "button",
+                "text": {
+                    "type": "plain_text",
+                    "text": "この本のレビューを見る",
+                    "emoji": True,
+                },
+                "value": suggested_book_value["isbn"],
+                "action_id": "read_review_of_book_action",
             },
         ],
     }

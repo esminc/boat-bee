@@ -31,6 +31,16 @@ def get_is_interested(*, user_id: str, isbn: str, ml_model: str) -> Optional[boo
 
     except Exception:  # pylint: disable=broad-except
         logger.exception("Failed to get data.")
+        # 未登録の場合は、そのおすすめ本を登録する
+        suggested_book_repository.create(
+            {
+                "user_id": user_id,
+                "isbn": "isbn",
+                "ml_model": "ml_model",
+                "interested": False,
+                "updated_at": datetime.now(),
+            }
+        )
         return None
 
 
