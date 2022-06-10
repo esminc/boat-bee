@@ -43,7 +43,7 @@ def home_controller(app):  # pylint: disable=too-many-statements
         recommended_books = recommend_service.recommend(user)
         # ＤＢにある興味ありボタンの状態をおすすめ本の情報に追加する
         # ボタンのviewにあるvalue値(isbn + ml_model)をlistで作る
-        recommended_books, button_value_list = add_button_recommended(
+        recommended_books_interested, button_value_list = add_button_recommended(
             user_id=event["user"], recommended_books_tuple=recommended_books
         )
 
@@ -71,7 +71,7 @@ def home_controller(app):  # pylint: disable=too-many-statements
             view=home(
                 suggested_callback_id="suggested_button_modal",
                 post_review_action_id="post_review_action",
-                recommended_books=recommended_books,
+                recommended_books=recommended_books_interested,
                 list_user_posted_review_action_id="list_user_posted_review_action",
                 user_info_action_id="user_info_action",
                 total_review_count=total_review_count,
@@ -110,7 +110,7 @@ def home_controller(app):  # pylint: disable=too-many-statements
         recommended_books = recommend_service.recommend(user)
         # ＤＢにある興味ありボタンの状態をおすすめ本の情報に追加する
         # ボタンのviewにあるvalue値(isbn + ml_model)をlistで作る
-        recommended_books, button_value_list = add_button_recommended(
+        recommended_books_interested, button_value_list = add_button_recommended(
             user_id=user_id, recommended_books_tuple=recommended_books
         )
 
@@ -140,7 +140,7 @@ def home_controller(app):  # pylint: disable=too-many-statements
             view=home(
                 suggested_callback_id="suggested_button_modal",
                 post_review_action_id="post_review_action",
-                recommended_books=recommended_books,
+                recommended_books=recommended_books_interested,
                 list_user_posted_review_action_id="list_user_posted_review_action",
                 user_info_action_id="user_info_action",
                 total_review_count=total_review_count,
@@ -175,7 +175,7 @@ def home_controller(app):  # pylint: disable=too-many-statements
         recommended_books = recommend_service.recommend(user)
         # ＤＢにある興味ありボタンの状態をおすすめ本の情報に追加する
         # ボタンのviewにあるvalue値(isbn + ml_model)をlistで作る
-        recommended_books, button_value_list = add_button_recommended(
+        recommended_books_interested, button_value_list = add_button_recommended(
             user_id=user_id, recommended_books_tuple=recommended_books
         )
 
@@ -209,7 +209,7 @@ def home_controller(app):  # pylint: disable=too-many-statements
             view=home(
                 suggested_callback_id="suggested_button_modal",
                 post_review_action_id="post_review_action",
-                recommended_books=recommended_books,
+                recommended_books=recommended_books_interested,
                 list_user_posted_review_action_id="list_user_posted_review_action",
                 user_info_action_id="user_info_action",
                 total_review_count=total_review_count,
@@ -243,7 +243,7 @@ def home_controller(app):  # pylint: disable=too-many-statements
         recommended_books = recommend_service.recommend(user)
         # ＤＢにある興味ありボタンの状態をおすすめ本の情報に追加する
         # ボタンのviewにあるvalue値(isbn + ml_model)をlistで作る
-        recommended_books, button_value_list = add_button_recommended(
+        recommended_books_interested, button_value_list = add_button_recommended(
             user_id=body["user"]["id"], recommended_books_tuple=recommended_books
         )
 
@@ -282,7 +282,7 @@ def home_controller(app):  # pylint: disable=too-many-statements
         modal_view = home(
             suggested_callback_id="suggested_button_modal",
             post_review_action_id="post_review_action",
-            recommended_books=recommended_books,
+            recommended_books=recommended_books_interested,
             list_user_posted_review_action_id="list_user_posted_review_action",
             user_info_action_id="user_info_action",
             total_review_count=total_review_count,
