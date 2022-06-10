@@ -270,10 +270,7 @@ def home_controller(app):  # pylint: disable=too-many-statements
 
         # どのボタンが押されたか判定する
         button_position = button_value_list.index(action["value"])
-        print("button_value_list=", button_value_list)
-        print("button_position=", button_position)
         # 押されたボタンを反転させる
-        print("recommended_books=", recommended_books_interested)
         recommended_books_interested[button_position][
             2
         ] = not recommended_books_interested[button_position][2]
@@ -309,8 +306,6 @@ def home_controller(app):  # pylint: disable=too-many-statements
     def add_button_recommended(
         *, user_id: str, recommended_books_tuple: list[tuple[SearchedBook, str]]
     ) -> list[list[SearchedBook, str, bool]]:
-        # *, user_id: str, recommended_books_tuple: list[tuple[SearchedBook, str]]
-        # ) -> list[list[SearchedBook, str, bool]]:
         # おすすめ本の情報に興味ありボタンの状態を追加する
         recommended_books = []
         for recommended_book_tuple in recommended_books_tuple:
