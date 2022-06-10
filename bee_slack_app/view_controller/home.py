@@ -2,6 +2,7 @@ import json
 from logging import getLogger
 from typing import Any, Optional, TypedDict
 
+from bee_slack_app.model.search import SearchedBook
 from bee_slack_app.model.suggested_book import SuggestedBook
 from bee_slack_app.service import (
     book_service,
@@ -43,7 +44,7 @@ def home_controller(app):  # pylint: disable=too-many-statements
         recommended_books = recommend_service.recommend(user)
         # ＤＢにある興味ありボタンの状態をおすすめ本の情報に追加する
         # ボタンのviewにあるvalue値(isbn + ml_model)をlistで作る
-        recommended_books_interested, _ = add_button_recommended(
+        recommended_books_interested = add_button_recommended(
             user_id=event["user"], recommended_books_tuple=recommended_books
         )
 
@@ -109,7 +110,7 @@ def home_controller(app):  # pylint: disable=too-many-statements
         recommended_books = recommend_service.recommend(user)
         # ＤＢにある興味ありボタンの状態をおすすめ本の情報に追加する
         # ボタンのviewにあるvalue値(isbn + ml_model)をlistで作る
-        recommended_books_interested, _ = add_button_recommended(
+        recommended_books_interested = add_button_recommended(
             user_id=user_id, recommended_books_tuple=recommended_books
         )
 
@@ -173,7 +174,7 @@ def home_controller(app):  # pylint: disable=too-many-statements
         recommended_books = recommend_service.recommend(user)
         # ＤＢにある興味ありボタンの状態をおすすめ本の情報に追加する
         # ボタンのviewにあるvalue値(isbn + ml_model)をlistで作る
-        recommended_books_interested, _ = add_button_recommended(
+        recommended_books_interested = add_button_recommended(
             user_id=user_id, recommended_books_tuple=recommended_books
         )
 
@@ -238,7 +239,7 @@ def home_controller(app):  # pylint: disable=too-many-statements
         recommended_books = recommend_service.recommend(user)
         # ＤＢにある興味ありボタンの状態をおすすめ本の情報に追加する
         # ボタンのviewにあるvalue値(isbn + ml_model)をlistで作る
-        recommended_books_interested, button_value_list = add_button_recommended(
+        recommended_books_interested = add_button_recommended(
             user_id=body["user"]["id"], recommended_books_tuple=recommended_books
         )
 
@@ -258,6 +259,13 @@ def home_controller(app):  # pylint: disable=too-many-statements
 
             metadata_str = _PrivateMetadataConvertor.to_private_metadata(
                 keys=books.get("keys"),
+            )
+
+        # ボタンのviewのvalue値(isbn + ml_model)をlistで作る
+        button_value_list = []
+        for recommended_book in recommended_books:
+            button_value_list.append(
+                f'{recommended_book[0]["isbn"]}#{recommended_book[1]}'
             )
 
         # どのボタンが押されたか判定する
@@ -298,10 +306,13 @@ def home_controller(app):  # pylint: disable=too-many-statements
         }
         add_suggested(suggested_book)
 
-    def add_button_recommended(*, user_id: str, recommended_books_tuple: tuple) -> Any:
+    def add_button_recommended(
+        *, user_id: str, recommended_books_tuple: list[tuple[SearchedBook, str]]
+    ) -> list[list[SearchedBook, str, bool]]:
+        # *, user_id: str, recommended_books_tuple: list[tuple[SearchedBook, str]]
+        # ) -> list[list[SearchedBook, str, bool]]:
         # おすすめ本の情報に興味ありボタンの状態を追加する
         recommended_books = []
-        button_value_list = []
         for recommended_book_tuple in recommended_books_tuple:
             # 興味ありボタンの状態をDBから取り出す
             interested_status: Optional[bool] = get_is_interested(
@@ -317,11 +328,7 @@ def home_controller(app):  # pylint: disable=too-many-statements
             )
             # おすすめされた個数分を追加する
             recommended_books.append(recommended_book_list)
-            # ボタンのviewのvalue値(isbn + ml_model)をlistで作る
-            button_value_list.append(
-                f'{recommended_book_list[0]["isbn"]}#{recommended_book_list[1]}'
-            )
-        return recommended_books, button_value_list
+        return recommended_books
 
 
 class _PrivateMetadataConvertor:
