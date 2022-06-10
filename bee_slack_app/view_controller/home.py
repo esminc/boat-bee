@@ -43,7 +43,7 @@ def home_controller(app):  # pylint: disable=too-many-statements
         recommended_books = recommend_service.recommend(user)
         # ＤＢにある興味ありボタンの状態をおすすめ本の情報に追加する
         # ボタンのviewにあるvalue値(isbn + ml_model)をlistで作る
-        recommended_books_interested, button_value_list = add_button_recommended(
+        recommended_books_interested, _ = add_button_recommended(
             user_id=event["user"], recommended_books_tuple=recommended_books
         )
 
@@ -63,7 +63,6 @@ def home_controller(app):  # pylint: disable=too-many-statements
 
             metadata_str = _PrivateMetadataConvertor.to_private_metadata(
                 keys=books.get("keys"),
-                button_value_list=button_value_list,
             )
 
         client.views_publish(
@@ -110,7 +109,7 @@ def home_controller(app):  # pylint: disable=too-many-statements
         recommended_books = recommend_service.recommend(user)
         # ＤＢにある興味ありボタンの状態をおすすめ本の情報に追加する
         # ボタンのviewにあるvalue値(isbn + ml_model)をlistで作る
-        recommended_books_interested, button_value_list = add_button_recommended(
+        recommended_books_interested, _ = add_button_recommended(
             user_id=user_id, recommended_books_tuple=recommended_books
         )
 
@@ -132,7 +131,6 @@ def home_controller(app):  # pylint: disable=too-many-statements
 
             metadata_str = _PrivateMetadataConvertor.to_private_metadata(
                 keys=books.get("keys"),
-                button_value_list=button_value_list,
             )
 
         client.views_publish(
@@ -175,7 +173,7 @@ def home_controller(app):  # pylint: disable=too-many-statements
         recommended_books = recommend_service.recommend(user)
         # ＤＢにある興味ありボタンの状態をおすすめ本の情報に追加する
         # ボタンのviewにあるvalue値(isbn + ml_model)をlistで作る
-        recommended_books_interested, button_value_list = add_button_recommended(
+        recommended_books_interested, _ = add_button_recommended(
             user_id=user_id, recommended_books_tuple=recommended_books
         )
 
@@ -201,7 +199,6 @@ def home_controller(app):  # pylint: disable=too-many-statements
 
             metadata_str = _PrivateMetadataConvertor.to_private_metadata(
                 keys=books.get("keys"),
-                button_value_list=button_value_list,
             )
 
         client.views_publish(
@@ -227,8 +224,6 @@ def home_controller(app):  # pylint: disable=too-many-statements
 
         ack()
         logger = getLogger(__name__)
-
-        private_metadata = body["view"]["private_metadata"]
 
         reviews = review_service.get_review_all()
 
@@ -263,20 +258,17 @@ def home_controller(app):  # pylint: disable=too-many-statements
 
             metadata_str = _PrivateMetadataConvertor.to_private_metadata(
                 keys=books.get("keys"),
-                button_value_list=button_value_list,
             )
 
-        # private_metadataに格納していた情報を復元する
-        metadata_dict = _PrivateMetadataConvertor.to_dict(
-            private_metadata=private_metadata
-        )
-        button_value_list = metadata_dict["button_value_list"]
         # どのボタンが押されたか判定する
         button_position = button_value_list.index(action["value"])
+        print("button_value_list=", button_value_list)
+        print("button_position=", button_position)
         # 押されたボタンを反転させる
-        recommended_books[button_position][2] = not recommended_books[button_position][
+        print("recommended_books=", recommended_books_interested)
+        recommended_books_interested[button_position][
             2
-        ]
+        ] = not recommended_books_interested[button_position][2]
 
         # 興味ありボタンの表示を切り替える
         modal_view = home(
@@ -299,9 +291,9 @@ def home_controller(app):  # pylint: disable=too-many-statements
         # 最新のボタン状態をDBに格納する
         suggested_book: SuggestedBook = {
             "user_id": body["user"]["id"],
-            "isbn": recommended_books[button_position][0]["isbn"],
-            "ml_model": recommended_books[button_position][1],
-            "interested": recommended_books[button_position][2],
+            "isbn": recommended_books_interested[button_position][0]["isbn"],
+            "ml_model": recommended_books_interested[button_position][1],
+            "interested": recommended_books_interested[button_position][2],
             "updated_at": None,
         }
         add_suggested(suggested_book)
@@ -335,11 +327,10 @@ def home_controller(app):  # pylint: disable=too-many-statements
 class _PrivateMetadataConvertor:
     class _MetadataDict(TypedDict):
         keys: Any
-        button_value_list: str
 
     @staticmethod
-    def to_private_metadata(*, keys: Any, button_value_list: str) -> str:
-        return json.dumps({"keys": keys, "button_value_list": button_value_list})
+    def to_private_metadata(*, keys: Any) -> str:
+        return json.dumps({"keys": keys})
 
     @staticmethod
     def to_dict(*, private_metadata: str) -> _MetadataDict:
