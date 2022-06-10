@@ -43,7 +43,7 @@ def home_controller(app):  # pylint: disable=too-many-statements
         recommended_books = recommend_service.recommend(user)
         # ＤＢにある興味ありボタンの状態をおすすめ本の情報に追加する
         # ボタンのviewにあるvalue値(isbn + ml_model)をlistで作る
-        recommended_books, button_value_list = add_button_recommmended(
+        recommended_books, button_value_list = add_button_recommended(
             user_id=event["user"], recommended_books_tuple=recommended_books
         )
 
@@ -110,7 +110,7 @@ def home_controller(app):  # pylint: disable=too-many-statements
         recommended_books = recommend_service.recommend(user)
         # ＤＢにある興味ありボタンの状態をおすすめ本の情報に追加する
         # ボタンのviewにあるvalue値(isbn + ml_model)をlistで作る
-        recommended_books, button_value_list = add_button_recommmended(
+        recommended_books, button_value_list = add_button_recommended(
             user_id=user_id, recommended_books_tuple=recommended_books
         )
 
@@ -175,7 +175,7 @@ def home_controller(app):  # pylint: disable=too-many-statements
         recommended_books = recommend_service.recommend(user)
         # ＤＢにある興味ありボタンの状態をおすすめ本の情報に追加する
         # ボタンのviewにあるvalue値(isbn + ml_model)をlistで作る
-        recommended_books, button_value_list = add_button_recommmended(
+        recommended_books, button_value_list = add_button_recommended(
             user_id=user_id, recommended_books_tuple=recommended_books
         )
 
@@ -243,7 +243,7 @@ def home_controller(app):  # pylint: disable=too-many-statements
         recommended_books = recommend_service.recommend(user)
         # ＤＢにある興味ありボタンの状態をおすすめ本の情報に追加する
         # ボタンのviewにあるvalue値(isbn + ml_model)をlistで作る
-        recommended_books, button_value_list = add_button_recommmended(
+        recommended_books, button_value_list = add_button_recommended(
             user_id=body["user"]["id"], recommended_books_tuple=recommended_books
         )
 
@@ -306,7 +306,7 @@ def home_controller(app):  # pylint: disable=too-many-statements
         }
         add_suggested(suggested_book)
 
-    def add_button_recommmended(*, user_id: str, recommended_books_tuple: tuple) -> Any:
+    def add_button_recommended(*, user_id: str, recommended_books_tuple: tuple) -> Any:
         # おすすめ本の情報に興味ありボタンの状態を追加する
         recommended_books = []
         button_value_list = []
