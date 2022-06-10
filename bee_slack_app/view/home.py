@@ -40,8 +40,6 @@ def home(  # pylint: disable=too-many-locals
     recommended_book_sections = []
 
     if recommended_books:
-
-        # for i, recommended_book in enumerate(recommended_books):
         for recommended_book in recommended_books:
 
             recommended_book_sections.append(
