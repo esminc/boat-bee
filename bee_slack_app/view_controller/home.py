@@ -45,7 +45,7 @@ def home_controller(app):  # pylint: disable=too-many-statements
         # ＤＢにある興味ありボタンの状態をおすすめ本の情報に追加する
         # ボタンのviewにあるvalue値(isbn + ml_model)をlistで作る
         recommended_books_interested = add_interested_status(
-            user_id=event["user"], recommended_books_tuple=recommended_books
+            user_id=event["user"], recommended_books=recommended_books
         )
 
         books_params = None
@@ -111,7 +111,7 @@ def home_controller(app):  # pylint: disable=too-many-statements
         # ＤＢにある興味ありボタンの状態をおすすめ本の情報に追加する
         # ボタンのviewにあるvalue値(isbn + ml_model)をlistで作る
         recommended_books_interested = add_interested_status(
-            user_id=user_id, recommended_books_tuple=recommended_books
+            user_id=user_id, recommended_books=recommended_books
         )
 
         books_params = None
@@ -175,7 +175,7 @@ def home_controller(app):  # pylint: disable=too-many-statements
         # ＤＢにある興味ありボタンの状態をおすすめ本の情報に追加する
         # ボタンのviewにあるvalue値(isbn + ml_model)をlistで作る
         recommended_books_interested = add_interested_status(
-            user_id=user_id, recommended_books_tuple=recommended_books
+            user_id=user_id, recommended_books=recommended_books
         )
 
         metadata_dict = _PrivateMetadataConvertor.to_dict(
@@ -240,7 +240,7 @@ def home_controller(app):  # pylint: disable=too-many-statements
         # ＤＢにある興味ありボタンの状態をおすすめ本の情報に追加する
         # ボタンのviewにあるvalue値(isbn + ml_model)をlistで作る
         recommended_books_interested = add_interested_status(
-            user_id=body["user"]["id"], recommended_books_tuple=recommended_books
+            user_id=body["user"]["id"], recommended_books=recommended_books
         )
 
         books_params = None
@@ -304,19 +304,19 @@ def home_controller(app):  # pylint: disable=too-many-statements
         add_suggested(suggested_book)
 
     def add_interested_status(
-        *, user_id: str, recommended_books_tuple: list[tuple[SearchedBook, str]]
+        *, user_id: str, recommended_books: list[tuple[SearchedBook, str]]
     ) -> list[list[SearchedBook, str, bool]]:
         # おすすめ本の情報に興味ありボタンの状態を追加する
         recommended_books = []
-        for recommended_book_tuple in recommended_books_tuple:
+        for recommended_book in recommended_books:
             # 興味ありボタンの状態をDBから取り出す
             interested_status: Optional[bool] = get_is_interested(
                 user_id=user_id,
-                isbn=recommended_book_tuple[0]["isbn"],
-                ml_model=recommended_book_tuple[1],
+                isbn=recommended_book[0]["isbn"],
+                ml_model=recommended_book[1],
             )
             # tupleに要素(ボタンの状態)を追加するため、listに変換する
-            recommended_book_list = list(recommended_book_tuple)
+            recommended_book_list = list(recommended_book)
             # １個のおすすめ情報にボタンの状態を追加
             recommended_book_list.append(
                 False if interested_status is None else interested_status
