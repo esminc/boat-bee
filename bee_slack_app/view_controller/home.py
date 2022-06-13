@@ -14,7 +14,7 @@ from bee_slack_app.service import (
 from bee_slack_app.service.suggested import (
     add_suggested,
     get_is_interested,
-    get_or_create,
+    create_initial_suggested,
 )
 from bee_slack_app.utils.datetime import parse
 from bee_slack_app.view.home import home
@@ -322,7 +322,7 @@ def home_controller(app):  # pylint: disable=too-many-statements
         *, user_id: str, recommended_books: list[tuple[SearchedBook, str]]
     ) -> None:
         for recommended_book in recommended_books:
-            get_or_create(
+            create_initial_suggested(
                 user_id=user_id,
                 isbn=recommended_book[0]["isbn"],
                 ml_model=recommended_book[1],

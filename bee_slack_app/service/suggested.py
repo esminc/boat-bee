@@ -8,7 +8,7 @@ from bee_slack_app.utils import datetime
 suggested_book_repository = SuggestedBookRepository()
 
 
-def get_or_create(*, user_id: str, isbn: str, ml_model: str) -> None:
+def create_initial_suggested(*, user_id: str, isbn: str, ml_model: str) -> None:
     """
     おすすめ本が未登録の場合はそれを登録する
 
@@ -50,7 +50,7 @@ def get_is_interested(*, user_id: str, isbn: str, ml_model: str) -> Optional[boo
 
 
     Returns:
-        興味あり:True、興味なし:False、未登録の場合は、False
+        興味あり:True、興味なし:False、未登録の場合は、Falseを返す。
     """
     logger = getLogger(__name__)
 
