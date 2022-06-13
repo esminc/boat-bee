@@ -54,56 +54,18 @@ def review_modal(
             datetime.parse(review["updated_at"]) if review["updated_at"] else "-"
         )
 
-        review_blocks.append(
-            {
-                "type": "section",
-                "fields": [
-                    {
-                        "type": "mrkdwn",
-                        "text": f"*投稿者*\n{review['user_name']}",
-                    },  # type:ignore
-                    {
-                        "type": "mrkdwn",
-                        "text": f"*投稿日時*\n{update_datetime}",
-                    },  # type:ignore
-                    {  # type:ignore
-                        "type": "mrkdwn",
-                        "text": f"*自分にとっての評価*\n{review['score_for_me']}",
-                    },
-                    {  # type:ignore
-                        "type": "mrkdwn",
-                        "text": f"*永和社員へのおすすめ度*\n{review['score_for_others']}",
-                    },
-                ],
-            }
+        review_blocks.extend(
+            _review_sections(
+                user_name=review["user_name"],
+                update_datetime=update_datetime,
+                score_for_me=review["score_for_me"],
+                score_for_others=review["score_for_others"],
+                review_comment=review["review_comment"],
+            )
         )
 
         review_blocks.append(
-            {
-                "type": "section",
-                "text": {  # type:ignore
-                    "type": "mrkdwn",
-                    "text": f"*レビューコメント*\n\n{review['review_comment'] or '-'}",
-                },
-            }
-        )
-
-        review_blocks.append(
-            {  # pylint: disable=duplicate-code
-                "type": "actions",
-                "elements": [
-                    {  # type: ignore
-                        "type": "button",
-                        "text": {
-                            "type": "plain_text",
-                            "text": "もっと見る",
-                            "emoji": True,
-                        },
-                        "value": review["user_id"] + ":" + review["isbn"],
-                        "action_id": "open_review_detail_modal_action",
-                    }
-                ],
-            },
+            _review_detail_button(user_id=review["user_id"], isbn=review["isbn"])
         )
 
         review_blocks.append({"type": "divider"})
@@ -154,56 +116,18 @@ def review_of_user_modal(*, callback_id: str, reviews: list[ReviewContents]):
             )
         )
 
-        review_blocks.append(
-            {
-                "type": "section",
-                "fields": [
-                    {
-                        "type": "mrkdwn",
-                        "text": f"*投稿者*\n{review['user_name']}",
-                    },  # type:ignore
-                    {
-                        "type": "mrkdwn",
-                        "text": f"*投稿日時*\n{update_datetime}",
-                    },  # type:ignore
-                    {  # type:ignore
-                        "type": "mrkdwn",
-                        "text": f"*自分にとっての評価*\n{review['score_for_me']}",
-                    },
-                    {  # type:ignore
-                        "type": "mrkdwn",
-                        "text": f"*永和社員へのおすすめ度*\n{review['score_for_others']}",
-                    },
-                ],
-            }
+        review_blocks.extend(
+            _review_sections(
+                user_name=review["user_name"],
+                update_datetime=update_datetime,
+                score_for_me=review["score_for_me"],
+                score_for_others=review["score_for_others"],
+                review_comment=review["review_comment"],
+            )
         )
 
         review_blocks.append(
-            {
-                "type": "section",
-                "text": {  # type:ignore
-                    "type": "mrkdwn",
-                    "text": f"*レビューコメント*\n\n{review['review_comment'] or '-'}",
-                },
-            }
-        )
-
-        review_blocks.append(
-            {  # pylint: disable=duplicate-code
-                "type": "actions",
-                "elements": [
-                    {  # type: ignore
-                        "type": "button",
-                        "text": {
-                            "type": "plain_text",
-                            "text": "もっと見る",
-                            "emoji": True,
-                        },
-                        "value": review["user_id"] + ":" + review["isbn"],
-                        "action_id": "open_review_detail_modal_action",
-                    }
-                ],
-            },
+            _review_detail_button(user_id=review["user_id"], isbn=review["isbn"])
         )
 
         review_blocks.append({"type": "divider"})
@@ -227,8 +151,6 @@ def review_detail_modal(review_contents: ReviewContents):
         else "-"
     )
 
-    review_comment = review_contents["review_comment"] or "-"
-
     return {
         "type": "modal",
         "title": {"type": "plain_text", "text": "レビュー詳細", "emoji": True},
@@ -241,33 +163,78 @@ def review_detail_modal(review_contents: ReviewContents):
                 url=review_contents["book_url"],
                 image_url=review_contents["book_image_url"],
             ),
-            {
-                "type": "section",
-                "fields": [
-                    {
-                        "type": "mrkdwn",
-                        "text": f"*投稿者*\n{review_contents['user_name']}",
-                    },  # type:ignore
-                    {
-                        "type": "mrkdwn",
-                        "text": f"*投稿日時*\n{update_datetime}",
-                    },  # type:ignore
-                    {  # type:ignore
-                        "type": "mrkdwn",
-                        "text": f"*自分にとっての評価*\n{review_contents['score_for_me']}",
-                    },
-                    {  # type:ignore
-                        "type": "mrkdwn",
-                        "text": f"*永和社員へのおすすめ度*\n{review_contents['score_for_others']}",
-                    },
-                ],
-            },
-            {
-                "type": "section",
-                "text": {
+            *_review_sections(
+                user_name=review_contents["user_name"],
+                update_datetime=update_datetime,
+                score_for_me=review_contents["score_for_me"],
+                score_for_others=review_contents["score_for_others"],
+                review_comment=review_contents["review_comment"],
+            ),
+        ],
+    }
+
+
+def _review_sections(
+    *,
+    user_name: str,
+    update_datetime: str,
+    score_for_me: str,
+    score_for_others: str,
+    review_comment: str,
+):
+    """
+    レビューのセクションのリスト
+    """
+    return [
+        {
+            "type": "section",
+            "fields": [
+                {
                     "type": "mrkdwn",
-                    "text": f"*レビューコメント*\n\n{review_comment}",
+                    "text": f"*投稿者*\n{user_name}",
+                },  # type:ignore
+                {
+                    "type": "mrkdwn",
+                    "text": f"*投稿日時*\n{update_datetime}",
+                },  # type:ignore
+                {  # type:ignore
+                    "type": "mrkdwn",
+                    "text": f"*自分にとっての評価*\n{score_for_me}",
                 },
+                {  # type:ignore
+                    "type": "mrkdwn",
+                    "text": f"*永和社員へのおすすめ度*\n{score_for_others}",
+                },
+            ],
+        },
+        {
+            "type": "section",
+            "text": {  # type:ignore
+                "type": "mrkdwn",
+                "text": f"*レビューコメント*\n\n{review_comment or '-'}",
             },
+        },
+    ]
+
+
+def _review_detail_button(*, user_id: str, isbn: str):
+    """
+    レビューの「もっと見る」ボタン
+
+    actionのvalueは '<user_id>:<isbn>'
+    """
+    return {
+        "type": "actions",
+        "elements": [
+            {  # type: ignore
+                "type": "button",
+                "text": {
+                    "type": "plain_text",
+                    "text": "もっと見る",
+                    "emoji": True,
+                },
+                "value": user_id + ":" + isbn,
+                "action_id": "open_review_detail_modal_action",
+            }
         ],
     }
