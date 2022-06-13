@@ -277,14 +277,15 @@ def home_controller(app):  # pylint: disable=too-many-statements
         # どのボタンが押されたか判定する
         button_position = button_value_list.index(action["value"])
 
-        # tupleの要素は更新できないのでlistに変換し、更新後、tupleに戻す
+        # tupleの要素は更新できないのでlistに変換する。
         recommended_books_interested[button_position] = list(
             recommended_books_interested[button_position]
         )
         # 押されたボタンを反転させる
-        recommended_books_interested[button_position][2] = (
-            False if recommended_books_interested[button_position][2] else True
-        )
+        recommended_books_interested[button_position][
+            2
+        ] = not recommended_books_interested[button_position][2]
+        # 更新後、tupleに戻す
         recommended_books_interested[button_position] = tuple(
             recommended_books_interested[button_position]
         )
