@@ -8,6 +8,37 @@ from bee_slack_app.utils import datetime
 suggested_book_repository = SuggestedBookRepository()
 
 
+def get_or_create(*, user_id: str, isbn: str, ml_model: str) -> None:
+    """
+    おすすめ本が未登録の場合はそれを登録する
+
+    Args:
+        user_id : おすすめされたユーザーのuser_id
+        isbn    : おすすめされた本のisbn
+        ml_model: おすすめされた本のml_model
+
+    Returns:
+        なし
+    """
+    logger = getLogger(__name__)
+    try:
+        result = suggested_book_repository.get(
+            user_id=user_id, isbn=isbn, ml_model=ml_model
+        )
+        if result is None:
+            suggested_book_repository.create(
+                {
+                    "user_id": user_id,
+                    "isbn": isbn,
+                    "ml_model": ml_model,
+                    "interested": False,
+                    "updated_at": datetime.now(),
+                }
+            )
+    except Exception:  # pylint: disable=broad-except
+        logger.exception("Failed to get data.")
+
+
 def get_is_interested(*, user_id: str, isbn: str, ml_model: str) -> Optional[bool]:
     """
     おすすめされた本の情報（履歴）を取得する
@@ -19,7 +50,7 @@ def get_is_interested(*, user_id: str, isbn: str, ml_model: str) -> Optional[boo
 
 
     Returns:
-        興味あり:True、興味なし:False、未登録の場合は、None
+        興味あり:True、興味なし:False、未登録の場合は、False
     """
     logger = getLogger(__name__)
 
@@ -27,20 +58,10 @@ def get_is_interested(*, user_id: str, isbn: str, ml_model: str) -> Optional[boo
         result: Optional[SuggestedBook] = suggested_book_repository.get(
             user_id=user_id, isbn=isbn, ml_model=ml_model
         )
-        return None if result is None else result["interested"]
+        return False if result is None else result["interested"]
 
     except Exception:  # pylint: disable=broad-except
         logger.exception("Failed to get data.")
-        # 未登録の場合は、そのおすすめ本を登録する
-        suggested_book_repository.create(
-            {
-                "user_id": user_id,
-                "isbn": "isbn",
-                "ml_model": "ml_model",
-                "interested": False,
-                "updated_at": datetime.now(),
-            }
-        )
         return None
 
 

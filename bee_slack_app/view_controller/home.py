@@ -11,7 +11,11 @@ from bee_slack_app.service import (
     user_action_service,
     user_service,
 )
-from bee_slack_app.service.suggested import add_suggested, get_is_interested
+from bee_slack_app.service.suggested import (
+    add_suggested,
+    get_is_interested,
+    get_or_create,
+)
 from bee_slack_app.utils.datetime import parse
 from bee_slack_app.view.home import home
 
@@ -41,6 +45,10 @@ def home_controller(app):  # pylint: disable=too-many-statements
         user_name = f"{user['user_name']}さん" if user is not None else "あなた"
 
         recommended_books = recommend_service.recommend(user)
+
+        # ＤＢにおすすめ本の情報が未登録の場合に初期登録を行う。
+        add_first_suggested(user_id=event["user"], recommended_books=recommended_books)
+
         # ＤＢにある興味ありボタンの状態をおすすめ本の情報に追加する
         # ボタンのviewにあるvalue値(isbn + ml_model)をlistで作る
         recommended_books_interested = add_interested_status(
@@ -64,7 +72,6 @@ def home_controller(app):  # pylint: disable=too-many-statements
             metadata_str = _PrivateMetadataConvertor.to_private_metadata(
                 keys=books.get("keys"),
             )
-
         client.views_publish(
             user_id=event["user"],
             view=home(
@@ -270,10 +277,14 @@ def home_controller(app):  # pylint: disable=too-many-statements
         # どのボタンが押されたか判定する
         button_position = button_value_list.index(action["value"])
 
-        # 押されたボタンを反転させる
-        status = False if recommended_books_interested[button_position][2] else True
         # tupleの要素は更新できないのでlistに変換し、更新後、tupleに戻す
-        list(recommended_books_interested[button_position])[2] = status
+        recommended_books_interested[button_position] = list(
+            recommended_books_interested[button_position]
+        )
+        # 押されたボタンを反転させる
+        recommended_books_interested[button_position][2] = (
+            False if recommended_books_interested[button_position][2] else True
+        )
         recommended_books_interested[button_position] = tuple(
             recommended_books_interested[button_position]
         )
@@ -306,6 +317,16 @@ def home_controller(app):  # pylint: disable=too-many-statements
         }
         add_suggested(suggested_book)
 
+    def add_first_suggested(
+        *, user_id: str, recommended_books: list[tuple[SearchedBook, str]]
+    ) -> None:
+        for recommended_book in recommended_books:
+            get_or_create(
+                user_id=user_id,
+                isbn=recommended_book[0]["isbn"],
+                ml_model=recommended_book[1],
+            )
+
     def add_interested_status(
         *, user_id: str, recommended_books: list[tuple[SearchedBook, str]]
     ) -> list[tuple[SearchedBook, str, bool]]:
@@ -318,11 +339,9 @@ def home_controller(app):  # pylint: disable=too-many-statements
                 isbn=recommended_book[0]["isbn"],
                 ml_model=recommended_book[1],
             )
-            recommended_book_interested = (
-                recommended_book + False
-                if interested_status is None
-                else interested_status
-            )
+            # タプルのおすすめ本の情報とタプルの興味あり状態を連結する
+            interested = False if interested_status is None else interested_status
+            recommended_book_interested = recommended_book + (interested,)
 
             # おすすめされた個数分をlistに追加する
             recommended_books_interested.append(recommended_book_interested)

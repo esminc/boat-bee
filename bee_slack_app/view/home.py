@@ -39,7 +39,6 @@ def home(  # pylint: disable=too-many-locals
         private_metadata: private_metadata
     """
     recommended_book_sections = []
-
     if recommended_books:
         for recommended_book in recommended_books:
 
