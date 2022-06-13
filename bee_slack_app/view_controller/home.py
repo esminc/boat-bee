@@ -13,8 +13,8 @@ from bee_slack_app.service import (
 )
 from bee_slack_app.service.suggested import (
     add_suggested,
-    get_is_interested,
     create_initial_suggested,
+    get_is_interested,
 )
 from bee_slack_app.utils.datetime import parse
 from bee_slack_app.view.home import home
