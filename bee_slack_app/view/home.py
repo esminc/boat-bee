@@ -12,7 +12,6 @@ class BooksParam(TypedDict):
 
 def home(  # pylint: disable=too-many-locals
     *,
-    suggested_callback_id: str,
     recommended_books: list[tuple[SearchedBook, str, bool]],
     post_review_action_id: str,
     list_user_posted_review_action_id: str,
@@ -27,7 +26,6 @@ def home(  # pylint: disable=too-many-locals
     アプリホーム画面
 
     Args:
-        suggested_callback_id:「興味ありなし」ボタンのある画面のcallback_id
         recommended_books: 「おすすめ本」のデータ
         post_review_action_id: 「レビューを投稿する」ボタンのaction_id
         list_user_posted_review_action_id: 「レビューを投稿したユーザ」ボタンのaction_id
@@ -77,7 +75,6 @@ def home(  # pylint: disable=too-many-locals
 
     view = {
         "type": "home",
-        "callback_id": suggested_callback_id,
         "private_metadata": private_metadata,
         "blocks": [
             {

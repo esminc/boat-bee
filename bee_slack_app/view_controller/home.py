@@ -75,7 +75,6 @@ def home_controller(app):  # pylint: disable=too-many-statements
         client.views_publish(
             user_id=event["user"],
             view=home(
-                suggested_callback_id="suggested_button_modal",
                 post_review_action_id="post_review_action",
                 recommended_books=recommended_books_interested,
                 list_user_posted_review_action_id="list_user_posted_review_action",
@@ -143,7 +142,6 @@ def home_controller(app):  # pylint: disable=too-many-statements
         client.views_publish(
             user_id=user_id,
             view=home(
-                suggested_callback_id="suggested_button_modal",
                 post_review_action_id="post_review_action",
                 recommended_books=recommended_books_interested,
                 list_user_posted_review_action_id="list_user_posted_review_action",
@@ -211,7 +209,6 @@ def home_controller(app):  # pylint: disable=too-many-statements
         client.views_publish(
             user_id=user_id,
             view=home(
-                suggested_callback_id="suggested_button_modal",
                 post_review_action_id="post_review_action",
                 recommended_books=recommended_books_interested,
                 list_user_posted_review_action_id="list_user_posted_review_action",
@@ -292,7 +289,6 @@ def home_controller(app):  # pylint: disable=too-many-statements
 
         # 興味ありボタンの表示を切り替える
         modal_view = home(
-            suggested_callback_id="suggested_button_modal",
             post_review_action_id="post_review_action",
             recommended_books=recommended_books_interested,
             list_user_posted_review_action_id="list_user_posted_review_action",
