@@ -2,6 +2,7 @@ from typing import TypedDict
 
 from bee_slack_app.model.review import ReviewContents
 from bee_slack_app.utils import datetime
+from bee_slack_app.view.common import book_section
 
 
 class BookOfReview(TypedDict):
@@ -34,18 +35,13 @@ def review_modal(
                 "image_url": "https://developers.google.com/maps/documentation/images/powered_by_google_on_white.png",
                 "alt_text": "Google Logo",
             },
-            {
-                "type": "section",
-                "text": {
-                    "type": "mrkdwn",
-                    "text": f"*{book['title']}*\n{book['author']}\nISBN-{book['isbn']}\n<{book['url']}|Google Booksで見る>",
-                },
-                "accessory": {
-                    "type": "image",
-                    "image_url": book["image_url"],
-                    "alt_text": book["title"],
-                },
-            },
+            book_section(
+                title=book["title"],
+                author=book["author"],
+                isbn=book["isbn"],
+                url=book["url"],
+                image_url=book["image_url"],
+            ),
             {"type": "divider"},
         ],
     }
@@ -149,18 +145,13 @@ def review_of_user_modal(*, callback_id: str, reviews: list[ReviewContents]):
         )
 
         review_blocks.append(
-            {
-                "type": "section",
-                "text": {
-                    "type": "mrkdwn",
-                    "text": f"*{review['book_title']}*\n{review['book_author']}\nISBN-{review['isbn']}\n<{review['book_url']}|Google Booksで見る>",
-                },
-                "accessory": {
-                    "type": "image",
-                    "image_url": review["book_image_url"],
-                    "alt_text": review["book_title"],
-                },
-            },
+            book_section(
+                title=review["book_title"],
+                author=review["book_author"],
+                isbn=review["isbn"],
+                url=review["book_url"],
+                image_url=review["book_image_url"],
+            )
         )
 
         review_blocks.append(
@@ -243,18 +234,13 @@ def review_detail_modal(review_contents: ReviewContents):
         "title": {"type": "plain_text", "text": "レビュー詳細", "emoji": True},
         "close": {"type": "plain_text", "text": "戻る", "emoji": True},
         "blocks": [
-            {
-                "type": "section",
-                "text": {
-                    "type": "mrkdwn",
-                    "text": f"*{review_contents['book_title']}*\n{review_contents['book_author']}\nISBN-{review_contents['isbn']}\n<{review_contents['book_url']}|Google Booksで見る>",
-                },
-                "accessory": {
-                    "type": "image",
-                    "image_url": review_contents["book_image_url"],
-                    "alt_text": review_contents["book_title"],
-                },
-            },
+            book_section(
+                title=review_contents["book_title"],
+                author=review_contents["book_author"],
+                isbn=review_contents["isbn"],
+                url=review_contents["book_url"],
+                image_url=review_contents["book_image_url"],
+            ),
             {
                 "type": "section",
                 "fields": [
