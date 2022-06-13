@@ -22,7 +22,6 @@ def home_controller(app):  # pylint: disable=too-many-statements
     @app.event("app_home_opened")
     def update_home_view(ack, event, client):
         ack()
-
         logger = getLogger(__name__)
 
         reviews = review_service.get_review_all()
@@ -219,7 +218,7 @@ def home_controller(app):  # pylint: disable=too-many-statements
         )
 
     @app.action("button_switch_action")
-    def handle_updete_button_action(
+    def handle_update_button_action(
         ack, body, client, action
     ):  # pylint: disable=too-many-locals
 
@@ -272,10 +271,12 @@ def home_controller(app):  # pylint: disable=too-many-statements
         button_position = button_value_list.index(action["value"])
 
         # 押されたボタンを反転させる
-        # tupleの要素は更新できないので、一時的に、listに変換する
-        status = list(recommended_books_interested[button_position][2])
-        status = not status
-        recommended_books_interested[button_position][2] = list(status)
+        status = False if recommended_books_interested[button_position][2] else True
+        # tupleの要素は更新できないのでlistに変換し、更新後、tupleに戻す
+        list(recommended_books_interested[button_position])[2] = status
+        recommended_books_interested[button_position] = tuple(
+            recommended_books_interested[button_position]
+        )
 
         # 興味ありボタンの表示を切り替える
         modal_view = home(
@@ -309,7 +310,7 @@ def home_controller(app):  # pylint: disable=too-many-statements
         *, user_id: str, recommended_books: list[tuple[SearchedBook, str]]
     ) -> list[tuple[SearchedBook, str, bool]]:
         # おすすめ本の情報に興味ありボタンの状態を追加する
-        recommended_books = []
+        recommended_books_interested = []
         for recommended_book in recommended_books:
             # 興味ありボタンの状態をDBから取り出す
             interested_status: Optional[bool] = get_is_interested(
@@ -317,17 +318,15 @@ def home_controller(app):  # pylint: disable=too-many-statements
                 isbn=recommended_book[0]["isbn"],
                 ml_model=recommended_book[1],
             )
-            # tupleに要素(ボタンの状態)を追加するため、listに変換する
-            recommended_book = list(recommended_book)
-            # １個のおすすめ情報にボタンの状態を追加
-            recommended_book_interested.append(
-                False if interested_status is None else interested_status
+            recommended_book_interested = (
+                recommended_book + False
+                if interested_status is None
+                else interested_status
             )
-            # 型をtupleに戻す
-            recommended_book_interested = tuple(recommended_book_interested)
-            # おすすめされた個数分を追加する
-            recommended_books.append(recommended_book_interested)
-        return recommended_books
+
+            # おすすめされた個数分をlistに追加する
+            recommended_books_interested.append(recommended_book_interested)
+        return recommended_books_interested
 
 
 class _PrivateMetadataConvertor:
