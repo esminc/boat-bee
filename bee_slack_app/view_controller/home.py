@@ -264,28 +264,33 @@ def home_controller(app):  # pylint: disable=too-many-statements
                 keys=books.get("keys"),
             )
 
-        # ボタンのviewのvalue値(isbn + ml_model)をlistで作る
-        button_value_list = []
-        for recommended_book in recommended_books:
-            button_value_list.append(
-                f'{recommended_book[0]["isbn"]}#{recommended_book[1]}'
-            )
+        # 押された本の状態を更新する
+        isbn = action["value"].split("#")[0]
+        pushed_books = [
+            book for book in recommended_books_interested if book[0]["isbn"] == isbn
+        ]
 
-        # どのボタンが押されたか判定する
-        button_position = button_value_list.index(action["value"])
+        # 念のため全ての本を先頭の状態に合わせる
+        new_state = not pushed_books[0][2]
+        for i, book in enumerate(recommended_books_interested):
 
-        # tupleの要素は更新できないのでlistに変換する。
-        recommended_books_interested[button_position] = list(
-            recommended_books_interested[button_position]
-        )
-        # 押されたボタンを反転させる
-        recommended_books_interested[button_position][
-            2
-        ] = not recommended_books_interested[button_position][2]
-        # 更新後、tupleに戻す
-        recommended_books_interested[button_position] = tuple(
-            recommended_books_interested[button_position]
-        )
+            if book not in pushed_books:
+                continue
+
+            # bookはタプルのため直接更新できないので一旦リストにして更新後に戻す
+            book_ = list(book)
+            book_[2] = new_state
+            recommended_books_interested[i] = tuple(book_)
+
+            # 最新のボタン状態をDBに格納する
+            suggested_book: SuggestedBook = {
+                "user_id": body["user"]["id"],
+                "isbn": book_[0]["isbn"],
+                "ml_model": book_[1],
+                "interested": book_[2],
+                "updated_at": None,
+            }
+            add_suggested(suggested_book)
 
         # 興味ありボタンの表示を切り替える
         modal_view = home(
@@ -303,16 +308,6 @@ def home_controller(app):  # pylint: disable=too-many-statements
             view_id=body["container"]["view_id"],
             view=modal_view,
         )
-
-        # 最新のボタン状態をDBに格納する
-        suggested_book: SuggestedBook = {
-            "user_id": body["user"]["id"],
-            "isbn": recommended_books_interested[button_position][0]["isbn"],
-            "ml_model": recommended_books_interested[button_position][1],
-            "interested": recommended_books_interested[button_position][2],
-            "updated_at": None,
-        }
-        add_suggested(suggested_book)
 
     def add_first_suggested(
         *, user_id: str, recommended_books: list[tuple[SearchedBook, str]]
