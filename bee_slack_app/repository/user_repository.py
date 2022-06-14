@@ -4,7 +4,7 @@ from typing import Optional
 
 from boto3.dynamodb.conditions import Key  # type: ignore
 
-from bee_slack_app.model.user import User
+from bee_slack_app.model import User
 from bee_slack_app.repository import database
 
 GSI_PK_VALUE = "user"

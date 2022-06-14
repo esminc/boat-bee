@@ -1,8 +1,7 @@
 import json
 import os
 
-from bee_slack_app.model.review import ReviewContents
-from bee_slack_app.model.user import User
+from bee_slack_app.model import ReviewContents, User
 from bee_slack_app.service import (
     book_search_service,
     review_service,

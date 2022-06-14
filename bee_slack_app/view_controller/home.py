@@ -2,8 +2,7 @@ import json
 from logging import getLogger
 from typing import Any, Optional, TypedDict
 
-from bee_slack_app.model.search import SearchedBook
-from bee_slack_app.model.suggested_book import SuggestedBook
+from bee_slack_app.model import SearchedBook, SuggestedBook
 from bee_slack_app.service import (
     book_service,
     recommend_service,
