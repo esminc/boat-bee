@@ -22,7 +22,7 @@ def test_おすすめ本の情報を取得を取得できること(monkeypatch):
     assert result is False
 
 
-def test_おすすめ本の情報がない場合はNoneを返す(monkeypatch):  # pylint: disable=invalid-name
+def test_おすすめ本の情報がない場合はFalseを返す(monkeypatch):  # pylint: disable=invalid-name
     def mock_suggested_repository_get(_, **__):
         return None
 
@@ -32,4 +32,4 @@ def test_おすすめ本の情報がない場合はNoneを返す(monkeypatch):  
         user_id="test_user_id", isbn="1234567890123", ml_model="test_ml_model"
     )
 
-    assert result is None
+    assert result is False

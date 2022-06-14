@@ -1,6 +1,7 @@
 from typing import Optional, TypedDict
 
 from bee_slack_app.model.book import Book
+from bee_slack_app.model.search import SearchedBook
 
 
 class BooksParam(TypedDict):
@@ -11,7 +12,7 @@ class BooksParam(TypedDict):
 
 def home(  # pylint: disable=too-many-locals
     *,
-    recommended_books: list,
+    recommended_books: list[tuple[SearchedBook, str, bool]],
     post_review_action_id: str,
     list_user_posted_review_action_id: str,
     user_info_action_id: str,
@@ -20,7 +21,7 @@ def home(  # pylint: disable=too-many-locals
     recommend_timestamp: str,
     books_params: Optional[BooksParam] = None,
     private_metadata: str = "",
-):
+):  # pylint: disable=too-many-locals
     """
     アプリホーム画面
 
@@ -36,9 +37,7 @@ def home(  # pylint: disable=too-many-locals
         private_metadata: private_metadata
     """
     recommended_book_sections = []
-
     if recommended_books:
-
         for recommended_book in recommended_books:
 
             recommended_book_sections.append(
@@ -56,23 +55,12 @@ def home(  # pylint: disable=too-many-locals
                 },
             )
 
-            recommended_book_sections.append(
-                {
-                    "type": "actions",
-                    "elements": [
-                        {  # type: ignore
-                            "type": "button",
-                            "text": {
-                                "type": "plain_text",
-                                "text": "この本のレビューを見る",
-                                "emoji": True,
-                            },
-                            "value": recommended_book[0]["isbn"],
-                            "action_id": "read_review_of_book_action",
-                        }
-                    ],
-                },
-            )
+            suggested_button_value = {
+                "isbn": recommended_book[0]["isbn"],
+                "ml_model": recommended_book[1],
+                "interested": recommended_book[2],
+            }
+            recommended_book_sections.append(create_button(suggested_button_value))
     else:
         recommended_book_sections.append(
             {
@@ -285,3 +273,32 @@ def home(  # pylint: disable=too-many-locals
     view["blocks"].extend(book_sections)  # type: ignore
 
     return view
+
+
+def create_button(suggested_book_value: dict) -> dict:
+    button_name = "興味あり❤️" if suggested_book_value["interested"] else "興味なし🤍"
+    return {
+        "type": "actions",
+        "elements": [
+            {
+                "type": "button",
+                "text": {
+                    "type": "plain_text",
+                    "text": button_name,
+                    "emoji": True,
+                },
+                "value": f'{suggested_book_value["isbn"]}#{suggested_book_value["ml_model"]}',
+                "action_id": "button_switch_action",
+            },
+            {  # type: ignore
+                "type": "button",
+                "text": {
+                    "type": "plain_text",
+                    "text": "この本のレビューを見る",
+                    "emoji": True,
+                },
+                "value": suggested_book_value["isbn"],
+                "action_id": "read_review_of_book_action",
+            },
+        ],
+    }
