@@ -3,9 +3,7 @@ from typing import Optional
 
 from bee_slack_app.model.book import Book
 from bee_slack_app.model.review import ReviewContents
-from bee_slack_app.repository.book_repository import BookRepository
-from bee_slack_app.repository.review_repository import ReviewRepository
-from bee_slack_app.repository.user_repository import UserRepository
+from bee_slack_app.repository import BookRepository, ReviewRepository, UserRepository
 from bee_slack_app.utils import datetime
 
 review_repository = ReviewRepository()
