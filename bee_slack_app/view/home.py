@@ -276,7 +276,7 @@ def home(  # pylint: disable=too-many-locals
 
 
 def create_button(suggested_book_value: dict) -> dict:
-    button_name = "❤️興味あり" if suggested_book_value["interested"] else "🤍興味なし"
+    button_name = "興味あり❤️" if suggested_book_value["interested"] else "興味なし🤍"
     return {
         "type": "actions",
         "elements": [
