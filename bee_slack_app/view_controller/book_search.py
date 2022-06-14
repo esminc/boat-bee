@@ -159,6 +159,6 @@ def book_search_controller(app):  # pylint: disable=too-many-statements
             response_action="push",
             view=post_review_modal(
                 callback_id="post_review_modal",
-                book_section=selected_book_section,
+                book_section_to_review=selected_book_section,
             ),
         )

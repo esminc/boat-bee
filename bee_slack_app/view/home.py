@@ -2,6 +2,7 @@ from typing import Optional, TypedDict
 
 from bee_slack_app.model.book import Book
 from bee_slack_app.model.search import SearchedBook
+from bee_slack_app.view.common import book_section
 
 
 class BooksParam(TypedDict):
@@ -41,18 +42,13 @@ def home(  # pylint: disable=too-many-locals
         for recommended_book in recommended_books:
 
             recommended_book_sections.append(
-                {
-                    "type": "section",
-                    "text": {
-                        "type": "mrkdwn",
-                        "text": f"*{recommended_book[0]['title']}*\n{','.join(recommended_book[0]['authors'])}\nISBN-{recommended_book[0]['isbn']}\n<{recommended_book[0]['google_books_url']}|Google Booksで見る>",
-                    },
-                    "accessory": {
-                        "type": "image",
-                        "image_url": recommended_book[0]["image_url"],
-                        "alt_text": recommended_book[0]["title"],
-                    },
-                },
+                book_section(
+                    title=recommended_book[0]["title"],
+                    author=",".join(recommended_book[0]["authors"]),
+                    isbn=recommended_book[0]["isbn"],
+                    url=recommended_book[0]["google_books_url"],
+                    image_url=recommended_book[0]["image_url"],
+                ),
             )
 
             suggested_button_value = {
@@ -206,18 +202,13 @@ def home(  # pylint: disable=too-many-locals
         for book in books_params["books"]:
 
             book_sections.append(
-                {
-                    "type": "section",
-                    "text": {
-                        "type": "mrkdwn",
-                        "text": f"*{book['title']}*\n{book['author']}\nISBN-{book['isbn']}\n<{book['url']}|Google Booksで見る>",
-                    },
-                    "accessory": {
-                        "type": "image",
-                        "image_url": book["image_url"],
-                        "alt_text": book["title"],
-                    },
-                },
+                book_section(
+                    title=book["title"],
+                    author=book["author"],
+                    isbn=book["isbn"],
+                    url=book["url"],
+                    image_url=book["image_url"],
+                ),
             )
 
             book_sections.append(

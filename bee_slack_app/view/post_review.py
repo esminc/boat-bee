@@ -1,5 +1,6 @@
 from bee_slack_app.model.review import ReviewContents
 from bee_slack_app.utils import datetime
+from bee_slack_app.view.common import book_section
 
 
 def search_book_to_review_modal(*, callback_id: str):
@@ -38,13 +39,13 @@ def search_book_to_review_modal(*, callback_id: str):
     }
 
 
-def post_review_modal(*, callback_id: str, book_section):
+def post_review_modal(*, callback_id: str, book_section_to_review):
     """
     レビュー投稿モーダル
 
     Args:
         callback_id: モーダルのcallback_id
-        book_section: レビューを投稿する本のsection block
+        book_section_to_review: レビューを投稿する本のsection block
     """
 
     return {
@@ -59,7 +60,7 @@ def post_review_modal(*, callback_id: str, book_section):
                 "image_url": "https://developers.google.com/maps/documentation/images/powered_by_google_on_white.png",
                 "alt_text": "",
             },
-            book_section,
+            book_section_to_review,
             {
                 "type": "input",
                 "block_id": "input_score_for_me",
@@ -194,18 +195,13 @@ def notify_review_post_message_blocks(review_contents: ReviewContents):
                 "emoji": True,
             },
         },
-        {
-            "type": "section",
-            "text": {
-                "type": "mrkdwn",
-                "text": f"*{review_contents['book_title']}*\n{review_contents['book_author']}\nISBN-{review_contents['isbn']}\n<{review_contents['book_url']}|Google Booksで見る>",
-            },
-            "accessory": {
-                "type": "image",
-                "image_url": review_contents["book_image_url"],
-                "alt_text": review_contents["book_title"],
-            },
-        },
+        book_section(
+            title=review_contents["book_title"],
+            author=review_contents["book_author"],
+            isbn=review_contents["isbn"],
+            url=review_contents["book_url"],
+            image_url=review_contents["book_image_url"],
+        ),
         {
             "type": "section",
             "fields": [
