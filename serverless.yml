@@ -77,8 +77,8 @@ resources: # CloudFormation template syntax from here on.
           - AttributeName: PK
             KeyType: HASH
         ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 2
         GlobalSecondaryIndexes:
           - IndexName: GSI_0
             KeySchema:
@@ -89,8 +89,8 @@ resources: # CloudFormation template syntax from here on.
             Projection:
               ProjectionType: "ALL"
             ProvisionedThroughput:
-              ReadCapacityUnits: 1
-              WriteCapacityUnits: 1
+              ReadCapacityUnits: 5
+              WriteCapacityUnits: 2
           - IndexName: GSI_1
             KeySchema:
               - AttributeName: GSI_PK
@@ -100,8 +100,8 @@ resources: # CloudFormation template syntax from here on.
             Projection:
               ProjectionType: "ALL"
             ProvisionedThroughput:
-              ReadCapacityUnits: 1
-              WriteCapacityUnits: 1
+              ReadCapacityUnits: 5
+              WriteCapacityUnits: 2
           - IndexName: GSI_2
             KeySchema:
               - AttributeName: GSI_PK
@@ -111,8 +111,8 @@ resources: # CloudFormation template syntax from here on.
             Projection:
               ProjectionType: "ALL"
             ProvisionedThroughput:
-              ReadCapacityUnits: 1
-              WriteCapacityUnits: 1
+              ReadCapacityUnits: 5
+              WriteCapacityUnits: 2
           - IndexName: GSI_3
             KeySchema:
               - AttributeName: GSI_PK
@@ -122,8 +122,8 @@ resources: # CloudFormation template syntax from here on.
             Projection:
               ProjectionType: "ALL"
             ProvisionedThroughput:
-              ReadCapacityUnits: 1
-              WriteCapacityUnits: 1
+              ReadCapacityUnits: 5
+              WriteCapacityUnits: 2
     BeeTable:
       Type: AWS::DynamoDB::Table
       Properties:
