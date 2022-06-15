@@ -20,6 +20,15 @@ def hello_controller(app):
             for x in review_service.get_reviews_by_user_id(user_id=user_id)
         ]
         num_reviews = len(myreviews)
+
+        if num_reviews == 0:
+            client.chat_postEphemeral(
+                channel=os.environ["NOTIFY_POST_REVIEW_CHANNEL"],
+                user=user_id,
+                text=f"<@{user_id}>さんはまだレビューを投稿していませんね",
+            )
+            return
+
         myreviews = "\n・".join(myreviews)
         myreviews = f"・{myreviews}"
 
