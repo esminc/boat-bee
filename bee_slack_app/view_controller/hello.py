@@ -35,5 +35,5 @@ def hello_controller(app):
         client.chat_postEphemeral(
             channel=os.environ["NOTIFY_POST_REVIEW_CHANNEL"],
             user=user_id,
-            text=f"<@{user_id}>さんが投稿したレビューはこれです（{num_reviews}冊）\n\n {myreviews}",
+            text=f"<@{user_id}>さんがレビューを投稿した本の一覧です（{num_reviews}冊）\n\n {myreviews}",
         )
