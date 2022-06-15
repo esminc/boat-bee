@@ -2,6 +2,7 @@
 
 
 from bee_slack_app.model.user import User
+from bee_slack_app.repository.review_repository import ReviewRepository
 from bee_slack_app.repository.user_repository import UserRepository
 from bee_slack_app.service.user import (
     add_user,
@@ -201,6 +202,84 @@ def test_レビューを投稿しているユーザを取得できること(monk
         mock_user_repository_get_by_posted_review,
     )
 
+    def mock_review_repository_get_all(_, **__):
+        return [
+            {
+                "user_id": "test_user_id_0",
+                "book_title": "仕事ではじめる機械学習",
+                "isbn": "12345",
+                "score_for_me": "1",
+                "score_for_others": "5",
+                "review_comment": "とても良いです",
+                "book_image_url": "dummy_book_image_url_0",
+                "book_author": "dummy_book_author_0",
+                "book_url": "dummy_book_url_0",
+                "book_description": "dummy_description_0",
+            },
+            {
+                "user_id": "test_user_id_1",
+                "book_title": "仕事ではじめる機械学習",
+                "isbn": "12345",
+                "score_for_me": "3",
+                "score_for_others": "4",
+                "review_comment": "まあまあです",
+                "book_image_url": "dummy_book_image_url_1",
+                "book_author": "dummy_book_author_1",
+                "book_url": "dummy_book_url_1",
+                "book_description": "dummy_description_1",
+            },
+            {
+                "user_id": "test_user_id_1",
+                "book_title": "仕事ではじめる機械学習_",
+                "isbn": "12345",
+                "score_for_me": "3",
+                "score_for_others": "4",
+                "review_comment": "まあまあです",
+                "book_image_url": "dummy_book_image_url_1",
+                "book_author": "dummy_book_author_1",
+                "book_url": "dummy_book_url_1",
+                "book_description": "dummy_description_1",
+            },
+            {
+                "user_id": "test_user_id_2",
+                "book_title": "Python チュートリアル",
+                "isbn": "67890",
+                "score_for_me": "2",
+                "score_for_others": "4",
+                "review_comment": "そこそこです",
+                "book_image_url": "dummy_book_image_url_2",
+                "book_author": "dummy_book_author_2",
+                "book_url": "dummy_book_url_2",
+                "book_description": "dummy_description_2",
+            },
+            {
+                "user_id": "test_user_id_2",
+                "book_title": "Python チュートリアル_",
+                "isbn": "67890",
+                "score_for_me": "2",
+                "score_for_others": "4",
+                "review_comment": "そこそこです",
+                "book_image_url": "dummy_book_image_url_2",
+                "book_author": "dummy_book_author_2",
+                "book_url": "dummy_book_url_2",
+                "book_description": "dummy_description_2",
+            },
+            {
+                "user_id": "test_user_id_2",
+                "book_title": "Python チュートリアル__",
+                "isbn": "67890",
+                "score_for_me": "2",
+                "score_for_others": "4",
+                "review_comment": "そこそこです",
+                "book_image_url": "dummy_book_image_url_2",
+                "book_author": "dummy_book_author_2",
+                "book_url": "dummy_book_url_2",
+                "book_description": "dummy_description_2",
+            },
+        ]
+
+    monkeypatch.setattr(ReviewRepository, "get_all", mock_review_repository_get_all)
+
     users = get_users_posted_review()
 
     assert len(users) == 3
@@ -211,6 +290,7 @@ def test_レビューを投稿しているユーザを取得できること(monk
     assert users[0]["job_type"] == "技術職"
     assert users[0]["age_range"] == "20"
     assert users[0]["updated_at"] == "2022-04-01T00:00:00+09:00"
+    assert users[0]["review_count"] == 1
 
     assert users[1]["user_id"] == "test_user_id_1"
     assert users[1]["user_name"] == "問屋町　花子"
@@ -218,6 +298,7 @@ def test_レビューを投稿しているユーザを取得できること(monk
     assert users[1]["job_type"] == "管理職"
     assert users[1]["age_range"] == "50"
     assert users[1]["updated_at"] == "2022-04-11T09:23:04+09:00"
+    assert users[1]["review_count"] == 2
 
     assert users[2]["user_id"] == "test_user_id_2"
     assert users[2]["user_name"] == "北ノ庄　肇"
@@ -225,3 +306,4 @@ def test_レビューを投稿しているユーザを取得できること(monk
     assert users[2]["job_type"] == "営業職"
     assert users[2]["age_range"] == "30"
     assert users[2]["updated_at"] == "2022-05-02T16:43:25+09:00"
+    assert users[2]["review_count"] == 3
