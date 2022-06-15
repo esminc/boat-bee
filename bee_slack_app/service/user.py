@@ -2,11 +2,10 @@ from logging import getLogger
 from typing import Optional
 
 from bee_slack_app.model.user import User
-from bee_slack_app.repository import ReviewRepository, UserRepository
+from bee_slack_app.repository import UserRepository
 from bee_slack_app.utils import datetime
 
 user_repository = UserRepository()
-review_repository = ReviewRepository()
 
 
 def get_user(user_id: str) -> Optional[User]:
@@ -54,15 +53,7 @@ def get_users_posted_review() -> list[User]:
     logger = getLogger(__name__)
 
     try:
-        users = user_repository.get_by_posted_review()
-        reviews = review_repository.get_all()
-
-        for user in users:
-            user["review_count"] = len(
-                [review for review in reviews if review["user_id"] == user["user_id"]]
-            )
-
-        return users
+        return user_repository.get_by_posted_review()
 
     except Exception:  # pylint: disable=broad-except
         logger.exception("Failed to get data.")
