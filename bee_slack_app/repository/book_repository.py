@@ -58,7 +58,28 @@ class BookRepository:
 
         self.table.put_item(Item=item)
 
-    def fetch(
+    def fetch(self, *, isbn: str) -> Optional[Book]:
+        """
+        レビューが投稿されている本を取得する
+
+        Args:
+            isbn: ISBN
+        Returns:
+            取得した本
+        """
+        partition_key = _encode_partition_key(isbn=isbn)
+        item = self.table.get_item(Key={database.PK: partition_key}).get("Item")
+
+        if not item:
+            return None
+
+        item["updated_at"] = datetime.timestamp_to_iso_format(
+            datetime.TIMESTAMP_MAX - float(item["updated_at"])
+        )
+
+        return item
+
+    def fetch_all(
         self,
         *,
         limit: Optional[int] = None,

@@ -6,11 +6,11 @@ from bee_slack_app.service.book import get_books, get_books_before
 
 
 def test_get_booksで本を取得できること_全件取得の場合(mocker):
-    mock_book_repository_fetch = mocker.patch.object(
+    mock_book_repository_fetch_all = mocker.patch.object(
         BookRepository,
-        "fetch",
+        "fetch_all",
     )
-    mock_book_repository_fetch.return_value = {
+    mock_book_repository_fetch_all.return_value = {
         "items": [
             {
                 "isbn": "3456789012346",
@@ -73,11 +73,11 @@ def test_get_booksで本を取得できること_全件取得の場合(mocker):
 
 
 def test_get_booksで本を取得できること_続きのデータなしの場合(mocker):
-    mock_book_repository_fetch = mocker.patch.object(
+    mock_book_repository_fetch_all = mocker.patch.object(
         BookRepository,
-        "fetch",
+        "fetch_all",
     )
-    mock_book_repository_fetch.return_value = {
+    mock_book_repository_fetch_all.return_value = {
         "items": [
             {
                 "isbn": "3456789012346",
@@ -140,11 +140,11 @@ def test_get_booksで本を取得できること_続きのデータなしの場�
 
 
 def test_get_booksで本を取得できること_続きのデータありの場合(mocker):
-    mock_book_repository_fetch = mocker.patch.object(
+    mock_book_repository_fetch_all = mocker.patch.object(
         BookRepository,
-        "fetch",
+        "fetch_all",
     )
-    mock_book_repository_fetch.return_value = {
+    mock_book_repository_fetch_all.return_value = {
         "items": [
             {
                 "isbn": "3456789012346",
@@ -209,11 +209,11 @@ def test_get_booksで本を取得できること_続きのデータありの場�
 def test_get_booksでbook_repositoryの処理でエラーが発生した場合Noneを返すこと(
     mocker,
 ):
-    mock_book_repository_fetch = mocker.patch.object(
+    mock_book_repository_fetch_all = mocker.patch.object(
         BookRepository,
-        "fetch",
+        "fetch_all",
     )
-    mock_book_repository_fetch.side_effect = Exception("dummy exception")
+    mock_book_repository_fetch_all.side_effect = Exception("dummy exception")
 
     books = get_books(limit=3, keys=["dummy_key_0", "dummy_key_1"])
 
@@ -221,11 +221,11 @@ def test_get_booksでbook_repositoryの処理でエラーが発生した場合No
 
 
 def test_get_books_beforeで本を取得できること_0ページへの遷移の場合(mocker):
-    mock_book_repository_fetch = mocker.patch.object(
+    mock_book_repository_fetch_all = mocker.patch.object(
         BookRepository,
-        "fetch",
+        "fetch_all",
     )
-    mock_book_repository_fetch.return_value = {
+    mock_book_repository_fetch_all.return_value = {
         "items": [
             {
                 "isbn": "3456789012346",
@@ -290,11 +290,11 @@ def test_get_books_beforeで本を取得できること_0ページへの遷移�
 
 
 def test_get_books_beforeで本を取得できること_1ページ以降への遷移の場合(mocker):
-    mock_book_repository_fetch = mocker.patch.object(
+    mock_book_repository_fetch_all = mocker.patch.object(
         BookRepository,
-        "fetch",
+        "fetch_all",
     )
-    mock_book_repository_fetch.return_value = {
+    mock_book_repository_fetch_all.return_value = {
         "items": [
             {
                 "isbn": "3456789012346",
@@ -363,11 +363,11 @@ def test_get_books_beforeで本を取得できること_1ページ以降への�
 def test_get_books_beforeでbook_repositoryの処理でエラーが発生した場合Noneを返すこと(
     mocker,
 ):
-    mock_book_repository_fetch = mocker.patch.object(
+    mock_book_repository_fetch_all = mocker.patch.object(
         BookRepository,
-        "fetch",
+        "fetch_all",
     )
-    mock_book_repository_fetch.side_effect = Exception("dummy exception")
+    mock_book_repository_fetch_all.side_effect = Exception("dummy exception")
 
     books = get_books_before(
         limit=3, keys=["dummy_key_0", "dummy_key_1", "dummy_key_2"]

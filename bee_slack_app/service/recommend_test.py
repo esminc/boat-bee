@@ -2,7 +2,7 @@
 # pylint: disable=invalid-name
 
 from bee_slack_app.model import User
-from bee_slack_app.repository.google_books_repository import GoogleBooksRepository
+from bee_slack_app.repository.book_repository import BookRepository
 from bee_slack_app.repository.recommend_book_repository import RecommendBookRepository
 from bee_slack_app.repository.suggested_book_repository import SuggestedBookRepository
 from bee_slack_app.service.recommend import created_at, recommend
@@ -17,19 +17,18 @@ def test_おすすめの本の情報を取得できること(monkeypatch):
         RecommendBookRepository, "fetch", mock_recommend_book_repository_fetch
     )
 
-    def mock_search_book_by_isbn(_, isbn):
+    def mock_book_repository_fetch(_, isbn):
         return {
             "title": "仕事ではじめる機械学習",
             "isbn": isbn,
-            "authors": ["有賀康顕", "中山心太", "西林孝"],
-            "google_books_url": "test_google_books_url",
+            "author": "有賀康顕,中山心太,西林孝",
+            "url": "test_book_url",
             "image_url": "test_image_url",
             "description": "test_description",
+            "updated_at": "2022-04-01T00:00:00+09:00",
         }
 
-    monkeypatch.setattr(
-        GoogleBooksRepository, "search_book_by_isbn", mock_search_book_by_isbn
-    )
+    monkeypatch.setattr(BookRepository, "fetch", mock_book_repository_fetch)
 
     def mock_suggested_book_repository_get(
         _, *, user_id: str, isbn: str, ml_model: str
@@ -62,10 +61,11 @@ def test_おすすめの本の情報を取得できること(monkeypatch):
     assert recommended_books[0]["isbn"] == "1234567890123"
     assert recommended_books[0]["author"] == "有賀康顕,中山心太,西林孝"
     assert recommended_books[0]["image_url"] == "test_image_url"
-    assert recommended_books[0]["url"] == "test_google_books_url"
+    assert recommended_books[0]["url"] == "test_book_url"
     assert recommended_books[0]["description"] == "test_description"
     assert recommended_books[0]["ml_model"] == "ml-a"
     assert recommended_books[0]["interested"] is True
+    assert recommended_books[0]["updated_at"] == "2022-04-01T00:00:00+09:00"
 
 
 def test_おすすめの本が取得できなかったら空のリストを返すこと(monkeypatch):
@@ -76,19 +76,18 @@ def test_おすすめの本が取得できなかったら空のリストを返�
         RecommendBookRepository, "fetch", mock_recommend_book_repository_fetch
     )
 
-    def mock_search_book_by_isbn(_, isbn):
+    def mock_book_repository_fetch(_, isbn):
         return {
             "title": "仕事ではじめる機械学習",
             "isbn": isbn,
-            "authors": ["有賀康顕", "中山心太", "西林孝"],
-            "google_books_url": "test_google_books_url",
+            "author": "有賀康顕,中山心太,西林孝",
+            "url": "test_book_url",
             "image_url": "test_image_url",
             "description": "test_description",
+            "updated_at": "2022-04-01T00:00:00+09:00",
         }
 
-    monkeypatch.setattr(
-        GoogleBooksRepository, "search_book_by_isbn", mock_search_book_by_isbn
-    )
+    monkeypatch.setattr(BookRepository, "fetch", mock_book_repository_fetch)
 
     def mock_suggested_book_repository_get(
         _, *, user_id: str, isbn: str, ml_model: str
@@ -128,12 +127,10 @@ def test_おすすめの本の情報がNoneのケース(monkeypatch):
         RecommendBookRepository, "fetch", mock_recommend_book_repository_fetch
     )
 
-    def mock_search_book_by_isbn(_, __):
+    def mock_book_repository_fetch(_, __):
         return None
 
-    monkeypatch.setattr(
-        GoogleBooksRepository, "search_book_by_isbn", mock_search_book_by_isbn
-    )
+    monkeypatch.setattr(BookRepository, "fetch", mock_book_repository_fetch)
 
     def mock_suggested_book_repository_get(
         _, *, user_id: str, isbn: str, ml_model: str
@@ -172,19 +169,18 @@ def test_おすすめ本が未登録の場合は登録すること(mocker):
     )
     mock_recommend_book_repository_fetch.return_value = {"ml-a": "1234567890123"}
 
-    def mock_search_book_by_isbn(_, isbn):
+    def mock_book_repository_fetch(_, isbn):
         return {
             "title": "仕事ではじめる機械学習",
             "isbn": isbn,
-            "authors": ["有賀康顕", "中山心太", "西林孝"],
-            "google_books_url": "test_google_books_url",
+            "author": "有賀康顕,中山心太,西林孝",
+            "url": "test_book_url",
             "image_url": "test_image_url",
             "description": "test_description",
+            "updated_at": "2022-04-01T00:00:00+09:00",
         }
 
-    mocker.patch.object(
-        GoogleBooksRepository, "search_book_by_isbn", mock_search_book_by_isbn
-    )
+    mocker.patch.object(BookRepository, "fetch", mock_book_repository_fetch)
 
     mock_suggested_book_repository_get = mocker.patch.object(
         SuggestedBookRepository, "get"
@@ -228,19 +224,18 @@ def test_書影が取得できない場合に書影にNone返値に設定され�
         RecommendBookRepository, "fetch", mock_recommend_book_repository_fetch
     )
 
-    def mock_search_book_by_isbn(_, isbn):
+    def mock_book_repository_fetch(_, isbn):
         return {
             "title": "仕事ではじめる機械学習",
             "isbn": isbn,
-            "authors": ["有賀康顕", "中山心太", "西林孝"],
-            "google_books_url": "test_google_books_url",
+            "author": "有賀康顕,中山心太,西林孝",
+            "url": "test_book_url",
             "image_url": None,
             "description": "test_description",
+            "updated_at": "2022-04-01T00:00:00+09:00",
         }
 
-    monkeypatch.setattr(
-        GoogleBooksRepository, "search_book_by_isbn", mock_search_book_by_isbn
-    )
+    monkeypatch.setattr(BookRepository, "fetch", mock_book_repository_fetch)
 
     def mock_suggested_book_repository_get(
         _, *, user_id: str, isbn: str, ml_model: str
@@ -273,10 +268,11 @@ def test_書影が取得できない場合に書影にNone返値に設定され�
     assert recommended_books[0]["isbn"] == "1234567890123"
     assert recommended_books[0]["author"] == "有賀康顕,中山心太,西林孝"
     assert recommended_books[0]["image_url"] is None
-    assert recommended_books[0]["url"] == "test_google_books_url"
+    assert recommended_books[0]["url"] == "test_book_url"
     assert recommended_books[0]["description"] == "test_description"
     assert recommended_books[0]["ml_model"] == "ml-a"
     assert recommended_books[0]["interested"] is True
+    assert recommended_books[0]["updated_at"] == "2022-04-01T00:00:00+09:00"
 
 
 def test_モジュール内で例外が発生した場合は返値は空のリストであること(monkeypatch):
@@ -287,12 +283,10 @@ def test_モジュール内で例外が発生した場合は返値は空のリ�
         RecommendBookRepository, "fetch", mock_recommend_book_repository_fetch
     )
 
-    def mock_search_book_by_isbn(_, __):
+    def mock_book_repository_fetch(_):
         raise Exception("dummy exception")
 
-    monkeypatch.setattr(
-        GoogleBooksRepository, "search_book_by_isbn", mock_search_book_by_isbn
-    )
+    monkeypatch.setattr(BookRepository, "fetch", mock_book_repository_fetch)
 
     def mock_suggested_book_repository_get(
         _, *, user_id: str, isbn: str, ml_model: str
@@ -332,30 +326,30 @@ def test_複数のおすすめの本の情報を取得できること(monkeypatc
         RecommendBookRepository, "fetch", mock_recommend_book_repository_fetch
     )
 
-    def mock_search_book_by_isbn(_, isbn):
+    def mock_book_repository_fetch(_, isbn):
         if isbn == "1234567890123":
             book = {
                 "title": "test_title_1",
                 "isbn": isbn,
-                "authors": ["test_authors_1"],
-                "google_books_url": "test_google_books_url_1",
+                "author": "test_authors_1",
+                "url": "test_book_url_1",
                 "image_url": "test_image_url_1",
                 "description": "test_description_1",
+                "updated_at": "2022-04-01T00:00:00+09:00",
             }
         elif isbn == "9876543221098":
             book = {
                 "title": "test_title_2",
                 "isbn": isbn,
-                "authors": ["test_authors_2"],
-                "google_books_url": "test_google_books_url_2",
+                "author": "test_authors_2",
+                "url": "test_book_url_2",
                 "image_url": "test_image_url_2",
                 "description": "test_description_2",
+                "updated_at": "2022-04-02T00:00:00+09:00",
             }
         return book
 
-    monkeypatch.setattr(
-        GoogleBooksRepository, "search_book_by_isbn", mock_search_book_by_isbn
-    )
+    monkeypatch.setattr(BookRepository, "fetch", mock_book_repository_fetch)
 
     def mock_suggested_book_repository_get(
         _, *, user_id: str, isbn: str, ml_model: str
@@ -396,19 +390,21 @@ def test_複数のおすすめの本の情報を取得できること(monkeypatc
     assert recommended_books[0]["isbn"] == "1234567890123"
     assert recommended_books[0]["author"] == "test_authors_1"
     assert recommended_books[0]["image_url"] == "test_image_url_1"
-    assert recommended_books[0]["url"] == "test_google_books_url_1"
+    assert recommended_books[0]["url"] == "test_book_url_1"
     assert recommended_books[0]["description"] == "test_description_1"
     assert recommended_books[0]["ml_model"] == "ml-a"
     assert recommended_books[0]["interested"] is True
+    assert recommended_books[0]["updated_at"] == "2022-04-01T00:00:00+09:00"
 
     assert recommended_books[1]["title"] == "test_title_2"
     assert recommended_books[1]["isbn"] == "9876543221098"
     assert recommended_books[1]["author"] == "test_authors_2"
     assert recommended_books[1]["image_url"] == "test_image_url_2"
-    assert recommended_books[1]["url"] == "test_google_books_url_2"
+    assert recommended_books[1]["url"] == "test_book_url_2"
     assert recommended_books[1]["description"] == "test_description_2"
     assert recommended_books[1]["ml_model"] == "ml-b"
     assert recommended_books[1]["interested"] is False
+    assert recommended_books[1]["updated_at"] == "2022-04-02T00:00:00+09:00"
 
 
 def test_おすすめ情報の生成時刻を取得できること(monkeypatch):

@@ -42,7 +42,7 @@ def get_books(
 
         start_key = keys[-1] if len(keys) > 0 else None
 
-        books = book_repository.fetch(limit=limit, start_key=start_key)
+        books = book_repository.fetch_all(limit=limit, start_key=start_key)
 
         logger.info(books)
 
@@ -92,7 +92,7 @@ def get_books_before(
 
         start_key = None if is_move_to_first else keys[-3]
 
-        books = book_repository.fetch(limit=limit, start_key=start_key)
+        books = book_repository.fetch_all(limit=limit, start_key=start_key)
 
         logger.info(books)
 
