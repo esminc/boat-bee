@@ -1,15 +1,26 @@
 from typing import Optional, TypedDict
 
+import boto3  # type: ignore
 from boto3.dynamodb.conditions import Key  # type: ignore
 
 from bee_slack_app.model.review import ReviewContents
 from bee_slack_app.repository import database
+from bee_slack_app.utils import datetime
 
 GSI_PK_VALUE = "review"
 
 
 def _encode_partition_key(*, user_id: str, isbn: str) -> str:
     return f"review#{user_id}#{isbn}"
+
+
+class ReviewItemKey(TypedDict):
+    isbn: str
+
+
+class GetResponse(TypedDict):
+    items: list[ReviewContents]
+    last_key: Optional[ReviewItemKey]
 
 
 class ReviewRepository:
@@ -91,6 +102,62 @@ class ReviewRepository:
             KeyConditionExpression=Key(database.GSI_PK).eq(GSI_PK_VALUE)
             & Key(database.GSI_1_SK).eq(user_id),
         )["Items"]
+
+    def fetch(
+        self,
+        *,
+        user_id: str,
+        limit: Optional[int] = None,
+        start_key: Optional[ReviewItemKey] = None,
+    ) -> GetResponse:
+        """
+        レビューが投稿されている本のリストを取得する
+
+        Args:
+            limit: 取得するアイテムの上限数
+            start_key: 読み込み位置を表すキー
+        Returns:
+            items: レビュー投稿日時が新しい順にソート済みの、本のリスト
+            last_key: 読み込んだ最後のキー
+        """
+
+        def query(exclusive_start_key=None, max_item_count=None):
+            option = {}
+            if exclusive_start_key:
+                option["ExclusiveStartKey"] = exclusive_start_key
+            if max_item_count:
+                option["Limit"] = max_item_count
+
+            response = self.table.query(
+                IndexName=database.GSI_1,
+                KeyConditionExpression=boto3.dynamodb.conditions.Key(
+                    database.GSI_PK
+                ).eq(GSI_PK_VALUE)
+                & Key(database.GSI_1_SK).eq(user_id),
+                **option,
+            )
+
+            return response["Items"], response.get("LastEvaluatedKey")
+
+        items, last_key = query(
+            exclusive_start_key=start_key,
+            max_item_count=limit,
+        )
+
+        if not limit:
+            # レスポンスに LastEvaluatedKey が含まれなくなるまでループ処理を実行する
+            # see https://dev.classmethod.jp/articles/hot-to-get-more-than-1mb-of-data-from-dynamodb-when-using-scan/
+            while last_key is not None:
+                new_items, last_key = query(exclusive_start_key=last_key)
+                items.extend(new_items)
+
+        for item in items:
+
+            item["updated_at"] = datetime.timestamp_to_iso_format(
+                datetime.TIMESTAMP_MAX - float(item["updated_at"])
+            )
+
+        return {"items": items, "last_key": last_key}
 
     def create(self, review):
         partition_key = _encode_partition_key(
