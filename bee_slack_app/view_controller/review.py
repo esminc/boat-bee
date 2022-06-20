@@ -1,5 +1,6 @@
 import json
 import os
+from typing import Any, TypedDict
 
 from bee_slack_app.model.review import ReviewContents
 from bee_slack_app.model.user import User
@@ -71,7 +72,7 @@ def review_controller(app):  # pylint: disable=too-many-statements
     @app.action("read_review_of_user_action")
     def read_review_of_user_action(ack, body, client, action):
         """
-        ユーザのレビューモーダルを開く
+        ユーザのレビューリストのモーダルを開く
         """
         ack()
 
@@ -85,6 +86,16 @@ def review_controller(app):  # pylint: disable=too-many-statements
 
         if review_items:
             reviews = review_items.get("items")
+            reviews = _make_review_contents_list_comment_short(reviews)
+
+            reviews_params = {
+                "reviews": reviews,
+                "show_move_to_back": False,
+                "show_move_to_next": review_items.get("has_next"),
+            }
+            metadata_str = _PrivateMetadataConvertor.to_private_metadata(
+                keys=review_items.get("keys"),
+            )
 
         user_action_service.record_user_action(
             user_id=user_id,
@@ -99,11 +110,12 @@ def review_controller(app):  # pylint: disable=too-many-statements
             )
             return
 
-        reviews = _make_review_contents_list_comment_short(reviews)
         client.views_push(
             trigger_id=body["trigger_id"],
             view=review_of_user_modal(
-                callback_id="review_of_user_modal", reviews=reviews
+                callback_id="review_of_user_modal",
+                reviews_params=reviews_params,
+                private_metadata=metadata_str,
             ),
         )
 
@@ -297,18 +309,14 @@ def _make_review_contents_list_comment_short(
     return review_contents_list
 
 
-class ReviewPrivateMetadataConvertor:
-    @staticmethod
-    def convert_to_private_metadata(*, keys, conditions=None):
-
-        metadata = {"keys": keys}
-
-        if conditions:
-            metadata["conditions"] = conditions
-
-        return json.dumps(metadata)
+class _PrivateMetadataConvertor:
+    class _MetadataDict(TypedDict):
+        keys: Any
 
     @staticmethod
-    def convert_to_dict(*, private_metadata):
+    def to_private_metadata(*, keys: Any) -> str:
+        return json.dumps({"keys": keys})
 
+    @staticmethod
+    def to_dict(*, private_metadata: str) -> _MetadataDict:
         return json.loads(private_metadata)

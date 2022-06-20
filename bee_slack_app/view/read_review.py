@@ -75,7 +75,7 @@ def review_modal(
     return view
 
 
-def review_of_user_modal(*, callback_id: str, reviews: list[ReviewContents]):
+def review_of_user_modal(*, callback_id: str, reviews_params, private_metadata: str):
     """
     ユーザのレビューモーダル
 
@@ -100,7 +100,9 @@ def review_of_user_modal(*, callback_id: str, reviews: list[ReviewContents]):
 
     review_blocks = []
 
-    for review in reviews:
+    move_buttons = {"type": "actions", "elements": []}
+
+    for review in reviews_params["reviews"]:
 
         update_datetime = (
             datetime.parse(review["updated_at"]) if review["updated_at"] else "-"
@@ -131,6 +133,27 @@ def review_of_user_modal(*, callback_id: str, reviews: list[ReviewContents]):
         )
 
         review_blocks.append({"type": "divider"})
+
+    if reviews_params["show_move_to_back"]:
+        move_buttons["elements"] = [
+            {  # type: ignore
+                "type": "button",
+                "text": {"type": "plain_text", "text": "前へ"},
+                "action_id": "review_move_to_back_action",
+            }
+        ]
+
+    if reviews_params["show_move_to_next"]:
+        move_buttons["elements"] = move_buttons["elements"] + [  # type: ignore
+            {
+                "type": "button",
+                "text": {"type": "plain_text", "text": "次へ"},
+                "action_id": "review_move_to_next_action",
+            }
+        ]
+
+    if bool(move_buttons["elements"]):
+        review_blocks.append(move_buttons)  # type: ignore
 
     view["blocks"].extend(review_blocks)  # type: ignore
 
