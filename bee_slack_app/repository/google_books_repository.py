@@ -1,4 +1,5 @@
 from typing import Any, Optional
+import json
 
 import requests  # type: ignore
 
@@ -63,6 +64,10 @@ class GoogleBooksRepository:
                 "description": _item["volumeInfo"].get("description", ["-"]),
             }
             list_result.append(dict_item)
+
+        # 辞書のリストから重複を取り除く
+        # see: https://qiita.com/kilo7998/items/184ed972571b2e202b40
+        list_result = list(map(json.loads, set(map(json.dumps, list_result))))
 
         return list_result
 
