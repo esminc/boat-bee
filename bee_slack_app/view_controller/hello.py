@@ -17,7 +17,11 @@ def hello_controller(app):
         user_id = message["user"]
         myreviews = [
             x["book_title"]
-            for x in review_service.get_reviews_by_user_id(user_id=user_id)
+            for x in sorted(
+                review_service.get_reviews_by_user_id(user_id=user_id),
+                key=lambda x: x["updated_at"],
+                reverse=True,
+            )
         ]
         num_reviews = len(myreviews)
 
