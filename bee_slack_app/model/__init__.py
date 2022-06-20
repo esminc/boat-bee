@@ -1,4 +1,4 @@
-from .book import Book
+from .book import Book, RecommendBook
 from .review import ReviewContents
 from .search import SearchedBook
 from .suggested_book import SuggestedBook

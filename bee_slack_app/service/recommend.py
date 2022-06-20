@@ -1,13 +1,19 @@
 from logging import getLogger
 from typing import Optional
 
-from bee_slack_app.model import SearchedBook, User
-from bee_slack_app.repository import GoogleBooksRepository, RecommendBookRepository
+from bee_slack_app.model import RecommendBook, SuggestedBook, User
+from bee_slack_app.repository import (
+    GoogleBooksRepository,
+    RecommendBookRepository,
+    SuggestedBookRepository,
+)
+from bee_slack_app.utils import datetime
 
 recommend_book_repository = RecommendBookRepository()
+suggested_book_repository = SuggestedBookRepository()
 
 
-def recommend(user: User) -> list[tuple[SearchedBook, str]]:
+def recommend(user: User) -> list[RecommendBook]:
     """
     おすすめの本の情報を返却する
 
@@ -15,8 +21,7 @@ def recommend(user: User) -> list[tuple[SearchedBook, str]]:
         user : おすすめ本を知りたい、利用者のユーザ情報。
 
     Returns:
-        book: おすすめする本の情報。
-        ml_model:おすすめした機械学習のモデル
+        おすすめする本のリスト
     """
     logger = getLogger(__name__)
 
@@ -48,16 +53,37 @@ def recommend(user: User) -> list[tuple[SearchedBook, str]]:
         for ml_model, isbn in recommended_book_dict.items():
             book = GoogleBooksRepository().search_book_by_isbn(isbn)
             if book is not None:
-                book_info: SearchedBook = {
+                suggested_book = suggested_book_repository.get(
+                    user_id=user["user_id"], isbn=isbn, ml_model=ml_model
+                )
+
+                if not suggested_book:
+                    # おすすめ本が未登録の場合はそれを登録する
+                    suggested_book_repository.create(
+                        {
+                            "user_id": user["user_id"],
+                            "isbn": isbn,
+                            "ml_model": ml_model,
+                            "interested": False,
+                            "updated_at": datetime.now(),
+                        }
+                    )
+
+                interested = suggested_book["interested"] if suggested_book else False
+
+                recommended_book: RecommendBook = {
                     "title": book["title"],
                     "isbn": isbn,
-                    "authors": book["authors"],
-                    "google_books_url": book["google_books_url"],
+                    "author": ",".join(book["authors"]),
+                    "url": book["google_books_url"],
                     "image_url": book["image_url"],
                     "description": book["description"],
+                    "updated_at": "no_data",  # この関数を呼ぶ側では不要だが、型的に必要なので、暫定対応
+                    "interested": interested,
+                    "ml_model": ml_model,
                 }
-                item = (book_info, ml_model)
-                recommended_books.append(item)
+                recommended_books.append(recommended_book)
+
         return recommended_books
 
     except Exception:  # pylint: disable=broad-except
@@ -83,3 +109,24 @@ def created_at() -> Optional[str]:
     except Exception:  # pylint: disable=broad-except
         logger.exception("Failed to get data.")
         return None
+
+
+def update_suggested_book_state(suggested_book: SuggestedBook) -> None:
+    """
+    おすすめされた本の情報（履歴）を登録・更新する
+    """
+    logger = getLogger(__name__)
+
+    try:
+        suggested_book_repository.create(
+            {
+                "user_id": suggested_book["user_id"],
+                "isbn": suggested_book["isbn"],
+                "ml_model": suggested_book["ml_model"],
+                "interested": suggested_book["interested"],
+                "updated_at": datetime.now(),
+            }
+        )
+
+    except Exception:  # pylint: disable=broad-except
+        logger.exception("Failed to store data")
