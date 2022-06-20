@@ -1,6 +1,6 @@
 from typing import Optional
 
-from bee_slack_app.model.user import User
+from bee_slack_app.model import User
 
 # 表示内容と内部情報の対応を辞書形式で保持しておく
 user_department_dict = {

@@ -1,7 +1,6 @@
 from typing import Optional, TypedDict
 
-from bee_slack_app.model.book import Book
-from bee_slack_app.model.search import SearchedBook
+from bee_slack_app.model import Book, SearchedBook
 from bee_slack_app.view.common import book_section
 
 

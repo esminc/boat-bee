@@ -1,7 +1,7 @@
 from logging import getLogger
 from typing import Any
 
-from bee_slack_app.model.user_action import UserAction
+from bee_slack_app.model import UserAction
 from bee_slack_app.repository import UserActionRepository
 from bee_slack_app.utils import datetime
 

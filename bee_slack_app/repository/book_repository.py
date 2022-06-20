@@ -2,7 +2,7 @@ from typing import Optional, TypedDict
 
 import boto3  # type: ignore
 
-from bee_slack_app.model.book import Book
+from bee_slack_app.model import Book
 from bee_slack_app.repository import database
 from bee_slack_app.utils import datetime
 
