@@ -1,6 +1,6 @@
 # pylint: disable=attribute-defined-outside-init
 # pylint: disable=non-ascii-name
-
+# pylint: disable=invalid-name
 
 from moto import mock_dynamodb  # type: ignore
 
@@ -213,7 +213,7 @@ class TestBookRepository:
         assert books_items[0]["description"] == "dummy_description_0"
         assert books_items[0]["updated_at"] == "2022-04-01T00:00:00+09:00"
 
-    def test_本が存在しない場合は空配列を返すこと(self):  # pylint: disable=invalid-name
+    def test_本が存在しない場合は空配列を返すこと(self):
         response = self.table.scan()
 
         assert len(response["Items"]) == 0

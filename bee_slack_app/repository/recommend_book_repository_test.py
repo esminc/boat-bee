@@ -1,4 +1,5 @@
 # pylint: disable=non-ascii-name
+# pylint: disable=invalid-name
 
 from bee_slack_app.repository.recommend_book_repository import RecommendBookRepository
 
@@ -35,7 +36,7 @@ def test_複数のおすすめ本を取得できること(mocker):
     }
 
 
-def test_おすすめ本の取得で存在しないユーザIDに対してはNoneを返すこと(mocker):  # pylint: disable=invalid-name
+def test_おすすめ本の取得で存在しないユーザIDに対してはNoneを返すこと(mocker):
     mocker.patch.object(
         RecommendBookRepository,
         "_load_recommend_info",
@@ -55,7 +56,7 @@ def test_おすすめ本の取得で存在しないユーザIDに対してはNon
     assert recommend_book_isbn is None
 
 
-def test_ひとつのMLがNoneでもおすすめ本を取得できること(mocker):  # pylint: disable=invalid-name
+def test_ひとつのMLがNoneでもおすすめ本を取得できること(mocker):
     mocker.patch.object(
         RecommendBookRepository,
         "_load_recommend_info",
@@ -85,7 +86,7 @@ def test_ひとつのMLがNoneでもおすすめ本を取得できること(mock
     }
 
 
-def test_JSONのメタデータが辞書形式で取得できること(mocker):  # pylint: disable=invalid-name
+def test_JSONのメタデータが辞書形式で取得できること(mocker):
     mocker.patch.object(
         RecommendBookRepository,
         "_load_recommend_info",

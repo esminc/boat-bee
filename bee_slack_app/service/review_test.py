@@ -1,4 +1,5 @@
 # pylint: disable=non-ascii-name
+# pylint: disable=invalid-name
 # pylint: disable=too-many-lines
 
 
@@ -61,7 +62,7 @@ def test_get_reviewでレビューを取得できること(monkeypatch):
 
 def test_get_reviewで該当するユーザ情報がない場合はユーザ名としてユーザIDを返すこと(
     monkeypatch,
-):  # pylint: disable=invalid-name
+):
     def mock_review_repository_get(_, **__):
         return {
             "user_id": "user_id_0",
@@ -91,7 +92,7 @@ def test_get_reviewで該当するユーザ情報がない場合はユーザ名�
 
 def test_get_reviewでreview_repositoryの処理でエラーが発生した場合Noneを返すこと(
     monkeypatch,
-):  # pylint: disable=invalid-name
+):
     def mock_review_repository_get(_, **__):
         raise Exception("dummy exception")
 
@@ -116,7 +117,7 @@ def test_get_reviewでreview_repositoryの処理でエラーが発生した場�
 
 def test_get_reviewでuser_repositoryの処理でエラーが発生した場合Noneを返すこと(
     monkeypatch,
-):  # pylint: disable=invalid-name
+):
     def mock_review_repository_get(_, **__):
         return {
             "user_id": "user_id_0",
@@ -259,7 +260,7 @@ def test_get_review_allでレビューを取得できること(monkeypatch):
 
 def test_get_reviewsで該当するユーザ情報がない場合はユーザ名としてユーザIDを返すこと(
     monkeypatch,
-):  # pylint: disable=invalid-name
+):
     def mock_review_repository_get_all(_, **__):
         return [
             {
@@ -350,7 +351,7 @@ def test_get_reviewsで該当するユーザ情報がない場合はユーザ名
 
 def test_get_review_allでreview_repositoryの処理でエラーが発生した場合Noneを返すこと(
     monkeypatch,
-):  # pylint: disable=invalid-name
+):
     def mock_review_repository_get_all(_, __):
         raise Exception("dummy exception")
 
@@ -363,7 +364,7 @@ def test_get_review_allでreview_repositoryの処理でエラーが発生した�
 
 def test_get_review_allでuser_repositoryの処理でエラーが発生した場合Noneを返すこと(
     monkeypatch,
-):  # pylint: disable=invalid-name
+):
     def mock_user_repository_get_all(_, __):
         raise Exception("dummy exception")
 
@@ -376,7 +377,7 @@ def test_get_review_allでuser_repositoryの処理でエラーが発生した場
 
 def test_post_reviewでレビューを投稿できること(
     mocker,
-):  # pylint: disable=invalid-name
+):
     mock_review_repository_create = mocker.patch.object(ReviewRepository, "create")
 
     mock_book_repository_put = mocker.patch.object(BookRepository, "put")
@@ -429,7 +430,7 @@ def test_post_reviewでレビューを投稿できること(
 
 def test_post_reviewでreview_repositoryの処理でエラーが発生した場合Noneを返すこと(
     mocker,
-):  # pylint: disable=invalid-name
+):
     mock_review_repository_create = mocker.patch.object(ReviewRepository, "create")
     mock_review_repository_create.side_effect = Exception("dummy exception")
 
@@ -470,7 +471,7 @@ def test_post_reviewでreview_repositoryの処理でエラーが発生した場�
 
 def test_post_reviewでbook_repositoryの処理でエラーが発生した場合Noneを返すこと(
     mocker,
-):  # pylint: disable=invalid-name
+):
     mock_review_repository_create = mocker.patch.object(ReviewRepository, "create")
 
     mock_book_repository_put = mocker.patch.object(BookRepository, "put")
@@ -511,7 +512,7 @@ def test_post_reviewでbook_repositoryの処理でエラーが発生した場合
 
 def test_post_reviewでuser_repositoryの処理でエラーが発生した場合Noneを返すこと(
     mocker,
-):  # pylint: disable=invalid-name
+):
     mock_review_repository_create = mocker.patch.object(ReviewRepository, "create")
 
     mock_book_repository_put = mocker.patch.object(BookRepository, "put")
@@ -554,7 +555,7 @@ def test_post_reviewでuser_repositoryの処理でエラーが発生した場合
 
 def test_get_reviews_by_isbnでレビューが取得できること(
     mocker,
-):  # pylint: disable=invalid-name
+):
     mock_review_repository_get_by_isbn = mocker.patch.object(
         ReviewRepository,
         "get_by_isbn",
@@ -648,7 +649,7 @@ def test_get_reviews_by_isbnでレビューが取得できること(
 
 def test_get_reviews_by_isbnでreview_repositoryの処理でエラーが発生した場合Noneを返すこと(
     mocker,
-):  # pylint: disable=invalid-name
+):
     mock_review_repository_get_by_isbn = mocker.patch.object(
         ReviewRepository,
         "get_by_isbn",
@@ -693,7 +694,7 @@ def test_get_reviews_by_isbnでreview_repositoryの処理でエラーが発生�
 
 def test_get_reviews_by_isbnでuser_repositoryの処理でエラーが発生した場合Noneを返すこと(
     mocker,
-):  # pylint: disable=invalid-name
+):
     mock_review_repository_get_by_isbn = mocker.patch.object(
         ReviewRepository,
         "get_by_isbn",
@@ -738,7 +739,7 @@ def test_get_reviews_by_isbnでuser_repositoryの処理でエラーが発生し�
 
 def test_get_reviews_by_isbnで該当するユーザ情報がない場合はユーザ名としてユーザIDを返すこと(
     mocker,
-):  # pylint: disable=invalid-name
+):
     mock_review_repository_get_by_isbn = mocker.patch.object(
         ReviewRepository,
         "get_by_isbn",
@@ -807,7 +808,7 @@ def test_get_reviews_by_isbnで該当するユーザ情報がない場合はユ�
 
 def test_get_reviews_by_user_idでレビューが取得できること(
     mocker,
-):  # pylint: disable=invalid-name
+):
     mock_review_repository_get_by_user_id = mocker.patch.object(
         ReviewRepository,
         "get_by_user_id",
@@ -901,7 +902,7 @@ def test_get_reviews_by_user_idでレビューが取得できること(
 
 def test_get_reviews_by_user_idでreview_repositoryの処理でエラーが発生した場合Noneを返すこと(
     mocker,
-):  # pylint: disable=invalid-name
+):
     mock_review_repository_get_by_user_id = mocker.patch.object(
         ReviewRepository,
         "get_by_user_id",
@@ -946,7 +947,7 @@ def test_get_reviews_by_user_idでreview_repositoryの処理でエラーが発�
 
 def test_get_reviews_by_user_idでuser_repositoryの処理でエラーが発生した場合Noneを返すこと(
     mocker,
-):  # pylint: disable=invalid-name
+):
     mock_review_repository_get_by_user_id = mocker.patch.object(
         ReviewRepository,
         "get_by_user_id",
@@ -991,7 +992,7 @@ def test_get_reviews_by_user_idでuser_repositoryの処理でエラーが発生�
 
 def test_get_reviews_by_user_idで該当するユーザ情報がない場合はユーザ名としてユーザIDを返すこと(
     mocker,
-):  # pylint: disable=invalid-name
+):
     mock_review_repository_get_by_user_id = mocker.patch.object(
         ReviewRepository,
         "get_by_user_id",

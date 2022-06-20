@@ -68,7 +68,7 @@ def test_おすすめの本の情報を取得できること(monkeypatch):
     assert recommended_books[0]["interested"] is True
 
 
-def test_おすすめの本が取得できなかったら空のリストを返すこと(monkeypatch):  # pylint: disable=invalid-name
+def test_おすすめの本が取得できなかったら空のリストを返すこと(monkeypatch):
     def mock_recommend_book_repository_fetch(_, __):
         return []
 
@@ -120,7 +120,7 @@ def test_おすすめの本が取得できなかったら空のリストを返�
     assert len(recommended_books) == 0
 
 
-def test_おすすめの本の情報がNoneのケース(monkeypatch):  # pylint: disable=invalid-name
+def test_おすすめの本の情報がNoneのケース(monkeypatch):
     def mock_recommend_book_repository_fetch(_, __):
         return {"ml-a": "1234567890123"}
 
@@ -220,7 +220,7 @@ def test_おすすめ本が未登録の場合は登録すること(mocker):
     assert args[0]["updated_at"] == "2022-04-01T00:00:00+09:00"
 
 
-def test_書影が取得できない場合に書影にNone返値に設定されること(monkeypatch):  # pylint: disable=invalid-name
+def test_書影が取得できない場合に書影にNone返値に設定されること(monkeypatch):
     def mock_recommend_book_repository_fetch(_, __):
         return {"ml-a": "1234567890123"}
 
@@ -279,7 +279,7 @@ def test_書影が取得できない場合に書影にNone返値に設定され�
     assert recommended_books[0]["interested"] is True
 
 
-def test_モジュール内で例外が発生した場合は返値は空のリストであること(monkeypatch):  # pylint: disable=invalid-name
+def test_モジュール内で例外が発生した場合は返値は空のリストであること(monkeypatch):
     def mock_recommend_book_repository_fetch(_, __):
         return {"ml-a": "1234567890123"}
 
