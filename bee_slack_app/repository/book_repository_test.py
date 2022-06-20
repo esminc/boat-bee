@@ -4,7 +4,7 @@
 
 from moto import mock_dynamodb  # type: ignore
 
-from bee_slack_app.model.book import Book
+from bee_slack_app.model import Book
 from bee_slack_app.repository.book_repository import BookRepository
 from bee_slack_app.repository.database import create_table
 

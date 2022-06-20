@@ -1,6 +1,6 @@
 from typing import Optional, TypedDict
 
-from bee_slack_app.model.book import Book, RecommendBook
+from bee_slack_app.model import Book, RecommendBook
 from bee_slack_app.view.common import book_section
 
 

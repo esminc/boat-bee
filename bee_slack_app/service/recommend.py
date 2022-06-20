@@ -1,9 +1,7 @@
 from logging import getLogger
 from typing import Optional
 
-from bee_slack_app.model.book import RecommendBook
-from bee_slack_app.model.suggested_book import SuggestedBook
-from bee_slack_app.model.user import User
+from bee_slack_app.model import RecommendBook, SuggestedBook, User
 from bee_slack_app.repository import (
     GoogleBooksRepository,
     RecommendBookRepository,

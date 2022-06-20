@@ -2,7 +2,7 @@ from typing import Optional, TypedDict
 
 from boto3.dynamodb.conditions import Key  # type: ignore
 
-from bee_slack_app.model.review import ReviewContents
+from bee_slack_app.model import ReviewContents
 from bee_slack_app.repository import database
 
 GSI_PK_VALUE = "review"

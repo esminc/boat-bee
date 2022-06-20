@@ -1,7 +1,7 @@
 # pylint: disable=non-ascii-name
 
 
-from bee_slack_app.model.user import User
+from bee_slack_app.model import User
 from bee_slack_app.repository.user_repository import UserRepository
 from bee_slack_app.service.user import (
     add_user,

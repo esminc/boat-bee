@@ -2,7 +2,7 @@
 """
 from typing import Optional
 
-from bee_slack_app.model.suggested_book import SuggestedBook
+from bee_slack_app.model import SuggestedBook
 from bee_slack_app.repository import database
 
 GSI_PK_VALUE = "suggested_book"

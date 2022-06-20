@@ -1,4 +1,4 @@
-from bee_slack_app.model.user import User
+from bee_slack_app.model import User
 
 
 def posted_review_user_list_modal(callback_id: str, users: list[User]):
@@ -37,7 +37,7 @@ def posted_review_user_list_modal(callback_id: str, users: list[User]):
                 "type": "section",
                 "text": {
                     "type": "mrkdwn",
-                    "text": f"*{user['user_name']}*",
+                    "text": f"*{user['user_name']}* ({user['post_review_count']})",
                 },
                 "accessory": {
                     "type": "button",
