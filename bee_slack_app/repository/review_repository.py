@@ -5,7 +5,6 @@ from boto3.dynamodb.conditions import Key  # type: ignore
 
 from bee_slack_app.model.review import ReviewContents
 from bee_slack_app.repository import database
-from bee_slack_app.utils import datetime
 
 GSI_PK_VALUE = "review"
 
@@ -150,12 +149,6 @@ class ReviewRepository:
             while last_key is not None:
                 new_items, last_key = query(exclusive_start_key=last_key)
                 items.extend(new_items)
-
-        for item in items:
-
-            item["updated_at"] = datetime.timestamp_to_iso_format(
-                datetime.TIMESTAMP_MAX - float(item["updated_at"])
-            )
 
         return {"items": items, "last_key": last_key}
 

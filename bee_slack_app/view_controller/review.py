@@ -22,6 +22,8 @@ from bee_slack_app.view.read_review import (
 )
 from bee_slack_app.view.user import user_department_dict
 
+BOOK_NUMBER_PER_PAGE = 19
+
 
 def review_controller(app):  # pylint: disable=too-many-statements
     @app.action("read_review_of_book_action")
@@ -77,7 +79,12 @@ def review_controller(app):  # pylint: disable=too-many-statements
 
         user_id_of_review = action["value"]
 
-        reviews = review_service.get_reviews_by_user_id(user_id=user_id_of_review)
+        review_items = review_service.get_next_reviews_by_user_id(
+            user_id=user_id_of_review, limit=BOOK_NUMBER_PER_PAGE, keys=[]
+        )
+
+        if review_items:
+            reviews = review_items.get("items")
 
         user_action_service.record_user_action(
             user_id=user_id,
@@ -93,7 +100,6 @@ def review_controller(app):  # pylint: disable=too-many-statements
             return
 
         reviews = _make_review_contents_list_comment_short(reviews)
-
         client.views_push(
             trigger_id=body["trigger_id"],
             view=review_of_user_modal(
