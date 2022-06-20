@@ -1,5 +1,6 @@
 # pylint: disable=attribute-defined-outside-init
 # pylint: disable=non-ascii-name
+# pylint: disable=invalid-name
 
 
 import boto3  # type: ignore
@@ -14,7 +15,7 @@ class TestReviewRepository:
     def setup_method(self, _):
         self.table = create_table()
 
-    def test_ISBNからレビューを取得できること(self):  # pylint: disable=invalid-name
+    def test_ISBNからレビューを取得できること(self):
         item = {
             "PK": "review#user_id_0#12345",
             "GSI_PK": "review",
@@ -101,7 +102,7 @@ class TestReviewRepository:
         assert reviews[1]["book_author"] == "dummy_book_author_0"
         assert reviews[1]["book_url"] == "dummy_book_url_0"
 
-    def test_テーブルに存在しないレビューのISBNを指定した場合_空配列を返すこと(self):  # pylint: disable=invalid-name
+    def test_テーブルに存在しないレビューのISBNを指定した場合_空配列を返すこと(self):
         item = {
             "PK": "review#user_id_0#12345",
             "GSI_PK": "review",
@@ -169,7 +170,7 @@ class TestReviewRepository:
         assert len(reviews) == 0
         assert isinstance(reviews, list)
 
-    def test_ユーザIDからレビューを取得できること(self):  # pylint: disable=invalid-name
+    def test_ユーザIDからレビューを取得できること(self):
         item = {
             "PK": "review#user_id_0#12345",
             "GSI_PK": "review",
@@ -258,7 +259,7 @@ class TestReviewRepository:
         assert reviews[1]["book_author"] == "dummy_book_author_2"
         assert reviews[1]["book_url"] == "dummy_book_url_2"
 
-    def test_テーブルに存在しないレビューのユーザIDを指定した場合_空配列を返すこと(self):  # pylint: disable=invalid-name
+    def test_テーブルに存在しないレビューのユーザIDを指定した場合_空配列を返すこと(self):
         item = {
             "PK": "review#user_id_0#12345",
             "GSI_PK": "review",
@@ -405,7 +406,7 @@ class TestReviewRepository:
         assert review["book_url"] == "dummy_book_url_1"
         assert review["book_description"] == "dummy_description_1"
 
-    def test_存在しないレビューを指定した場合_Noneを返すこと(self):  # pylint: disable=invalid-name
+    def test_存在しないレビューを指定した場合_Noneを返すこと(self):
         item = {
             "PK": "review#user_id_0#12345",
             "GSI_PK": "review",

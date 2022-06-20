@@ -1,5 +1,5 @@
 # pylint: disable=non-ascii-name
-
+# pylint: disable=invalid-name
 
 from bee_slack_app.repository.book_repository import BookRepository
 from bee_slack_app.service.book import get_books, get_books_before
@@ -208,7 +208,7 @@ def test_get_booksで本を取得できること_続きのデータありの場�
 
 def test_get_booksでbook_repositoryの処理でエラーが発生した場合Noneを返すこと(
     mocker,
-):  # pylint: disable=invalid-name
+):
     mock_book_repository_fetch = mocker.patch.object(
         BookRepository,
         "fetch",
@@ -362,7 +362,7 @@ def test_get_books_beforeで本を取得できること_1ページ以降への�
 
 def test_get_books_beforeでbook_repositoryの処理でエラーが発生した場合Noneを返すこと(
     mocker,
-):  # pylint: disable=invalid-name
+):
     mock_book_repository_fetch = mocker.patch.object(
         BookRepository,
         "fetch",

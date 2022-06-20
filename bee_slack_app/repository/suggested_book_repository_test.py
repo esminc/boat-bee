@@ -1,5 +1,6 @@
 # pylint: disable=attribute-defined-outside-init
 # pylint: disable=non-ascii-name
+# pylint: disable=invalid-name
 
 
 from moto import mock_dynamodb  # type: ignore
@@ -13,7 +14,7 @@ class TestSuggestedBookRepository:
     def setup_method(self, _):
         self.table = database.create_table()
 
-    def test_DBの先頭にあるおすすめされた本を取得できること(self):  # pylint: disable=invalid-name
+    def test_DBの先頭にあるおすすめされた本を取得できること(self):
         item = {
             "PK": "suggested_book#test_user_id_0#1234567890123#dummy_ml_model_0",
             "GSI_PK": "suggested_book",
@@ -56,7 +57,7 @@ class TestSuggestedBookRepository:
         assert suggested_book["interested"] is True
         assert suggested_book["updated_at"] == "2022-04-01T00:00:00+09:00"
 
-    def test_DBの最後尾にあるおすすめされた本を取得できること(self):  # pylint: disable=invalid-name
+    def test_DBの最後尾にあるおすすめされた本を取得できること(self):
         item = {
             "PK": "suggested_book#test_user_id_0#1234567890123#dummy_ml_model_0",
             "GSI_PK": "suggested_book",
@@ -99,7 +100,7 @@ class TestSuggestedBookRepository:
         assert suggested_book["interested"] is False
         assert suggested_book["updated_at"] == "2022-04-11T09:23:04+09:00"
 
-    def test_おすすめされた本が無い場合にNoneが返ること(self):  # pylint: disable=invalid-name
+    def test_おすすめされた本が無い場合にNoneが返ること(self):
         item = {
             "PK": "suggested_book#test_user_id_0#1234567890123#dummy_ml_model_0",
             "GSI_PK": "suggested_book",

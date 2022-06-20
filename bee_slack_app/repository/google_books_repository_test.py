@@ -1,6 +1,6 @@
 # pylint: disable=attribute-defined-outside-init
-
 # pylint: disable=non-ascii-name
+# pylint: disable=invalid-name
 
 from bee_slack_app.repository.google_books_repository import GoogleBooksRepository
 
@@ -63,7 +63,7 @@ class TestGoogleBooksRepository:
 
         assert len(result) > 0
 
-    def test_13桁の正当なISBNを指定したら結果が1件だけ得られること(self):  # pylint: disable=invalid-name
+    def test_13桁の正当なISBNを指定したら結果が1件だけ得られること(self):
         target_isbn = "9784873118253"
 
         result = self.api_client.search_book_by_isbn(target_isbn)
@@ -86,7 +86,7 @@ class TestGoogleBooksRepository:
             "機械学習やデータ分析の道具をどのようにビジネスに生かしていけば良いのか、「仕事で使う」という観点から整理。"
         )
 
-    def test_10桁の正当なISBNを指定したら結果が1件だけ得られること(self):  # pylint: disable=invalid-name
+    def test_10桁の正当なISBNを指定したら結果が1件だけ得られること(self):
         target_isbn = "4873118255"
 
         result = self.api_client.search_book_by_isbn(target_isbn)
@@ -109,14 +109,14 @@ class TestGoogleBooksRepository:
             "機械学習やデータ分析の道具をどのようにビジネスに生かしていけば良いのか、「仕事で使う」という観点から整理。"
         )
 
-    def test_存在しないISBNを指定したら結果が0件であること(self):  # pylint: disable=invalid-name
+    def test_存在しないISBNを指定したら結果が0件であること(self):
         target_isbn = "1234567890123"
 
         result = self.api_client.search_book_by_isbn(target_isbn)
 
         assert result is None
 
-    def test_13桁ではない不正なISBNを指定したら結果が0件であること(self):  # pylint: disable=invalid-name
+    def test_13桁ではない不正なISBNを指定したら結果が0件であること(self):
         target_isbn = "123"
 
         result = self.api_client.search_book_by_isbn(target_isbn)
