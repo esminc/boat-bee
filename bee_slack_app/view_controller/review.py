@@ -77,7 +77,6 @@ def review_controller(app):  # pylint: disable=too-many-statements
         ack()
 
         user_id = body["user"]["id"]
-
         user_id_of_review = action["value"]
 
         review_items = review_service.get_next_reviews_by_user_id(
@@ -93,8 +92,10 @@ def review_controller(app):  # pylint: disable=too-many-statements
                 "show_move_to_back": False,
                 "show_move_to_next": review_items.get("has_next"),
             }
+            # メタデータに変換する
             metadata_str = _PrivateMetadataConvertor.to_private_metadata(
                 keys=review_items.get("keys"),
+                user_id_of_review=user_id_of_review,
             )
 
         user_action_service.record_user_action(
@@ -109,6 +110,60 @@ def review_controller(app):  # pylint: disable=too-many-statements
                 view=simple_modal(title="エラー", text="レビュー取得でエラーが発生しました"),
             )
             return
+
+        client.views_push(
+            trigger_id=body["trigger_id"],
+            view=review_of_user_modal(
+                callback_id="review_of_user_modal",
+                reviews_params=reviews_params,
+                private_metadata=metadata_str,
+            ),
+        )
+
+    @app.action("review_move_to_next_action")
+    def review_move_to_next_action(
+        ack, client, body, action
+    ):  # pylint: disable=too-many-locals
+        """
+        自分のレビューを見る画面で「次へ」を押下されたときの処理
+        """
+        ack()
+
+        user_id = body["user"]["id"]
+
+        # メタデータから取り出す
+        private_metadata = body["view"]["private_metadata"]
+        metadata_dict = _PrivateMetadataConvertor.to_dict(
+            private_metadata=private_metadata
+        )
+        user_id_of_review = metadata_dict["user_id_of_review"]
+
+        review_items = review_service.get_next_reviews_by_user_id(
+            user_id=user_id_of_review,
+            limit=BOOK_NUMBER_PER_PAGE,
+            keys=metadata_dict["keys"],
+        )
+
+        if review_items:
+            reviews = review_items.get("items")
+            reviews = _make_review_contents_list_comment_short(reviews)
+
+            reviews_params = {
+                "reviews": review_items.get("items"),
+                "show_move_to_back": True,
+                "show_move_to_next": review_items.get("has_next"),
+            }
+            # メタデータに変換する
+            metadata_str = _PrivateMetadataConvertor.to_private_metadata(
+                keys=review_items.get("keys"),
+                user_id_of_review=user_id_of_review,
+            )
+
+        user_action_service.record_user_action(
+            user_id=user_id,
+            action_name="read_review_of_user_action",
+            payload={"user_id_of_review": user_id_of_review, "reviews": reviews},
+        )
 
         client.views_push(
             trigger_id=body["trigger_id"],
@@ -312,11 +367,14 @@ def _make_review_contents_list_comment_short(
 class _PrivateMetadataConvertor:
     class _MetadataDict(TypedDict):
         keys: Any
+        user_id_of_review: Any
 
     @staticmethod
-    def to_private_metadata(*, keys: Any) -> str:
-        return json.dumps({"keys": keys})
+    # メタデータへの変換
+    def to_private_metadata(*, keys: Any, user_id_of_review: str) -> str:
+        return json.dumps({"keys": keys, "user_id_of_review": user_id_of_review})
 
     @staticmethod
+    # メタデータから取り出し
     def to_dict(*, private_metadata: str) -> _MetadataDict:
         return json.loads(private_metadata)

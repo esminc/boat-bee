@@ -82,10 +82,14 @@ def review_of_user_modal(*, callback_id: str, reviews_params, private_metadata: 
     Args:
         callback_id: モーダルのcallback_id
         reviews: 表示するレビューのリスト
+        books_param: 「投稿されているレビュー」のデータ
+        private_metadata: private_metadata
+
     """
 
     view = {
         "type": "modal",
+        "private_metadata": private_metadata,
         "callback_id": callback_id,
         "title": {"type": "plain_text", "text": "本のレビュー"},
         "blocks": [
