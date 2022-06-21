@@ -197,7 +197,7 @@ def get_next_reviews_by_user_id(
 
         start_key = keys[-1] if len(keys) > 0 else None
 
-        reviews = review_repository.fetch(
+        reviews = review_repository.get_limited_by_user_id(
             user_id=user_id, limit=limit, start_key=start_key
         )
 
@@ -261,7 +261,7 @@ def get_before_reviews_by_user_id(
 
         start_key = None if is_move_to_first else keys[-3]
 
-        reviews = review_repository.fetch(
+        reviews = review_repository.get_limited_by_user_id(
             user_id=user_id, limit=limit, start_key=start_key
         )
 

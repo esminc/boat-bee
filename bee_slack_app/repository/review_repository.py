@@ -102,7 +102,7 @@ class ReviewRepository:
             & Key(database.GSI_1_SK).eq(user_id),
         )["Items"]
 
-    def fetch(
+    def get_limited_by_user_id(
         self,
         *,
         user_id: str,
