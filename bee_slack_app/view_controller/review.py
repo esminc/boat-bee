@@ -72,7 +72,7 @@ def review_controller(app):  # pylint: disable=too-many-statements
     @app.action("read_review_of_user_action")
     def read_review_of_user_action(ack, body, client, action):
         """
-        ユーザのレビューリストのモーダルを開く
+        選択したユーザのレビューリストを開く
         """
         ack()
 
@@ -87,7 +87,7 @@ def review_controller(app):  # pylint: disable=too-many-statements
             reviews = review_items.get("items")
             reviews = _make_review_contents_list_comment_short(reviews)
 
-            reviews_params = {
+            reviews_param = {
                 "reviews": reviews,
                 "show_move_to_back": False,
                 "show_move_to_next": review_items.get("has_next"),
@@ -115,17 +115,17 @@ def review_controller(app):  # pylint: disable=too-many-statements
             trigger_id=body["trigger_id"],
             view=review_of_user_modal(
                 callback_id="review_of_user_modal",
-                reviews_params=reviews_params,
+                reviews_param=reviews_param,
                 private_metadata=metadata_str,
             ),
         )
 
     @app.action("review_move_to_next_action")
     def review_move_to_next_action(
-        ack, client, body, action
+        ack, client, body
     ):  # pylint: disable=too-many-locals
         """
-        自分のレビューを見る画面で「次へ」を押下されたときの処理
+        レビューリストで「次へ」を押下されたときの処理
         """
         ack()
 
@@ -148,7 +148,7 @@ def review_controller(app):  # pylint: disable=too-many-statements
             reviews = review_items.get("items")
             reviews = _make_review_contents_list_comment_short(reviews)
 
-            reviews_params = {
+            reviews_param = {
                 "reviews": review_items.get("items"),
                 "show_move_to_back": True,
                 "show_move_to_next": review_items.get("has_next"),
@@ -169,7 +169,63 @@ def review_controller(app):  # pylint: disable=too-many-statements
             trigger_id=body["trigger_id"],
             view=review_of_user_modal(
                 callback_id="review_of_user_modal",
-                reviews_params=reviews_params,
+                reviews_param=reviews_param,
+                private_metadata=metadata_str,
+            ),
+        )
+
+    @app.action("review_move_to_back_action")
+    def review_move_to_back_action(
+        ack, client, body
+    ):  # pylint: disable=too-many-locals
+        """
+        レビューリストで「前へ」を押下されたときの処理
+        """
+        ack()
+
+        user_id = body["user"]["id"]
+
+        # メタデータから取り出す
+        private_metadata = body["view"]["private_metadata"]
+        metadata_dict = _PrivateMetadataConvertor.to_dict(
+            private_metadata=private_metadata
+        )
+        user_id_of_review = metadata_dict["user_id_of_review"]
+
+        reviews_param = None
+        metadata_str = ""
+
+        review_items = review_service.get_before_reviews_by_user_id(
+            user_id=user_id_of_review,
+            limit=BOOK_NUMBER_PER_PAGE,
+            keys=metadata_dict["keys"],
+        )
+        if review_items:
+            reviews = review_items.get("items")
+            reviews = _make_review_contents_list_comment_short(reviews)
+
+            reviews_param = {
+                "reviews": review_items.get("items"),
+                "show_move_to_back": not review_items.get("is_move_to_first"),
+                "show_move_to_next": True,
+            }
+            # メタデータに変換する
+            metadata_str = _PrivateMetadataConvertor.to_private_metadata(
+                keys=review_items.get("keys"),
+                user_id_of_review=user_id_of_review,
+            )
+
+        user_action_service.record_user_action(
+            user_id=user_id,
+            action_name="read_review_of_user_action",
+            payload={"user_id_of_review": user_id_of_review, "reviews": reviews},
+        )
+
+        client.views_push(
+            trigger_id=body["trigger_id"],
+            view=review_of_user_modal(
+                callback_id="review_of_user_modal",
+                reviews_param=reviews_param,
                 private_metadata=metadata_str,
             ),
         )

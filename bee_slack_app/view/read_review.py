@@ -75,14 +75,13 @@ def review_modal(
     return view
 
 
-def review_of_user_modal(*, callback_id: str, reviews_params, private_metadata: str):
+def review_of_user_modal(*, callback_id: str, reviews_param, private_metadata: str):
     """
     ユーザのレビューモーダル
 
     Args:
         callback_id: モーダルのcallback_id
-        reviews: 表示するレビューのリスト
-        books_param: 「投稿されているレビュー」のデータ
+        reviews_param: 「投稿されているレビュー」のデータ
         private_metadata: private_metadata
 
     """
@@ -106,7 +105,7 @@ def review_of_user_modal(*, callback_id: str, reviews_params, private_metadata: 
 
     move_buttons = {"type": "actions", "elements": []}
 
-    for review in reviews_params["reviews"]:
+    for review in reviews_param["reviews"]:
 
         update_datetime = (
             datetime.parse(review["updated_at"]) if review["updated_at"] else "-"
@@ -138,7 +137,7 @@ def review_of_user_modal(*, callback_id: str, reviews_params, private_metadata: 
 
         review_blocks.append({"type": "divider"})
 
-    if reviews_params["show_move_to_back"]:
+    if reviews_param["show_move_to_back"]:
         move_buttons["elements"] = [
             {  # type: ignore
                 "type": "button",
@@ -147,7 +146,7 @@ def review_of_user_modal(*, callback_id: str, reviews_params, private_metadata: 
             }
         ]
 
-    if reviews_params["show_move_to_next"]:
+    if reviews_param["show_move_to_next"]:
         move_buttons["elements"] = move_buttons["elements"] + [  # type: ignore
             {
                 "type": "button",
