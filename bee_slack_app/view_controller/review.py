@@ -83,6 +83,7 @@ def review_controller(app):  # pylint: disable=too-many-statements
             user_id=user_id_of_review, limit=BOOK_NUMBER_PER_PAGE, keys=[]
         )
 
+        reviews = []
         if review_items:
             reviews = review_items.get("items")
             reviews = _make_review_contents_list_comment_short(reviews)
@@ -137,6 +138,9 @@ def review_controller(app):  # pylint: disable=too-many-statements
             private_metadata=private_metadata
         )
         user_id_of_review = metadata_dict["user_id_of_review"]
+
+        reviews_param = None
+        metadata_str = ""
 
         review_items = review_service.get_next_reviews_by_user_id(
             user_id=user_id_of_review,
