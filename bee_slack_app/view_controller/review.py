@@ -165,8 +165,8 @@ def review_controller(app):  # pylint: disable=too-many-statements
             payload={"user_id_of_review": user_id_of_review, "reviews": reviews},
         )
 
-        client.views_push(
-            trigger_id=body["trigger_id"],
+        client.views_update(
+            view_id=body.get("view").get("id"),
             view=review_of_user_modal(
                 callback_id="review_of_user_modal",
                 reviews_param=reviews_param,
@@ -221,8 +221,8 @@ def review_controller(app):  # pylint: disable=too-many-statements
             payload={"user_id_of_review": user_id_of_review, "reviews": reviews},
         )
 
-        client.views_push(
-            trigger_id=body["trigger_id"],
+        client.views_update(
+            view_id=body.get("view").get("id"),
             view=review_of_user_modal(
                 callback_id="review_of_user_modal",
                 reviews_param=reviews_param,
