@@ -110,7 +110,7 @@ class ReviewRepository:
         start_key: Optional[ReviewItemKey] = None,
     ) -> GetResponse:
         """
-        レビューが投稿されている本のリストを取得する
+        投稿されているレビューをページネーション対応付きで取得する
 
         Args:
             limit: 取得するアイテムの上限数
