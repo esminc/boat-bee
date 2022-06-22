@@ -85,17 +85,17 @@ def review_controller(app):  # pylint: disable=too-many-statements
 
         reviews = []
         if review_items:
-            reviews = review_items.get("items")
+            reviews = review_items["items"]
             reviews = _make_review_contents_list_comment_short(reviews)
 
             reviews_param = {
                 "reviews": reviews,
                 "show_move_to_back": False,
-                "show_move_to_next": review_items.get("has_next"),
+                "show_move_to_next": review_items["has_next"],
             }
             # メタデータに変換する
             metadata_str = _PrivateMetadataConvertor.to_private_metadata(
-                keys=review_items.get("keys"),
+                keys=review_items["keys"],
                 user_id_of_review=user_id_of_review,
             )
 
@@ -149,17 +149,17 @@ def review_controller(app):  # pylint: disable=too-many-statements
         )
 
         if review_items:
-            reviews = review_items.get("items")
+            reviews = review_items["items"]
             reviews = _make_review_contents_list_comment_short(reviews)
 
             reviews_param = {
-                "reviews": review_items.get("items"),
+                "reviews": review_items["items"],
                 "show_move_to_back": True,
-                "show_move_to_next": review_items.get("has_next"),
+                "show_move_to_next": review_items["has_next"],
             }
             # メタデータに変換する
             metadata_str = _PrivateMetadataConvertor.to_private_metadata(
-                keys=review_items.get("keys"),
+                keys=review_items["keys"],
                 user_id_of_review=user_id_of_review,
             )
 
@@ -170,7 +170,7 @@ def review_controller(app):  # pylint: disable=too-many-statements
         )
 
         client.views_update(
-            view_id=body.get("view").get("id"),
+            view_id=body["view"]["id"],
             view=review_of_user_modal(
                 callback_id="review_of_user_modal",
                 reviews_param=reviews_param,
@@ -205,17 +205,17 @@ def review_controller(app):  # pylint: disable=too-many-statements
             keys=metadata_dict["keys"],
         )
         if review_items:
-            reviews = review_items.get("items")
+            reviews = review_items["items"]
             reviews = _make_review_contents_list_comment_short(reviews)
 
             reviews_param = {
-                "reviews": review_items.get("items"),
-                "show_move_to_back": not review_items.get("is_move_to_first"),
+                "reviews": review_items["items"],
+                "show_move_to_back": not review_items["is_move_to_first"],
                 "show_move_to_next": True,
             }
             # メタデータに変換する
             metadata_str = _PrivateMetadataConvertor.to_private_metadata(
-                keys=review_items.get("keys"),
+                keys=review_items["keys"],
                 user_id_of_review=user_id_of_review,
             )
 
@@ -226,7 +226,7 @@ def review_controller(app):  # pylint: disable=too-many-statements
         )
 
         client.views_update(
-            view_id=body.get("view").get("id"),
+            view_id=body["view"]["id"],
             view=review_of_user_modal(
                 callback_id="review_of_user_modal",
                 reviews_param=reviews_param,
