@@ -75,7 +75,9 @@ def review_modal(
     return view
 
 
-def review_of_user_modal(*, callback_id: str, reviews_param, private_metadata: str):
+def review_of_user_modal(
+    *, callback_id: str, reviews_param: str, private_metadata: str
+):
     """
     ユーザのレビューモーダル
 

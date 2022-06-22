@@ -160,7 +160,7 @@ def post_review(review_contents: ReviewContents) -> Optional[ReviewContents]:
         return None
 
 
-class GetReviewsResponse(TypedDict):
+class GetNextReviewsResponse(TypedDict):
     items: list[ReviewContents]
     keys: Any
     has_next: bool
@@ -171,7 +171,7 @@ def get_next_reviews_by_user_id(
     user_id: str,
     limit: Optional[int] = None,
     keys: Any = None,
-) -> Optional[GetReviewsResponse]:
+) -> Optional[GetNextReviewsResponse]:
     """
     ユーザIDからレビューを順方向に取得する
 
