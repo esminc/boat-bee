@@ -76,7 +76,7 @@ def review_modal(
 
 
 def review_of_user_modal(
-    *, callback_id: str, reviews_param: str, private_metadata: str
+    *, callback_id: str, reviews_param: dict, private_metadata: str
 ):
     """
     ユーザのレビューモーダル
