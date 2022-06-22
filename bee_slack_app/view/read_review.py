@@ -1,5 +1,6 @@
 from typing import TypedDict
 
+from bee_slack_app.model.pagination import ReviewPagination
 from bee_slack_app.model.review import ReviewContents
 from bee_slack_app.utils import datetime
 from bee_slack_app.view.common import book_section
@@ -76,7 +77,7 @@ def review_modal(
 
 
 def review_of_user_modal(
-    *, callback_id: str, reviews_param: dict, private_metadata: str
+    *, callback_id: str, reviews_param: ReviewPagination, private_metadata: str
 ):
     """
     ユーザのレビューモーダル

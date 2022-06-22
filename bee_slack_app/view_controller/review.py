@@ -2,6 +2,7 @@ import json
 import os
 from typing import Any, TypedDict
 
+from bee_slack_app.model.pagination import ReviewPagination
 from bee_slack_app.model.review import ReviewContents
 from bee_slack_app.model.user import User
 from bee_slack_app.service import (
@@ -84,11 +85,12 @@ def review_controller(app):  # pylint: disable=too-many-statements
         )
 
         reviews = []
+
         if review_items:
             reviews = review_items["items"]
             reviews = _make_review_contents_list_comment_short(reviews)
 
-            reviews_param = {
+            reviews_param: ReviewPagination = {
                 "reviews": reviews,
                 "show_move_to_back": False,
                 "show_move_to_next": review_items["has_next"],
@@ -152,7 +154,7 @@ def review_controller(app):  # pylint: disable=too-many-statements
             reviews = review_items["items"]
             reviews = _make_review_contents_list_comment_short(reviews)
 
-            reviews_param = {
+            reviews_param: ReviewPagination = {
                 "reviews": review_items["items"],
                 "show_move_to_back": True,
                 "show_move_to_next": review_items["has_next"],
@@ -208,7 +210,7 @@ def review_controller(app):  # pylint: disable=too-many-statements
             reviews = review_items["items"]
             reviews = _make_review_contents_list_comment_short(reviews)
 
-            reviews_param = {
+            reviews_param: ReviewPagination = {
                 "reviews": review_items["items"],
                 "show_move_to_back": not review_items["is_move_to_first"],
                 "show_move_to_next": True,
