@@ -426,8 +426,8 @@ def _make_review_contents_list_comment_short(
 
 class _PrivateMetadataConvertor:
     class _MetadataDict(TypedDict):
-        keys: Any
-        user_id_of_review: Any
+        keys: str
+        user_id_of_review: str
 
     @staticmethod
     # メタデータへの変換
