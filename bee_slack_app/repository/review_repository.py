@@ -113,6 +113,7 @@ class ReviewRepository:
         投稿されているレビューをページネーション対応付きで取得する
 
         Args:
+            user_id: 取得するユーザーID
             limit: 取得するアイテムの上限数
             start_key: 読み込み位置を表すキー
         Returns:
