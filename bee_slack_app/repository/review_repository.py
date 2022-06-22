@@ -117,8 +117,7 @@ class ReviewRepository:
             limit: 取得するアイテムの上限数
             start_key: 読み込み位置を表すキー
         Returns:
-            items: レビュー投稿日時が新しい順にソート済みの、本のリスト
-            last_key: 読み込んだ最後のキー
+            GetResponse: レビューのリストと、読み込んだ最後のキー
         """
 
         def query(exclusive_start_key=None, max_item_count=None):
