@@ -1,8 +1,7 @@
 from logging import getLogger
 from typing import Any, Optional, TypedDict
 
-from bee_slack_app.model.book import Book
-from bee_slack_app.model.review import ReviewContents
+from bee_slack_app.model import Book, ReviewContents
 from bee_slack_app.repository import BookRepository, ReviewRepository, UserRepository
 from bee_slack_app.utils import datetime
 

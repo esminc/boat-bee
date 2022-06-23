@@ -1,20 +1,14 @@
 import json
 from logging import getLogger
-from typing import Any, Optional, TypedDict
+from typing import Any, TypedDict
 
-from bee_slack_app.model.search import SearchedBook
-from bee_slack_app.model.suggested_book import SuggestedBook
+from bee_slack_app.model import SuggestedBook
 from bee_slack_app.service import (
     book_service,
     recommend_service,
     review_service,
     user_action_service,
     user_service,
-)
-from bee_slack_app.service.suggested import (
-    add_suggested,
-    create_initial_suggested,
-    get_is_interested,
 )
 from bee_slack_app.utils.datetime import parse
 from bee_slack_app.view.home import home
@@ -46,15 +40,6 @@ def home_controller(app):  # pylint: disable=too-many-statements
 
         recommended_books = recommend_service.recommend(user)
 
-        # ＤＢにおすすめ本の情報が未登録の場合に初期登録を行う。
-        add_first_suggested(user_id=event["user"], recommended_books=recommended_books)
-
-        # ＤＢにある興味ありボタンの状態をおすすめ本の情報に追加する
-        # ボタンのviewにあるvalue値(isbn + ml_model)をlistで作る
-        recommended_books_interested = add_interested_status(
-            user_id=event["user"], recommended_books=recommended_books
-        )
-
         books_params = None
         metadata_str = ""
 
@@ -76,7 +61,7 @@ def home_controller(app):  # pylint: disable=too-many-statements
             user_id=event["user"],
             view=home(
                 post_review_action_id="post_review_action",
-                recommended_books=recommended_books_interested,
+                recommended_books=recommended_books,
                 list_user_posted_review_action_id="list_user_posted_review_action",
                 user_info_action_id="user_info_action",
                 total_review_count=total_review_count,
@@ -113,11 +98,6 @@ def home_controller(app):  # pylint: disable=too-many-statements
         user_name = f"{user['user_name']}さん" if user is not None else "あなた"
 
         recommended_books = recommend_service.recommend(user)
-        # ＤＢにある興味ありボタンの状態をおすすめ本の情報に追加する
-        # ボタンのviewにあるvalue値(isbn + ml_model)をlistで作る
-        recommended_books_interested = add_interested_status(
-            user_id=user_id, recommended_books=recommended_books
-        )
 
         books_params = None
         metadata_str = ""
@@ -143,7 +123,7 @@ def home_controller(app):  # pylint: disable=too-many-statements
             user_id=user_id,
             view=home(
                 post_review_action_id="post_review_action",
-                recommended_books=recommended_books_interested,
+                recommended_books=recommended_books,
                 list_user_posted_review_action_id="list_user_posted_review_action",
                 user_info_action_id="user_info_action",
                 total_review_count=total_review_count,
@@ -176,11 +156,6 @@ def home_controller(app):  # pylint: disable=too-many-statements
         user_name = f"{user['user_name']}さん" if user is not None else "あなた"
 
         recommended_books = recommend_service.recommend(user)
-        # ＤＢにある興味ありボタンの状態をおすすめ本の情報に追加する
-        # ボタンのviewにあるvalue値(isbn + ml_model)をlistで作る
-        recommended_books_interested = add_interested_status(
-            user_id=user_id, recommended_books=recommended_books
-        )
 
         metadata_dict = _PrivateMetadataConvertor.to_dict(
             private_metadata=private_metadata
@@ -210,7 +185,7 @@ def home_controller(app):  # pylint: disable=too-many-statements
             user_id=user_id,
             view=home(
                 post_review_action_id="post_review_action",
-                recommended_books=recommended_books_interested,
+                recommended_books=recommended_books,
                 list_user_posted_review_action_id="list_user_posted_review_action",
                 user_info_action_id="user_info_action",
                 total_review_count=total_review_count,
@@ -240,11 +215,6 @@ def home_controller(app):  # pylint: disable=too-many-statements
         user_name = f"{user['user_name']}さん" if user is not None else "あなた"
 
         recommended_books = recommend_service.recommend(user)
-        # ＤＢにある興味ありボタンの状態をおすすめ本の情報に追加する
-        # ボタンのviewにあるvalue値(isbn + ml_model)をlistで作る
-        recommended_books_interested = add_interested_status(
-            user_id=body["user"]["id"], recommended_books=recommended_books
-        )
 
         books_params = None
         metadata_str = ""
@@ -266,36 +236,38 @@ def home_controller(app):  # pylint: disable=too-many-statements
 
         # 押された本の状態を更新する
         isbn = action["value"].split("#")[0]
-        pushed_books = [
-            book for book in recommended_books_interested if book[0]["isbn"] == isbn
-        ]
+        pushed_books = [book for book in recommended_books if book["isbn"] == isbn]
 
         # 念のため全ての本を先頭の状態に合わせる
-        new_state = not pushed_books[0][2]
-        for i, book in enumerate(recommended_books_interested):
+        new_state = not pushed_books[0]["interested"]
 
-            if book not in pushed_books:
+        # ボタンの表示を更新
+        recommended_books = [
+            {**recommended_book, "interested": new_state}
+            if recommended_book["isbn"] == isbn
+            else recommended_book
+            for recommended_book in recommended_books
+        ]
+
+        for book in recommended_books:
+
+            if book["isbn"] != isbn:
                 continue
-
-            # bookはタプルのため直接更新できないので一旦リストにして更新後に戻す
-            book_ = list(book)
-            book_[2] = new_state
-            recommended_books_interested[i] = tuple(book_)
 
             # 最新のボタン状態をDBに格納する
             suggested_book: SuggestedBook = {
                 "user_id": body["user"]["id"],
-                "isbn": book_[0]["isbn"],
-                "ml_model": book_[1],
-                "interested": book_[2],
+                "isbn": book["isbn"],
+                "ml_model": book["ml_model"],
+                "interested": book["interested"],
                 "updated_at": None,
             }
-            add_suggested(suggested_book)
+            recommend_service.update_suggested_book_state(suggested_book)
 
         # 興味ありボタンの表示を切り替える
         modal_view = home(
             post_review_action_id="post_review_action",
-            recommended_books=recommended_books_interested,
+            recommended_books=recommended_books,
             list_user_posted_review_action_id="list_user_posted_review_action",
             user_info_action_id="user_info_action",
             total_review_count=total_review_count,
@@ -308,36 +280,6 @@ def home_controller(app):  # pylint: disable=too-many-statements
             view_id=body["container"]["view_id"],
             view=modal_view,
         )
-
-    def add_first_suggested(
-        *, user_id: str, recommended_books: list[tuple[SearchedBook, str]]
-    ) -> None:
-        for recommended_book in recommended_books:
-            create_initial_suggested(
-                user_id=user_id,
-                isbn=recommended_book[0]["isbn"],
-                ml_model=recommended_book[1],
-            )
-
-    def add_interested_status(
-        *, user_id: str, recommended_books: list[tuple[SearchedBook, str]]
-    ) -> list[tuple[SearchedBook, str, bool]]:
-        # おすすめ本の情報に興味ありボタンの状態を追加する
-        recommended_books_interested = []
-        for recommended_book in recommended_books:
-            # 興味ありボタンの状態をDBから取り出す
-            interested_status: Optional[bool] = get_is_interested(
-                user_id=user_id,
-                isbn=recommended_book[0]["isbn"],
-                ml_model=recommended_book[1],
-            )
-            # タプルのおすすめ本の情報とタプルの興味あり状態を連結する
-            interested = False if interested_status is None else interested_status
-            recommended_book_interested = recommended_book + (interested,)
-
-            # おすすめされた個数分をlistに追加する
-            recommended_books_interested.append(recommended_book_interested)
-        return recommended_books_interested
 
 
 class _PrivateMetadataConvertor:

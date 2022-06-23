@@ -1,7 +1,8 @@
 # pylint: disable=non-ascii-name
+# pylint: disable=invalid-name
 
 
-from bee_slack_app.model.user import User
+from bee_slack_app.model import User
 from bee_slack_app.repository.user_repository import UserRepository
 from bee_slack_app.service.user import (
     add_user,
@@ -133,7 +134,7 @@ def test_全取得ではユーザー情報が無い場合に空のリストを�
 
 def test_全取得ではrepositoryの処理でエラーが発生した場合空のリストを返すこと(
     monkeypatch,
-):  # pylint: disable=invalid-name
+):
     def mock_user_repository_get_all(_):
         raise Exception("dummy exception")
 
@@ -144,7 +145,7 @@ def test_全取得ではrepositoryの処理でエラーが発生した場合空�
     assert len(users) == 0
 
 
-def test_ユーザー情報が無い場合にNoneを返すこと(monkeypatch):  # pylint: disable=invalid-name
+def test_ユーザー情報が無い場合にNoneを返すこと(monkeypatch):
     def mock_user_repository_get(_, __):
         return None
 
@@ -155,7 +156,7 @@ def test_ユーザー情報が無い場合にNoneを返すこと(monkeypatch):  
     assert user is None
 
 
-def test_repositoryの処理でエラーが発生した場合Noneを返すこと(monkeypatch):  # pylint: disable=invalid-name
+def test_repositoryの処理でエラーが発生した場合Noneを返すこと(monkeypatch):
     def mock_user_repository_get(_):
         raise Exception("dummy exception")
 
@@ -166,7 +167,7 @@ def test_repositoryの処理でエラーが発生した場合Noneを返すこと
     assert user is None
 
 
-def test_レビューを投稿しているユーザを取得できること(monkeypatch):  # pylint: disable=invalid-name
+def test_レビューを投稿しているユーザを取得できること(monkeypatch):
     def mock_user_repository_get_by_posted_review(_):
         return [
             {

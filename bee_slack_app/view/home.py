@@ -1,7 +1,6 @@
 from typing import Optional, TypedDict
 
-from bee_slack_app.model.book import Book
-from bee_slack_app.model.search import SearchedBook
+from bee_slack_app.model import Book, RecommendBook
 from bee_slack_app.view.common import book_section
 
 
@@ -13,7 +12,7 @@ class BooksParam(TypedDict):
 
 def home(  # pylint: disable=too-many-locals
     *,
-    recommended_books: list[tuple[SearchedBook, str, bool]],
+    recommended_books: list[RecommendBook],
     post_review_action_id: str,
     list_user_posted_review_action_id: str,
     user_info_action_id: str,
@@ -43,18 +42,18 @@ def home(  # pylint: disable=too-many-locals
 
             recommended_book_sections.append(
                 book_section(
-                    title=recommended_book[0]["title"],
-                    author=",".join(recommended_book[0]["authors"]),
-                    isbn=recommended_book[0]["isbn"],
-                    url=recommended_book[0]["google_books_url"],
-                    image_url=recommended_book[0]["image_url"],
+                    title=recommended_book["title"],
+                    author=recommended_book["author"],
+                    isbn=recommended_book["isbn"],
+                    url=recommended_book["url"],
+                    image_url=recommended_book["image_url"],
                 ),
             )
 
             suggested_button_value = {
-                "isbn": recommended_book[0]["isbn"],
-                "ml_model": recommended_book[1],
-                "interested": recommended_book[2],
+                "isbn": recommended_book["isbn"],
+                "ml_model": recommended_book["ml_model"],
+                "interested": recommended_book["interested"],
             }
             recommended_book_sections.append(create_button(suggested_button_value))
     else:

@@ -1,4 +1,4 @@
-from bee_slack_app.model.user_action import UserAction
+from bee_slack_app.model import UserAction
 from bee_slack_app.repository import database
 
 GSI_PK_VALUE = "user_action"

@@ -1,7 +1,7 @@
 from typing import TypedDict
 
-from bee_slack_app.model.pagination import ReviewPagination
-from bee_slack_app.model.review import ReviewContents
+
+from bee_slack_app.model import ReviewContents, ReviewPagination
 from bee_slack_app.utils import datetime
 from bee_slack_app.view.common import book_section
 

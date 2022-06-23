@@ -1,5 +1,6 @@
 # pylint: disable=attribute-defined-outside-init
 # pylint: disable=non-ascii-name
+# pylint: disable=invalid-name
 
 from moto import mock_dynamodb  # type: ignore
 
@@ -72,7 +73,7 @@ class TestUserRepository:
         assert user["age_range"] == "50"
         assert user["updated_at"] == "2022-04-11T09:23:04+09:00"
 
-    def test_ユーザーが無い場合にNoneが返ること(self):  # pylint: disable=invalid-name
+    def test_ユーザーが無い場合にNoneが返ること(self):
         item = {
             "PK": "user#test_user_id_0",
             "GSI_PK": "user",
@@ -127,7 +128,7 @@ class TestUserRepository:
 
         assert user is None
 
-    def test_ユーザー情報が0件の場合にNoneを返すこと(self):  # pylint: disable=invalid-name
+    def test_ユーザー情報が0件の場合にNoneを返すこと(self):
         # DBが空であることを確認
         response = self.table.scan()
         assert len(response["Items"]) == 0
@@ -213,7 +214,7 @@ class TestUserRepository:
         assert users[2]["age_range"] == "30"
         assert users[2]["updated_at"] == "2022-05-02T16:43:25+09:00"
 
-    def test_ユーザー情報が0件の場合に空のListを返すこと(self):  # pylint: disable=invalid-name
+    def test_ユーザー情報が0件の場合に空のListを返すこと(self):
         # DBが空であることを確認
         response = self.table.scan()
         assert len(response["Items"]) == 0
@@ -296,7 +297,7 @@ class TestUserRepository:
         assert users[1]["updated_at"] == "2022-04-01T00:00:00+09:00"
         assert users[1]["post_review_count"] == 1
 
-    def test_レビューを投稿したユーザが0件の場合に空配列を返すこと(self):  # pylint: disable=invalid-name
+    def test_レビューを投稿したユーザが0件の場合に空配列を返すこと(self):
         item = {
             "PK": "user#test_user_id_0",
             "GSI_PK": "user",

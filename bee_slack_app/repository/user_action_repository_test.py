@@ -4,7 +4,7 @@
 
 from moto import mock_dynamodb  # type: ignore
 
-from bee_slack_app.model.user_action import UserAction
+from bee_slack_app.model import UserAction
 from bee_slack_app.repository.database import create_table
 from bee_slack_app.repository.user_action_repository import UserActionRepository
 

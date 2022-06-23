@@ -1,4 +1,4 @@
-from bee_slack_app.model.review import ReviewContents
+from bee_slack_app.model import ReviewContents
 from bee_slack_app.utils import datetime
 from bee_slack_app.view.common import book_section
 
