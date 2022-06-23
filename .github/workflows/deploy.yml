@@ -1,13 +1,10 @@
-name: CI/CD
+name: Deploy
 
 on:
-  pull_request:
-  push:
-    branches:
-      - main
+  workflow_call:
 
 jobs:
-  check-code:
+  deploy:
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -21,7 +18,6 @@ jobs:
         with:
           python-version: "3.9.11"
       - uses: actions/setup-node@v2
-      - run: npm install -g prettier@2.6.2
       - run: npm install -g serverless@3.12.0
       - uses: actions/checkout@v2.4.0
       - run: pip install pipenv
@@ -30,26 +26,22 @@ jobs:
           path: ~/.local/share/virtualenvs
           key: ${{ runner.os }}-pipenv-${{ hashFiles('./Pipfile.lock') }}
       - run: make init
-      - run: make format-check
-      - run: make lint-check
-      - run: make type-check
-      - run: make test
-      - run: sls package
-        env:
-          SLACK_BOT_TOKEN: DUMMY_SLACK_BOT_TOKEN
-          SLACK_CHANNEL: DUMMY_SLACK_CHANNEL
-      - name: Notify Action Failure to Slack
+      #- run: make deploy-dev
+      #  if: inputs.stage =='dev'
+      #- run: make deploy-prod
+      #  if: inputs.stage =='prod'
+      - name: Notify Action Result to Slack
         uses: slackapi/slack-github-action@v1.18.0
         with:
           payload: |
             {
-              "text": "GitHub Actions 失敗通知 \n${{ github.event.pull_request.html_url || github.event.head_commit.url }}",
+              "text": "[boat-bee] ${{ inputs.stage }}環境へのデプロイ: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}",
               "blocks": [
                 {
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "GitHub Actions 失敗通知 \n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+                    "text": "[boat-bee] ${{ inputs.stage }}環境へのデプロイ: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
                   }
                 }
               ]
@@ -57,9 +49,3 @@ jobs:
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.PR_MESSAGE_SLACK_WEBHOOK_URL }}
           SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
-        if: failure()
-
-  deploy:
-    needs: check-code
-    #if: contains(github.event_name, 'push')
-    uses: ./.github/workflows/deploy.yml
