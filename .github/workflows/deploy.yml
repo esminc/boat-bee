@@ -2,8 +2,14 @@ name: Deploy
 
 on:
   workflow_call:
+    inputs:
+      stage: # dev or prod
+        required: true
+        type: string
     secrets:
       AWS_ROLE_ARN:
+        required: true
+      SLACK_WEBHOOK_URL:
         required: true
 
 jobs:
@@ -29,10 +35,10 @@ jobs:
           path: ~/.local/share/virtualenvs
           key: ${{ runner.os }}-pipenv-${{ hashFiles('./Pipfile.lock') }}
       - run: make init
-      #- run: make deploy-dev
-      #  if: inputs.stage =='dev'
-      #- run: make deploy-prod
-      #  if: inputs.stage =='prod'
+      - run: make deploy-dev
+        if: inputs.stage =='dev'
+      - run: make deploy-prod
+        if: inputs.stage =='prod'
       - name: Notify Action Result to Slack
         uses: slackapi/slack-github-action@v1.18.0
         with:
@@ -50,5 +56,5 @@ jobs:
               ]
             }
         env:
-          SLACK_WEBHOOK_URL: ${{ secrets.PR_MESSAGE_SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK

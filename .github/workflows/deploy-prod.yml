@@ -3,46 +3,10 @@ name: Manual Deploy to production
 on:
   workflow_dispatch:
 
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
-    steps:
-      - uses: aws-actions/configure-aws-credentials@v1
-        with:
-          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-          aws-region: ap-northeast-1
-      - uses: actions/setup-python@v3
-        with:
-          python-version: "3.9.11"
-      - uses: actions/setup-node@v2
-      - run: npm install -g serverless@3.12.0
-      - uses: actions/checkout@v2.4.0
-      - run: pip install pipenv
-      - uses: actions/cache@v3.0.1
-        with:
-          path: ~/.local/share/virtualenvs
-          key: ${{ runner.os }}-pipenv-${{ hashFiles('./Pipfile.lock') }}
-      - run: make init
-      - run: make deploy-prod
-      - name: Notify Action Result to Slack
-        uses: slackapi/slack-github-action@v1.18.0
-        with:
-          payload: |
-            {
-              "text": "[boat-bee] production環境へのデプロイ: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}",
-              "blocks": [
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "[boat-bee] production環境へのデプロイ: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
-                  }
-                }
-              ]
-            }
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.PR_MESSAGE_SLACK_WEBHOOK_URL }}
-          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+deploy:
+  uses: ./.github/workflows/deploy.yml
+  with:
+    stage: prod
+  secrets:
+    AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
+    SLACK_WEBHOOK_URL: ${{ secrets.PR_MESSAGE_SLACK_WEBHOOK_URL }}
