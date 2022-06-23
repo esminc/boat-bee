@@ -9,7 +9,14 @@ on:
 jobs:
   check-code:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     steps:
+      - uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ap-northeast-1
       - uses: actions/setup-python@v3
         with:
           python-version: "3.9.11"
@@ -27,6 +34,10 @@ jobs:
       - run: make lint-check
       - run: make type-check
       - run: make test
+      - run: sls package
+        env:
+          SLACK_BOT_TOKEN: DUMMY_SLACK_BOT_TOKEN
+          SLACK_CHANNEL: DUMMY_SLACK_CHANNEL
       - name: Notify Action Failure to Slack
         uses: slackapi/slack-github-action@v1.18.0
         with:
