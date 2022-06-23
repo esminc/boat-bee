@@ -1,3 +1,6 @@
+import inspect
+import os
+
 from datetime import datetime
 
 # 実行時間を計測するためのユーティリティ
