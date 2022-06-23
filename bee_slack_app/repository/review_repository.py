@@ -106,7 +106,7 @@ class ReviewRepository:
         self,
         *,
         user_id: str,
-        limit: Optional[int] = None,
+        limit: int = None,
         start_key: Optional[ReviewItemKey] = None,
     ) -> GetResponse:
         """
