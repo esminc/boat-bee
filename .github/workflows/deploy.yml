@@ -2,6 +2,9 @@ name: Deploy
 
 on:
   workflow_call:
+    secrets:
+      AWS_ROLE_ARN:
+        required: true
 
 jobs:
   deploy:

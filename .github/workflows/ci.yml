@@ -63,3 +63,5 @@ jobs:
     needs: check-code
     #if: contains(github.event_name, 'push')
     uses: ./.github/workflows/deploy.yml
+    secrets:
+      AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
