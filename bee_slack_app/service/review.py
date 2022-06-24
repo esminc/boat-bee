@@ -168,7 +168,7 @@ class GetNextReviewsResponse(TypedDict):
 def get_next_reviews_by_user_id(
     *,
     user_id: str,
-    limit: Optional[int] = None,
+    limit: int,
     keys: Any = None,
 ) -> Optional[GetNextReviewsResponse]:
     """
@@ -227,7 +227,7 @@ class GetBeforeReviewsResponse(TypedDict):
 def get_before_reviews_by_user_id(
     *,
     user_id: str,
-    limit: Optional[int] = None,
+    limit: int,
     keys: Any = None,
 ) -> Optional[GetBeforeReviewsResponse]:
     """

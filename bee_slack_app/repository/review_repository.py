@@ -106,7 +106,7 @@ class ReviewRepository:
         self,
         *,
         user_id: str,
-        limit: int = None,
+        limit: int,
         start_key: Optional[ReviewItemKey] = None,
     ) -> GetResponse:
         """
@@ -142,13 +142,6 @@ class ReviewRepository:
             exclusive_start_key=start_key,
             max_item_count=limit,
         )
-
-        if not limit:
-            # レスポンスに LastEvaluatedKey が含まれなくなるまでループ処理を実行する
-            # see https://dev.classmethod.jp/articles/hot-to-get-more-than-1mb-of-data-from-dynamodb-when-using-scan/
-            while last_key is not None:
-                new_items, last_key = query(exclusive_start_key=last_key)
-                items.extend(new_items)
 
         return {"items": items, "last_key": last_key}
 
