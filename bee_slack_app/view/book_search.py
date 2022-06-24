@@ -1,4 +1,5 @@
 from bee_slack_app.model import SearchedBook
+from bee_slack_app.view.common import google_logo_image
 
 
 def book_search_result_modal(
@@ -16,13 +17,7 @@ def book_search_result_modal(
         book_results: 本の検索結果のリスト
     """
     blocks = []
-    blocks.append(
-        {
-            "type": "image",
-            "image_url": "https://developers.google.com/maps/documentation/images/powered_by_google_on_white.png",
-            "alt_text": "",
-        },
-    )
+    blocks.append(google_logo_image())
 
     for book in book_results:
         blocks.extend(_generate_book_block(book))
@@ -121,14 +116,7 @@ def book_search_result_selected_modal(
 
     # Blocksで渡ってくるimageには余計なパラメータが付与されているため一旦削除して付け直す
     new_blocks = [x for x in new_blocks if x["type"] != "image"]
-    new_blocks.insert(
-        0,
-        {
-            "type": "image",
-            "image_url": "https://developers.google.com/maps/documentation/images/powered_by_google_on_white.png",
-            "alt_text": "",
-        },
-    )
+    new_blocks.insert(0, google_logo_image())
 
     return {
         "type": "modal",

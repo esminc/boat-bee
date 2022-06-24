@@ -2,7 +2,7 @@ from typing import TypedDict
 
 from bee_slack_app.model import ReviewContents, ReviewPagination
 from bee_slack_app.utils import datetime
-from bee_slack_app.view.common import book_section
+from bee_slack_app.view.common import book_section, google_logo_image
 
 
 class BookOfReview(TypedDict):
@@ -30,11 +30,7 @@ def review_modal(
         "callback_id": callback_id,
         "title": {"type": "plain_text", "text": "本のレビュー"},
         "blocks": [
-            {
-                "type": "image",
-                "image_url": "https://developers.google.com/maps/documentation/images/powered_by_google_on_white.png",
-                "alt_text": "Google Logo",
-            },
+            google_logo_image(),
             book_section(
                 title=book["title"],
                 author=book["author"],
@@ -94,11 +90,7 @@ def review_of_user_modal(
         "callback_id": callback_id,
         "title": {"type": "plain_text", "text": "本のレビュー"},
         "blocks": [
-            {
-                "type": "image",
-                "image_url": "https://developers.google.com/maps/documentation/images/powered_by_google_on_white.png",
-                "alt_text": "Google Logo",
-            },
+            google_logo_image(),
             {"type": "divider"},
         ],
     }
