@@ -1227,7 +1227,7 @@ def test_get_next_reviews_by_user_idで不正なKEYを指定した場合はNone�
     ]
 
     get_response = get_next_reviews_by_user_id(
-        user_id="user_id_0", limit=1, keys="INBALID_KEY_VALUE"
+        user_id="user_id_0", limit=1, keys="INVALID_KEY_VALUE"
     )
 
     assert get_response is None
