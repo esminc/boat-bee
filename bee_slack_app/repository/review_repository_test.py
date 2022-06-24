@@ -512,6 +512,17 @@ class TestReviewRepository:
         assert reviews[0]["book_author"] == "dummy_book_author_0"
         assert reviews[0]["book_url"] == "dummy_book_url_0"
 
+        assert reviews[1]["user_id"] == "user_id_1"
+        assert reviews[1]["isbn"] == "67890"
+        assert reviews[1]["book_title"] == "Python チュートリアル"
+        assert reviews[1]["score_for_me"] == "2"
+        assert reviews[1]["score_for_others"] == "4"
+        assert reviews[1]["review_comment"] == "そこそこです"
+        assert reviews[1]["updated_at"] == "2022-04-02T00:00:00+09:00"
+        assert reviews[1]["book_image_url"] == "dummy_book_image_url_2"
+        assert reviews[1]["book_author"] == "dummy_book_author_2"
+        assert reviews[1]["book_url"] == "dummy_book_url_2"
+
     def test_個数と存在しないユーザIDを指定した場合_空配列を返すこと(self):
         item = {
             "PK": "review#user_id_0#12345",
