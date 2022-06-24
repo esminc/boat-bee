@@ -1,5 +1,6 @@
 from typing import Optional, TypedDict
 
+import boto3  # type: ignore
 from boto3.dynamodb.conditions import Key  # type: ignore
 
 from bee_slack_app.model import ReviewContents
@@ -10,6 +11,15 @@ GSI_PK_VALUE = "review"
 
 def _encode_partition_key(*, user_id: str, isbn: str) -> str:
     return f"review#{user_id}#{isbn}"
+
+
+class ReviewItemKey(TypedDict):
+    isbn: str
+
+
+class GetResponse(TypedDict):
+    items: list[ReviewContents]
+    last_key: Optional[ReviewItemKey]
 
 
 class ReviewRepository:
@@ -91,6 +101,49 @@ class ReviewRepository:
             KeyConditionExpression=Key(database.GSI_PK).eq(GSI_PK_VALUE)
             & Key(database.GSI_1_SK).eq(user_id),
         )["Items"]
+
+    def get_limited_by_user_id(
+        self,
+        *,
+        user_id: str,
+        limit: int,
+        start_key: Optional[ReviewItemKey] = None,
+    ) -> GetResponse:
+        """
+        投稿されているレビューをページネーション対応付きで取得する
+
+        Args:
+            user_id: 取得するユーザーID
+            limit: 取得するアイテムの上限数
+            start_key: 読み込み位置を表すキー
+        Returns:
+            GetResponse: レビューのリストと、読み込んだ最後のキー
+        """
+
+        def query(exclusive_start_key=None, max_item_count=None):
+            option = {}
+            if exclusive_start_key:
+                option["ExclusiveStartKey"] = exclusive_start_key
+            if max_item_count:
+                option["Limit"] = max_item_count
+
+            response = self.table.query(
+                IndexName=database.GSI_1,
+                KeyConditionExpression=boto3.dynamodb.conditions.Key(
+                    database.GSI_PK
+                ).eq(GSI_PK_VALUE)
+                & Key(database.GSI_1_SK).eq(user_id),
+                **option,
+            )
+
+            return response["Items"], response.get("LastEvaluatedKey")
+
+        items, last_key = query(
+            exclusive_start_key=start_key,
+            max_item_count=limit,
+        )
+
+        return {"items": items, "last_key": last_key}
 
     def create(self, review):
         partition_key = _encode_partition_key(

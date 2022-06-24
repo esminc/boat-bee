@@ -1,5 +1,5 @@
 from logging import getLogger
-from typing import Optional
+from typing import Any, Optional, TypedDict
 
 from bee_slack_app.model import Book, ReviewContents
 from bee_slack_app.repository import BookRepository, ReviewRepository, UserRepository
@@ -157,3 +157,127 @@ def post_review(review_contents: ReviewContents) -> Optional[ReviewContents]:
     except Exception:  # pylint: disable=broad-except
         logger.exception("Failed to store data")
         return None
+
+
+class GetNextReviewsResponse(TypedDict):
+    items: list[ReviewContents]
+    keys: Any
+    has_next: bool
+
+
+def get_next_reviews_by_user_id(
+    *,
+    user_id: str,
+    limit: int,
+    keys: Any = None,
+) -> Optional[GetNextReviewsResponse]:
+    """
+    ユーザIDからレビューを順方向に取得する
+
+    Args:
+        user_id: レビューを取得したいユーザー
+        limit: 一度に取得するレビューの数
+        keys: 読み込みキーのリスト
+
+    Returns
+        items: 取得したレビューのリスト
+        keys: 更新された読み込みキーのリスト
+        has_next: さらに読み込む要素があるか
+    """
+    try:
+        logger = getLogger(__name__)
+
+        if not keys:
+            keys = []
+
+        if not _is_valid_key(keys):
+            logger.info({"keys": keys})
+            return None
+
+        start_key = keys[-1] if len(keys) > 0 else None
+
+        reviews = review_repository.get_limited_by_user_id(
+            user_id=user_id, limit=limit, start_key=start_key
+        )
+
+        fill_user_name(reviews["items"])
+
+        logger.info({"reviews": reviews})
+
+        last_key = [reviews["last_key"]] if reviews["last_key"] else ["end"]  # type: ignore
+        has_next = last_key != ["end"]
+
+        return {
+            "items": reviews["items"],
+            "keys": keys + last_key,
+            "has_next": has_next,
+        }
+
+    except Exception:  # pylint: disable=broad-except
+        logger.exception("Failed to get next data.")
+        return None
+
+
+class GetBeforeReviewsResponse(TypedDict):
+    items: list[ReviewContents]
+    keys: Any
+    is_move_to_first: bool
+
+
+def get_before_reviews_by_user_id(
+    *,
+    user_id: str,
+    limit: int,
+    keys: Any = None,
+) -> Optional[GetBeforeReviewsResponse]:
+    """
+    ユーザIDからレビューを逆方向に取得する
+
+    keysの状態より1ページ前のレビューリストを取得する。
+    例えば、keysが3ページ目を指しているならば、2ページ目のレビューリストを取得する。
+
+    Args:
+        user_id: レビューを取得したいユーザー
+        limit: 一度に取得するレビューの数
+        keys: 読み込みキーのリスト
+
+    Returns
+        items: 取得したレビューのリスト
+        keys: 更新された読み込みキーのリスト
+        is_move_to_first: 0ページへの遷移か
+    """
+    try:
+        logger = getLogger(__name__)
+
+        if not keys:
+            keys = []
+
+        if not _is_valid_key(keys):
+            logger.info({"keys": keys})
+            return None
+
+        is_move_to_first = len(keys) < 3
+
+        start_key = None if is_move_to_first else keys[-3]
+
+        reviews = review_repository.get_limited_by_user_id(
+            user_id=user_id, limit=limit, start_key=start_key
+        )
+
+        fill_user_name(reviews["items"])
+
+        logger.info({"reviews": reviews})
+
+        return {
+            "items": reviews["items"],
+            "keys": [reviews["last_key"]] if is_move_to_first else keys[:-1],
+            "is_move_to_first": is_move_to_first,
+        }
+
+    except Exception:  # pylint: disable=broad-except
+        logger.exception("Failed to get before data.")
+        return None
+
+
+def _is_valid_key(target) -> bool:
+    return isinstance(target, list)

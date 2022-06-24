@@ -1,6 +1,6 @@
 from typing import TypedDict
 
-from bee_slack_app.model import ReviewContents
+from bee_slack_app.model import ReviewContents, ReviewPagination
 from bee_slack_app.utils import datetime
 from bee_slack_app.view.common import book_section
 
@@ -75,17 +75,22 @@ def review_modal(
     return view
 
 
-def review_of_user_modal(*, callback_id: str, reviews: list[ReviewContents]):
+def review_of_user_modal(
+    *, callback_id: str, reviews_param: ReviewPagination, private_metadata: str
+):
     """
     ユーザのレビューモーダル
 
     Args:
         callback_id: モーダルのcallback_id
-        reviews: 表示するレビューのリスト
+        reviews_param: 「投稿されているレビュー」のデータ
+        private_metadata: private_metadata
+
     """
 
     view = {
         "type": "modal",
+        "private_metadata": private_metadata,
         "callback_id": callback_id,
         "title": {"type": "plain_text", "text": "本のレビュー"},
         "blocks": [
@@ -100,7 +105,9 @@ def review_of_user_modal(*, callback_id: str, reviews: list[ReviewContents]):
 
     review_blocks = []
 
-    for review in reviews:
+    move_buttons = {"type": "actions", "elements": []}
+
+    for review in reviews_param["reviews"]:
 
         update_datetime = (
             datetime.parse(review["updated_at"]) if review["updated_at"] else "-"
@@ -131,6 +138,27 @@ def review_of_user_modal(*, callback_id: str, reviews: list[ReviewContents]):
         )
 
         review_blocks.append({"type": "divider"})
+
+    if reviews_param["show_move_to_back"]:
+        move_buttons["elements"] = [
+            {  # type: ignore
+                "type": "button",
+                "text": {"type": "plain_text", "text": "前へ"},
+                "action_id": "review_move_to_back_action",
+            }
+        ]
+
+    if reviews_param["show_move_to_next"]:
+        move_buttons["elements"] = move_buttons["elements"] + [  # type: ignore
+            {
+                "type": "button",
+                "text": {"type": "plain_text", "text": "次へ"},
+                "action_id": "review_move_to_next_action",
+            }
+        ]
+
+    if bool(move_buttons["elements"]):
+        review_blocks.append(move_buttons)  # type: ignore
 
     view["blocks"].extend(review_blocks)  # type: ignore
 
