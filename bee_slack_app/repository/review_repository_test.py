@@ -1,6 +1,7 @@
 # pylint: disable=attribute-defined-outside-init
 # pylint: disable=non-ascii-name
 # pylint: disable=invalid-name
+# pylint: disable=too-many-lines
 
 
 import boto3  # type: ignore
