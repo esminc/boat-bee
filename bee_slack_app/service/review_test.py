@@ -1273,9 +1273,9 @@ def test_get_next_reviews_by_user_idでuser_repositoryの処理でエラーが�
     )
     mock_user_repository_get_all.side_effect = Exception("dummy exception")
 
-    reviews = get_next_reviews_by_user_id(user_id="user_id_0", limit=1)
+    get_response = get_next_reviews_by_user_id(user_id="user_id_0", limit=1)
 
-    assert reviews is None
+    assert get_response is None
 
 
 def test_get_before_reviews_by_user_idで個数を指定してレビューが取得できること(
@@ -1490,6 +1490,6 @@ def test_get_before_reviews_by_user_idでuser_repositoryの処理でエラーが
     )
     mock_user_repository_get_all.side_effect = Exception("dummy exception")
 
-    reviews = get_before_reviews_by_user_id(user_id="user_id_0", limit=1)
+    get_response = get_before_reviews_by_user_id(user_id="user_id_0", limit=1)
 
-    assert reviews is None
+    assert get_response is None
