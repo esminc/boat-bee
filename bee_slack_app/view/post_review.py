@@ -1,6 +1,6 @@
 from bee_slack_app.model import ReviewContents
 from bee_slack_app.utils import datetime
-from bee_slack_app.view.common import book_section
+from bee_slack_app.view.common import book_section, google_logo_image
 
 
 def search_book_to_review_modal(*, callback_id: str):
@@ -30,11 +30,7 @@ def search_book_to_review_modal(*, callback_id: str):
                     },
                 },
             },
-            {
-                "type": "image",
-                "image_url": "https://developers.google.com/maps/documentation/images/powered_by_google_on_white.png",
-                "alt_text": "",
-            },
+            google_logo_image(),
         ],
     }
 
@@ -55,11 +51,7 @@ def post_review_modal(*, callback_id: str, book_section_to_review):
         "close": {"type": "plain_text", "text": "戻る", "emoji": True},
         "submit": {"type": "plain_text", "text": "送信"},
         "blocks": [
-            {
-                "type": "image",
-                "image_url": "https://developers.google.com/maps/documentation/images/powered_by_google_on_white.png",
-                "alt_text": "",
-            },
+            google_logo_image(),
             book_section_to_review,
             {
                 "type": "input",

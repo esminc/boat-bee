@@ -53,3 +53,14 @@ def book_section(
             "alt_text": title,
         },
     }
+
+
+def google_logo_image():
+    """
+    「Powered by Google」の画像
+    """
+    return {
+        "type": "image",
+        "image_url": "https://developers.google.com/maps/documentation/images/powered_by_google_on_white.png",
+        "alt_text": "Google Logo",
+    }
