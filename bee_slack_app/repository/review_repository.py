@@ -3,7 +3,7 @@ from typing import Optional, TypedDict
 import boto3  # type: ignore
 from boto3.dynamodb.conditions import Key  # type: ignore
 
-from bee_slack_app.model import ReviewContents
+from bee_slack_app.model import Review
 from bee_slack_app.repository import database
 
 GSI_PK_VALUE = "review"
@@ -18,7 +18,7 @@ class ReviewItemKey(TypedDict):
 
 
 class GetResponse(TypedDict):
-    items: list[ReviewContents]
+    items: list[Review]
     last_key: Optional[ReviewItemKey]
 
 
@@ -30,7 +30,7 @@ class ReviewRepository:
     def __init__(self):
         self.table = database.get_table()
 
-    def get(self, *, user_id: str, isbn: str) -> Optional[ReviewContents]:
+    def get(self, *, user_id: str, isbn: str) -> Optional[Review]:
         """
         本のレビューを取得する
 
@@ -43,7 +43,7 @@ class ReviewRepository:
         partition_key = _encode_partition_key(user_id=user_id, isbn=isbn)
         return self.table.get_item(Key={database.PK: partition_key}).get("Item")
 
-    def get_all(self) -> list[ReviewContents]:
+    def get_all(self) -> list[Review]:
         """
         本のレビューを全て取得する
 
@@ -72,7 +72,7 @@ class ReviewRepository:
 
         return items
 
-    def get_by_isbn(self, *, isbn: str) -> list[ReviewContents]:
+    def get_by_isbn(self, *, isbn: str) -> list[Review]:
         """
         ISBNから、本のレビューを取得する
 
@@ -87,7 +87,7 @@ class ReviewRepository:
             & Key(database.GSI_2_SK).eq(isbn),
         )["Items"]
 
-    def get_by_user_id(self, *, user_id: str) -> list[ReviewContents]:
+    def get_by_user_id(self, *, user_id: str) -> list[Review]:
         """
         ユーザIDから、本のレビューを取得する
 
