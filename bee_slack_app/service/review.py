@@ -1,7 +1,7 @@
 from logging import getLogger
 from typing import Any, Optional, TypedDict
 
-from bee_slack_app.model import Book, ReviewContents
+from bee_slack_app.model import Book, Review
 from bee_slack_app.repository import BookRepository, ReviewRepository, UserRepository
 from bee_slack_app.utils import datetime
 
@@ -10,7 +10,7 @@ user_repository = UserRepository()
 book_repository = BookRepository()
 
 
-def get_review(*, user_id: str, isbn: str) -> Optional[ReviewContents]:
+def get_review(*, user_id: str, isbn: str) -> Optional[Review]:
     """
     レビューを一意に指定して取得する
     """
@@ -33,7 +33,7 @@ def get_review(*, user_id: str, isbn: str) -> Optional[ReviewContents]:
         return None
 
 
-def get_review_all() -> Optional[list[ReviewContents]]:
+def get_review_all() -> Optional[list[Review]]:
     """
     全てのレビューを取得する
 
@@ -54,7 +54,7 @@ def get_review_all() -> Optional[list[ReviewContents]]:
         return None
 
 
-def get_reviews_by_isbn(*, isbn: str) -> Optional[list[ReviewContents]]:
+def get_reviews_by_isbn(*, isbn: str) -> Optional[list[Review]]:
     """
     ISBNからレビューを取得する
     """
@@ -74,7 +74,7 @@ def get_reviews_by_isbn(*, isbn: str) -> Optional[list[ReviewContents]]:
         return None
 
 
-def get_reviews_by_user_id(*, user_id: str) -> Optional[list[ReviewContents]]:
+def get_reviews_by_user_id(*, user_id: str) -> Optional[list[Review]]:
     """
     ユーザIDからレビューを取得する
     """
@@ -94,7 +94,7 @@ def get_reviews_by_user_id(*, user_id: str) -> Optional[list[ReviewContents]]:
         return None
 
 
-def fill_user_name(review_contents_list: list[ReviewContents]) -> None:
+def fill_user_name(review_contents_list: list[Review]) -> None:
     # 対応するユーザ情報からユーザ名を取得してレビュー情報に追加する
     users = user_repository.get_all()
     for review_contents in review_contents_list:
@@ -110,14 +110,14 @@ def fill_user_name(review_contents_list: list[ReviewContents]) -> None:
         review_contents["user_name"] = user_name
 
 
-def post_review(review_contents: ReviewContents) -> Optional[ReviewContents]:
+def post_review(review_contents: Review) -> Optional[Review]:
 
     logger = getLogger(__name__)
 
     try:
         updated_at = datetime.now()
 
-        item: ReviewContents = {
+        item: Review = {
             "user_id": review_contents["user_id"],
             "book_title": review_contents["book_title"],
             "isbn": review_contents["isbn"],
@@ -160,7 +160,7 @@ def post_review(review_contents: ReviewContents) -> Optional[ReviewContents]:
 
 
 class GetNextReviewsResponse(TypedDict):
-    items: list[ReviewContents]
+    items: list[Review]
     keys: Any
     has_next: bool
 
@@ -219,7 +219,7 @@ def get_next_reviews_by_user_id(
 
 
 class GetBeforeReviewsResponse(TypedDict):
-    items: list[ReviewContents]
+    items: list[Review]
     keys: Any
     is_move_to_first: bool
 

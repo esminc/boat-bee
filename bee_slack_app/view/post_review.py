@@ -1,4 +1,4 @@
-from bee_slack_app.model import ReviewContents
+from bee_slack_app.model import Review
 from bee_slack_app.utils import datetime
 from bee_slack_app.view.common import book_section, google_logo_image
 
@@ -164,7 +164,7 @@ def post_review_modal(*, callback_id: str, book_section_to_review):
     }
 
 
-def notify_review_post_message_blocks(review_contents: ReviewContents):
+def notify_review_post_message_blocks(review_contents: Review):
     """
     レビュー投稿メッセージブロック
 

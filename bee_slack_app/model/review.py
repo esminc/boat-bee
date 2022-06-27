@@ -1,7 +1,7 @@
 from typing import Optional, TypedDict
 
 
-class ReviewContentsRequired(TypedDict):
+class ReviewRequired(TypedDict):
     """
     Required keys
     """
@@ -19,7 +19,7 @@ class ReviewContentsRequired(TypedDict):
     book_description: str
 
 
-class ReviewContents(ReviewContentsRequired, total=False):
+class Review(ReviewRequired, total=False):
     """
     Optional keys
     """

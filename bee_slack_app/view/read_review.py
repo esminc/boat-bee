@@ -1,6 +1,6 @@
 from typing import TypedDict
 
-from bee_slack_app.model import ReviewContents, ReviewPagination
+from bee_slack_app.model import Review, ReviewPagination
 from bee_slack_app.utils import datetime
 from bee_slack_app.view.common import book_section, google_logo_image
 
@@ -13,9 +13,7 @@ class BookOfReview(TypedDict):
     image_url: str
 
 
-def review_modal(
-    *, callback_id: str, book: BookOfReview, reviews: list[ReviewContents]
-):
+def review_modal(*, callback_id: str, book: BookOfReview, reviews: list[Review]):
     """
     レビューモーダル
 
@@ -157,7 +155,7 @@ def review_of_user_modal(
     return view
 
 
-def review_detail_modal(review_contents: ReviewContents):
+def review_detail_modal(review_contents: Review):
     """
     レビュー詳細モーダル
 

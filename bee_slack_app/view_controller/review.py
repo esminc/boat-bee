@@ -2,7 +2,7 @@ import json
 import os
 from typing import Any, TypedDict
 
-from bee_slack_app.model import ReviewContents, ReviewPagination, User
+from bee_slack_app.model import Review, ReviewPagination, User
 from bee_slack_app.service import (
     book_search_service,
     review_service,
@@ -323,7 +323,7 @@ def review_controller(app):  # pylint: disable=too-many-statements
         # response_action="clear" を設定する
         ack(response_action="clear")
 
-        review_contents: ReviewContents = {
+        review_contents: Review = {
             "user_id": user_id,
             "book_title": book_title,
             "isbn": isbn,
@@ -403,8 +403,8 @@ def review_controller(app):  # pylint: disable=too-many-statements
 
 
 def _make_review_contents_list_comment_short(
-    review_contents_list: list[ReviewContents],
-) -> list[ReviewContents]:
+    review_contents_list: list[Review],
+) -> list[Review]:
     """
     レビューのコメントを、一覧表示用に短くする
     """
