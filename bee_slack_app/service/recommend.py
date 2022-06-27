@@ -102,7 +102,7 @@ def created_at() -> Optional[str]:
     logger = getLogger(__name__)
 
     try:
-        metadata = RecommendBookRepository().fetch_metadata()
+        metadata = recommend_book_repository.fetch_metadata()
 
         return metadata.get("created_at") if metadata is not None else None
 
