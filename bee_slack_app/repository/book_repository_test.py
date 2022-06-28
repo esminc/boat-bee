@@ -93,7 +93,117 @@ class TestBookRepository:
 
         book_repository = BookRepository()
 
-        books = book_repository.fetch()
+        book = book_repository.fetch(isbn="01234")
+
+        assert book["isbn"] == "01234"
+        assert book["title"] == "dummy_title_2"
+        assert book["author"] == "dummy_author_2"
+        assert book["url"] == "dummy_url_2"
+        assert book["image_url"] == "dummy_image_url_2"
+        assert book["description"] == "dummy_description_2"
+        assert book["updated_at"] == "2022-04-03T00:00:00+09:00"
+
+    def test_fetchで本が存在しない場合はNoneを返すこと(self):
+        item = {
+            "PK": "book#12345",
+            "GSI_PK": "book",
+            "GSI_0_SK": "251753562000.0",
+            "isbn": "12345",
+            "updated_at": "251753562000.0",
+            "title": "dummy_title_0",
+            "author": "dummy_author_0",
+            "url": "dummy_url_0",
+            "image_url": "dummy_image_url_0",
+            "description": "dummy_description_0",
+        }
+
+        self.table.put_item(Item=item)
+
+        item = {
+            "PK": "book#67890",
+            "GSI_PK": "book",
+            "GSI_0_SK": "251753475600.0",
+            "isbn": "67890",
+            "updated_at": "251753475600.0",
+            "title": "dummy_title_1",
+            "author": "dummy_author_1",
+            "url": "dummy_url_1",
+            "image_url": "dummy_image_url_1",
+            "description": "dummy_description_1",
+        }
+
+        self.table.put_item(Item=item)
+
+        item = {
+            "PK": "book#01234",
+            "GSI_PK": "book",
+            "GSI_0_SK": "251753389200.0",
+            "isbn": "01234",
+            "updated_at": "251753389200.0",
+            "title": "dummy_title_2",
+            "author": "dummy_author_2",
+            "url": "dummy_url_2",
+            "image_url": "dummy_image_url_2",
+            "description": "dummy_description_2",
+        }
+
+        self.table.put_item(Item=item)
+
+        book_repository = BookRepository()
+
+        book = book_repository.fetch(isbn="isbn_not_exist")
+
+        assert book is None
+
+    def test_fetch_allで本を取得できること(self):
+        item = {
+            "PK": "book#12345",
+            "GSI_PK": "book",
+            "GSI_0_SK": "251753562000.0",
+            "isbn": "12345",
+            "updated_at": "251753562000.0",
+            "title": "dummy_title_0",
+            "author": "dummy_author_0",
+            "url": "dummy_url_0",
+            "image_url": "dummy_image_url_0",
+            "description": "dummy_description_0",
+        }
+
+        self.table.put_item(Item=item)
+
+        item = {
+            "PK": "book#67890",
+            "GSI_PK": "book",
+            "GSI_0_SK": "251753475600.0",
+            "isbn": "67890",
+            "updated_at": "251753475600.0",
+            "title": "dummy_title_1",
+            "author": "dummy_author_1",
+            "url": "dummy_url_1",
+            "image_url": "dummy_image_url_1",
+            "description": "dummy_description_1",
+        }
+
+        self.table.put_item(Item=item)
+
+        item = {
+            "PK": "book#01234",
+            "GSI_PK": "book",
+            "GSI_0_SK": "251753389200.0",
+            "isbn": "01234",
+            "updated_at": "251753389200.0",
+            "title": "dummy_title_2",
+            "author": "dummy_author_2",
+            "url": "dummy_url_2",
+            "image_url": "dummy_image_url_2",
+            "description": "dummy_description_2",
+        }
+
+        self.table.put_item(Item=item)
+
+        book_repository = BookRepository()
+
+        books = book_repository.fetch_all()
 
         books_items = books["items"]
 
@@ -125,7 +235,7 @@ class TestBookRepository:
         assert books_items[2]["description"] == "dummy_description_0"
         assert books_items[2]["updated_at"] == "2022-04-01T00:00:00+09:00"
 
-    def test_複数回に分けて本を取得できること(self):
+    def test_fetch_allで複数回に分けて本を取得できること(self):
         item = {
             "PK": "book#12345",
             "GSI_PK": "book",
@@ -174,7 +284,7 @@ class TestBookRepository:
         book_repository = BookRepository()
 
         # 1回目
-        books = book_repository.fetch(limit=2)
+        books = book_repository.fetch_all(limit=2)
 
         books_items = books["items"]
 
@@ -199,7 +309,7 @@ class TestBookRepository:
         assert books_items[1]["updated_at"] == "2022-04-02T00:00:00+09:00"
 
         # 2回目
-        books = book_repository.fetch(limit=2, start_key=books["last_key"])
+        books = book_repository.fetch_all(limit=2, start_key=books["last_key"])
 
         books_items = books["items"]
 
@@ -213,14 +323,14 @@ class TestBookRepository:
         assert books_items[0]["description"] == "dummy_description_0"
         assert books_items[0]["updated_at"] == "2022-04-01T00:00:00+09:00"
 
-    def test_本が存在しない場合は空配列を返すこと(self):
+    def test_fetch_allで本が存在しない場合は空配列を返すこと(self):
         response = self.table.scan()
 
         assert len(response["Items"]) == 0
 
         book_repository = BookRepository()
 
-        books = book_repository.fetch()
+        books = book_repository.fetch_all()
 
         books_items = books["items"]
         books_last_key = books["last_key"]

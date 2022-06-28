@@ -3,12 +3,13 @@ from typing import Optional
 
 from bee_slack_app.model import RecommendBook, SuggestedBook, User
 from bee_slack_app.repository import (
-    GoogleBooksRepository,
+    BookRepository,
     RecommendBookRepository,
     SuggestedBookRepository,
 )
 from bee_slack_app.utils import datetime
 
+book_repository = BookRepository()
 recommend_book_repository = RecommendBookRepository()
 suggested_book_repository = SuggestedBookRepository()
 
@@ -51,7 +52,7 @@ def recommend(user: User) -> list[RecommendBook]:
 
         recommended_books = []
         for ml_model, isbn in recommended_book_dict.items():
-            book = GoogleBooksRepository().search_book_by_isbn(isbn)
+            book = book_repository.fetch(isbn=isbn)
             if book is not None:
                 suggested_book = suggested_book_repository.get(
                     user_id=user["user_id"], isbn=isbn, ml_model=ml_model
@@ -74,11 +75,11 @@ def recommend(user: User) -> list[RecommendBook]:
                 recommended_book: RecommendBook = {
                     "title": book["title"],
                     "isbn": isbn,
-                    "author": ",".join(book["authors"]),
-                    "url": book["google_books_url"],
+                    "author": book["author"],
+                    "url": book["url"],
                     "image_url": book["image_url"],
                     "description": book["description"],
-                    "updated_at": "no_data",  # この関数を呼ぶ側では不要だが、型的に必要なので、暫定対応
+                    "updated_at": book["updated_at"],
                     "interested": interested,
                     "ml_model": ml_model,
                 }
