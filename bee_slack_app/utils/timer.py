@@ -17,7 +17,7 @@ class Timer(object):
         print(f"time: {diff}ms\t\tlocation: {self.location}")
 
 
-def location(depth=0):
+def location():
     frame = inspect.currentframe().f_back
     return (
         os.path.basename(frame.f_code.co_filename),
