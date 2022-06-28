@@ -57,7 +57,7 @@ BeeApp の動作性能を測定する方法です。
 1. 測定したいファイルで以下のインポートを行う
 
 ```py
-from bee_slack_app.utils.timer import Timer, location
+from bee_slack_app.utils.timer import StopWatch, location
 ```
 
 2. 測定したい箇所を以下のように変更する
@@ -72,7 +72,7 @@ from bee_slack_app.utils.timer import Timer, location
   with ブロックで囲む（測定したい処理をインデントする）
 
 ```py
-with Timer(location()):
+with StopWatch(location()):
     何かの処理
 ```
 
@@ -97,7 +97,7 @@ def hello_controller(app):
     @app.message("hello")
     def message_hello(message, say):
         # say() sends a message to the channel where the event was triggered
-        with Timer(location()):
+        with StopWatch(location()):
             say(f"Hey there!! <@{message['user']}>!")
 ```
 

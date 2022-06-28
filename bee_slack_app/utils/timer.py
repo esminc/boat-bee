@@ -4,7 +4,7 @@ from datetime import datetime
 
 
 # 実行時間を計測するためのユーティリティ
-class Timer(object):
+class StopWatch(object):
     def __init__(self, location_: str):
         self.start = 0.0
         self.location = location_
@@ -27,7 +27,7 @@ def location():
 
 
 # コンテキストマネージャーとして使うことで、実行時間を計測する。
-with Timer(location_=location()):
+with StopWatch(location_=location()):
     arr = []
     for i in range(10000000):
         arr.append(i)
