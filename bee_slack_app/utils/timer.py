@@ -4,7 +4,7 @@ from datetime import datetime
 
 
 # 実行時間を計測するためのユーティリティ
-class StopWatch(object):
+class StopWatch:
     def __init__(self, location_: str):
         self.start = 0.0
         self.location = location_
