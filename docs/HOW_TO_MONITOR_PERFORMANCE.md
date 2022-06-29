@@ -1,14 +1,14 @@
-# デバッグ
+# 性能測定
 
-## 性能測定
+## 本ドキュメントの目的
 
-BeeApp の動作性能を測定する方法です。
+BeeApp の動作性能を測定する方法を説明する
 
 [BeeApp の性能測定をしたい #380](https://github.com/esminc/boat-bee/issues/380) 参照
 
 ※AWS 環境/Ngrok 環境の違いによる影響を考慮の上利用してください
 
-### 手順
+## 手順
 
 1. 測定したいファイルで以下のインポートを行う
 
@@ -33,10 +33,10 @@ with StopWatch(location()):
 ```
 
 3. 測定したい箇所を動作させる
+
 4. ターミナルに以下のように測定結果が表示される
 
 ```sh
-
 time: 3.115ms           location: ('home.py', 'update_home_view', 48)
 time: 597.583ms         location: ('home.py', 'update_home_view', 65)
 time: 2.534ms           location: ('home.py', 'update_home_view', 48)
@@ -46,7 +46,8 @@ time: 670.071ms         location: ('hello.py', 'show_my_review', 15)
 
 ### 測定サンプル
 
-- bee_slack_app/view_controller/hello.py
+- bee_slack_app/view_controller/hello.py  
+  `say`の処理を with ブロックで囲む
 
 ```py
 def hello_controller(app):

@@ -44,6 +44,6 @@ AWS 環境で環境変数を設定する場合は、AWS Secrets Manager を介�
 - SLACK_SIGNING_SECRET [Bolt 入門ガイド](https://slack.dev/bolt-python/ja-jp/tutorial/getting-started-http)を参照
 - NOTIFY_POST_REVIEW_CHANNEL レビュー投稿通知を流す Slack チャンネル ID
 
-## 性能測定方法
+### 性能測定方法
 
-[こちらを参照](/bee_slack_app/utils/README.md)
+[こちらを参照](/docs/HOW_TO_MONITOR_PERFORMANCE.md)
