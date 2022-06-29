@@ -1,13 +1,15 @@
 import os
 
 from bee_slack_app.service import review_service
+from bee_slack_app.utils.timer import StopWatch, location
 
 
 def hello_controller(app):
     @app.message("hello")
     def message_hello(message, say):
         # say() sends a message to the channel where the event was triggered
-        say(f"Hey there!! <@{message['user']}>!")
+        with StopWatch(location()):
+            say(f"Hey there!! <@{message['user']}>!")
 
     @app.message("myreview")
     def show_my_review(ack, message, client):
