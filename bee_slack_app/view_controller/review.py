@@ -148,6 +148,8 @@ def review_controller(app):  # pylint: disable=too-many-statements
             keys=metadata_dict["keys"],
         )
 
+        reviews = []
+
         if review_items:
             reviews = review_items["items"]
             reviews = _make_review_contents_list_comment_short(reviews)
@@ -204,6 +206,9 @@ def review_controller(app):  # pylint: disable=too-many-statements
             limit=BOOK_NUMBER_PER_PAGE,
             keys=metadata_dict["keys"],
         )
+
+        reviews = []
+
         if review_items:
             reviews = review_items["items"]
             reviews = _make_review_contents_list_comment_short(reviews)
