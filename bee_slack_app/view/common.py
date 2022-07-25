@@ -55,12 +55,14 @@ def book_section(
     }
 
 
-def google_logo_image():
+def google_graphic():
     """
-    「Powered by Google」の画像
+    「Powered by Google」
     """
     return {
-        "type": "image",
-        "image_url": "https://developers.google.com/maps/documentation/images/powered_by_google_on_white.png",
-        "alt_text": "Google Logo",
+        "type": "section",
+        "text": {
+            "type": "mrkdwn",
+            "text": "Powered by Google",
+        },
     }

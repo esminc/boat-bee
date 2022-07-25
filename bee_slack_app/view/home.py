@@ -1,7 +1,7 @@
 from typing import Optional, TypedDict
 
 from bee_slack_app.model import Book, RecommendBook
-from bee_slack_app.view.common import book_section, google_logo_image
+from bee_slack_app.view.common import book_section, google_graphic
 
 
 class BooksParam(TypedDict):
@@ -183,7 +183,7 @@ def home(  # pylint: disable=too-many-locals
                 "emoji": True,
             },
         },
-        google_logo_image(),
+        google_graphic(),
     ]
 
     view["blocks"].extend(following_blocks)  # type: ignore
