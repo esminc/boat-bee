@@ -3,7 +3,7 @@ import {
   SecretsManagerClient,
   GetSecretValueCommand,
 } from "@aws-sdk/client-secrets-manager";
-import { HelloController } from "./src/view_controller";
+import { HelloController, homeController } from "./src/view_controller";
 
 type AwsHandler = Awaited<ReturnType<AwsLambdaReceiver["start"]>>;
 
@@ -42,6 +42,7 @@ export const handler: AwsHandler = async (event, context, callback) => {
   });
 
   HelloController(app);
+  homeController(app);
 
   const handler = await awsLambdaReceiver.start();
   return handler(event, context, callback);

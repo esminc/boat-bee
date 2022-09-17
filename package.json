@@ -29,6 +29,7 @@
     }
   },
   "dependencies": {
+    "@aws-sdk/client-dynamodb": "3.172.0",
     "@aws-sdk/client-secrets-manager": "3.171.0",
     "@slack/bolt": "3.12.1"
   }

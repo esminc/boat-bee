@@ -5,7 +5,9 @@ export default (app: App) => {
     await say(`Hey there!!`);
   });
 
-  app.command("/bee", async ({ say }) => {
-    await say({ text: "Hey there", reply_broadcast: false });
+  app.command("/bee", async ({ ack, respond }) => {
+    await ack();
+
+    await respond({ response_type: "ephemeral", text: "Hey there" });
   });
 };
