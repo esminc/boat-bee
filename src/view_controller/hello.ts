@@ -5,7 +5,7 @@ export default (app: App) => {
     await say(`Hey there!!`);
   });
 
-  app.message("myreview", async ({ message, say }) => {
-    await say(`Hey there!!`);
+  app.command("/bee", async ({ say }) => {
+    await say({ text: "Hey there", reply_broadcast: false });
   });
 };
