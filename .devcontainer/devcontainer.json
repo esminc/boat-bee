@@ -9,31 +9,14 @@
     }
   },
   "runArgs": ["--env-file", ".env"],
-  "postCreateCommand": "make init",
+  "postCreateCommand": "npm install",
   "settings": {
     "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "editor.formatOnSave": true,
-    "python.linting.pylintEnabled": true,
-    "python.linting.enabled": true,
-    "[python]": {
-      "editor.defaultFormatter": "ms-python.python",
-      "editor.formatOnPaste": false,
-      "editor.formatOnSaveMode": "file"
-    },
-    "python.formatting.provider": "black",
-    /*
-        この設定は、pylintrcにも同様のものがあります。
-        VS Codeがpylintrcの設定を認識しないため、重複してこちらにも記述しています。
-      */
-    "python.linting.pylintArgs": [
-      "--disable",
-      "missing-module-docstring, missing-class-docstring, missing-function-docstring, line-too-long, fixme, duplicate-code"
-    ]
+    "editor.formatOnSave": true
   },
   "extensions": [
     "redhat.vscode-yaml",
     "esbenp.prettier-vscode",
-    "ms-python.python",
     "philnash.ngrok-for-vscode"
   ]
 }

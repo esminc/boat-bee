@@ -1,12 +1,13 @@
-FROM --platform=linux/amd64 public.ecr.aws/lambda/python:3.9
+FROM --platform=linux/amd64 public.ecr.aws/lambda/nodejs:16 as builder
+WORKDIR /usr/app
+COPY package*.json ./
+RUN npm install
+COPY . .
+RUN npm run build
 
-RUN pip install pipenv
-
-COPY Pipfile Pipfile.lock ./
-
-RUN pipenv install --system
-
-COPY app.py ./
-COPY ./bee_slack_app/ ./bee_slack_app/
-
-CMD [ "app.lambda_handler" ]
+FROM --platform=linux/amd64 public.ecr.aws/lambda/nodejs:16
+WORKDIR ${LAMBDA_TASK_ROOT}
+COPY package*.json ./
+RUN npm ci
+COPY --from=builder lib/* ./
+CMD ["app.handler"]
