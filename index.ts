@@ -1,5 +1,17 @@
 import { App, AwsLambdaReceiver } from "@slack/bolt";
-import { HelloController } from "./view_controller";
+import {
+  SecretsManagerClient,
+  GetSecretValueCommand,
+} from "@aws-sdk/client-secrets-manager";
+import { HelloController } from "./src/view_controller";
+
+const client = new SecretsManagerClient({ region: "us-east-1" });
+
+const SecretId = process.env["SLACK_CREDENTIALS_SECRET_ID"];
+
+const command = new GetSecretValueCommand({ SecretId });
+
+//const data = await client.send(command);
 
 const { SLACK_SIGNING_SECRET } = process.env;
 
