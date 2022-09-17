@@ -10,3 +10,16 @@ export type Book = {
   description: string;
   updated_at: string;
 };
+
+export type RecommendBook = Book & {
+  interested: boolean;
+  ml_model: string;
+};
+
+export type SearchedBook = {
+  user_id: string;
+  isbn: string;
+  ml_model: string;
+  interested: boolean;
+  updated_at?: string;
+};
