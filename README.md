@@ -30,10 +30,10 @@
 
 ```bash
 # 依存パッケージのインストール
-make init
+npm install
 
 # デプロイ
-make deploy
+sls deploy
 ```
 
 ### 環境変数

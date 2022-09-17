@@ -12,8 +12,8 @@ FROM --platform=linux/amd64 public.ecr.aws/lambda/nodejs:14
 
 COPY package*.json ./
 
-RUN npm install
+RUN npm ci
 
 COPY --from=builder /lib ./
 
-CMD [ "index.handler" ]
+CMD [ "app.handler" ]
