@@ -8,28 +8,25 @@ type Book = {
   updated_at: string;
 };
 
-type BookItemKey {
-  
-}
+type BookItemKey = {};
 
 class BookRepository {
   /**
    * レビューが投稿されている本を保存する
    */
   async put(entryId: number, userId: string) {}
+
   /**
    * レビューが投稿されている本を取得する
    */
   async fetch(isbn: string): Promise<Book | null> {
     return null;
   }
+
   /**
    * レビューが投稿されている本のリストを取得する
    */
-  async fetchAll(limit?:number, startKey?:) {}
+  async fetchAll(limit?: number, startKey?: BookItemKey) {}
 }
 
 export { BookRepository };
-
-limit: Optional[int] = None,
-start_key: Optional[BookItemKey] = None,
