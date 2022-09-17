@@ -40,14 +40,14 @@ class UserRepository {
   /**
    * ユーザー情報を取得する
    */
-  async fetch(isbn: string): Promise<User | null> {
+  async fetch(userId: string): Promise<User | null> {
     return null;
   }
 
   /**
    * 全てのユーザー情報を取得する
    */
-  async fetchByUserId(userId: string): Promise<User[] | null> {
+  async fetchAll(): Promise<User[] | null> {
     return null;
   }
 

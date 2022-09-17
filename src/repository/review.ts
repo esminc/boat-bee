@@ -10,7 +10,7 @@ class ReviewRepository {
   /**
    * レビューを追加・更新する
    */
-  async put(review: Review) {
+  async put(review: Review): Promise<Review | null> {
     const partitionKey = this.encodePartitionKey(
       review["user_id"],
       review["isbn"]
@@ -48,14 +48,14 @@ class ReviewRepository {
   /**
    * 本のレビューを取得する
    */
-  async fetch(isbn: string): Promise<Review | null> {
+  async fetch(userId: string, isbn: string): Promise<Review | null> {
     return null;
   }
 
   /**
    * ユーザIDから、本のレビューを取得する
    */
-  async fetchByUserId(userId: string): Promise<Review | null> {
+  async fetchByUserId(userId: string): Promise<Review[] | null> {
     return null;
   }
 
@@ -72,6 +72,13 @@ class ReviewRepository {
    * ISBNから、本のレビューを取得する
    */
   async fetchByIsbn(isbn: string): Promise<Review | null> {
+    return null;
+  }
+
+  /**
+   * 全ての本のレビューを取得する
+   */
+  async fetchAll(): Promise<Review[] | null> {
     return null;
   }
 
