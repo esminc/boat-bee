@@ -1,4 +1,7 @@
-import {} from "../model";
+import { now } from "../utils/datetime";
+import { UserActionRepository } from "../repository";
+
+const userActionRepository = new UserActionRepository();
 
 class UserActionService {
   /**
@@ -9,7 +12,17 @@ class UserActionService {
     actionName: string;
     status: string;
     payload?: any;
-  }): Promise<void> {}
+  }): Promise<void> {
+    try {
+      const item = { ...params, createdAt: now() };
+
+      console.info(item);
+
+      await userActionRepository.put(item);
+    } catch (error) {
+      console.error(error);
+    }
+  }
 }
 
 export { UserActionService };

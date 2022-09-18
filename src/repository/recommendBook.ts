@@ -1,0 +1,3 @@
+class RecommendBooksRepository {}
+
+export { RecommendBooksRepository };
