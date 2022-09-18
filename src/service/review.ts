@@ -1,4 +1,5 @@
 import { Review } from "../model";
+import { now } from "../utils/datetime";
 import {
   ReviewRepository,
   UserRepository,
@@ -24,9 +25,9 @@ class ReviewService {
         return null;
       }
 
-      const userName = user ? user.user_name : review.user_id;
+      const userName = user ? user.user_name : review.userId;
 
-      return { ...review, user_name: userName };
+      return { ...review, userName };
     } catch (error) {
       console.error(error);
 
@@ -74,39 +75,52 @@ class ReviewService {
   /**
    * ユーザIDからレビューを順方向に取得する
    */
-  async fetchNextByUserId(userId: string): Promise<Review[] | null> {
+  async fetchNextByUserId(userId: string): Promise<Review[] | undefined> {
+    return undefined;
   }
 
   /**
    * ユーザIDからレビューを逆方向に取得する
    */
-   async fetchBackByUserId(userId: string): Promise<Review[] | null> {
+  async fetchBackByUserId(userId: string): Promise<Review[] | undefined> {
+    return undefined;
   }
-
 
   /**
    * レビューを追加・更新する
    */
-  async put(params: {}): Promise<void> {
+  async put(review: Review): Promise<void> {
     try {
-      const review = {};
-      const book = {};
+      const updatedAt = now();
+
+      const book = {
+        isbn: review.isbn,
+        title: review.bookTitle,
+        author: review.bookAuthor,
+        url: review.bookUrl,
+        imageUrl: review.bookImageUrl,
+        description: review.bookDescription,
+        updatedAt,
+      };
 
       await Promise.all([
         (bookRepository.put(book), reviewRepository.put(review)),
       ]);
 
-      const postReviewCount = (await reviewRepository.fetchByUserId())?.length;
+      const postReviewCount = (
+        await reviewRepository.fetchByUserId(review.userId)
+      )?.length;
 
       if (!postReviewCount) {
         return;
       }
 
-      await userRepository.updatePostReviewCount(, postReviewCount)
-
+      await userRepository.updatePostReviewCount(
+        review.userId,
+        postReviewCount
+      );
     } catch (error) {
       console.error(error);
-
     }
   }
 
@@ -120,12 +134,12 @@ class ReviewService {
     if (!users) {
       // ユーザ情報が存在しない場合は、ユーザIDをユーザ名に設定する
       return target.map((review) => {
-        return { ...review, user_name: review.user_id };
+        return { ...review, user_name: review.userId };
       });
     }
 
     return target.map((review) => {
-      const user = users.find((user) => user.user_id === review.user_id);
+      const user = users.find((user) => user.user_id === review.userId);
 
       let userName = undefined;
 
@@ -133,7 +147,7 @@ class ReviewService {
         userName = user.user_name;
       } else {
         // ユーザ情報が存在しない場合は、ユーザIDをユーザ名に設定する
-        userName = review.user_id;
+        userName = review.userId;
       }
 
       return { ...review, user_name: userName };

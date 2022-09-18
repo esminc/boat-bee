@@ -1,34 +1,30 @@
-type Book = {
-  isbn: string;
-  title: string;
-  author: string;
-  url: string;
-  image_url: string;
-  description: string;
-  updated_at: string;
-};
-
-type BookItemKey = {};
+import { Book } from "../model";
+import { GetResponse } from "./types";
 
 class BookRepository {
   /**
    * レビューが投稿されている本を保存する
    */
-  async put(entryId: number, userId: string): Promise<Book | null> {
-    return null;
+  async put(book: Book): Promise<Book | undefined> {
+    return undefined;
   }
 
   /**
    * レビューが投稿されている本を取得する
    */
-  async fetch(isbn: string): Promise<Book | null> {
-    return null;
+  async fetch(isbn: string): Promise<Book | undefined> {
+    return undefined;
   }
 
   /**
    * レビューが投稿されている本のリストを取得する
    */
-  async fetchAll(limit?: number, startKey?: BookItemKey) {}
+  async fetchAll(
+    limit?: number,
+    startKey?: any
+  ): Promise<GetResponse<Book> | undefined> {
+    return undefined;
+  }
 }
 
 export { BookRepository };

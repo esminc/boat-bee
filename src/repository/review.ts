@@ -10,7 +10,7 @@ class ReviewRepository {
   /**
    * レビューを追加・更新する
    */
-  async put(review: Review): Promise<Review | null> {
+  async put(review: Review): Promise<Review | undefined> {
     const partitionKey = this.encodePartitionKey(
       review["user_id"],
       review["isbn"]
@@ -40,6 +40,8 @@ class ReviewRepository {
 
     try {
       await dynamoDBClient.send(command);
+
+      return review;
     } catch (error) {
       console.error(error);
     }
@@ -55,8 +57,8 @@ class ReviewRepository {
   /**
    * ユーザIDから、本のレビューを取得する
    */
-  async fetchByUserId(userId: string): Promise<Review[] | null> {
-    return null;
+  async fetchByUserId(userId: string): Promise<Review[] | undefined> {
+    return undefined;
   }
 
   /**
@@ -64,22 +66,22 @@ class ReviewRepository {
    */
   async fetchByUserIdWithPagination(
     userId: string
-  ): Promise<Pagination<Review> | null> {
-    return null;
+  ): Promise<Pagination<Review> | undefined> {
+    return undefined;
   }
 
   /**
    * ISBNから、本のレビューを取得する
    */
-  async fetchByIsbn(isbn: string): Promise<Review | null> {
-    return null;
+  async fetchByIsbn(isbn: string): Promise<Review | undefined> {
+    return undefined;
   }
 
   /**
    * 全ての本のレビューを取得する
    */
-  async fetchAll(): Promise<Review[] | null> {
-    return null;
+  async fetchAll(): Promise<Review[] | undefined> {
+    return undefined;
   }
 
   private encodePartitionKey(userId: string, isbn: string) {
