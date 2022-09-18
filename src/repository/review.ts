@@ -11,30 +11,27 @@ class ReviewRepository {
    * レビューを追加・更新する
    */
   async put(review: Review): Promise<Review | undefined> {
-    const partitionKey = this.encodePartitionKey(
-      review["user_id"],
-      review["isbn"]
-    );
+    const partitionKey = this.encodePartitionKey(review.userId, review.isbn);
 
     const command = new PutItemCommand({
       TableName: TABLE_NAME,
       Item: {
         PK: { S: partitionKey },
         GSI_PK: { S: this.GSI_PK_VALUE },
-        GSI_0_SK: { S: review["updated_at"] || "" },
-        GSI_1_SK: { S: review["user_id"] },
+        GSI_0_SK: { S: review.updatedAt || "" },
+        GSI_1_SK: { S: review.userId },
         GSI_2_SK: { S: review["isbn"] },
-        user_id: { S: review["user_id"] },
-        book_title: { S: review["book_title"] },
+        user_id: { S: review.userId },
+        book_title: { S: review.bookTitle },
         isbn: { S: review["isbn"] },
-        score_for_me: { S: review["score_for_me"] },
-        score_for_others: { S: review["score_for_others"] },
-        review_comment: { S: review["review_comment"] },
-        updated_at: { S: review["updated_at"] || "" },
-        book_image_url: { S: review["book_image_url"] },
-        book_author: { S: review["book_author"] },
-        book_url: { S: review["book_url"] },
-        book_description: { S: review["book_description"] },
+        score_for_me: { S: review.scoreForMe },
+        score_for_others: { S: review.scoreForOthers },
+        review_comment: { S: review.reviewComment },
+        updated_at: { S: review.updatedAt || "" },
+        book_image_url: { S: review.bookImageUrl },
+        book_author: { S: review.bookAuthor },
+        book_url: { S: review.bookUrl },
+        book_description: { S: review.bookDescription },
       },
     });
 
@@ -50,8 +47,8 @@ class ReviewRepository {
   /**
    * 本のレビューを取得する
    */
-  async fetch(userId: string, isbn: string): Promise<Review | null> {
-    return null;
+  async fetch(userId: string, isbn: string): Promise<Review | undefined> {
+    return undefined;
   }
 
   /**
