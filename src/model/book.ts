@@ -16,10 +16,19 @@ export type RecommendBook = Book & {
   mlModel: string;
 };
 
-export type SearchedBook = {
+export type SuggestedBook = {
   userId: string;
   isbn: string;
   mlModel: string;
   interested: boolean;
   updatedAt?: string;
+};
+
+export type SearchedBook = {
+  isbn: string;
+  title: string;
+  authors: string[];
+  imageUrl?: string;
+  googleBooksUrl: string;
+  description: string;
 };
