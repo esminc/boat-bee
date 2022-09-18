@@ -4,8 +4,8 @@ class RecommendService {
   /**
    * おすすめの本を取得する
    */
-  async fetch(userId: string): Promise<RecommendBook[] | null> {
-    return null;
+  async fetch(userId: string): Promise<RecommendBook[] | undefined> {
+    return undefined;
   }
 
   /**
@@ -13,8 +13,8 @@ class RecommendService {
    *
    * YYYY/mm/dd HH:MM:SSの時刻文字列。例 2022/04/01 00:00:00
    */
-  async getCreatedAt(): Promise<string | null> {
-    return null;
+  async getCreatedAt(): Promise<string | undefined> {
+    return undefined;
   }
 
   /**

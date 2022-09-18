@@ -6,20 +6,20 @@ export type Book = {
   title: string;
   author: string;
   url: string;
-  image_url: string;
+  imageUrl: string;
   description: string;
-  updated_at: string;
+  updatedAt: string;
 };
 
 export type RecommendBook = Book & {
   interested: boolean;
-  ml_model: string;
+  mlModel: string;
 };
 
 export type SearchedBook = {
-  user_id: string;
+  userId: string;
   isbn: string;
-  ml_model: string;
+  mlModel: string;
   interested: boolean;
-  updated_at?: string;
+  updatedAt?: string;
 };

@@ -8,15 +8,18 @@ class BookService {
   /**
    * レビューが投稿されている本のリストを取得する
    */
-  async fetch(userId: string): Promise<Response<Book> | null> {
-    return null;
+  async fetch(params: {
+    limit?: number;
+    keys?: any;
+  }): Promise<Response<Book> | undefined> {
+    return undefined;
   }
 
   /**
    * レビューが投稿されている本のリストを取得する（前への移動）
    */
-  async fetchBefore(userId: string): Promise<BeforeResponse<Book> | null> {
-    return null;
+  async fetchBefore(userId: string): Promise<BeforeResponse<Book> | undefined> {
+    return undefined;
   }
 }
 
