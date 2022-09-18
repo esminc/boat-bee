@@ -13,15 +13,11 @@ class UserActionService {
     status: string;
     payload?: any;
   }): Promise<void> {
-    try {
-      const item = { ...params, createdAt: now() };
+    const item = { ...params, createdAt: now() };
 
-      console.info(item);
+    console.info(item);
 
-      await userActionRepository.put(item);
-    } catch (error) {
-      console.error(error);
-    }
+    await userActionRepository.put(item);
   }
 }
 
