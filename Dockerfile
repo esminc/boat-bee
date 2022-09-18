@@ -12,7 +12,7 @@ FROM --platform=linux/amd64 public.ecr.aws/lambda/nodejs:14
 
 COPY package*.json ./
 
-RUN npm ci
+RUN npm ci --omit=dev
 
 COPY --from=builder /lib ./
 

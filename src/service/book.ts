@@ -1,8 +1,11 @@
 import { Book } from "../model";
+import { BookRepository } from "../repository";
 
 type Response<T> = { items: T[]; keys: any; hasNext: boolean };
 
 type BeforeResponse<T> = { items: T[]; keys: any; isMoveToFirst: boolean };
+
+const bookRepository = new BookRepository();
 
 class BookService {
   /**
@@ -10,9 +13,36 @@ class BookService {
    */
   async fetch(params: {
     limit?: number;
-    keys?: any;
+    keys?: any[];
   }): Promise<Response<Book> | undefined> {
-    return undefined;
+    try {
+      const keys = params.keys || [];
+
+      const startKey = keys.length > 0 ? keys[-1] : undefined;
+
+      const books = await bookRepository.fetchAll({
+        limit: params.limit,
+        startKey,
+      });
+
+      if (!books) {
+        return undefined;
+      }
+
+      console.log(books);
+
+      const lastKey = books.lastKey || "end";
+
+      return {
+        items: books.items,
+        keys: [...keys, lastKey],
+        hasNext: lastKey !== "end",
+      };
+    } catch (error) {
+      console.error(error);
+
+      return undefined;
+    }
   }
 
   /**
