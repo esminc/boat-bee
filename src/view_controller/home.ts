@@ -73,20 +73,12 @@ export default (app: App) => {
   /**
    * ホーム画面で「次へ」を押下されたときの処理
    */
-  app.action("home_move_to_next_action", async ({ client, logger }) => {
-    await client.views.update({
-      view: homeView(),
-    });
-  });
+  app.action("home_move_to_next_action", async ({ client, logger }) => {});
 
   /**
    * ホーム画面で「前へ」を押下されたときの処理
    */
-  app.action("home_move_to_back_action", async ({ client, logger }) => {
-    await client.views.update({
-      view: homeView(),
-    });
-  });
+  app.action("home_move_to_back_action", async ({ client, logger }) => {});
 };
 
 const privateMetadataConverter = {
