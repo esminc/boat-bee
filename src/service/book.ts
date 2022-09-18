@@ -42,8 +42,32 @@ class BookService {
   /**
    * レビューが投稿されている本のリストを取得する（前への移動）
    */
-  async fetchBefore(userId: string): Promise<BeforeResponse<Book> | undefined> {
-    return undefined;
+  async fetchBefore(params: {
+    limit?: number;
+    keys?: any[];
+  }): Promise<BeforeResponse<Book> | undefined> {
+    const keys = params.keys || [];
+
+    const isMoveToFirst = keys.length < 3;
+
+    const startKey = isMoveToFirst ? undefined : keys[-3];
+
+    const books = await bookRepository.fetchAll({
+      limit: params.limit,
+      startKey,
+    });
+
+    if (!books) {
+      return undefined;
+    }
+
+    console.log(books);
+
+    return {
+      items: books.items,
+      keys: isMoveToFirst ? [books.lastKey] : keys.pop(),
+      isMoveToFirst,
+    };
   }
 }
 
