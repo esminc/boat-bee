@@ -3,10 +3,11 @@ import { userProfileModal } from "../view";
 import { UserService, UserActionService } from "../service";
 
 const userService = new UserService();
+const userActionService = new UserActionService();
 
 export default (app: App) => {
   /**
-   *
+   * プロフィールボタンが押下されたとき
    */
   app.action("user_info_action", async ({ ack, client, body }) => {
     await ack();
@@ -27,15 +28,25 @@ export default (app: App) => {
       throw new Error("Failed to retrieve user name.");
     }
 
-    await client.views.open({
-      view: userProfileModal({
-        callbackId: "user_profile_modal",
-        userName,
-        user,
+    await Promise.all([
+      client.views.open({
+        view: userProfileModal({
+          callbackId: "user_profile_modal",
+          userName,
+          user,
+        }),
+        trigger_id: body.trigger_id,
       }),
-      trigger_id: body.trigger_id,
-    });
+
+      userActionService.record({
+        userId: body.user.id,
+        actionName: "user_info_action",
+        status: "ok",
+        payload: { user_info: userInfo },
+      }),
+    ]);
   });
+
   /**
    *
    */

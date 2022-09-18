@@ -177,6 +177,42 @@ export const homeView = (props: {
         },
       },
       googleGraphic(),
+
+      ...(() => {
+        let bookSections = [];
+
+        if (props.booksParams) {
+          props.booksParams.books.forEach((book) => {
+            bookSections.push(bookSection({ ...book }));
+            bookSections.push({
+              type: "actions",
+              elements: [
+                {
+                  type: "button",
+                  text: {
+                    type: "plain_text",
+                    text: "この本のレビューを見る",
+                    emoji: true,
+                  },
+                  value: book.isbn,
+                  action_id: "read_review_of_book_action",
+                },
+              ],
+            });
+          });
+        } else {
+          bookSections.push({
+            type: "section",
+            text: {
+              type: "plain_text",
+              text: "本の取得に失敗しました :expressionless:",
+              emoji: true,
+            },
+          });
+        }
+
+        return bookSections;
+      })(),
     ],
   };
 };
