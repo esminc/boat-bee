@@ -8,7 +8,7 @@ class UserActionService {
     userId: string;
     actionName: string;
     status: string;
-    payload: any;
+    payload?: any;
   }): Promise<void> {}
 }
 

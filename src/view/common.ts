@@ -1,7 +1,12 @@
+import { ModalView, SectionBlock } from "@slack/bolt";
+
 /**
  * テキストだけの簡易モーダル
  */
-export const simpleModal = (props: { title: string; text: string }) => {
+export const simpleModal = (props: {
+  title: string;
+  text: string;
+}): ModalView => {
   return {
     type: "modal",
     title: { type: "plain_text", text: props.title, emoji: true },
@@ -31,7 +36,7 @@ export const bookSection = (props: {
   isbn: string;
   url: string;
   imageUrl?: string;
-}) => {
+}): SectionBlock => {
   return {
     type: "section",
     text: {
