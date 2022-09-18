@@ -40,22 +40,22 @@ class UserRepository {
   /**
    * ユーザー情報を取得する
    */
-  async fetch(userId: string): Promise<User | null> {
-    return null;
+  async fetch(userId: string): Promise<User | undefined> {
+    return undefined;
   }
 
   /**
    * 全てのユーザー情報を取得する
    */
-  async fetchAll(): Promise<User[] | null> {
-    return null;
+  async fetchAll(): Promise<User[] | undefined> {
+    return undefined;
   }
 
   /**
    * レビューを投稿しているユーザを取得する
    */
-  async fetchByPostedReview(userId: string): Promise<Pagination<User> | null> {
-    return null;
+  async fetchByPostedReview(): Promise<User[] | undefined> {
+    return undefined;
   }
 
   /**
