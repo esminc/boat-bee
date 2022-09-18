@@ -3,17 +3,17 @@ import { GetResponse } from "./types";
 import { QueryCommand, QueryCommandInput } from "@aws-sdk/client-dynamodb";
 import { dynamoDBClient } from "./database";
 
-async function query(
-  otherInput: QueryCommandInput;
-  tableName: string,
-  exclusiveStartKey?: any,
-  maxItemCount?: number
-) {
+async function query(params: {
+  tableName: string;
+  exclusiveStartKey?: any;
+  maxItemCount?: number;
+  otherInput?: Partial<QueryCommandInput>;
+}) {
   const command = new QueryCommand({
-    ...otherInput,
-    TableName: tableName,
-    Limit: maxItemCount,
-    ExclusiveStartKey: exclusiveStartKey,
+    ...params.otherInput,
+    TableName: params.tableName,
+    Limit: params.maxItemCount,
+    ExclusiveStartKey: params.exclusiveStartKey,
   });
 
   const { Items, LastEvaluatedKey } = await dynamoDBClient.send(command);
@@ -22,6 +22,7 @@ async function query(
 }
 
 const TABLE_NAME = "bee-dev";
+
 class BookRepository {
   private GSI_PK_VALUE = "book" as const;
 
@@ -46,35 +47,64 @@ class BookRepository {
     limit?: number;
     startKey?: any;
   }): Promise<GetResponse<Book> | undefined> {
-    const command = new QueryCommand({
-      TableName: TABLE_NAME,
-      ExpressionAttributeNames: { "#attr": "GSI_PK" },
-      ExpressionAttributeValues: { ":val": { S: this.GSI_PK_VALUE } },
-      KeyConditionExpression: "#attr = :val",
-    });
-
     try {
-      const { Items, LastEvaluatedKey } = await dynamoDBClient.send(command);
+      let lastEvaluatedKey = undefined;
+      let items = undefined;
 
-      if (!Items) {
+      let queryResult = await query({
+        tableName: TABLE_NAME,
+        maxItemCount: params.limit,
+        otherInput: {
+          IndexName: "GSI_0",
+          ExpressionAttributeNames: { "#attr": "GSI_PK" },
+          ExpressionAttributeValues: { ":val": { S: this.GSI_PK_VALUE } },
+          KeyConditionExpression: "#attr = :val",
+        },
+      });
+
+      items = queryResult.Items;
+      lastEvaluatedKey = queryResult.LastEvaluatedKey;
+
+      if (!items) {
         return undefined;
       }
 
-      const items = Items.map((Item) => {
-        const book = {
-          isbn: Item.isbn.S,
-          title: Item.title.S,
-          author: Item.author.S,
-          url: Item.url.S,
-          imageUrl: Item.imageUrl.S,
-          description: Item.description.S,
-          updatedAt: Item.updatedAt.S,
-        };
+      if (!params.limit) {
+        while (lastEvaluatedKey) {
+          queryResult = await query({
+            tableName: TABLE_NAME,
+            exclusiveStartKey: lastEvaluatedKey,
+            otherInput: {
+              IndexName: "GSI_0",
+              ExpressionAttributeNames: { "#attr": "GSI_PK" },
+              ExpressionAttributeValues: { ":val": { S: this.GSI_PK_VALUE } },
+              KeyConditionExpression: "#attr = :val",
+            },
+          });
 
-        return validateBook(book);
-      });
+          if (queryResult.Items) {
+            items.concat(queryResult.Items);
+          }
+          lastEvaluatedKey = queryResult.LastEvaluatedKey;
+        }
+      }
 
-      return { items, lastKey: LastEvaluatedKey };
+      return {
+        items: items.map((Item) => {
+          const book = {
+            isbn: Item.isbn.S,
+            title: Item.title.S,
+            author: Item.author.S,
+            url: Item.url.S,
+            imageUrl: Item.image_url.S,
+            description: Item.description.S,
+            updatedAt: Item.updated_at.S,
+          };
+
+          return validateBook(book);
+        }),
+        lastKey: lastEvaluatedKey,
+      };
     } catch (error) {
       console.error(error);
     }
