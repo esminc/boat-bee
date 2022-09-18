@@ -1,5 +1,9 @@
 import { User, validateUser } from "../model";
-import { PutItemCommand, GetItemCommand, QueryCommand } from "@aws-sdk/client-dynamodb";
+import {
+  PutItemCommand,
+  GetItemCommand,
+  QueryCommand,
+} from "@aws-sdk/client-dynamodb";
 import { dynamoDBClient } from "./database";
 
 const TABLE_NAME = "bee-dev";
@@ -24,7 +28,7 @@ class UserRepository {
         user_name: { S: user.userName },
         department: { S: user["department"] },
         job_type: { S: user.jobType },
-        age_range: { S: user.ageRange] },
+        age_range: { S: user.ageRange },
         updated_at: { S: user.updatedAt || "" },
         post_review_count: { N: String(user.postReviewCount) },
       },
@@ -102,7 +106,7 @@ class UserRepository {
         };
 
         return validateUser(user);
-      })
+      });
     } catch (error) {
       console.error(error);
     }
