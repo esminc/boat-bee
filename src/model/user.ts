@@ -1,9 +1,9 @@
 export type User = {
-  user_id: string;
-  user_name: string;
+  userId: string;
+  userName: string;
   department: string;
-  job_type: string;
-  age_range: string;
-  updated_at?: string;
-  post_review_count: number;
+  jobType: string;
+  ageRange: string;
+  updatedAt?: string;
+  postReviewCount: number;
 };

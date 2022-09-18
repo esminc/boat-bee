@@ -1,5 +1,5 @@
-import { User, Pagination } from "../model";
-import { PutItemCommand } from "@aws-sdk/client-dynamodb";
+import { User, validateUser } from "../model";
+import { PutItemCommand, GetItemCommand, QueryCommand } from "@aws-sdk/client-dynamodb";
 import { dynamoDBClient } from "./database";
 
 const TABLE_NAME = "bee-dev";
@@ -11,22 +11,22 @@ class UserRepository {
    * ユーザを追加・更新する
    */
   async put(user: User): Promise<void> {
-    const partitionKey = this.encodePartitionKey(user["user_id"]);
+    const partitionKey = this.encodePartitionKey(user.userId);
 
     const command = new PutItemCommand({
       TableName: TABLE_NAME,
       Item: {
         PK: { S: partitionKey },
         GSI_PK: { S: this.GSI_PK_VALUE },
-        GSI_0_SK: { S: user["updated_at"] || "" },
-        GSI_3_SK: { N: String(user["post_review_count"]) },
-        user_id: { S: user["user_id"] },
-        user_name: { S: user["user_name"] },
+        GSI_0_SK: { S: user.userId || "" },
+        GSI_3_SK: { N: String(user.postReviewCount) },
+        user_id: { S: user.userId },
+        user_name: { S: user.userName },
         department: { S: user["department"] },
-        job_type: { S: user["job_type"] },
-        age_range: { S: user["age_range"] },
-        updated_at: { S: user["updated_at"] || "" },
-        post_review_count: { N: String(user["post_review_count"]) },
+        job_type: { S: user.jobType },
+        age_range: { S: user.ageRange] },
+        updated_at: { S: user.updatedAt || "" },
+        post_review_count: { N: String(user.postReviewCount) },
       },
     });
 
@@ -41,14 +41,71 @@ class UserRepository {
    * ユーザー情報を取得する
    */
   async fetch(userId: string): Promise<User | undefined> {
-    return undefined;
+    const partitionKey = this.encodePartitionKey(userId);
+
+    const command = new GetItemCommand({
+      TableName: TABLE_NAME,
+      Key: { PK: { S: partitionKey } },
+    });
+
+    try {
+      const { Item } = await dynamoDBClient.send(command);
+
+      if (!Item) {
+        return undefined;
+      }
+
+      const user = {
+        userId: Item.user_id.S,
+        title: Item.user_name.S,
+        department: Item.department.S,
+        jobType: Item.job_type.S,
+        ageRange: Item.age_range.S,
+        updatedAt: Item.updated_at.S,
+        postReviewCount: Item.post_review_count.N,
+      };
+
+      return validateUser(user);
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   /**
    * 全てのユーザー情報を取得する
    */
   async fetchAll(): Promise<User[] | undefined> {
-    return undefined;
+    const command = new QueryCommand({
+      TableName: TABLE_NAME,
+      IndexName: "GSI_0",
+      ExpressionAttributeNames: { "#attr": "GSI_PK" },
+      ExpressionAttributeValues: { ":val": { S: this.GSI_PK_VALUE } },
+      KeyConditionExpression: "#attr = :val",
+    });
+
+    try {
+      const { Items } = await dynamoDBClient.send(command);
+
+      if (!Items) {
+        return undefined;
+      }
+
+      return Items.map((Item) => {
+        const user = {
+          userId: Item.user_id.S,
+          title: Item.user_name.S,
+          department: Item.department.S,
+          jobType: Item.job_type.S,
+          ageRange: Item.age_range.S,
+          updatedAt: Item.updated_at.S,
+          postReviewCount: Item.post_review_count.N,
+        };
+
+        return validateUser(user);
+      })
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   /**
