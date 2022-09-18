@@ -15,34 +15,28 @@ class BookService {
     limit?: number;
     keys?: any[];
   }): Promise<Response<Book> | undefined> {
-    try {
-      const keys = params.keys || [];
+    const keys = params.keys || [];
 
-      const startKey = keys.length > 0 ? keys[-1] : undefined;
+    const startKey = keys.length > 0 ? keys[-1] : undefined;
 
-      const books = await bookRepository.fetchAll({
-        limit: params.limit,
-        startKey,
-      });
+    const books = await bookRepository.fetchAll({
+      limit: params.limit,
+      startKey,
+    });
 
-      if (!books) {
-        return undefined;
-      }
-
-      console.log(books);
-
-      const lastKey = books.lastKey || "end";
-
-      return {
-        items: books.items,
-        keys: [...keys, lastKey],
-        hasNext: lastKey !== "end",
-      };
-    } catch (error) {
-      console.error(error);
-
+    if (!books) {
       return undefined;
     }
+
+    console.log(books);
+
+    const lastKey = books.lastKey || "end";
+
+    return {
+      items: books.items,
+      keys: [...keys, lastKey],
+      hasNext: lastKey !== "end",
+    };
   }
 
   /**

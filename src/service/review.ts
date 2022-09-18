@@ -15,62 +15,44 @@ class ReviewService {
    * レビューを取得する
    */
   async fetch(userId: string, isbn: string): Promise<Review | null> {
-    try {
-      const [review, user] = await Promise.all([
-        reviewRepository.fetch(userId, isbn),
-        userRepository.fetch(userId),
-      ]);
+    const [review, user] = await Promise.all([
+      reviewRepository.fetch(userId, isbn),
+      userRepository.fetch(userId),
+    ]);
 
-      if (!review) {
-        return null;
-      }
-
-      const userName = user ? user.user_name : review.userId;
-
-      return { ...review, userName };
-    } catch (error) {
-      console.error(error);
-
+    if (!review) {
       return null;
     }
+
+    const userName = user ? user.user_name : review.userId;
+
+    return { ...review, userName };
   }
 
   /**
    * 全てのレビューを取得する
    */
   async fetchAll(): Promise<Review[] | null> {
-    try {
-      const reviews = await reviewRepository.fetchAll();
+    const reviews = await reviewRepository.fetchAll();
 
-      if (!reviews) {
-        return null;
-      }
-
-      return this.fillUserName(reviews);
-    } catch (error) {
-      console.error(error);
-
+    if (!reviews) {
       return null;
     }
+
+    return this.fillUserName(reviews);
   }
 
   /**
    * ユーザIDからレビューを取得する
    */
   async fetchByUserId(userId: string): Promise<Review[] | null> {
-    try {
-      const reviews = await reviewRepository.fetchByUserId(userId);
+    const reviews = await reviewRepository.fetchByUserId(userId);
 
-      if (!reviews) {
-        return null;
-      }
-
-      return this.fillUserName(reviews);
-    } catch (error) {
-      console.error(error);
-
+    if (!reviews) {
       return null;
     }
+
+    return this.fillUserName(reviews);
   }
   /**
    * ユーザIDからレビューを順方向に取得する
@@ -90,38 +72,31 @@ class ReviewService {
    * レビューを追加・更新する
    */
   async put(review: Review): Promise<void> {
-    try {
-      const updatedAt = now();
+    const updatedAt = now();
 
-      const book = {
-        isbn: review.isbn,
-        title: review.bookTitle,
-        author: review.bookAuthor,
-        url: review.bookUrl,
-        imageUrl: review.bookImageUrl,
-        description: review.bookDescription,
-        updatedAt,
-      };
+    const book = {
+      isbn: review.isbn,
+      title: review.bookTitle,
+      author: review.bookAuthor,
+      url: review.bookUrl,
+      imageUrl: review.bookImageUrl,
+      description: review.bookDescription,
+      updatedAt,
+    };
 
-      await Promise.all([
-        (bookRepository.put(book), reviewRepository.put(review)),
-      ]);
+    await Promise.all([
+      (bookRepository.put(book), reviewRepository.put(review)),
+    ]);
 
-      const postReviewCount = (
-        await reviewRepository.fetchByUserId(review.userId)
-      )?.length;
+    const postReviewCount = (
+      await reviewRepository.fetchByUserId(review.userId)
+    )?.length;
 
-      if (!postReviewCount) {
-        return;
-      }
-
-      await userRepository.updatePostReviewCount(
-        review.userId,
-        postReviewCount
-      );
-    } catch (error) {
-      console.error(error);
+    if (!postReviewCount) {
+      return;
     }
+
+    await userRepository.updatePostReviewCount(review.userId, postReviewCount);
   }
 
   /**

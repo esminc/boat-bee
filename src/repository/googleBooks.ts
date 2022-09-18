@@ -4,15 +4,35 @@ class GoogleBooksRepository {
   /**
    * タイトルから書籍を検索する
    */
-  async searchBookByTitle(isbn: string) {
-    return null;
+  async searchBookByTitle(title: string): Promise<
+    | {
+        title: string;
+        isbn: string;
+        authors: string[];
+        imageUrl: string;
+        googleBooksUrl: string;
+        description: string;
+      }[]
+    | undefined
+  > {
+    return undefined;
   }
 
   /**
    * ISBNから書籍を検索する
    */
-  async searchBookByIsbn(userId: string) {
-    return null;
+  async searchBookByIsbn(isbn: string): Promise<
+    | {
+        title: string;
+        isbn: string;
+        authors: string[];
+        imageUrl: string;
+        googleBooksUrl: string;
+        description: string;
+      }
+    | undefined
+  > {
+    return undefined;
   }
 }
 
