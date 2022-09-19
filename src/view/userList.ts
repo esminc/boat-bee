@@ -32,7 +32,7 @@ export const postedReviewUserListModal = (props: {
               type: "section",
               text: {
                 type: "mrkdwn",
-                text: `"*${user.userName}* (${user.postReviewCount})`,
+                text: `*${user.userName}* (${user.postReviewCount})`,
               },
               accessory: {
                 type: "button",
