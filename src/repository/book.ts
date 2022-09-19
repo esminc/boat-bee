@@ -1,4 +1,5 @@
-import { Book, validateBook } from "../model";
+import { Book } from "../model";
+import { validateBook } from "../model/book.validator";
 import { GetResponse } from "./types";
 import {
   QueryCommand,

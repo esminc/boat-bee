@@ -19,7 +19,7 @@
     "fmt": "prettier . --write .",
     "fmt:check": "prettier . --check",
     "test": "vitest",
-    "gen": "npx create-validator-ts src/model"
+    "gen": "rm -rf src/model/**/*.validator.ts && npx create-validator-ts src/model/*"
   },
   "betterScripts": {
     "start": {

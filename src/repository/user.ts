@@ -1,4 +1,5 @@
-import { User, validateUser } from "../model";
+import { User } from "../model";
+import { validateUser } from "../model/user.validator";
 import {
   PutItemCommand,
   GetItemCommand,

@@ -88,7 +88,7 @@ export const SCHEMA = {
                 "url"
             ]
         },
-        "SearchedBook": {
+        "SuggestedBook": {
             "type": "object",
             "properties": {
                 "userId": {
@@ -112,6 +112,40 @@ export const SCHEMA = {
                 "isbn",
                 "mlModel",
                 "interested"
+            ],
+            "additionalProperties": false
+        },
+        "SearchedBook": {
+            "type": "object",
+            "properties": {
+                "isbn": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "authors": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "imageUrl": {
+                    "type": "string"
+                },
+                "googleBooksUrl": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "isbn",
+                "title",
+                "authors",
+                "googleBooksUrl",
+                "description"
             ],
             "additionalProperties": false
         }
@@ -154,6 +188,27 @@ export function validateRecommendBook(payload: unknown): apiTypes.RecommendBook 
 export function isRecommendBook(payload: unknown): payload is apiTypes.RecommendBook {
   try {
     validateRecommendBook(payload);
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
+
+export function validateSuggestedBook(payload: unknown): apiTypes.SuggestedBook {
+  /** Schema is defined in {@link SCHEMA.definitions.SuggestedBook } **/
+  const validator = ajv.getSchema("SCHEMA#/definitions/SuggestedBook");
+  const valid = validator(payload);
+  if (!valid) {
+    const error = new Error('Invalid SuggestedBook: ' + ajv.errorsText(validator.errors, {dataVar: "SuggestedBook"}));
+    error.name = "ValidationError";
+    throw error;
+  }
+  return payload;
+}
+
+export function isSuggestedBook(payload: unknown): payload is apiTypes.SuggestedBook {
+  try {
+    validateSuggestedBook(payload);
     return true;
   } catch (error) {
     return false;

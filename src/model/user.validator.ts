@@ -11,35 +11,35 @@ export const SCHEMA = {
         "User": {
             "type": "object",
             "properties": {
-                "user_id": {
+                "userId": {
                     "type": "string"
                 },
-                "user_name": {
+                "userName": {
                     "type": "string"
                 },
                 "department": {
                     "type": "string"
                 },
-                "job_type": {
+                "jobType": {
                     "type": "string"
                 },
-                "age_range": {
+                "ageRange": {
                     "type": "string"
                 },
-                "updated_at": {
+                "updatedAt": {
                     "type": "string"
                 },
-                "post_review_count": {
+                "postReviewCount": {
                     "type": "number"
                 }
             },
             "required": [
-                "user_id",
-                "user_name",
+                "userId",
+                "userName",
                 "department",
-                "job_type",
-                "age_range",
-                "post_review_count"
+                "jobType",
+                "ageRange",
+                "postReviewCount"
             ],
             "additionalProperties": false
         }
