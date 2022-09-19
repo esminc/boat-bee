@@ -33,6 +33,7 @@ jobs:
       - uses: actions/setup-node@v2
       - run: npm install -g serverless@3.12.0
       - uses: actions/checkout@v2.4.0
+      - run: sls dynamodb install
       - run: sls package
 
   notify-if-failure:
