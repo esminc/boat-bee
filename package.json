@@ -7,9 +7,11 @@
     "@aws-sdk/client-dynamodb": "3.172.0",
     "@aws-sdk/client-secrets-manager": "3.171.0",
     "@slack/bolt": "3.12.1",
-    "ajv": "8.11.0"
+    "ajv": "8.11.0",
+    "axios": "0.27.2"
   },
   "devDependencies": {
+    "@types/axios": "^0.14.0",
     "better-npm-run": "0.1.0",
     "create-validator-ts": "4.0.2",
     "dynamodb-admin": "4.4.0",

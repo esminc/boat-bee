@@ -62,7 +62,7 @@ class UserRepository {
 
       const user = {
         userId: Item.user_id.S,
-        title: Item.user_name.S,
+        userName: Item.user_name.S,
         department: Item.department.S,
         jobType: Item.job_type.S,
         ageRange: Item.age_range.S,
@@ -98,7 +98,7 @@ class UserRepository {
       return Items.map((Item) => {
         const user = {
           userId: Item.user_id.S,
-          title: Item.user_name.S,
+          userName: Item.user_name.S,
           department: Item.department.S,
           jobType: Item.job_type.S,
           ageRange: Item.age_range.S,
@@ -141,7 +141,7 @@ class UserRepository {
       return Items.map((Item) => {
         const user = {
           userId: Item.user_id.S,
-          title: Item.user_name.S,
+          userName: Item.user_name.S,
           department: Item.department.S,
           jobType: Item.job_type.S,
           ageRange: Item.age_range.S,
