@@ -46,6 +46,7 @@ class BookRepository {
         title: { S: book.title },
         author: { S: book.author },
         url: { S: book.url },
+        image_url: { S: book.imageUrl },
         description: { S: book.description },
         updated_at: { S: book.updatedAt },
       };
@@ -75,8 +76,22 @@ class BookRepository {
       if (!Item) {
         return undefined;
       }
+
+      const book = {
+        isbn: Item.isbn.S,
+        title: Item.title.S,
+        author: Item.author.S,
+        url: Item.url.S,
+        imageUrl: Item.image_url.S,
+        description: Item.description.S,
+        updatedAt: Item.updated_at.S,
+      };
+
+      return validateBook(book);
     } catch (error) {
       console.error(error);
+
+      return undefined;
     }
   }
 
