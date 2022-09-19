@@ -1,4 +1,8 @@
+import { Axios } from "axios";
+
 const GOOGLE_BOOKS_API_ENDPOINT = "https://www.googleapis.com/books/v1/volumes";
+
+const client = new Axios();
 
 class GoogleBooksRepository {
   /**
@@ -15,6 +19,13 @@ class GoogleBooksRepository {
       }[]
     | undefined
   > {
+    const { data } = await client.get(GOOGLE_BOOKS_API_ENDPOINT, {
+      params: {
+        q: `intitle:${title}`,
+        Country: "JP",
+      },
+    });
+
     return undefined;
   }
 
