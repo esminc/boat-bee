@@ -1,9 +1,16 @@
 import { App } from "@slack/bolt";
-import { UserService, UserActionService } from "../service";
+import {
+  UserService,
+  UserActionService,
+  BookSearchService,
+  ReviewService,
+} from "../service";
 import { simpleModal, searchBookToReviewModal } from "../view";
 
 const userService = new UserService();
 const userActionService = new UserActionService();
+const bookSearchService = new BookSearchService();
+const reviewService = new ReviewService();
 
 export default (app: App) => {
   /**
@@ -72,7 +79,17 @@ export default (app: App) => {
   /**
    *
    */
-  app.view("post_review_modal", async ({ client, logger }) => {});
+  app.view("post_review_modal", async ({ ack, client, logger }) => {
+    await ack();
+
+    const isbn = "";
+
+    const book = await bookSearchService.fetchByIsbn(isbn);
+
+    if (!book) {
+      throw new Error("Failed to retrieve book.");
+    }
+  });
 
   /**
    *

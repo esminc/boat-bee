@@ -114,9 +114,45 @@ class UserRepository {
 
   /**
    * レビューを投稿しているユーザを取得する
+   *
+   * ユーザは、レビュー投稿数が多い順でソート済み
    */
   async fetchByPostedReview(): Promise<User[] | undefined> {
-    return undefined;
+    try {
+      const command = new QueryCommand({
+        TableName: TABLE_NAME,
+        IndexName: "GSI_3",
+        ExpressionAttributeNames: { "#attr1": "GSI_PK", "#attr2": "GSI_3_SK" },
+        ExpressionAttributeValues: {
+          ":val1": { S: this.GSI_PK_VALUE },
+          ":val2": { N: "0" },
+        },
+        KeyConditionExpression: "#attr1 = :val1 AND #attr2 >= :val2",
+        ScanIndexForward: false,
+      });
+
+      const { Items } = await dynamoDBClient.send(command);
+
+      if (!Items) {
+        return undefined;
+      }
+
+      return Items.map((Item) => {
+        const user = {
+          userId: Item.user_id.S,
+          title: Item.user_name.S,
+          department: Item.department.S,
+          jobType: Item.job_type.S,
+          ageRange: Item.age_range.S,
+          updatedAt: Item.updated_at.S,
+          postReviewCount: Item.post_review_count.N,
+        };
+
+        return validateUser(user);
+      });
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   /**
