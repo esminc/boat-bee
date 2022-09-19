@@ -1,4 +1,4 @@
-import { HomeView } from "@slack/bolt";
+import { HomeView, Button } from "@slack/bolt";
 import { Book, RecommendBook } from "../model";
 import { googleGraphic, bookSection } from "./common";
 
@@ -200,6 +200,28 @@ export const homeView = (props: {
               ],
             });
           });
+
+          const moveButtons = { type: "actions", elements: [] as Button[] };
+
+          if (props.booksParams.showMoveToBack) {
+            moveButtons.elements.push({
+              type: "button",
+              text: { type: "plain_text", text: "前へ" },
+              action_id: "home_move_to_back_action",
+            });
+          }
+
+          if (props.booksParams.showMoveToNext) {
+            moveButtons.elements.push({
+              type: "button",
+              text: { type: "plain_text", text: "次へ" },
+              action_id: "home_move_to_next_action",
+            });
+          }
+
+          if (moveButtons.elements.length !== 0) {
+            bookSections.push(moveButtons);
+          }
         } else {
           bookSections.push({
             type: "section",
