@@ -146,7 +146,7 @@ class UserRepository {
           jobType: Item.job_type.S,
           ageRange: Item.age_range.S,
           updatedAt: Item.updated_at.S,
-          postReviewCount: Item.post_review_count.N,
+          postReviewCount: Number(Item.post_review_count.N),
         };
 
         return validateUser(user);
