@@ -32,7 +32,7 @@ export const postedReviewUserListModal = (props: {
               type: "section",
               text: {
                 type: "mrkdwn",
-                text: `"*${user.user_name}* (${user.post_review_count})`,
+                text: `"*${user.userName}* (${user.postReviewCount})`,
               },
               accessory: {
                 type: "button",
@@ -41,7 +41,7 @@ export const postedReviewUserListModal = (props: {
                   text: "このユーザのレビューを見る",
                   emoji: true,
                 },
-                value: user.user_id,
+                value: user.userId,
                 action_id: "read_review_of_user_action",
               },
             };

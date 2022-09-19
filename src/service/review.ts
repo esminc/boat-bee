@@ -24,7 +24,7 @@ class ReviewService {
       return null;
     }
 
-    const userName = user ? user.user_name : review.userId;
+    const userName = user ? user.userName : review.userId;
 
     return { ...review, userName };
   }
@@ -109,23 +109,23 @@ class ReviewService {
     if (!users) {
       // ユーザ情報が存在しない場合は、ユーザIDをユーザ名に設定する
       return target.map((review) => {
-        return { ...review, user_name: review.userId };
+        return { ...review, userName: review.userId };
       });
     }
 
     return target.map((review) => {
-      const user = users.find((user) => user.user_id === review.userId);
+      const user = users.find((user) => user.userId === review.userId);
 
       let userName = undefined;
 
       if (user) {
-        userName = user.user_name;
+        userName = user.userName;
       } else {
         // ユーザ情報が存在しない場合は、ユーザIDをユーザ名に設定する
         userName = review.userId;
       }
 
-      return { ...review, user_name: userName };
+      return { ...review, userName };
     });
   }
 }

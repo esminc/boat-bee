@@ -35,7 +35,7 @@ export default (app: App) => {
     });
 
     const user = await userService.fetch(event.user);
-    const userName = user ? `${user.user_name}さん` : "あなた";
+    const userName = user ? `${user.userName}さん` : "あなた";
 
     const recommendedBooks = await recommendService.fetch(event.user);
 
