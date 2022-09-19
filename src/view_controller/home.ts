@@ -101,7 +101,7 @@ export default (app: App) => {
       keys: privateMetadataBefore.keys,
     });
 
-    console.info({ books });
+    console.info({ books: JSON.stringify(books) });
 
     let booksParams = undefined;
     let privateMetadata = undefined;
@@ -163,7 +163,7 @@ export default (app: App) => {
       keys: privateMetadataBefore.keys,
     });
 
-    console.info({ books });
+    console.info({ books: JSON.stringify(books) });
 
     let booksParams = undefined;
     let privateMetadata = undefined;

@@ -1,6 +1,11 @@
 import { Book, validateBook } from "../model";
 import { GetResponse } from "./types";
-import { QueryCommand, QueryCommandInput } from "@aws-sdk/client-dynamodb";
+import {
+  QueryCommand,
+  QueryCommandInput,
+  PutItemCommand,
+  GetItemCommand,
+} from "@aws-sdk/client-dynamodb";
 import { dynamoDBClient } from "./database";
 
 async function query(params: {
@@ -29,15 +34,50 @@ class BookRepository {
   /**
    * レビューが投稿されている本を保存する
    */
-  async put(book: Book): Promise<Book | undefined> {
-    return undefined;
+  async put(book: Book): Promise<void> {
+    try {
+      const partitionKey = this.encodePartitionKey(book.isbn);
+
+      const item = {
+        PK: { S: partitionKey },
+        GSI_PK: { S: this.GSI_PK_VALUE },
+        GSI_0_SK: { S: book.updatedAt },
+        isbn: { S: book.isbn },
+        title: { S: book.title },
+        author: { S: book.author },
+        url: { S: book.url },
+        description: { S: book.description },
+        updated_at: { S: book.updatedAt },
+      };
+
+      const command = new PutItemCommand({ TableName: TABLE_NAME, Item: item });
+
+      await dynamoDBClient.send(command);
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   /**
    * レビューが投稿されている本を取得する
    */
   async fetch(isbn: string): Promise<Book | undefined> {
-    return undefined;
+    try {
+      const partitionKey = this.encodePartitionKey(isbn);
+
+      const command = new GetItemCommand({
+        TableName: TABLE_NAME,
+        Key: { PK: { S: partitionKey } },
+      });
+
+      const { Item } = await dynamoDBClient.send(command);
+
+      if (!Item) {
+        return undefined;
+      }
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   /**
@@ -54,6 +94,7 @@ class BookRepository {
       let queryResult = await query({
         tableName: TABLE_NAME,
         maxItemCount: params.limit,
+        exclusiveStartKey: params.startKey,
         otherInput: {
           IndexName: "GSI_0",
           ExpressionAttributeNames: { "#attr": "GSI_PK" },

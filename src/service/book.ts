@@ -17,7 +17,7 @@ class BookService {
   }): Promise<Response<Book> | undefined> {
     const keys = params.keys || [];
 
-    const startKey = keys.length > 0 ? keys[-1] : undefined;
+    const startKey = keys.length > 0 ? keys[keys.length - 1] : undefined;
 
     const books = await bookRepository.fetchAll({
       limit: params.limit,
@@ -50,7 +50,7 @@ class BookService {
 
     const isMoveToFirst = keys.length < 3;
 
-    const startKey = isMoveToFirst ? undefined : keys[-3];
+    const startKey = isMoveToFirst ? undefined : keys[keys.length - 3];
 
     const books = await bookRepository.fetchAll({
       limit: params.limit,
@@ -63,9 +63,11 @@ class BookService {
 
     console.log(books);
 
+    keys.pop();
+
     return {
       items: books.items,
-      keys: isMoveToFirst ? [books.lastKey] : keys.pop(),
+      keys: isMoveToFirst ? [books.lastKey] : keys,
       isMoveToFirst,
     };
   }
