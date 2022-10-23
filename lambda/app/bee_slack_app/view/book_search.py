@@ -1,5 +1,5 @@
 from bee_slack_app.model import SearchedBook
-from bee_slack_app.view.common import google_graphic
+from bee_slack_app.view.common import DUMMY_IMAGE_URL, google_graphic
 
 
 def book_search_result_modal(
@@ -40,13 +40,8 @@ def book_search_result_modal(
 
 
 def _generate_book_block(book: SearchedBook):
-    # TODO: 暫定で適当な画像をデフォルトに設定、S3に画像を置くようになったら自前の画像に差し替える
-    dummy_url = (
-        "https://pbs.twimg.com/profile_images/625633822235693056/lNGUneLX_400x400.jpg"
-    )
-
     authors = ", ".join(book["authors"])
-    image_url = book["image_url"] if book["image_url"] is not None else dummy_url
+    image_url = book["image_url"] if book["image_url"] is not None else DUMMY_IMAGE_URL
 
     block = [
         {"type": "divider"},

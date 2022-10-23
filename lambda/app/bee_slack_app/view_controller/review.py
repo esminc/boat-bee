@@ -9,7 +9,7 @@ from bee_slack_app.service import (
     user_action_service,
     user_service,
 )
-from bee_slack_app.view.common import simple_modal
+from bee_slack_app.view.common import DUMMY_IMAGE_URL, simple_modal
 from bee_slack_app.view.post_review import (
     notify_review_post_message_blocks,
     search_book_to_review_modal,
@@ -292,8 +292,6 @@ def review_controller(app):  # pylint: disable=too-many-statements
 
         # 必ず取得できるのでelse側の考慮は不要
         # ただしImage URLだけは例外
-        # TODO: 暫定で適当な画像をデフォルトに設定、S3に画像を置くようになったら自前の画像に差し替える
-        dummy_url = "https://pbs.twimg.com/profile_images/625633822235693056/lNGUneLX_400x400.jpg"
 
         if book_info is not None:
             book_title = book_info["title"]
@@ -301,7 +299,7 @@ def review_controller(app):  # pylint: disable=too-many-statements
             image_url = (
                 book_info["image_url"]
                 if book_info["image_url"] is not None
-                else dummy_url
+                else DUMMY_IMAGE_URL
             )
             book_url = book_info["google_books_url"]
             book_description = book_info["description"]
