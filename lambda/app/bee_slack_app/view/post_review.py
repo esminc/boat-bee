@@ -142,7 +142,7 @@ def post_review_modal(*, callback_id: str, book_section_to_review):
                 "optional": True,
                 "label": {
                     "type": "plain_text",
-                    "text": "チャンネル #bee へのレビュー投稿通知",
+                    "text": "チャンネル #etc-books へのレビュー投稿通知",
                     "emoji": True,
                 },
                 "element": {
