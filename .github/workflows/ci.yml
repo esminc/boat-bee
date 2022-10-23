@@ -30,6 +30,20 @@ jobs:
       - run: make type-check
       - run: make test
 
+  error_handler:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: lambda/error_handler
+    steps:
+      - uses: actions/checkout@v2.4.0
+      - uses: actions/setup-python@v3
+        with:
+          python-version: "3.9.11"
+      - run: pip install pipenv
+      - run: make init
+      - run: make format-check
+
   cdk:
     runs-on: ubuntu-latest
     defaults:
@@ -49,7 +63,7 @@ jobs:
 
   notify-if-failure:
     runs-on: ubuntu-latest
-    needs: [app, cdk]
+    needs: [app, cdk, error_handler]
     if: failure()
     steps:
       - name: Notify Action Failure to Slack
@@ -74,7 +88,7 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
-    needs: [app, cdk]
+    needs: [app, cdk, error_handler]
     if: contains(github.event_name, 'push')
     permissions:
       id-token: write

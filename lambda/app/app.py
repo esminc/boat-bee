@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 
 import boto3  # type: ignore
@@ -21,6 +22,13 @@ os.environ["NOTIFY_POST_REVIEW_CHANNEL"] = secret["NOTIFY_POST_REVIEW_CHANNEL"]
 
 
 from bee_slack_app.slack import app  # pylint: disable=wrong-import-position
+
+
+@app.error
+def custom_error_handler(error, body, logger):
+    logger = logging.getLogger(__name__)
+    logger.exception("ERROR: %s", error)
+    logger.info("Request body: %s", body)
 
 
 def lambda_handler(event, context):
