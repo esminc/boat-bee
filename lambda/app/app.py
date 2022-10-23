@@ -9,7 +9,7 @@ SlackRequestHandler.clear_all_log_handlers()
 logging.basicConfig(level=logging.DEBUG)
 
 
-secretsmanager_client = boto3.client("secretsmanager", region_name="us-east-1")
+secretsmanager_client = boto3.client("secretsmanager")
 
 secret_id = os.environ["SLACK_CREDENTIALS_SECRET_ID"]
 

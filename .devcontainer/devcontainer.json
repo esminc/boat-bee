@@ -9,7 +9,6 @@
     }
   },
   "runArgs": ["--env-file", ".env"],
-  "postCreateCommand": "make init",
   "settings": {
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.formatOnSave": true,
@@ -33,7 +32,6 @@
   "extensions": [
     "redhat.vscode-yaml",
     "esbenp.prettier-vscode",
-    "ms-python.python",
-    "philnash.ngrok-for-vscode"
+    "ms-python.python"
   ]
 }
