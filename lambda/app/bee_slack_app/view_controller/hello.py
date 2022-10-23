@@ -43,3 +43,42 @@ def hello_controller(app):
             user=user_id,
             text=f"<@{user_id}>さんがレビューを投稿した本の一覧です（{num_reviews}冊）\n\n {myreviews}",
         )
+
+    @app.command("/bee")
+    def repeat_text(ack, respond, command):
+        ack()
+
+        command_text = command.get("text")
+
+        if not command_text:
+            respond(
+                "/bee <subcommand>の形式で実行してください。\n\n利用可能なサブコマンドは下記の通りです。\n- myreview : 自分の投稿したレビューを確認する"
+            )
+            return
+
+        if command_text == "myreview":
+
+            user_id = command["user_id"]
+            myreviews = [
+                x["book_title"]
+                for x in sorted(
+                    review_service.get_reviews_by_user_id(user_id=user_id),
+                    key=lambda x: x["updated_at"],
+                    reverse=True,
+                )
+            ]
+            num_reviews = len(myreviews)
+
+            if num_reviews == 0:
+                respond(f"<@{user_id}>さんはまだレビューを投稿していませんね")
+                return
+
+            myreviews = "\n・".join(myreviews)
+            myreviews = f"・{myreviews}"
+
+            respond(f"<@{user_id}>さんがレビューを投稿した本の一覧です（{num_reviews}冊）\n\n {myreviews}")
+            return
+
+        respond(
+            f"{command_text} は、利用可能なサブコマンドではありません。\n\n利用可能なサブコマンドは下記の通りです。\n- myreview : 自分の投稿したレビューを確認する"
+        )
