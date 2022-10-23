@@ -1,12 +1,10 @@
 import json
-import logging
 import os
 
 import boto3  # type: ignore
 from slack_bolt.adapter.aws_lambda import SlackRequestHandler
 
 SlackRequestHandler.clear_all_log_handlers()
-logging.basicConfig(level=logging.DEBUG)
 
 
 secretsmanager_client = boto3.client("secretsmanager")
