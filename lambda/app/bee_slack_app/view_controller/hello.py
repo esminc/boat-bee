@@ -2,7 +2,7 @@ import os
 
 from bee_slack_app.service import review_service
 from bee_slack_app.utils.timer import StopWatch, location
-
+from bee_slack_app.view_controller.utils import respond_to_slack_within_3_seconds
 
 def hello_controller(app):
     @app.message("hello")
@@ -44,7 +44,6 @@ def hello_controller(app):
             text=f"<@{user_id}>さんがレビューを投稿した本の一覧です（{num_reviews}冊）\n\n {myreviews}",
         )
 
-    @app.command("/bee")
     def repeat_text(ack, respond, command):
         ack()
 
@@ -82,3 +81,8 @@ def hello_controller(app):
         respond(
             f"{command_text} は、利用可能なサブコマンドではありません。\n\n利用可能なサブコマンドは下記の通りです。\n- myreview : 自分の投稿したレビューを確認する"
         )
+
+    app.command("/bee")(
+        ack=respond_to_slack_within_3_seconds,
+        lazy=[repeat_text],
+    )

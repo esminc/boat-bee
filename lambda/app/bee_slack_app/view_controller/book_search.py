@@ -7,6 +7,7 @@ from bee_slack_app.view.book_search import (
 )
 from bee_slack_app.view.common import simple_modal
 from bee_slack_app.view.post_review import post_review_modal
+from bee_slack_app.view_controller.utils import respond_to_slack_within_3_seconds
 
 
 # TODO: disable=too-many-statementsを取り消す
@@ -59,8 +60,7 @@ def book_search_controller(app):  # pylint: disable=too-many-statements
             ),
         )
 
-    @app.action("select_book_action")
-    def handle_book_selected(ack, body, _, client):
+    def handle_book_selected(body, _, client):
         """
         検索結果画面で選択ボタンを選択した時に行う処理
         """
@@ -92,7 +92,11 @@ def book_search_controller(app):  # pylint: disable=too-many-statements
                 isbn=isbn,
             ),
         )
-        ack()
+
+    app.action("select_book_action")(
+        ack=respond_to_slack_within_3_seconds,
+        lazy=[handle_book_selected],
+    )
 
     @app.action("google_books_buttons_action")
     def handle_google_books_selected(ack, body, _, logger):

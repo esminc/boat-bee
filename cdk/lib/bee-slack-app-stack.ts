@@ -163,6 +163,13 @@ export class BeeSlackAppStack extends Stack {
     dynamoTable.grantReadWriteData(appFunction);
     secret.grantRead(appFunction);
 
+    appFunction.addToRolePolicy(
+      new PolicyStatement({
+        actions: ["lambda:InvokeFunction", "lambda:GetFunction"],
+        resources: ["*"],
+      })
+    );
+
     const api = new RestApi(this, "RestAPI");
 
     api.root

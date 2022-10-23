@@ -4,12 +4,11 @@ from typing import Optional, TypedDict
 from bee_slack_app.model import User
 from bee_slack_app.service import user_action_service, user_service
 from bee_slack_app.view.user import user_profile_modal
+from bee_slack_app.view_controller.utils import respond_to_slack_within_3_seconds
 
 
 def user_controller(app):
-    @app.action("user_info_action")
-    def open_user_info(ack, body, client):
-        ack()
+    def open_user_info(body, client):
         user_id = body["user"]["id"]
 
         # ユーザー情報の取得
@@ -47,9 +46,12 @@ def user_controller(app):
             view=modal_view,
         )
 
-    @app.view("user_profile_modal")
-    def handle_submission(ack, body, _, view):
+    app.action("user_info_action")(
+        ack=respond_to_slack_within_3_seconds,
+        lazy=[open_user_info],
+    )
 
+    def handle_submission(body, _, view):
         user_name = view["blocks"][0]["text"]["text"]
 
         department = view["state"]["values"]["input_department"]["department_action"][
@@ -72,8 +74,6 @@ def user_controller(app):
             private_metadata=private_metadata
         )
 
-        ack()
-
         user: User = {
             "user_id": user_id,
             "user_name": user_name,
@@ -91,6 +91,11 @@ def user_controller(app):
             action_name="user_profile_modal",
             payload={"user": user},
         )
+
+    app.view("user_profile_modal")(
+        ack=respond_to_slack_within_3_seconds,
+        lazy=[handle_submission],
+    )
 
 
 class _PrivateMetadataConvertor:

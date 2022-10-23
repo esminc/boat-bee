@@ -21,17 +21,16 @@ from bee_slack_app.view.read_review import (
     review_of_user_modal,
 )
 from bee_slack_app.view.user import user_department_dict
+from bee_slack_app.view_controller.utils import respond_to_slack_within_3_seconds
 
 BOOK_NUMBER_PER_PAGE = 19
 
 
 def review_controller(app):  # pylint: disable=too-many-statements
-    @app.action("read_review_of_book_action")
-    def read_review_of_book_action(ack, body, client, action):
+    def read_review_of_book_action(body, client, action):
         """
         本のレビューモーダルを開く
         """
-        ack()
 
         user_id = body["user"]["id"]
 
@@ -68,12 +67,15 @@ def review_controller(app):  # pylint: disable=too-many-statements
             view=review_modal(callback_id="review_modal", book=book, reviews=reviews),
         )
 
-    @app.action("read_review_of_user_action")
-    def read_review_of_user_action(ack, body, client, action):
+    app.action("read_review_of_book_action")(
+        ack=respond_to_slack_within_3_seconds,
+        lazy=[read_review_of_book_action],
+    )
+
+    def read_review_of_user_action(body, client, action):
         """
         選択したユーザのレビューリストを開く
         """
-        ack()
 
         user_id = body["user"]["id"]
         user_id_of_review = action["value"]
@@ -121,14 +123,15 @@ def review_controller(app):  # pylint: disable=too-many-statements
             ),
         )
 
-    @app.action("review_move_to_next_action")
-    def review_move_to_next_action(
-        ack, client, body
-    ):  # pylint: disable=too-many-locals
+    app.action("read_review_of_user_action")(
+        ack=respond_to_slack_within_3_seconds,
+        lazy=[read_review_of_user_action],
+    )
+
+    def review_move_to_next_action(client, body):  # pylint: disable=too-many-locals
         """
         レビューリストで「次へ」を押下されたときの処理
         """
-        ack()
 
         user_id = body["user"]["id"]
 
@@ -180,14 +183,15 @@ def review_controller(app):  # pylint: disable=too-many-statements
             ),
         )
 
-    @app.action("review_move_to_back_action")
-    def review_move_to_back_action(
-        ack, client, body
-    ):  # pylint: disable=too-many-locals
+    app.action("review_move_to_next_action")(
+        ack=respond_to_slack_within_3_seconds,
+        lazy=[review_move_to_next_action],
+    )
+
+    def review_move_to_back_action(client, body):  # pylint: disable=too-many-locals
         """
         レビューリストで「前へ」を押下されたときの処理
         """
-        ack()
 
         user_id = body["user"]["id"]
 
@@ -239,12 +243,15 @@ def review_controller(app):  # pylint: disable=too-many-statements
             ),
         )
 
-    @app.action("post_review_action")
-    def open_book_search_modal(ack, body, client):
+    app.action("review_move_to_back_action")(
+        ack=respond_to_slack_within_3_seconds,
+        lazy=[review_move_to_back_action],
+    )
+
+    def open_book_search_modal(body, client):
         """
         本の検索モーダルを開く
         """
-        ack()
 
         user_id = body["user"]["id"]
 
@@ -275,10 +282,12 @@ def review_controller(app):  # pylint: disable=too-many-statements
             view=search_book_to_review_modal(callback_id="book_search_modal"),
         )
 
-    @app.view("post_review_modal")
-    def handle_submission(
-        ack, body, _, view, client
-    ):  # pylint: disable=too-many-locals
+    app.action("post_review_action")(
+        ack=respond_to_slack_within_3_seconds,
+        lazy=[open_book_search_modal],
+    )
+
+    def handle_submission(body, _, view, client):  # pylint: disable=too-many-locals
 
         # ハック的な対処なので注意
         # "*<本のタイトル>*\n<本の著者>\nISBN-<本のISBN>"のような文字列からタイトルやISBNを抜き出す
@@ -319,12 +328,8 @@ def review_controller(app):  # pylint: disable=too-many-statements
         if review_comment is not None and len(review_comment) <= 1:
             errors["input_comment"] = "The value must be longer than 5 characters"
         if len(errors) > 0:
-            ack(response_action="errors", errors=errors)
+            # ack(response_action="errors", errors=errors)
             return
-        # view_submission リクエストの確認を行い、モーダルを閉じる
-        # この時、最初に開いていたモーダルも含めてすべて閉じるために
-        # response_action="clear" を設定する
-        ack(response_action="clear")
 
         review_contents: Review = {
             "user_id": user_id,
@@ -367,15 +372,20 @@ def review_controller(app):  # pylint: disable=too-many-statements
                 text=f"{review['user_name']}さんがレビューを投稿しました",
             )
 
+    app.view("post_review_modal")(
+        # この時、最初に開いていたモーダルも含めてすべて閉じるために
+        # response_action="clear" を設定する
+        ack=lambda ack: ack(response_action="clear"),
+        lazy=[handle_submission],
+    )
+
     def _make_detailed_user_name(user: User) -> str:
         """
         ユーザー名を部署名付きのものに変換する
         """
         return f'{user["user_name"]}  ({user_department_dict[user["department"]]})'
 
-    @app.action("open_review_detail_modal_action")
-    def open_review_detail_modal(ack, body, client, action):
-        ack()
+    def open_review_detail_modal(body, client, action):
 
         user_id, isbn = action["value"].split(":")
 
@@ -403,6 +413,11 @@ def review_controller(app):  # pylint: disable=too-many-statements
         client.views_push(
             trigger_id=body["trigger_id"], view=review_detail_modal(review)
         )
+
+    app.action("open_review_detail_modal_action")(
+        ack=respond_to_slack_within_3_seconds,
+        lazy=[open_review_detail_modal],
+    )
 
 
 def _make_review_contents_list_comment_short(

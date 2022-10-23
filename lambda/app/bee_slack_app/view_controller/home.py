@@ -12,6 +12,7 @@ from bee_slack_app.service import (
 )
 from bee_slack_app.utils.datetime import parse
 from bee_slack_app.view.home import home
+from bee_slack_app.view_controller.utils import respond_to_slack_within_3_seconds
 
 BOOK_NUMBER_PER_PAGE = 20
 
@@ -72,12 +73,10 @@ def home_controller(app):  # pylint: disable=too-many-statements
             ),
         )
 
-    @app.action("home_move_to_next_action")
-    def home_move_to_next_action(ack, client, body):  # pylint: disable=too-many-locals
+    def home_move_to_next_action(client, body):  # pylint: disable=too-many-locals
         """
         ホーム画面で「次へ」を押下されたときの処理
         """
-        ack()
 
         logger = getLogger(__name__)
 
@@ -134,12 +133,15 @@ def home_controller(app):  # pylint: disable=too-many-statements
             ),
         )
 
-    @app.action("home_move_to_back_action")
-    def home_move_to_back_action(ack, client, body):  # pylint: disable=too-many-locals
+    app.action("home_move_to_next_action")(
+        ack=respond_to_slack_within_3_seconds,
+        lazy=[home_move_to_next_action],
+    )
+
+    def home_move_to_back_action(client, body):  # pylint: disable=too-many-locals
         """
         ホーム画面で「前へ」を押下されたときの処理
         """
-        ack()
 
         logger = getLogger(__name__)
 
@@ -196,12 +198,15 @@ def home_controller(app):  # pylint: disable=too-many-statements
             ),
         )
 
-    @app.action("button_switch_action")
+    app.action("home_move_to_back_action")(
+        ack=respond_to_slack_within_3_seconds,
+        lazy=[home_move_to_back_action],
+    )
+
     def handle_update_button_action(
-        ack, body, client, action
+        body, client, action
     ):  # pylint: disable=too-many-locals
 
-        ack()
         logger = getLogger(__name__)
 
         reviews = review_service.get_review_all()
@@ -280,6 +285,11 @@ def home_controller(app):  # pylint: disable=too-many-statements
             view_id=body["container"]["view_id"],
             view=modal_view,
         )
+
+    app.action("button_switch_action")(
+        ack=respond_to_slack_within_3_seconds,
+        lazy=[handle_update_button_action],
+    )
 
 
 class _PrivateMetadataConvertor:
