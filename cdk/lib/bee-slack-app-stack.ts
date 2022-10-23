@@ -11,6 +11,11 @@ import {
 import { Secret } from "aws-cdk-lib/aws-secretsmanager";
 import { Construct } from "constructs";
 import { join } from "path";
+import * as s3 from "aws-cdk-lib/aws-s3";
+import * as cloudfront from "aws-cdk-lib/aws-cloudfront";
+import * as s3deploy from "aws-cdk-lib/aws-s3-deployment";
+import * as cloudfront_origins from "aws-cdk-lib/aws-cloudfront-origins";
+import { PolicyStatement, CanonicalUserPrincipal } from "aws-cdk-lib/aws-iam";
 
 interface Props extends StackProps {
   isProduction: boolean;
@@ -93,6 +98,52 @@ export class BeeSlackAppStack extends Stack {
       },
     });
 
+    const cloudfrontOAI = new cloudfront.OriginAccessIdentity(
+      this,
+      "cloudfront-OAI"
+    );
+
+    const assetBucket = new s3.Bucket(this, "AssetBucket", {
+      removalPolicy,
+      autoDeleteObjects: !isProduction,
+    });
+
+    assetBucket.addToResourcePolicy(
+      new PolicyStatement({
+        actions: ["s3:GetObject"],
+        resources: [assetBucket.arnForObjects("*")],
+        principals: [
+          new CanonicalUserPrincipal(
+            cloudfrontOAI.cloudFrontOriginAccessIdentityS3CanonicalUserId
+          ),
+        ],
+      })
+    );
+
+    const distribution = new cloudfront.Distribution(
+      this,
+      "AssetDistribution",
+      {
+        minimumProtocolVersion: cloudfront.SecurityPolicyProtocol.TLS_V1_2_2021,
+        defaultBehavior: {
+          origin: new cloudfront_origins.S3Origin(assetBucket, {
+            originAccessIdentity: cloudfrontOAI,
+          }),
+          compress: true,
+          allowedMethods: cloudfront.AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
+          viewerProtocolPolicy:
+            cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+        },
+      }
+    );
+
+    new s3deploy.BucketDeployment(this, "AssetDeployment", {
+      sources: [s3deploy.Source.asset("../assets")],
+      destinationBucket: assetBucket,
+      distribution,
+      distributionPaths: ["/*"],
+    });
+
     const appFunction = new Function(this, "Lambda", {
       runtime: Runtime.FROM_IMAGE,
       handler: Handler.FROM_IMAGE,
@@ -100,6 +151,7 @@ export class BeeSlackAppStack extends Stack {
       environment: {
         SLACK_CREDENTIALS_SECRET_ID: secret.secretName,
         DYNAMODB_TABLE: dynamoTable.tableName,
+        ASSET_URL: "https://" + distribution.distributionDomainName,
       },
       timeout: Duration.minutes(3),
       memorySize: 1024,

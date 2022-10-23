@@ -1,3 +1,4 @@
+import os
 from typing import Optional
 
 
@@ -30,9 +31,7 @@ def simple_modal(
     }
 
 
-DUMMY_IMAGE_URL = (
-    "https://pbs.twimg.com/profile_images/625633822235693056/lNGUneLX_400x400.jpg"
-)
+DUMMY_IMAGE_URL = os.environ["ASSET_URL"] + "/no_image.png"
 
 
 def book_section(
