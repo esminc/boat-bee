@@ -1,6 +1,7 @@
 import { LambdaIntegration, RestApi } from "aws-cdk-lib/aws-apigateway";
 import { AttributeType, Table } from "aws-cdk-lib/aws-dynamodb";
 import { Runtime, Function, Code, Handler } from "aws-cdk-lib/aws-lambda";
+import { LambdaDestination } from "aws-cdk-lib/aws-logs-destinations";
 import {
   StackProps,
   Stack,
@@ -95,6 +96,8 @@ export class BeeSlackAppStack extends Stack {
         SLACK_BOT_TOKEN: SecretValue.unsafePlainText("dummy"),
         SLACK_SIGNING_SECRET: SecretValue.unsafePlainText("dummy"),
         NOTIFY_POST_REVIEW_CHANNEL: SecretValue.unsafePlainText("dummy"),
+        BEE_OPERATION_BOT_SLACK_WEBHOOK_URL:
+          SecretValue.unsafePlainText("dummy"),
       },
     });
 
@@ -144,7 +147,7 @@ export class BeeSlackAppStack extends Stack {
       distributionPaths: ["/*"],
     });
 
-    const appFunction = new Function(this, "Lambda", {
+    const appFunction = new Function(this, "AppLambda", {
       runtime: Runtime.FROM_IMAGE,
       handler: Handler.FROM_IMAGE,
       code: Code.fromAssetImage(join(__dirname, "../../lambda/app")),
@@ -166,5 +169,23 @@ export class BeeSlackAppStack extends Stack {
       .addResource("slack")
       .addResource("events")
       .addMethod("POST", new LambdaIntegration(appFunction));
+
+    const errorHandlerFunction = new Function(this, "ErrorHandlerLambda", {
+      runtime: Runtime.FROM_IMAGE,
+      handler: Handler.FROM_IMAGE,
+      code: Code.fromAssetImage(join(__dirname, "../../lambda/error_handler")),
+      environment: {
+        SLACK_CREDENTIALS_SECRET_ID: secret.secretName,
+      },
+      timeout: Duration.minutes(3),
+      memorySize: 1024,
+    });
+
+    secret.grantRead(errorHandlerFunction);
+
+    appFunction.logGroup.addSubscriptionFilter("ErrorSubscriptionFilter", {
+      destination: new LambdaDestination(errorHandlerFunction),
+      filterPattern: { logPatternString: "ERROR" },
+    });
   }
 }
