@@ -11,7 +11,7 @@ from bee_slack_app.service import (
     user_service,
 )
 from bee_slack_app.utils.datetime import parse
-from bee_slack_app.view.home import home
+from bee_slack_app.view import home
 
 BOOK_NUMBER_PER_PAGE = 20
 

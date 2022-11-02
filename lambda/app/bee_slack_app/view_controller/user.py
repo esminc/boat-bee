@@ -3,7 +3,7 @@ from typing import Optional, TypedDict
 
 from bee_slack_app.model import User
 from bee_slack_app.service import user_action_service, user_service
-from bee_slack_app.view.user import user_profile_modal
+from bee_slack_app.view import user_profile_modal
 
 
 def user_controller(app):

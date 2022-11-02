@@ -9,18 +9,17 @@ from bee_slack_app.service import (
     user_action_service,
     user_service,
 )
-from bee_slack_app.view.common import DUMMY_IMAGE_URL, simple_modal
-from bee_slack_app.view.post_review import (
-    notify_review_post_message_blocks,
-    search_book_to_review_modal,
-)
-from bee_slack_app.view.read_review import (
+from bee_slack_app.view import (
+    DUMMY_IMAGE_URL,
     BookOfReview,
+    notify_review_post_message_blocks,
     review_detail_modal,
     review_modal,
     review_of_user_modal,
+    search_book_to_review_modal,
+    simple_modal,
+    user_department_dict,
 )
-from bee_slack_app.view.user import user_department_dict
 
 BOOK_NUMBER_PER_PAGE = 19
 
