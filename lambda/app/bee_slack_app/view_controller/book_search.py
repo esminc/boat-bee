@@ -1,12 +1,12 @@
 import json
 
 from bee_slack_app.service import book_search_service, user_action_service
-from bee_slack_app.view.book_search import (
+from bee_slack_app.view import (
     book_search_result_modal,
     book_search_result_selected_modal,
+    post_review_modal,
+    simple_modal,
 )
-from bee_slack_app.view.common import simple_modal
-from bee_slack_app.view.post_review import post_review_modal
 
 
 # TODO: disable=too-many-statementsを取り消す
