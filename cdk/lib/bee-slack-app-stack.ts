@@ -17,6 +17,8 @@ import * as cloudfront from "aws-cdk-lib/aws-cloudfront";
 import * as s3deploy from "aws-cdk-lib/aws-s3-deployment";
 import * as cloudfront_origins from "aws-cdk-lib/aws-cloudfront-origins";
 import { PolicyStatement, CanonicalUserPrincipal } from "aws-cdk-lib/aws-iam";
+import { Rule, Schedule } from "aws-cdk-lib/aws-events";
+import { LambdaFunction } from "aws-cdk-lib/aws-events-targets";
 
 interface Props extends StackProps {
   isProduction: boolean;
@@ -186,6 +188,30 @@ export class BeeSlackAppStack extends Stack {
     appFunction.logGroup.addSubscriptionFilter("ErrorSubscriptionFilter", {
       destination: new LambdaDestination(errorHandlerFunction),
       filterPattern: { logPatternString: "ERROR" },
+    });
+
+    const bookRecommendationFunction = new Function(
+      this,
+      "BookRecommendationLambda",
+      {
+        runtime: Runtime.FROM_IMAGE,
+        handler: Handler.FROM_IMAGE,
+        code: Code.fromAssetImage(
+          join(__dirname, "../../lambda/book_recommendation")
+        ),
+        environment: {
+          DYNAMODB_TABLE: dynamoTable.tableName,
+        },
+        timeout: Duration.minutes(3),
+        memorySize: 1024,
+      }
+    );
+
+    dynamoTable.grantReadWriteData(bookRecommendationFunction);
+
+    new Rule(this, "BookRecommendationRule", {
+      schedule: Schedule.cron({ hour: "0", minute: "0" }), // 毎日09:00(JST)に実行
+      targets: [new LambdaFunction(bookRecommendationFunction)],
     });
   }
 }

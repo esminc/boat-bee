@@ -1,46 +1,58 @@
-from typing import Optional
+from typing import Optional, TypedDict
 
-import requests  # type: ignore
+import boto3  # type: ignore
+
+from bee_slack_app.repository import database
+
+GSI_PK_VALUE = "book_recommendation"
+
+
+BookRecommendation = TypedDict(
+    "BookRecommendation", {"ml_model_name": str, "isbn": str}
+)
+
+RecommendBookRepositoryFetchResult = TypedDict(
+    "RecommendBookRepositoryFetchResult",
+    {
+        "book_recommendations": list[BookRecommendation],
+        "created_at": str,
+    },
+)
 
 
 class RecommendBookRepository:  # pylint: disable=too-few-public-methods
     recommend_info = None
 
     def __init__(self) -> None:
-        self.recommend_info = self._load_recommend_info()
+        self.table = database.get_table()
 
-    def fetch(self, user_id: str) -> Optional[dict[str, str]]:
-        """
-        おすすめの本を取得する
+    def fetch(self, user_id: str) -> Optional[RecommendBookRepositoryFetchResult]:
+        items = self.table.query(
+            IndexName=database.GSI_2,
+            KeyConditionExpression=boto3.dynamodb.conditions.Key(database.GSI_PK).eq(
+                GSI_PK_VALUE
+            )
+            & boto3.dynamodb.conditions.Key(database.GSI_2_SK).begins_with(user_id),
+            ScanIndexForward=False,
+            Limit=1,
+        )["Items"]
 
-        Args:
-            user_id : ユーザID
-        Returns:
-           MLモデルとおすすめの本のISBNを辞書形式で返す
-        """
+        if len(items) == 0:
+            return None
 
-        return (
-            self.recommend_info["result"].get(user_id)
-            if self.recommend_info is not None
-            else None
-        )
+        item = items[0]  # 最新のおすすめデータを参照する
 
-    def fetch_metadata(self) -> Optional[dict]:
-        """
-        おすすめ情報のメタデータを取得する
-        メタデータの内容はアプリの都合により変動があると思われるため
-        リポジトリでは辞書形式の読み出しに留めて柔軟性を確保しておく
-        辞書の内容については上位側で取り出す
+        book_recommendations: list[BookRecommendation] = [
+            {
+                "ml_model_name": book_recommendation["ml_model_name"],
+                "isbn": book_recommendation["isbn"],
+            }
+            for book_recommendation in item["book_recommendations"]
+        ]
 
-        Returns:
-           JSONファイルに格納されているメタデータを辞書形式で返す
-        """
+        created_at = item["created_at"]
 
-        return (
-            self.recommend_info["metadata"] if self.recommend_info is not None else None
-        )
-
-    @staticmethod
-    def _load_recommend_info():
-        url = "https://bee-ml-prod-bucket.s3.ap-northeast-1.amazonaws.com/recommended_book.json"
-        return requests.get(url).json()
+        return {
+            "book_recommendations": book_recommendations,
+            "created_at": created_at,
+        }
