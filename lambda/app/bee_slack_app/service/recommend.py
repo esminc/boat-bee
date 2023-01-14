@@ -1,5 +1,5 @@
 from logging import getLogger
-from typing import Optional
+from typing import Optional, TypedDict
 
 from bee_slack_app.model import RecommendBook, SuggestedBook, User
 from bee_slack_app.repository import (
@@ -14,7 +14,12 @@ recommend_book_repository = RecommendBookRepository()
 suggested_book_repository = SuggestedBookRepository()
 
 
-def recommend(user: User) -> list[RecommendBook]:
+RecommendResult = TypedDict(
+    "RecommendResult", {"recommended_books": list[RecommendBook], "created_at": str}
+)
+
+
+def recommend(user: User) -> Optional[RecommendResult]:
     """
     おすすめの本の情報を返却する
 
@@ -22,7 +27,7 @@ def recommend(user: User) -> list[RecommendBook]:
         user : おすすめ本を知りたい、利用者のユーザ情報。
 
     Returns:
-        おすすめする本のリスト
+        おすすめの本の情報
     """
     logger = getLogger(__name__)
 
@@ -43,15 +48,18 @@ def recommend(user: User) -> list[RecommendBook]:
         }
         user_id = user_id_in_fdo_workspace.get(user_id, user_id)
 
-        recommended_book_dict = recommend_book_repository.fetch(user_id)
+        recommend_book_fetch_result = recommend_book_repository.fetch(user_id)
 
-        if not recommended_book_dict:
+        if not recommend_book_fetch_result:
             logger.info("Failed to recommend book")
             logger.info({"user_id": user_id})
-            return []
+            return None
 
         recommended_books = []
-        for ml_model, isbn in recommended_book_dict.items():
+        for book_recommendation in recommend_book_fetch_result["book_recommendations"]:
+            isbn = book_recommendation["isbn"]
+            ml_model = book_recommendation["ml_model_name"]
+
             book = book_repository.fetch(isbn=isbn)
             if book is not None:
                 suggested_book = suggested_book_repository.get(
@@ -85,27 +93,10 @@ def recommend(user: User) -> list[RecommendBook]:
                 }
                 recommended_books.append(recommended_book)
 
-        return recommended_books
-
-    except Exception:  # pylint: disable=broad-except
-        logger.exception("Failed to get data.")
-        return []
-
-
-def created_at() -> Optional[str]:
-    """
-    おすすめ情報の生成時刻をISO 8601形式で取得する
-    ISO 8601形式であることは情報を格納するbee-ml側で担保すること
-
-    Returns:
-        str : YYYY/mm/dd HH:MM:SSの時刻文字列。例 2022/04/01 00:00:00
-    """
-    logger = getLogger(__name__)
-
-    try:
-        metadata = recommend_book_repository.fetch_metadata()
-
-        return metadata.get("created_at") if metadata is not None else None
+        return {
+            "recommended_books": recommended_books,
+            "created_at": recommend_book_fetch_result["created_at"],
+        }
 
     except Exception:  # pylint: disable=broad-except
         logger.exception("Failed to get data.")

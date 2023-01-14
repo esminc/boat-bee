@@ -5,13 +5,18 @@ from bee_slack_app.model import User
 from bee_slack_app.repository.book_repository import BookRepository
 from bee_slack_app.repository.recommend_book_repository import RecommendBookRepository
 from bee_slack_app.repository.suggested_book_repository import SuggestedBookRepository
-from bee_slack_app.service.recommend import created_at, recommend
+from bee_slack_app.service.recommend import recommend
 from bee_slack_app.utils import datetime
 
 
 def test_おすすめの本の情報を取得できること(monkeypatch):
     def mock_recommend_book_repository_fetch(_, __):
-        return {"ml-a": "1234567890123"}
+        return {
+            "book_recommendations": [
+                {"ml_model_name": "ml-a", "isbn": "1234567890123"}
+            ],
+            "created_at": "2022-04-01T00:00:00+09:00",
+        }
 
     monkeypatch.setattr(
         RecommendBookRepository, "fetch", mock_recommend_book_repository_fetch
@@ -55,7 +60,9 @@ def test_おすすめの本の情報を取得できること(monkeypatch):
         "post_review_count": 1,
     }
 
-    recommended_books = recommend(user)
+    result = recommend(user)
+
+    recommended_books = result["recommended_books"]
 
     assert recommended_books[0]["title"] == "仕事ではじめる機械学習"
     assert recommended_books[0]["isbn"] == "1234567890123"
@@ -67,10 +74,12 @@ def test_おすすめの本の情報を取得できること(monkeypatch):
     assert recommended_books[0]["interested"] is True
     assert recommended_books[0]["updated_at"] == "2022-04-01T00:00:00+09:00"
 
+    assert result["created_at"] == "2022-04-01T00:00:00+09:00"
 
-def test_おすすめの本が取得できなかったら空のリストを返すこと(monkeypatch):
+
+def test_おすすめの本が取得できなかったらNoneを返すこと(monkeypatch):
     def mock_recommend_book_repository_fetch(_, __):
-        return []
+        return None
 
     monkeypatch.setattr(
         RecommendBookRepository, "fetch", mock_recommend_book_repository_fetch
@@ -116,12 +125,17 @@ def test_おすすめの本が取得できなかったら空のリストを返�
 
     recommended_books = recommend(user)
 
-    assert len(recommended_books) == 0
+    assert recommended_books is None
 
 
 def test_おすすめの本の情報がNoneのケース(monkeypatch):
     def mock_recommend_book_repository_fetch(_, __):
-        return {"ml-a": "1234567890123"}
+        return {
+            "book_recommendations": [
+                {"ml_model_name": "ml-a", "isbn": "1234567890123"}
+            ],
+            "created_at": "2022-04-01T00:00:00+09:00",
+        }
 
     monkeypatch.setattr(
         RecommendBookRepository, "fetch", mock_recommend_book_repository_fetch
@@ -157,9 +171,9 @@ def test_おすすめの本の情報がNoneのケース(monkeypatch):
         "post_review_count": 1,
     }
 
-    recommended_books = recommend(user)
+    result = recommend(user)
 
-    assert len(recommended_books) == 0
+    assert result is None
 
 
 def test_おすすめ本が未登録の場合は登録すること(mocker):
@@ -167,7 +181,10 @@ def test_おすすめ本が未登録の場合は登録すること(mocker):
     mock_recommend_book_repository_fetch = mocker.patch.object(
         RecommendBookRepository, "fetch"
     )
-    mock_recommend_book_repository_fetch.return_value = {"ml-a": "1234567890123"}
+    mock_recommend_book_repository_fetch.return_value = {
+        "book_recommendations": [{"ml_model_name": "ml-a", "isbn": "1234567890123"}],
+        "created_at": "2022-04-01T00:00:00+09:00",
+    }
 
     def mock_book_repository_fetch(_, isbn):
         return {
@@ -218,7 +235,12 @@ def test_おすすめ本が未登録の場合は登録すること(mocker):
 
 def test_書影が取得できない場合に書影にNone返値に設定されること(monkeypatch):
     def mock_recommend_book_repository_fetch(_, __):
-        return {"ml-a": "1234567890123"}
+        return {
+            "book_recommendations": [
+                {"ml_model_name": "ml-a", "isbn": "1234567890123"}
+            ],
+            "created_at": "2022-04-01T00:00:00+09:00",
+        }
 
     monkeypatch.setattr(
         RecommendBookRepository, "fetch", mock_recommend_book_repository_fetch
@@ -262,7 +284,9 @@ def test_書影が取得できない場合に書影にNone返値に設定され�
         "post_review_count": 1,
     }
 
-    recommended_books = recommend(user)
+    result = recommend(user)
+
+    recommended_books = result["recommended_books"]
 
     assert recommended_books[0]["title"] == "仕事ではじめる機械学習"
     assert recommended_books[0]["isbn"] == "1234567890123"
@@ -274,10 +298,17 @@ def test_書影が取得できない場合に書影にNone返値に設定され�
     assert recommended_books[0]["interested"] is True
     assert recommended_books[0]["updated_at"] == "2022-04-01T00:00:00+09:00"
 
+    assert result["created_at"] == "2022-04-01T00:00:00+09:00"
 
-def test_モジュール内で例外が発生した場合は返値は空のリストであること(monkeypatch):
+
+def test_モジュール内で例外が発生した場合は返値はNoneであること(monkeypatch):
     def mock_recommend_book_repository_fetch(_, __):
-        return {"ml-a": "1234567890123"}
+        return {
+            "book_recommendations": [
+                {"ml_model_name": "ml-a", "isbn": "1234567890123"}
+            ],
+            "created_at": "2022-04-01T00:00:00+09:00",
+        }
 
     monkeypatch.setattr(
         RecommendBookRepository, "fetch", mock_recommend_book_repository_fetch
@@ -313,14 +344,20 @@ def test_モジュール内で例外が発生した場合は返値は空のリ�
         "post_review_count": 1,
     }
 
-    book = recommend(user)
+    result = recommend(user)
 
-    assert len(book) == 0
+    assert result is None
 
 
 def test_複数のおすすめの本の情報を取得できること(monkeypatch):
     def mock_recommend_book_repository_fetch(_, __):
-        return {"ml-a": "1234567890123", "ml-b": "9876543221098"}
+        return {
+            "book_recommendations": [
+                {"ml_model_name": "ml-a", "isbn": "1234567890123"},
+                {"ml_model_name": "ml-b", "isbn": "9876543221098"},
+            ],
+            "created_at": "2022-04-01T00:00:00+09:00",
+        }
 
     monkeypatch.setattr(
         RecommendBookRepository, "fetch", mock_recommend_book_repository_fetch
@@ -384,7 +421,9 @@ def test_複数のおすすめの本の情報を取得できること(monkeypatc
         "post_review_count": 1,
     }
 
-    recommended_books = recommend(user)
+    result = recommend(user)
+
+    recommended_books = result["recommended_books"]
 
     assert recommended_books[0]["title"] == "test_title_1"
     assert recommended_books[0]["isbn"] == "1234567890123"
@@ -406,65 +445,4 @@ def test_複数のおすすめの本の情報を取得できること(monkeypatc
     assert recommended_books[1]["interested"] is False
     assert recommended_books[1]["updated_at"] == "2022-04-02T00:00:00+09:00"
 
-
-def test_おすすめ情報の生成時刻を取得できること(monkeypatch):
-    def mock_recommend_book_repository_fetch_metadata(_):
-        return {"created_at": "2022/04/01 00:00:00"}
-
-    monkeypatch.setattr(
-        RecommendBookRepository,
-        "fetch_metadata",
-        mock_recommend_book_repository_fetch_metadata,
-    )
-
-    timestamp = created_at()
-
-    assert timestamp == "2022/04/01 00:00:00"
-
-
-def test_メタデータが存在しない場合はNoneが返ること(monkeypatch):
-    def mock_recommend_book_repository_fetch_metadata(_):
-        return None
-
-    monkeypatch.setattr(
-        RecommendBookRepository,
-        "fetch_metadata",
-        mock_recommend_book_repository_fetch_metadata,
-    )
-
-    timestamp = created_at()
-
-    assert timestamp is None
-
-
-def test_メタデータにタイムスタンプ情報が存在しない場合はNoneが返ること(monkeypatch):
-    def mock_recommend_book_repository_fetch_metadata(_):
-        return {
-            "hoge": "hoge_value",
-            "fuga": "fuga_value",
-        }
-
-    monkeypatch.setattr(
-        RecommendBookRepository,
-        "fetch_metadata",
-        mock_recommend_book_repository_fetch_metadata,
-    )
-
-    timestamp = created_at()
-
-    assert timestamp is None
-
-
-def test_メタデータ取得中にエラーが発生した場合はNoneが返ること(monkeypatch):
-    def mock_recommend_book_repository_fetch_metadata(_):
-        raise Exception("dummy exception")
-
-    monkeypatch.setattr(
-        RecommendBookRepository,
-        "fetch_metadata",
-        mock_recommend_book_repository_fetch_metadata,
-    )
-
-    timestamp = created_at()
-
-    assert timestamp is None
+    assert result["created_at"] == "2022-04-01T00:00:00+09:00"

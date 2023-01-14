@@ -25,7 +25,6 @@ def home_controller(app):  # pylint: disable=too-many-statements
         reviews = review_service.get_review_all()
 
         total_review_count = len(reviews) if reviews else 0
-        recommend_timestamp = parse(recommend_service.created_at())
 
         user_action_service.record_user_action(
             user_id=event["user"],
@@ -38,7 +37,7 @@ def home_controller(app):  # pylint: disable=too-many-statements
         user = user_service.get_user(event["user"])
         user_name = f"{user['user_name']}さん" if user is not None else "あなた"
 
-        recommended_books = recommend_service.recommend(user)
+        recommended_result = recommend_service.recommend(user)
 
         books_params = None
         metadata_str = ""
@@ -61,12 +60,12 @@ def home_controller(app):  # pylint: disable=too-many-statements
             user_id=event["user"],
             view=home(
                 post_review_action_id="post_review_action",
-                recommended_books=recommended_books,
+                recommended_books=recommended_result["recommended_books"],
                 list_user_posted_review_action_id="list_user_posted_review_action",
                 user_info_action_id="user_info_action",
                 total_review_count=total_review_count,
                 user_name=user_name,
-                recommend_timestamp=recommend_timestamp,
+                recommend_timestamp=parse(recommended_result["created_at"]),
                 books_params=books_params,
                 private_metadata=metadata_str,
             ),
@@ -92,12 +91,11 @@ def home_controller(app):  # pylint: disable=too-many-statements
         reviews = review_service.get_review_all()
 
         total_review_count = len(reviews) if reviews else 0
-        recommend_timestamp = parse(recommend_service.created_at())
 
         user = user_service.get_user(user_id)
         user_name = f"{user['user_name']}さん" if user is not None else "あなた"
 
-        recommended_books = recommend_service.recommend(user)
+        recommended_result = recommend_service.recommend(user)
 
         books_params = None
         metadata_str = ""
@@ -123,12 +121,12 @@ def home_controller(app):  # pylint: disable=too-many-statements
             user_id=user_id,
             view=home(
                 post_review_action_id="post_review_action",
-                recommended_books=recommended_books,
+                recommended_books=recommended_result["recommended_books"],
                 list_user_posted_review_action_id="list_user_posted_review_action",
                 user_info_action_id="user_info_action",
                 total_review_count=total_review_count,
                 user_name=user_name,
-                recommend_timestamp=recommend_timestamp,
+                recommend_timestamp=parse(recommended_result["created_at"]),
                 books_params=books_params,
                 private_metadata=metadata_str,
             ),
@@ -150,12 +148,11 @@ def home_controller(app):  # pylint: disable=too-many-statements
         reviews = review_service.get_review_all()
 
         total_review_count = len(reviews) if reviews else 0
-        recommend_timestamp = parse(recommend_service.created_at())
 
         user = user_service.get_user(user_id)
         user_name = f"{user['user_name']}さん" if user is not None else "あなた"
 
-        recommended_books = recommend_service.recommend(user)
+        recommended_result = recommend_service.recommend(user)
 
         metadata_dict = _PrivateMetadataConvertor.to_dict(
             private_metadata=private_metadata
@@ -185,12 +182,12 @@ def home_controller(app):  # pylint: disable=too-many-statements
             user_id=user_id,
             view=home(
                 post_review_action_id="post_review_action",
-                recommended_books=recommended_books,
+                recommended_books=recommended_result["recommended_books"],
                 list_user_posted_review_action_id="list_user_posted_review_action",
                 user_info_action_id="user_info_action",
                 total_review_count=total_review_count,
                 user_name=user_name,
-                recommend_timestamp=recommend_timestamp,
+                recommend_timestamp=parse(recommended_result["created_at"]),
                 books_params=books_params,
                 private_metadata=metadata_str,
             ),
@@ -207,14 +204,14 @@ def home_controller(app):  # pylint: disable=too-many-statements
         reviews = review_service.get_review_all()
 
         total_review_count = len(reviews) if reviews else 0
-        recommend_timestamp = parse(recommend_service.created_at())
 
         logger.info({"total_review_count": total_review_count})
 
         user = user_service.get_user(body["user"]["id"])
         user_name = f"{user['user_name']}さん" if user is not None else "あなた"
 
-        recommended_books = recommend_service.recommend(user)
+        recommended_result = recommend_service.recommend(user)
+        recommended_books = recommended_result["recommended_books"]
 
         books_params = None
         metadata_str = ""
@@ -272,7 +269,7 @@ def home_controller(app):  # pylint: disable=too-many-statements
             user_info_action_id="user_info_action",
             total_review_count=total_review_count,
             user_name=user_name,
-            recommend_timestamp=recommend_timestamp,
+            recommend_timestamp=parse(recommended_result["created_at"]),
             books_params=books_params,
             private_metadata=metadata_str,
         )

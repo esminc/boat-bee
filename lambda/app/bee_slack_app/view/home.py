@@ -12,7 +12,7 @@ class BooksParam(TypedDict):
 
 def home(  # pylint: disable=too-many-locals
     *,
-    recommended_books: list[RecommendBook],
+    recommended_books: Optional[list[RecommendBook]],
     post_review_action_id: str,
     list_user_posted_review_action_id: str,
     user_info_action_id: str,
