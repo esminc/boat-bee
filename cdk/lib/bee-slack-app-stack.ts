@@ -213,5 +213,25 @@ export class BeeSlackAppStack extends Stack {
       schedule: Schedule.cron({ hour: "0", minute: "0" }), // 毎日09:00(JST)に実行
       targets: [new LambdaFunction(bookRecommendationFunction)],
     });
+
+    const reportFunction = new Function(this, "ReportLambda", {
+      runtime: Runtime.FROM_IMAGE,
+      handler: Handler.FROM_IMAGE,
+      code: Code.fromAssetImage(join(__dirname, "../../lambda/report")),
+      environment: {
+        SLACK_CREDENTIALS_SECRET_ID: secret.secretName,
+        DYNAMODB_TABLE: dynamoTable.tableName,
+      },
+      timeout: Duration.minutes(3),
+      memorySize: 1024,
+    });
+
+    dynamoTable.grantReadData(reportFunction);
+    secret.grantRead(reportFunction);
+
+    new Rule(this, "ReportRule", {
+      schedule: Schedule.cron({ weekDay: "MON", hour: "0", minute: "0" }), // 毎週月曜日09:00(JST)に実行
+      targets: [new LambdaFunction(reportFunction)],
+    });
   }
 }
