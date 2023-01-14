@@ -72,6 +72,20 @@ jobs:
       - run: make init
       - run: make format-check
 
+  report_review_graph:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: lambda/report_review_graph
+    steps:
+      - uses: actions/checkout@v2.4.0
+      - uses: actions/setup-python@v3
+        with:
+          python-version: "3.9.16"
+      - run: pip install pipenv
+      - run: make init
+      - run: make format-check
+
   cdk:
     runs-on: ubuntu-latest
     defaults:
@@ -91,7 +105,15 @@ jobs:
 
   notify-if-failure:
     runs-on: ubuntu-latest
-    needs: [app, cdk, error_handler, book_recommendation, report]
+    needs:
+      [
+        app,
+        cdk,
+        error_handler,
+        book_recommendation,
+        report,
+        report_review_graph,
+      ]
     if: failure()
     steps:
       - name: Notify Action Failure to Slack
@@ -116,7 +138,15 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
-    needs: [app, cdk, error_handler, book_recommendation, report]
+    needs:
+      [
+        app,
+        cdk,
+        error_handler,
+        book_recommendation,
+        report,
+        report_review_graph,
+      ]
     if: contains(github.event_name, 'push')
     permissions:
       id-token: write
