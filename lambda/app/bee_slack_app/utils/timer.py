@@ -1,3 +1,4 @@
+# type: ignore
 import inspect
 import os
 from datetime import datetime

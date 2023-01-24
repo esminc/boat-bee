@@ -1,5 +1,5 @@
 import os
-from typing import Optional
+from typing import Any, Optional
 
 
 def simple_modal(
@@ -54,7 +54,7 @@ def book_section(
     }
 
 
-def google_graphic():
+def google_graphic() -> dict[str, Any]:
     """
     「Powered by Google」
     """

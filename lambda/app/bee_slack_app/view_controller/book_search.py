@@ -1,5 +1,7 @@
 import json
 
+from slack_bolt import App
+
 from bee_slack_app.service import book_search_service, user_action_service
 from bee_slack_app.view import (
     book_search_result_modal,
@@ -10,7 +12,7 @@ from bee_slack_app.view import (
 
 
 # TODO: disable=too-many-statementsを取り消す
-def book_search_controller(app):  # pylint: disable=too-many-statements
+def book_search_controller(app: App) -> None:  # pylint: disable=too-many-statements
     @app.view("book_search_modal")
     def open_book_search_result_modal(ack, body):
         """

@@ -5,7 +5,7 @@ import os
 import boto3  # type: ignore
 from slack_bolt.adapter.aws_lambda import SlackRequestHandler
 
-SlackRequestHandler.clear_all_log_handlers()
+SlackRequestHandler.clear_all_log_handlers()  # type: ignore
 
 
 secretsmanager_client = boto3.client("secretsmanager")

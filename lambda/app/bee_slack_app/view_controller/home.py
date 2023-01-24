@@ -2,6 +2,8 @@ import json
 from logging import getLogger
 from typing import Any, TypedDict
 
+from slack_bolt import App
+
 from bee_slack_app.model import SuggestedBook
 from bee_slack_app.service import (
     book_service,
@@ -16,7 +18,7 @@ from bee_slack_app.view import home
 BOOK_NUMBER_PER_PAGE = 20
 
 
-def home_controller(app):  # pylint: disable=too-many-statements
+def home_controller(app: App) -> None:  # pylint: disable=too-many-statements
     @app.event("app_home_opened")
     def update_home_view(ack, event, client):
         ack()

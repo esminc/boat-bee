@@ -9,7 +9,7 @@ def _encode_partition_key(*, user_id: str, created_at: str) -> str:
 
 
 class UserActionRepository:  # pylint: disable=too-few-public-methods
-    def __init__(self):
+    def __init__(self) -> None:
         self.table = database.get_table()
 
     def put(self, user_action: UserAction) -> None:

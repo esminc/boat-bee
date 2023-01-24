@@ -1,4 +1,4 @@
-from typing import Optional, TypedDict
+from typing import Any, Optional, Tuple, TypedDict
 
 import boto3  # type: ignore
 from boto3.dynamodb.conditions import Key  # type: ignore
@@ -27,7 +27,7 @@ class ReviewRepository:
         score_for_me: Optional[str]
         score_for_others: Optional[str]
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.table = database.get_table()
 
     def fetch(self, *, user_id: str, isbn: str) -> Optional[Review]:
@@ -50,7 +50,9 @@ class ReviewRepository:
         Returns: 本のレビューのリスト
         """
 
-        def query(exclusive_start_key=None):
+        QueryResult = Tuple[list[Review], Optional[ReviewItemKey]]
+
+        def query(exclusive_start_key=None) -> QueryResult:
             option = {}
             if exclusive_start_key:
                 option["ExclusiveStartKey"] = exclusive_start_key
@@ -120,7 +122,9 @@ class ReviewRepository:
             GetResponse: レビューのリストと、読み込んだ最後のキー
         """
 
-        def query(exclusive_start_key=None, max_item_count=None):
+        QueryResult = Tuple[list[Review], Optional[ReviewItemKey]]
+
+        def query(exclusive_start_key=None, max_item_count=None) -> QueryResult:
             option = {}
             if exclusive_start_key:
                 option["ExclusiveStartKey"] = exclusive_start_key
@@ -145,7 +149,7 @@ class ReviewRepository:
 
         return {"items": items, "last_key": last_key}
 
-    def put(self, review):
+    def put(self, review: Review) -> dict[str, Any]:
         partition_key = _encode_partition_key(
             user_id=review["user_id"], isbn=review["isbn"]
         )
