@@ -3,9 +3,11 @@ from typing import Optional, TypedDict
 
 from slack_bolt import App
 
-from bee_slack_app.model import User
-from bee_slack_app.service import user_action_service, user_service
-from bee_slack_app.view import user_profile_modal
+from bee_slack_app.model import Review, ReviewPagination, User
+from bee_slack_app.service import review_service, user_action_service, user_service
+from bee_slack_app.view import review_of_user_modal, simple_modal, user_profile_modal
+
+BOOK_NUMBER_PER_PAGE = 20
 
 
 def user_controller(app: App) -> None:
@@ -93,6 +95,28 @@ def user_controller(app: App) -> None:
             action_name="user_profile_modal",
             payload={"user": user},
         )
+
+
+def _make_review_contents_list_comment_short(
+    review_contents_list: list[Review],
+) -> list[Review]:
+    """
+    レビューのコメントを、一覧表示用に短くする
+    """
+    comment_len = 20
+
+    for review_contents in review_contents_list:
+        review_comment = review_contents["review_comment"]
+        if review_comment:
+            review_contents["review_comment"] = (
+                review_comment[0:comment_len] + "..."
+                if len(review_comment) > comment_len
+                else review_comment
+            )
+        else:
+            review_contents["review_comment"] = "-"
+
+    return review_contents_list
 
 
 class _PrivateMetadataConvertor:

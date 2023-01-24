@@ -16,6 +16,7 @@ def home(  # pylint: disable=too-many-locals
     post_review_action_id: str,
     list_user_posted_review_action_id: str,
     user_info_action_id: str,
+    list_posted_review_action_id: str,
     total_review_count: int,
     user_name: str,
     recommend_timestamp: str,
@@ -30,6 +31,7 @@ def home(  # pylint: disable=too-many-locals
         post_review_action_id: 「レビューを投稿する」ボタンのaction_id
         list_user_posted_review_action_id: 「レビューを投稿したユーザ」ボタンのaction_id
         user_info_action_id: 「プロフィール」ボタンのaction_id
+        list_posted_review_action_id: 「投稿したレビュー」ボタンのaction_id
         total_review_count: 表示する「レビュー投稿数」
         user_name:表示する「ユーザ名」
         recommend_timestamp:MLのjsonファイルを作成した日時
@@ -171,6 +173,16 @@ def home(  # pylint: disable=too-many-locals
                     },
                     "value": "dummy_value",
                     "action_id": user_info_action_id,
+                },
+                {
+                    "type": "button",
+                    "text": {
+                        "type": "plain_text",
+                        "text": "投稿したレビュー",
+                        "emoji": True,
+                    },
+                    "value": "dummy_value",
+                    "action_id": list_posted_review_action_id,
                 },
             ],
         },

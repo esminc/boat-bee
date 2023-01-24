@@ -70,7 +70,12 @@ def review_modal(*, callback_id: str, book: BookOfReview, reviews: list[Review])
 
 
 def review_of_user_modal(
-    *, callback_id: str, reviews_param: ReviewPagination, private_metadata: str
+    *,
+    callback_id: str,
+    reviews_param: ReviewPagination,
+    private_metadata: str,
+    review_move_to_back_action: str,
+    review_move_to_next_action: str,
 ):
     """
     ユーザのレビューモーダル
@@ -79,7 +84,8 @@ def review_of_user_modal(
         callback_id: モーダルのcallback_id
         reviews_param: 「投稿されているレビュー」のデータ
         private_metadata: private_metadata
-
+        review_move_to_back_action: 「前へ」ボタンのaction_id
+        review_move_to_next_action: 「次へ」ボタンのaction_id
     """
 
     view = {
@@ -134,7 +140,7 @@ def review_of_user_modal(
             {  # type: ignore
                 "type": "button",
                 "text": {"type": "plain_text", "text": "前へ"},
-                "action_id": "review_move_to_back_action",
+                "action_id": review_move_to_back_action,
             }
         ]
 
@@ -143,7 +149,7 @@ def review_of_user_modal(
             {
                 "type": "button",
                 "text": {"type": "plain_text", "text": "次へ"},
-                "action_id": "review_move_to_next_action",
+                "action_id": review_move_to_next_action,
             }
         ]
 
