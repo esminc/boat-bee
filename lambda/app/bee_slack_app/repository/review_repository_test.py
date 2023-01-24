@@ -79,7 +79,7 @@ class TestReviewRepository:
 
         review_repository = ReviewRepository()
 
-        reviews = review_repository.get_by_isbn(isbn="12345")
+        reviews = review_repository.fetch_by_isbn(isbn="12345")
 
         assert len(reviews) == 2
 
@@ -166,7 +166,7 @@ class TestReviewRepository:
 
         review_repository = ReviewRepository()
 
-        reviews = review_repository.get_by_isbn(isbn="isbn_not_exist")
+        reviews = review_repository.fetch_by_isbn(isbn="isbn_not_exist")
 
         assert len(reviews) == 0
         assert isinstance(reviews, list)
@@ -234,7 +234,7 @@ class TestReviewRepository:
 
         review_repository = ReviewRepository()
 
-        reviews = review_repository.get_by_user_id(user_id="user_id_1")
+        reviews = review_repository.fetch_by_user_id(user_id="user_id_1")
 
         assert len(reviews) == 2
 
@@ -323,7 +323,7 @@ class TestReviewRepository:
 
         review_repository = ReviewRepository()
 
-        get_response = review_repository.get_limited_by_user_id(
+        get_response = review_repository.fetch_limited_by_user_id(
             user_id="user_id_1", limit=1
         )
 
@@ -405,13 +405,13 @@ class TestReviewRepository:
 
         review_repository = ReviewRepository()
 
-        get_response = review_repository.get_limited_by_user_id(
+        get_response = review_repository.fetch_limited_by_user_id(
             user_id="user_id_1", limit=1
         )
 
         key = get_response["last_key"]
 
-        get_response = review_repository.get_limited_by_user_id(
+        get_response = review_repository.fetch_limited_by_user_id(
             user_id="user_id_1", limit=1, start_key=key
         )
 
@@ -493,7 +493,7 @@ class TestReviewRepository:
 
         review_repository = ReviewRepository()
 
-        get_response = review_repository.get_limited_by_user_id(
+        get_response = review_repository.fetch_limited_by_user_id(
             user_id="user_id_1", limit=5
         )
 
@@ -586,7 +586,7 @@ class TestReviewRepository:
 
         review_repository = ReviewRepository()
 
-        get_response = review_repository.get_limited_by_user_id(
+        get_response = review_repository.fetch_limited_by_user_id(
             user_id="non_user_id", limit=1
         )
 
@@ -657,7 +657,7 @@ class TestReviewRepository:
 
         review_repository = ReviewRepository()
 
-        reviews = review_repository.get_by_user_id(user_id="user_id_not_exist")
+        reviews = review_repository.fetch_by_user_id(user_id="user_id_not_exist")
 
         assert len(reviews) == 0
         assert isinstance(reviews, list)
@@ -728,7 +728,7 @@ class TestReviewRepository:
 
         review_repository = ReviewRepository()
 
-        review = review_repository.get(user_id="user_id_1", isbn="12345")
+        review = review_repository.fetch(user_id="user_id_1", isbn="12345")
 
         assert review["user_id"] == "user_id_1"
         assert review["isbn"] == "12345"
@@ -807,7 +807,7 @@ class TestReviewRepository:
 
         review_repository = ReviewRepository()
 
-        review = review_repository.get(user_id="user_id_not_exist", isbn="12345")
+        review = review_repository.fetch(user_id="user_id_not_exist", isbn="12345")
 
         assert review is None
 
@@ -877,7 +877,7 @@ class TestReviewRepository:
 
         review_repository = ReviewRepository()
 
-        reviews = review_repository.get_all()
+        reviews = review_repository.fetch_all()
 
         assert len(reviews) == 3
 
@@ -921,7 +921,7 @@ class TestReviewRepository:
 
         review_repository = ReviewRepository()
 
-        reviews = review_repository.get_all()
+        reviews = review_repository.fetch_all()
 
         assert len(reviews) == 0
         assert isinstance(reviews, list)
@@ -933,7 +933,7 @@ class TestReviewRepository:
 
         review_repository = ReviewRepository()
 
-        review_repository.create(
+        review_repository.put(
             {
                 "user_id": "test_user_id",
                 "isbn": "12345",
@@ -972,7 +972,7 @@ class TestReviewRepository:
     def test_レビューを上書きできること(self):
         review_repository = ReviewRepository()
 
-        review_repository.create(
+        review_repository.put(
             {
                 "user_id": "test_user_id",
                 "isbn": "12345",
@@ -1009,7 +1009,7 @@ class TestReviewRepository:
         assert actual["book_url"] == "dummy_book_url"
         assert actual["book_description"] == "dummy_description"
 
-        review_repository.create(
+        review_repository.put(
             {
                 "user_id": "test_user_id",
                 "isbn": "12345",
@@ -1057,7 +1057,7 @@ class TestReviewRepository:
 
         review_repository = ReviewRepository()
 
-        review_repository.create(
+        review_repository.put(
             {
                 "user_id": "test_user_id",
                 "isbn": "12345",
@@ -1073,7 +1073,7 @@ class TestReviewRepository:
             }
         )
 
-        review_repository.create(
+        review_repository.put(
             {
                 "user_id": "test_user_id",
                 "isbn": "67890",

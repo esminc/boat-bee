@@ -17,12 +17,12 @@ def get_review(*, user_id: str, isbn: str) -> Optional[Review]:
     logger = getLogger(__name__)
 
     try:
-        review = review_repository.get(user_id=user_id, isbn=isbn)
+        review = review_repository.fetch(user_id=user_id, isbn=isbn)
 
         if not review:
             return None
 
-        user = user_repository.get(user_id)
+        user = user_repository.fetch(user_id)
 
         review["user_name"] = user["user_name"] if user else review["user_id"]
 
@@ -43,7 +43,7 @@ def get_review_all() -> Optional[list[Review]]:
 
     try:
 
-        reviews = review_repository.get_all()
+        reviews = review_repository.fetch_all()
 
         fill_user_name(reviews)
 
@@ -61,7 +61,7 @@ def get_reviews_by_isbn(*, isbn: str) -> Optional[list[Review]]:
     try:
         logger = getLogger(__name__)
 
-        reviews = review_repository.get_by_isbn(isbn=isbn)
+        reviews = review_repository.fetch_by_isbn(isbn=isbn)
 
         fill_user_name(reviews)
 
@@ -81,7 +81,7 @@ def get_reviews_by_user_id(*, user_id: str) -> Optional[list[Review]]:
     try:
         logger = getLogger(__name__)
 
-        reviews = review_repository.get_by_user_id(user_id=user_id)
+        reviews = review_repository.fetch_by_user_id(user_id=user_id)
 
         fill_user_name(reviews)
 
@@ -96,7 +96,7 @@ def get_reviews_by_user_id(*, user_id: str) -> Optional[list[Review]]:
 
 def fill_user_name(review_contents_list: list[Review]) -> None:
     # 対応するユーザ情報からユーザ名を取得してレビュー情報に追加する
-    users = user_repository.get_all()
+    users = user_repository.fetch_all()
     for review_contents in review_contents_list:
         user_candidate = [
             user for user in users if user["user_id"] == review_contents["user_id"]
@@ -130,7 +130,7 @@ def post_review(review_contents: Review) -> Optional[Review]:
             "book_url": review_contents["book_url"],
             "book_description": review_contents["book_description"],
         }
-        review_repository.create(item)
+        review_repository.put(item)
 
         book: Book = {
             "isbn": review_contents["isbn"],
@@ -145,7 +145,7 @@ def post_review(review_contents: Review) -> Optional[Review]:
         book_repository.put(book=book)
 
         post_review_count = len(
-            review_repository.get_by_user_id(user_id=review_contents["user_id"])
+            review_repository.fetch_by_user_id(user_id=review_contents["user_id"])
         )
 
         user_repository.update_post_review_count(
@@ -196,7 +196,7 @@ def get_next_reviews_by_user_id(
 
         start_key = keys[-1] if len(keys) > 0 else None
 
-        reviews = review_repository.get_limited_by_user_id(
+        reviews = review_repository.fetch_limited_by_user_id(
             user_id=user_id, limit=limit, start_key=start_key
         )
 
@@ -260,7 +260,7 @@ def get_before_reviews_by_user_id(
 
         start_key = None if is_move_to_first else keys[-3]
 
-        reviews = review_repository.get_limited_by_user_id(
+        reviews = review_repository.fetch_limited_by_user_id(
             user_id=user_id, limit=limit, start_key=start_key
         )
 

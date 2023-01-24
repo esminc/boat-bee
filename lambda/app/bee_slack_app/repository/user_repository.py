@@ -18,7 +18,7 @@ class UserRepository:
     def __init__(self):
         self.table = database.get_table()
 
-    def get(self, user_id: str) -> Optional[User]:
+    def fetch(self, user_id: str) -> Optional[User]:
         """
         自分のユーザー情報を取得する
 
@@ -31,7 +31,7 @@ class UserRepository:
         partition_key = _encode_partition_key(user_id=user_id)
         return self.table.get_item(Key={database.PK: partition_key}).get("Item")
 
-    def get_all(self) -> list[User]:
+    def fetch_all(self) -> list[User]:
         """
         全てのユーザー情報を取得する
 
@@ -43,7 +43,7 @@ class UserRepository:
             KeyConditionExpression=Key(database.GSI_PK).eq(GSI_PK_VALUE),
         )["Items"]
 
-    def get_by_posted_review(self) -> list[User]:
+    def fetch_by_posted_review(self) -> list[User]:
         """
         レビューを投稿しているユーザを取得する
 
@@ -56,7 +56,7 @@ class UserRepository:
             ScanIndexForward=False,
         )["Items"]
 
-    def create(self, user: User) -> None:
+    def put(self, user: User) -> None:
         """
         データを追加および上書きします
         """

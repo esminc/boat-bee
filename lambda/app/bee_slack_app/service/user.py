@@ -21,14 +21,14 @@ def get_user(user_id: str) -> Optional[User]:
     logger = getLogger(__name__)
 
     try:
-        return user_repository.get(user_id)
+        return user_repository.fetch(user_id)
 
     except Exception:  # pylint: disable=broad-except
         logger.exception("Failed to get data.")
         return None
 
 
-def get_all_user() -> list[User]:
+def fetch_all_user() -> list[User]:
     """
     ユーザ情報を取得する
 
@@ -39,7 +39,7 @@ def get_all_user() -> list[User]:
     logger = getLogger(__name__)
 
     try:
-        return user_repository.get_all()
+        return user_repository.fetch_all()
 
     except Exception:  # pylint: disable=broad-except
         logger.exception("Failed to get data.")
@@ -53,7 +53,7 @@ def get_users_posted_review() -> list[User]:
     logger = getLogger(__name__)
 
     try:
-        return user_repository.get_by_posted_review()
+        return user_repository.fetch_by_posted_review()
 
     except Exception:  # pylint: disable=broad-except
         logger.exception("Failed to get data.")
@@ -67,7 +67,7 @@ def add_user(user: User) -> None:
     logger = getLogger(__name__)
 
     try:
-        user_repository.create(
+        user_repository.put(
             {
                 "user_id": user["user_id"],
                 "user_name": user["user_name"],

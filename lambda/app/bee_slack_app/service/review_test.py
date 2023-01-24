@@ -33,7 +33,7 @@ def test_get_reviewでレビューを取得できること(monkeypatch):
             "book_description": "dummy_description_0",
         }
 
-    monkeypatch.setattr(ReviewRepository, "get", mock_review_repository_get)
+    monkeypatch.setattr(ReviewRepository, "fetch", mock_review_repository_get)
 
     def mock_user_repository_get(_, __):
         return {
@@ -45,7 +45,7 @@ def test_get_reviewでレビューを取得できること(monkeypatch):
             "user_name": "user_name_0",
         }
 
-    monkeypatch.setattr(UserRepository, "get", mock_user_repository_get)
+    monkeypatch.setattr(UserRepository, "fetch", mock_user_repository_get)
 
     review = get_review(user_id="user_id_0", isbn="12345")
 
@@ -79,12 +79,12 @@ def test_get_reviewで該当するユーザ情報がない場合はユーザ名�
             "book_description": "dummy_description_0",
         }
 
-    monkeypatch.setattr(ReviewRepository, "get", mock_review_repository_get)
+    monkeypatch.setattr(ReviewRepository, "fetch", mock_review_repository_get)
 
     def mock_user_repository_get(_, __):
         return None
 
-    monkeypatch.setattr(UserRepository, "get", mock_user_repository_get)
+    monkeypatch.setattr(UserRepository, "fetch", mock_user_repository_get)
 
     review = get_review(user_id="user_id_0", isbn="12345")
 
@@ -98,7 +98,7 @@ def test_get_reviewでreview_repositoryの処理でエラーが発生した場�
     def mock_review_repository_get(_, **__):
         raise Exception("dummy exception")
 
-    monkeypatch.setattr(ReviewRepository, "get", mock_review_repository_get)
+    monkeypatch.setattr(ReviewRepository, "fetch", mock_review_repository_get)
 
     def mock_user_repository_get(_, __):
         return {
@@ -110,7 +110,7 @@ def test_get_reviewでreview_repositoryの処理でエラーが発生した場�
             "user_name": "user_name_0",
         }
 
-    monkeypatch.setattr(UserRepository, "get", mock_user_repository_get)
+    monkeypatch.setattr(UserRepository, "fetch", mock_user_repository_get)
 
     review = get_review(user_id="user_id_0", isbn="12345")
 
@@ -134,12 +134,12 @@ def test_get_reviewでuser_repositoryの処理でエラーが発生した場合N
             "book_description": "dummy_description_0",
         }
 
-    monkeypatch.setattr(ReviewRepository, "get", mock_review_repository_get)
+    monkeypatch.setattr(ReviewRepository, "fetch", mock_review_repository_get)
 
     def mock_user_repository_get(_, __):
         raise Exception("dummy exception")
 
-    monkeypatch.setattr(UserRepository, "get", mock_user_repository_get)
+    monkeypatch.setattr(UserRepository, "fetch", mock_user_repository_get)
 
     review = get_review(user_id="user_id_0", isbn="12345")
 
@@ -147,7 +147,7 @@ def test_get_reviewでuser_repositoryの処理でエラーが発生した場合N
 
 
 def test_get_review_allでレビューを取得できること(monkeypatch):
-    def mock_review_repository_get_all(_, **__):
+    def mock_review_repository_fetch_all(_, **__):
         return [
             {
                 "user_id": "user_id_0",
@@ -187,9 +187,9 @@ def test_get_review_allでレビューを取得できること(monkeypatch):
             },
         ]
 
-    monkeypatch.setattr(ReviewRepository, "get_all", mock_review_repository_get_all)
+    monkeypatch.setattr(ReviewRepository, "fetch_all", mock_review_repository_fetch_all)
 
-    def mock_user_repository_get_all(_, **__):
+    def mock_user_repository_fetch_all(_, **__):
         return [
             {
                 "user_id": "user_id_0",
@@ -217,7 +217,7 @@ def test_get_review_allでレビューを取得できること(monkeypatch):
             },
         ]
 
-    monkeypatch.setattr(UserRepository, "get_all", mock_user_repository_get_all)
+    monkeypatch.setattr(UserRepository, "fetch_all", mock_user_repository_fetch_all)
 
     reviews = get_review_all()
 
@@ -263,7 +263,7 @@ def test_get_review_allでレビューを取得できること(monkeypatch):
 def test_get_reviewsで該当するユーザ情報がない場合はユーザ名としてユーザIDを返すこと(
     monkeypatch,
 ):
-    def mock_review_repository_get_all(_, **__):
+    def mock_review_repository_fetch_all(_, **__):
         return [
             {
                 "user_id": "user_id_0",
@@ -303,12 +303,12 @@ def test_get_reviewsで該当するユーザ情報がない場合はユーザ名
             },
         ]
 
-    monkeypatch.setattr(ReviewRepository, "get_all", mock_review_repository_get_all)
+    monkeypatch.setattr(ReviewRepository, "fetch_all", mock_review_repository_fetch_all)
 
-    def mock_user_repository_get_all(_, **__):
+    def mock_user_repository_fetch_all(_, **__):
         return []
 
-    monkeypatch.setattr(UserRepository, "get_all", mock_user_repository_get_all)
+    monkeypatch.setattr(UserRepository, "fetch_all", mock_user_repository_fetch_all)
 
     reviews = get_review_all()
 
@@ -354,10 +354,10 @@ def test_get_reviewsで該当するユーザ情報がない場合はユーザ名
 def test_get_review_allでreview_repositoryの処理でエラーが発生した場合Noneを返すこと(
     monkeypatch,
 ):
-    def mock_review_repository_get_all(_, __):
+    def mock_review_repository_fetch_all(_, __):
         raise Exception("dummy exception")
 
-    monkeypatch.setattr(UserRepository, "get_all", mock_review_repository_get_all)
+    monkeypatch.setattr(UserRepository, "fetch_all", mock_review_repository_fetch_all)
 
     reviews = get_review_all()
 
@@ -367,10 +367,10 @@ def test_get_review_allでreview_repositoryの処理でエラーが発生した�
 def test_get_review_allでuser_repositoryの処理でエラーが発生した場合Noneを返すこと(
     monkeypatch,
 ):
-    def mock_user_repository_get_all(_, __):
+    def mock_user_repository_fetch_all(_, __):
         raise Exception("dummy exception")
 
-    monkeypatch.setattr(ReviewRepository, "get", mock_user_repository_get_all)
+    monkeypatch.setattr(ReviewRepository, "fetch", mock_user_repository_fetch_all)
 
     reviews = get_review_all()
 
@@ -380,12 +380,12 @@ def test_get_review_allでuser_repositoryの処理でエラーが発生した場
 def test_post_reviewでレビューを投稿できること(
     mocker,
 ):
-    mock_review_repository_create = mocker.patch.object(ReviewRepository, "create")
+    mock_review_repository_create = mocker.patch.object(ReviewRepository, "put")
 
     mock_book_repository_put = mocker.patch.object(BookRepository, "put")
 
-    mock_review_repository_get_by_user_id = mocker.patch.object(
-        ReviewRepository, "get_by_user_id"
+    mock_review_repository_fetch_by_user_id = mocker.patch.object(
+        ReviewRepository, "fetch_by_user_id"
     )
 
     mock_user_repository_update_post_review_count = mocker.patch.object(
@@ -413,7 +413,7 @@ def test_post_reviewでレビューを投稿できること(
 
     assert mock_book_repository_put.call_count == 1
 
-    assert mock_review_repository_get_by_user_id.call_count == 1
+    assert mock_review_repository_fetch_by_user_id.call_count == 1
 
     assert mock_user_repository_update_post_review_count.call_count == 1
 
@@ -433,13 +433,13 @@ def test_post_reviewでレビューを投稿できること(
 def test_post_reviewでreview_repositoryの処理でエラーが発生した場合Noneを返すこと(
     mocker,
 ):
-    mock_review_repository_create = mocker.patch.object(ReviewRepository, "create")
+    mock_review_repository_create = mocker.patch.object(ReviewRepository, "put")
     mock_review_repository_create.side_effect = Exception("dummy exception")
 
     mock_book_repository_put = mocker.patch.object(BookRepository, "put")
 
-    mock_review_repository_get_by_user_id = mocker.patch.object(
-        ReviewRepository, "get_by_user_id"
+    mock_review_repository_fetch_by_user_id = mocker.patch.object(
+        ReviewRepository, "fetch_by_user_id"
     )
 
     mock_user_repository_update_post_review_count = mocker.patch.object(
@@ -465,7 +465,7 @@ def test_post_reviewでreview_repositoryの処理でエラーが発生した場�
 
     assert mock_review_repository_create.call_count == 1
     assert mock_book_repository_put.call_count == 0
-    assert mock_review_repository_get_by_user_id.call_count == 0
+    assert mock_review_repository_fetch_by_user_id.call_count == 0
     assert mock_user_repository_update_post_review_count.call_count == 0
 
     assert review is None
@@ -474,13 +474,13 @@ def test_post_reviewでreview_repositoryの処理でエラーが発生した場�
 def test_post_reviewでbook_repositoryの処理でエラーが発生した場合Noneを返すこと(
     mocker,
 ):
-    mock_review_repository_create = mocker.patch.object(ReviewRepository, "create")
+    mock_review_repository_create = mocker.patch.object(ReviewRepository, "put")
 
     mock_book_repository_put = mocker.patch.object(BookRepository, "put")
     mock_book_repository_put.side_effect = Exception("dummy exception")
 
-    mock_review_repository_get_by_user_id = mocker.patch.object(
-        ReviewRepository, "get_by_user_id"
+    mock_review_repository_fetch_by_user_id = mocker.patch.object(
+        ReviewRepository, "fetch_by_user_id"
     )
 
     mock_user_repository_update_post_review_count = mocker.patch.object(
@@ -506,7 +506,7 @@ def test_post_reviewでbook_repositoryの処理でエラーが発生した場合
 
     assert mock_review_repository_create.call_count == 1
     assert mock_book_repository_put.call_count == 1
-    assert mock_review_repository_get_by_user_id.call_count == 0
+    assert mock_review_repository_fetch_by_user_id.call_count == 0
     assert mock_user_repository_update_post_review_count.call_count == 0
 
     assert review is None
@@ -515,12 +515,12 @@ def test_post_reviewでbook_repositoryの処理でエラーが発生した場合
 def test_post_reviewでuser_repositoryの処理でエラーが発生した場合Noneを返すこと(
     mocker,
 ):
-    mock_review_repository_create = mocker.patch.object(ReviewRepository, "create")
+    mock_review_repository_create = mocker.patch.object(ReviewRepository, "put")
 
     mock_book_repository_put = mocker.patch.object(BookRepository, "put")
 
-    mock_review_repository_get_by_user_id = mocker.patch.object(
-        ReviewRepository, "get_by_user_id"
+    mock_review_repository_fetch_by_user_id = mocker.patch.object(
+        ReviewRepository, "fetch_by_user_id"
     )
 
     mock_user_repository_update_post_review_count = mocker.patch.object(
@@ -549,7 +549,7 @@ def test_post_reviewでuser_repositoryの処理でエラーが発生した場合
 
     assert mock_review_repository_create.call_count == 1
     assert mock_book_repository_put.call_count == 1
-    assert mock_review_repository_get_by_user_id.call_count == 1
+    assert mock_review_repository_fetch_by_user_id.call_count == 1
     assert mock_user_repository_update_post_review_count.call_count == 1
 
     assert review is None
@@ -558,11 +558,11 @@ def test_post_reviewでuser_repositoryの処理でエラーが発生した場合
 def test_get_reviews_by_isbnでレビューが取得できること(
     mocker,
 ):
-    mock_review_repository_get_by_isbn = mocker.patch.object(
+    mock_review_repository_fetch_by_isbn = mocker.patch.object(
         ReviewRepository,
-        "get_by_isbn",
+        "fetch_by_isbn",
     )
-    mock_review_repository_get_by_isbn.return_value = [
+    mock_review_repository_fetch_by_isbn.return_value = [
         {
             "user_id": "user_id_0",
             "book_title": "仕事ではじめる機械学習",
@@ -589,11 +589,11 @@ def test_get_reviews_by_isbnでレビューが取得できること(
         },
     ]
 
-    mock_user_repository_get_all = mocker.patch.object(
+    mock_user_repository_fetch_all = mocker.patch.object(
         UserRepository,
-        "get_all",
+        "fetch_all",
     )
-    mock_user_repository_get_all.return_value = [
+    mock_user_repository_fetch_all.return_value = [
         {
             "user_id": "user_id_0",
             "department": "department_0",
@@ -652,17 +652,17 @@ def test_get_reviews_by_isbnでレビューが取得できること(
 def test_get_reviews_by_isbnでreview_repositoryの処理でエラーが発生した場合Noneを返すこと(
     mocker,
 ):
-    mock_review_repository_get_by_isbn = mocker.patch.object(
+    mock_review_repository_fetch_by_isbn = mocker.patch.object(
         ReviewRepository,
-        "get_by_isbn",
+        "fetch_by_isbn",
     )
-    mock_review_repository_get_by_isbn.side_effect = Exception("dummy exception")
+    mock_review_repository_fetch_by_isbn.side_effect = Exception("dummy exception")
 
-    mock_user_repository_get_all = mocker.patch.object(
+    mock_user_repository_fetch_all = mocker.patch.object(
         UserRepository,
-        "get_all",
+        "fetch_all",
     )
-    mock_user_repository_get_all.return_value = [
+    mock_user_repository_fetch_all.return_value = [
         {
             "user_id": "user_id_0",
             "department": "department_0",
@@ -697,11 +697,11 @@ def test_get_reviews_by_isbnでreview_repositoryの処理でエラーが発生�
 def test_get_reviews_by_isbnでuser_repositoryの処理でエラーが発生した場合Noneを返すこと(
     mocker,
 ):
-    mock_review_repository_get_by_isbn = mocker.patch.object(
+    mock_review_repository_fetch_by_isbn = mocker.patch.object(
         ReviewRepository,
-        "get_by_isbn",
+        "fetch_by_isbn",
     )
-    mock_review_repository_get_by_isbn.return_value = [
+    mock_review_repository_fetch_by_isbn.return_value = [
         {
             "user_id": "user_id_0",
             "book_title": "仕事ではじめる機械学習",
@@ -728,11 +728,11 @@ def test_get_reviews_by_isbnでuser_repositoryの処理でエラーが発生し�
         },
     ]
 
-    mock_user_repository_get_all = mocker.patch.object(
+    mock_user_repository_fetch_all = mocker.patch.object(
         UserRepository,
-        "get_all",
+        "fetch_all",
     )
-    mock_user_repository_get_all.side_effect = Exception("dummy exception")
+    mock_user_repository_fetch_all.side_effect = Exception("dummy exception")
 
     reviews = get_reviews_by_isbn(isbn="1234567890123")
 
@@ -742,11 +742,11 @@ def test_get_reviews_by_isbnでuser_repositoryの処理でエラーが発生し�
 def test_get_reviews_by_isbnで該当するユーザ情報がない場合はユーザ名としてユーザIDを返すこと(
     mocker,
 ):
-    mock_review_repository_get_by_isbn = mocker.patch.object(
+    mock_review_repository_fetch_by_isbn = mocker.patch.object(
         ReviewRepository,
-        "get_by_isbn",
+        "fetch_by_isbn",
     )
-    mock_review_repository_get_by_isbn.return_value = [
+    mock_review_repository_fetch_by_isbn.return_value = [
         {
             "user_id": "user_id_0",
             "book_title": "仕事ではじめる機械学習",
@@ -773,11 +773,11 @@ def test_get_reviews_by_isbnで該当するユーザ情報がない場合はユ�
         },
     ]
 
-    mock_user_repository_get_all = mocker.patch.object(
+    mock_user_repository_fetch_all = mocker.patch.object(
         UserRepository,
-        "get_all",
+        "fetch_all",
     )
-    mock_user_repository_get_all.return_value = []
+    mock_user_repository_fetch_all.return_value = []
 
     reviews = get_reviews_by_isbn(isbn="1234567890123")
 
@@ -811,11 +811,11 @@ def test_get_reviews_by_isbnで該当するユーザ情報がない場合はユ�
 def test_get_reviews_by_user_idでレビューが取得できること(
     mocker,
 ):
-    mock_review_repository_get_by_user_id = mocker.patch.object(
+    mock_review_repository_fetch_by_user_id = mocker.patch.object(
         ReviewRepository,
-        "get_by_user_id",
+        "fetch_by_user_id",
     )
-    mock_review_repository_get_by_user_id.return_value = [
+    mock_review_repository_fetch_by_user_id.return_value = [
         {
             "user_id": "user_id_0",
             "book_title": "仕事ではじめる機械学習",
@@ -842,11 +842,11 @@ def test_get_reviews_by_user_idでレビューが取得できること(
         },
     ]
 
-    mock_user_repository_get_all = mocker.patch.object(
+    mock_user_repository_fetch_all = mocker.patch.object(
         UserRepository,
-        "get_all",
+        "fetch_all",
     )
-    mock_user_repository_get_all.return_value = [
+    mock_user_repository_fetch_all.return_value = [
         {
             "user_id": "user_id_0",
             "department": "department_0",
@@ -905,17 +905,17 @@ def test_get_reviews_by_user_idでレビューが取得できること(
 def test_get_reviews_by_user_idでreview_repositoryの処理でエラーが発生した場合Noneを返すこと(
     mocker,
 ):
-    mock_review_repository_get_by_user_id = mocker.patch.object(
+    mock_review_repository_fetch_by_user_id = mocker.patch.object(
         ReviewRepository,
-        "get_by_user_id",
+        "fetch_by_user_id",
     )
-    mock_review_repository_get_by_user_id.side_effect = Exception("dummy exception")
+    mock_review_repository_fetch_by_user_id.side_effect = Exception("dummy exception")
 
-    mock_user_repository_get_all = mocker.patch.object(
+    mock_user_repository_fetch_all = mocker.patch.object(
         UserRepository,
-        "get_all",
+        "fetch_all",
     )
-    mock_user_repository_get_all.return_value = [
+    mock_user_repository_fetch_all.return_value = [
         {
             "user_id": "user_id_0",
             "department": "department_0",
@@ -950,11 +950,11 @@ def test_get_reviews_by_user_idでreview_repositoryの処理でエラーが発�
 def test_get_reviews_by_user_idでuser_repositoryの処理でエラーが発生した場合Noneを返すこと(
     mocker,
 ):
-    mock_review_repository_get_by_user_id = mocker.patch.object(
+    mock_review_repository_fetch_by_user_id = mocker.patch.object(
         ReviewRepository,
-        "get_by_user_id",
+        "fetch_by_user_id",
     )
-    mock_review_repository_get_by_user_id.return_value = [
+    mock_review_repository_fetch_by_user_id.return_value = [
         {
             "user_id": "user_id_0",
             "book_title": "仕事ではじめる機械学習",
@@ -981,11 +981,11 @@ def test_get_reviews_by_user_idでuser_repositoryの処理でエラーが発生�
         },
     ]
 
-    mock_user_repository_get_all = mocker.patch.object(
+    mock_user_repository_fetch_all = mocker.patch.object(
         UserRepository,
-        "get_all",
+        "fetch_all",
     )
-    mock_user_repository_get_all.side_effect = Exception("dummy exception")
+    mock_user_repository_fetch_all.side_effect = Exception("dummy exception")
 
     reviews = get_reviews_by_user_id(user_id="user_id_0")
 
@@ -995,11 +995,11 @@ def test_get_reviews_by_user_idでuser_repositoryの処理でエラーが発生�
 def test_get_reviews_by_user_idで該当するユーザ情報がない場合はユーザ名としてユーザIDを返すこと(
     mocker,
 ):
-    mock_review_repository_get_by_user_id = mocker.patch.object(
+    mock_review_repository_fetch_by_user_id = mocker.patch.object(
         ReviewRepository,
-        "get_by_user_id",
+        "fetch_by_user_id",
     )
-    mock_review_repository_get_by_user_id.return_value = [
+    mock_review_repository_fetch_by_user_id.return_value = [
         {
             "user_id": "user_id_0",
             "book_title": "仕事ではじめる機械学習",
@@ -1026,11 +1026,11 @@ def test_get_reviews_by_user_idで該当するユーザ情報がない場合は�
         },
     ]
 
-    mock_user_repository_get_all = mocker.patch.object(
+    mock_user_repository_fetch_all = mocker.patch.object(
         UserRepository,
-        "get_all",
+        "fetch_all",
     )
-    mock_user_repository_get_all.return_value = []
+    mock_user_repository_fetch_all.return_value = []
 
     reviews = get_reviews_by_user_id(user_id="user_id_0")
 
@@ -1064,11 +1064,11 @@ def test_get_reviews_by_user_idで該当するユーザ情報がない場合は�
 def test_get_next_reviews_by_user_idで個数を指定してレビューが取得できること(
     mocker,
 ):
-    mock_review_repository_get_limited_by_user_id = mocker.patch.object(
+    mock_review_repository_fetch_limited_by_user_id = mocker.patch.object(
         ReviewRepository,
-        "get_limited_by_user_id",
+        "fetch_limited_by_user_id",
     )
-    mock_review_repository_get_limited_by_user_id.return_value = [
+    mock_review_repository_fetch_limited_by_user_id.return_value = [
         {
             "user_id": "user_id_0",
             "book_title": "仕事ではじめる機械学習",
@@ -1095,11 +1095,11 @@ def test_get_next_reviews_by_user_idで個数を指定してレビューが取�
         },
     ]
 
-    mock_user_repository_get_all = mocker.patch.object(
+    mock_user_repository_fetch_all = mocker.patch.object(
         UserRepository,
-        "get_all",
+        "fetch_all",
     )
-    mock_user_repository_get_all.return_value = [
+    mock_user_repository_fetch_all.return_value = [
         {
             "user_id": "user_id_0",
             "department": "department_0",
@@ -1164,11 +1164,11 @@ def test_get_next_reviews_by_user_idで個数を指定してレビューが取�
 def test_get_next_reviews_by_user_idで不正なKEYを指定した場合はNoneが返ること(
     mocker,
 ):
-    mock_review_repository_get_limited_by_user_id = mocker.patch.object(
+    mock_review_repository_fetch_limited_by_user_id = mocker.patch.object(
         ReviewRepository,
-        "get_limited_by_user_id",
+        "fetch_limited_by_user_id",
     )
-    mock_review_repository_get_limited_by_user_id.return_value = [
+    mock_review_repository_fetch_limited_by_user_id.return_value = [
         {
             "user_id": "user_id_0",
             "book_title": "仕事ではじめる機械学習",
@@ -1195,11 +1195,11 @@ def test_get_next_reviews_by_user_idで不正なKEYを指定した場合はNone�
         },
     ]
 
-    mock_user_repository_get_all = mocker.patch.object(
+    mock_user_repository_fetch_all = mocker.patch.object(
         UserRepository,
-        "get_all",
+        "fetch_all",
     )
-    mock_user_repository_get_all.return_value = [
+    mock_user_repository_fetch_all.return_value = [
         {
             "user_id": "user_id_0",
             "department": "department_0",
@@ -1236,11 +1236,11 @@ def test_get_next_reviews_by_user_idで不正なKEYを指定した場合はNone�
 def test_get_next_reviews_by_user_idでuser_repositoryの処理でエラーが発生した場合Noneを返すこと(
     mocker,
 ):
-    mock_review_repository_get_limited_by_user_id = mocker.patch.object(
+    mock_review_repository_fetch_limited_by_user_id = mocker.patch.object(
         ReviewRepository,
-        "get_by_user_id",
+        "fetch_by_user_id",
     )
-    mock_review_repository_get_limited_by_user_id.return_value = [
+    mock_review_repository_fetch_limited_by_user_id.return_value = [
         {
             "user_id": "user_id_0",
             "book_title": "仕事ではじめる機械学習",
@@ -1267,11 +1267,11 @@ def test_get_next_reviews_by_user_idでuser_repositoryの処理でエラーが�
         },
     ]
 
-    mock_user_repository_get_all = mocker.patch.object(
+    mock_user_repository_fetch_all = mocker.patch.object(
         UserRepository,
-        "get_all",
+        "fetch_all",
     )
-    mock_user_repository_get_all.side_effect = Exception("dummy exception")
+    mock_user_repository_fetch_all.side_effect = Exception("dummy exception")
 
     get_response = get_next_reviews_by_user_id(user_id="user_id_0", limit=1)
 
@@ -1281,11 +1281,11 @@ def test_get_next_reviews_by_user_idでuser_repositoryの処理でエラーが�
 def test_get_before_reviews_by_user_idで個数を指定してレビューが取得できること(
     mocker,
 ):
-    mock_review_repository_get_limited_by_user_id = mocker.patch.object(
+    mock_review_repository_fetch_limited_by_user_id = mocker.patch.object(
         ReviewRepository,
-        "get_limited_by_user_id",
+        "fetch_limited_by_user_id",
     )
-    mock_review_repository_get_limited_by_user_id.return_value = [
+    mock_review_repository_fetch_limited_by_user_id.return_value = [
         {
             "user_id": "user_id_0",
             "book_title": "仕事ではじめる機械学習",
@@ -1312,11 +1312,11 @@ def test_get_before_reviews_by_user_idで個数を指定してレビューが取
         },
     ]
 
-    mock_user_repository_get_all = mocker.patch.object(
+    mock_user_repository_fetch_all = mocker.patch.object(
         UserRepository,
-        "get_all",
+        "fetch_all",
     )
-    mock_user_repository_get_all.return_value = [
+    mock_user_repository_fetch_all.return_value = [
         {
             "user_id": "user_id_0",
             "department": "department_0",
@@ -1381,11 +1381,11 @@ def test_get_before_reviews_by_user_idで個数を指定してレビューが取
 def test_get_before_reviews_by_user_idで不正なKEYを指定した場合はNoneが返ること(
     mocker,
 ):
-    mock_review_repository_get_limited_by_user_id = mocker.patch.object(
+    mock_review_repository_fetch_limited_by_user_id = mocker.patch.object(
         ReviewRepository,
-        "get_limited_by_user_id",
+        "fetch_limited_by_user_id",
     )
-    mock_review_repository_get_limited_by_user_id.return_value = [
+    mock_review_repository_fetch_limited_by_user_id.return_value = [
         {
             "user_id": "user_id_0",
             "book_title": "仕事ではじめる機械学習",
@@ -1412,11 +1412,11 @@ def test_get_before_reviews_by_user_idで不正なKEYを指定した場合はNon
         },
     ]
 
-    mock_user_repository_get_all = mocker.patch.object(
+    mock_user_repository_fetch_all = mocker.patch.object(
         UserRepository,
-        "get_all",
+        "fetch_all",
     )
-    mock_user_repository_get_all.return_value = [
+    mock_user_repository_fetch_all.return_value = [
         {
             "user_id": "user_id_0",
             "department": "department_0",
@@ -1453,11 +1453,11 @@ def test_get_before_reviews_by_user_idで不正なKEYを指定した場合はNon
 def test_get_before_reviews_by_user_idでuser_repositoryの処理でエラーが発生した場合Noneを返すこと(
     mocker,
 ):
-    mock_review_repository_get_limited_by_user_id = mocker.patch.object(
+    mock_review_repository_fetch_limited_by_user_id = mocker.patch.object(
         ReviewRepository,
-        "get_by_user_id",
+        "fetch_by_user_id",
     )
-    mock_review_repository_get_limited_by_user_id.return_value = [
+    mock_review_repository_fetch_limited_by_user_id.return_value = [
         {
             "user_id": "user_id_0",
             "book_title": "仕事ではじめる機械学習",
@@ -1484,11 +1484,11 @@ def test_get_before_reviews_by_user_idでuser_repositoryの処理でエラーが
         },
     ]
 
-    mock_user_repository_get_all = mocker.patch.object(
+    mock_user_repository_fetch_all = mocker.patch.object(
         UserRepository,
-        "get_all",
+        "fetch_all",
     )
-    mock_user_repository_get_all.side_effect = Exception("dummy exception")
+    mock_user_repository_fetch_all.side_effect = Exception("dummy exception")
 
     get_response = get_before_reviews_by_user_id(user_id="user_id_0", limit=1)
 
