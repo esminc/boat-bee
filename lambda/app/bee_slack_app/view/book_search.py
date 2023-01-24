@@ -1,3 +1,5 @@
+from typing import Any
+
 from bee_slack_app.model import SearchedBook
 from bee_slack_app.view.common import DUMMY_IMAGE_URL, google_graphic
 
@@ -128,7 +130,7 @@ def book_search_result_selected_modal(
     }
 
 
-def _selected_book(item):
+def _selected_book(item) -> dict[str, Any]:
     """
     ボタンが選択された本のblockを生成する
     """
@@ -160,7 +162,7 @@ def _selected_book(item):
     }
 
 
-def _unselected_book(item):
+def _unselected_book(item) -> dict[str, Any]:
     """
     ボタンが選択されていない本のblockを生成する
     """

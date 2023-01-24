@@ -15,7 +15,7 @@ def _encode_partition_key(*, user_id: str) -> str:
 
 
 class UserRepository:
-    def __init__(self):
+    def __init__(self) -> None:
         self.table = database.get_table()
 
     def fetch(self, user_id: str) -> Optional[User]:

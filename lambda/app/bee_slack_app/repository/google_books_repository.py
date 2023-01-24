@@ -5,7 +5,7 @@ import requests  # type: ignore
 
 
 class GoogleBooksRepository:
-    def __init__(self):
+    def __init__(self) -> None:
         # Google API
         self.base_url_google = "https://www.googleapis.com/books/v1/volumes"
 
@@ -111,7 +111,7 @@ class GoogleBooksRepository:
         return dict_info
 
     @staticmethod
-    def _get_image_url(_item):
+    def _get_image_url(_item: dict[str, Any]) -> Optional[str]:
         if (
             _item["volumeInfo"].get("imageLinks") is not None
             and _item["volumeInfo"].get("imageLinks").get("thumbnail") is not None

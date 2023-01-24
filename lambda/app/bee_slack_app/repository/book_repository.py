@@ -1,4 +1,4 @@
-from typing import Optional, TypedDict
+from typing import Optional, Tuple, TypedDict
 
 import boto3  # type: ignore
 
@@ -27,7 +27,7 @@ class BookRepository:
         score_for_me: Optional[str]
         score_for_others: Optional[str]
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.table = database.get_table()
 
     def put(self, *, book: Book) -> None:
@@ -95,8 +95,9 @@ class BookRepository:
             items: レビュー投稿日時が新しい順にソート済みの、本のリスト
             last_key: 読み込んだ最後のキー
         """
+        QueryResult = Tuple[list[Book], Optional[BookItemKey]]
 
-        def query(exclusive_start_key=None, max_item_count=None):
+        def query(exclusive_start_key=None, max_item_count=None) -> QueryResult:
             option = {}
             if exclusive_start_key:
                 option["ExclusiveStartKey"] = exclusive_start_key

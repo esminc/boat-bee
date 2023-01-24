@@ -1,10 +1,12 @@
 import os
 
+from slack_bolt import App
+
 from bee_slack_app.service import review_service
-from bee_slack_app.utils.timer import StopWatch, location
+from bee_slack_app.utils.timer import StopWatch, location  # type: ignore
 
 
-def hello_controller(app):
+def hello_controller(app: App) -> None:
     @app.message("hello")
     def message_hello(message, say):
         # say() sends a message to the channel where the event was triggered

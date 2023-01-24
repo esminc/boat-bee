@@ -1,4 +1,4 @@
-from typing import TypedDict
+from typing import Any, TypedDict
 
 from bee_slack_app.model import Review, ReviewPagination
 from bee_slack_app.utils import datetime
@@ -155,7 +155,7 @@ def review_of_user_modal(
     return view
 
 
-def review_detail_modal(review_contents: Review):
+def review_detail_modal(review_contents: Review) -> dict[str, Any]:
     """
     レビュー詳細モーダル
 

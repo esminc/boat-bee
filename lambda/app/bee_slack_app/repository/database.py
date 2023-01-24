@@ -1,4 +1,5 @@
 import os
+from typing import Any
 
 import boto3  # type: ignore
 
@@ -14,8 +15,10 @@ GSI_1_SK = "GSI_1_SK"
 GSI_2_SK = "GSI_2_SK"
 GSI_3_SK = "GSI_3_SK"
 
+DynamoDBResource = Any
 
-def get_database_client():
+
+def get_database_client() -> DynamoDBResource:
     """
     環境変数にDYNAMODB_ENDPOINTが設定されていればそこに接続する（ローカル環境）
     設定されていなければデフォルトのDynamoDBに接続する（AWSの環境）
@@ -26,7 +29,10 @@ def get_database_client():
     return dynamodb
 
 
-def get_table():
+DynamoDBTable = Any
+
+
+def get_table() -> DynamoDBTable:
     return get_database_client().Table(os.environ["DYNAMODB_TABLE"])
 
 

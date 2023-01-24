@@ -2,6 +2,8 @@ import json
 import os
 from typing import Any, TypedDict
 
+from slack_bolt import App
+
 from bee_slack_app.model import Review, ReviewPagination, User
 from bee_slack_app.service import (
     book_search_service,
@@ -24,7 +26,7 @@ from bee_slack_app.view import (
 BOOK_NUMBER_PER_PAGE = 19
 
 
-def review_controller(app):  # pylint: disable=too-many-statements
+def review_controller(app: App) -> None:  # pylint: disable=too-many-statements
     @app.action("read_review_of_book_action")
     def read_review_of_book_action(ack, body, client, action):
         """
