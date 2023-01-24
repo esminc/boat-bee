@@ -100,6 +100,8 @@ export class BeeSlackAppStack extends Stack {
         NOTIFY_POST_REVIEW_CHANNEL: SecretValue.unsafePlainText("dummy"),
         BEE_OPERATION_BOT_SLACK_WEBHOOK_URL:
           SecretValue.unsafePlainText("dummy"),
+        BEE_OPERATION_BOT_SLACK_BOT_TOKEN: SecretValue.unsafePlainText("dummy"),
+        BEE_OPERATION_BOT_SLACK_CHANNEL: SecretValue.unsafePlainText("dummy"),
       },
     });
 
@@ -232,6 +234,32 @@ export class BeeSlackAppStack extends Stack {
     new Rule(this, "ReportRule", {
       schedule: Schedule.cron({ weekDay: "MON", hour: "0", minute: "0" }), // 毎週月曜日09:00(JST)に実行
       targets: [new LambdaFunction(reportFunction)],
+    });
+
+    const reportReviewGraphFunction = new Function(
+      this,
+      "ReportReviewGraphLambda",
+      {
+        runtime: Runtime.FROM_IMAGE,
+        handler: Handler.FROM_IMAGE,
+        code: Code.fromAssetImage(
+          join(__dirname, "../../lambda/report_review_graph")
+        ),
+        environment: {
+          SLACK_CREDENTIALS_SECRET_ID: secret.secretName,
+          DYNAMODB_TABLE: dynamoTable.tableName,
+        },
+        timeout: Duration.minutes(3),
+        memorySize: 1024,
+      }
+    );
+
+    dynamoTable.grantReadData(reportReviewGraphFunction);
+    secret.grantRead(reportReviewGraphFunction);
+
+    new Rule(this, "ReportReviewGraphRule", {
+      schedule: Schedule.cron({ weekDay: "MON", hour: "0", minute: "0" }), // 毎週月曜日09:00(JST)に実行
+      targets: [new LambdaFunction(reportReviewGraphFunction)],
     });
   }
 }
