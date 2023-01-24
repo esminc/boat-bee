@@ -1,4 +1,4 @@
-from typing import Optional, TypedDict
+from typing import Any, Optional, TypedDict
 
 from bee_slack_app.model import Book, RecommendBook
 from bee_slack_app.view.common import book_section, google_graphic
@@ -261,7 +261,7 @@ def home(  # pylint: disable=too-many-locals
     return view
 
 
-def create_button(suggested_book_value: dict) -> dict:
+def create_button(suggested_book_value: dict[str, Any]) -> dict[str, Any]:
     button_name = "興味あり❤️" if suggested_book_value["interested"] else "興味なし🤍"
     return {
         "type": "actions",

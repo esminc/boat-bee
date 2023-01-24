@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Any, Optional
 
 from bee_slack_app.model import User
 
@@ -29,7 +29,7 @@ user_age_range_dict = {
 }
 
 
-def _make_options(source: dict[str, str]) -> list[dict]:
+def _make_options(source: dict[str, str]) -> list[dict[str, Any]]:
     """
     変換辞書の内容から画面表示用のOptionsを生成する
     """
