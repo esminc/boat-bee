@@ -24,7 +24,7 @@ lint-check:
 
 .PHONY: type-check
 type-check:
-	pipenv run mypy . --disallow-untyped-calls
+	pipenv run mypy . --disallow-untyped-calls --disallow-any-generics
 
 .PHONY: test
 test: export AWS_DEFAULT_REGION := us-east-1
