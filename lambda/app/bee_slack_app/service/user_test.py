@@ -6,7 +6,7 @@ from bee_slack_app.model import User
 from bee_slack_app.repository.user_repository import UserRepository
 from bee_slack_app.service.user import (
     add_user,
-    get_all_user,
+    fetch_all_user,
     get_user,
     get_users_posted_review,
 )
@@ -14,7 +14,7 @@ from bee_slack_app.utils import datetime
 
 
 def test_ユーザを登録できること(mocker):
-    mock_user_repository_create = mocker.patch.object(UserRepository, "create")
+    mock_user_repository_create = mocker.patch.object(UserRepository, "put")
 
     mocker.patch.object(datetime, "now").return_value = "2022-04-01T00:00:00+09:00"
 
@@ -52,7 +52,7 @@ def test_ユーザー情報を取得できること(monkeypatch):
             "updated_at": "2022-05-02T16:43:25+09:00",
         }
 
-    monkeypatch.setattr(UserRepository, "get", mock_user_repository_get)
+    monkeypatch.setattr(UserRepository, "fetch", mock_user_repository_get)
 
     user = get_user("test_user_id")
 
@@ -65,7 +65,7 @@ def test_ユーザー情報を取得できること(monkeypatch):
 
 
 def test_全てのユーザー情報を取得できること(monkeypatch):
-    def mock_user_repository_get_all(_):
+    def mock_user_repository_fetch_all(_):
         return [
             {
                 "user_id": "test_user_id_0",
@@ -93,9 +93,9 @@ def test_全てのユーザー情報を取得できること(monkeypatch):
             },
         ]
 
-    monkeypatch.setattr(UserRepository, "get_all", mock_user_repository_get_all)
+    monkeypatch.setattr(UserRepository, "fetch_all", mock_user_repository_fetch_all)
 
-    users = get_all_user()
+    users = fetch_all_user()
 
     assert len(users) == 3
 
@@ -122,12 +122,12 @@ def test_全てのユーザー情報を取得できること(monkeypatch):
 
 
 def test_全取得ではユーザー情報が無い場合に空のリストを返すこと(monkeypatch):
-    def mock_user_repository_get_all(_):
+    def mock_user_repository_fetch_all(_):
         return []
 
-    monkeypatch.setattr(UserRepository, "get_all", mock_user_repository_get_all)
+    monkeypatch.setattr(UserRepository, "fetch_all", mock_user_repository_fetch_all)
 
-    users = get_all_user()
+    users = fetch_all_user()
 
     assert len(users) == 0
 
@@ -135,12 +135,12 @@ def test_全取得ではユーザー情報が無い場合に空のリストを�
 def test_全取得ではrepositoryの処理でエラーが発生した場合空のリストを返すこと(
     monkeypatch,
 ):
-    def mock_user_repository_get_all(_):
+    def mock_user_repository_fetch_all(_):
         raise Exception("dummy exception")
 
-    monkeypatch.setattr(UserRepository, "get_all", mock_user_repository_get_all)
+    monkeypatch.setattr(UserRepository, "fetch_all", mock_user_repository_fetch_all)
 
-    users = get_all_user()
+    users = fetch_all_user()
 
     assert len(users) == 0
 
@@ -149,7 +149,7 @@ def test_ユーザー情報が無い場合にNoneを返すこと(monkeypatch):
     def mock_user_repository_get(_, __):
         return None
 
-    monkeypatch.setattr(UserRepository, "get", mock_user_repository_get)
+    monkeypatch.setattr(UserRepository, "fetch", mock_user_repository_get)
 
     user = get_user("test_user_id")
 
@@ -160,7 +160,7 @@ def test_repositoryの処理でエラーが発生した場合Noneを返すこと
     def mock_user_repository_get(_):
         raise Exception("dummy exception")
 
-    monkeypatch.setattr(UserRepository, "get", mock_user_repository_get)
+    monkeypatch.setattr(UserRepository, "fetch", mock_user_repository_get)
 
     user = get_user("test_user_id")
 
@@ -168,7 +168,7 @@ def test_repositoryの処理でエラーが発生した場合Noneを返すこと
 
 
 def test_レビューを投稿しているユーザを取得できること(monkeypatch):
-    def mock_user_repository_get_by_posted_review(_):
+    def mock_user_repository_fetch_by_posted_review(_):
         return [
             {
                 "user_id": "test_user_id_0",
@@ -198,8 +198,8 @@ def test_レビューを投稿しているユーザを取得できること(monk
 
     monkeypatch.setattr(
         UserRepository,
-        "get_by_posted_review",
-        mock_user_repository_get_by_posted_review,
+        "fetch_by_posted_review",
+        mock_user_repository_fetch_by_posted_review,
     )
 
     users = get_users_posted_review()

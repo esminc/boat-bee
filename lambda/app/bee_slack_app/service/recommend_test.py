@@ -47,7 +47,7 @@ def test_おすすめの本の情報を取得できること(monkeypatch):
         }
 
     monkeypatch.setattr(
-        SuggestedBookRepository, "get", mock_suggested_book_repository_get
+        SuggestedBookRepository, "fetch", mock_suggested_book_repository_get
     )
 
     user: User = {
@@ -110,7 +110,7 @@ def test_おすすめの本が取得できなかったらNoneを返すこと(mon
         }
 
     monkeypatch.setattr(
-        SuggestedBookRepository, "get", mock_suggested_book_repository_get
+        SuggestedBookRepository, "fetch", mock_suggested_book_repository_get
     )
 
     user: User = {
@@ -158,7 +158,7 @@ def test_おすすめの本の情報がNoneのケース(monkeypatch):
         }
 
     monkeypatch.setattr(
-        SuggestedBookRepository, "get", mock_suggested_book_repository_get
+        SuggestedBookRepository, "fetch", mock_suggested_book_repository_get
     )
 
     user: User = {
@@ -200,12 +200,12 @@ def test_おすすめ本が未登録の場合は登録すること(mocker):
     mocker.patch.object(BookRepository, "fetch", mock_book_repository_fetch)
 
     mock_suggested_book_repository_get = mocker.patch.object(
-        SuggestedBookRepository, "get"
+        SuggestedBookRepository, "fetch"
     )
     mock_suggested_book_repository_get.return_value = None
 
     mock_suggested_book_repository_create = mocker.patch.object(
-        SuggestedBookRepository, "create"
+        SuggestedBookRepository, "put"
     )
 
     mocker.patch.object(datetime, "now").return_value = "2022-04-01T00:00:00+09:00"
@@ -271,7 +271,7 @@ def test_書影が取得できない場合に書影にNone返値に設定され�
         }
 
     monkeypatch.setattr(
-        SuggestedBookRepository, "get", mock_suggested_book_repository_get
+        SuggestedBookRepository, "fetch", mock_suggested_book_repository_get
     )
 
     user: User = {
@@ -331,7 +331,7 @@ def test_モジュール内で例外が発生した場合は返値はNoneであ�
         }
 
     monkeypatch.setattr(
-        SuggestedBookRepository, "get", mock_suggested_book_repository_get
+        SuggestedBookRepository, "fetch", mock_suggested_book_repository_get
     )
 
     user: User = {
@@ -408,7 +408,7 @@ def test_複数のおすすめの本の情報を取得できること(monkeypatc
         }
 
     monkeypatch.setattr(
-        SuggestedBookRepository, "get", mock_suggested_book_repository_get
+        SuggestedBookRepository, "fetch", mock_suggested_book_repository_get
     )
 
     user: User = {

@@ -62,13 +62,13 @@ def recommend(user: User) -> Optional[RecommendResult]:
 
             book = book_repository.fetch(isbn=isbn)
             if book is not None:
-                suggested_book = suggested_book_repository.get(
+                suggested_book = suggested_book_repository.fetch(
                     user_id=user["user_id"], isbn=isbn, ml_model=ml_model
                 )
 
                 if not suggested_book:
                     # おすすめ本が未登録の場合はそれを登録する
-                    suggested_book_repository.create(
+                    suggested_book_repository.put(
                         {
                             "user_id": user["user_id"],
                             "isbn": isbn,
@@ -110,7 +110,7 @@ def update_suggested_book_state(suggested_book: SuggestedBook) -> None:
     logger = getLogger(__name__)
 
     try:
-        suggested_book_repository.create(
+        suggested_book_repository.put(
             {
                 "user_id": suggested_book["user_id"],
                 "isbn": suggested_book["isbn"],

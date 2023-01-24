@@ -64,7 +64,7 @@ class TestUserRepository:
 
         user_repository = UserRepository()
 
-        user = user_repository.get("test_user_id_1")
+        user = user_repository.fetch("test_user_id_1")
 
         assert user["user_id"] == "test_user_id_1"
         assert user["user_name"] == "問屋町　花子"
@@ -124,7 +124,7 @@ class TestUserRepository:
 
         user_repository = UserRepository()
 
-        user = user_repository.get("test_user_id_3")
+        user = user_repository.fetch("test_user_id_3")
 
         assert user is None
 
@@ -134,7 +134,7 @@ class TestUserRepository:
         assert len(response["Items"]) == 0
 
         user_repository = UserRepository()
-        user = user_repository.get("test_user_id_0")
+        user = user_repository.fetch("test_user_id_0")
 
         assert user is None
 
@@ -189,7 +189,7 @@ class TestUserRepository:
 
         user_repository = UserRepository()
 
-        users = user_repository.get_all()
+        users = user_repository.fetch_all()
 
         assert len(users) == 3
 
@@ -220,7 +220,7 @@ class TestUserRepository:
         assert len(response["Items"]) == 0
 
         user_repository = UserRepository()
-        users = user_repository.get_all()
+        users = user_repository.fetch_all()
 
         assert len(users) == 0
 
@@ -275,7 +275,7 @@ class TestUserRepository:
 
         user_repository = UserRepository()
 
-        users = user_repository.get_by_posted_review()
+        users = user_repository.fetch_by_posted_review()
 
         assert len(users) == 2
 
@@ -348,7 +348,7 @@ class TestUserRepository:
 
         user_repository = UserRepository()
 
-        users = user_repository.get_by_posted_review()
+        users = user_repository.fetch_by_posted_review()
 
         assert len(users) == 0
         assert isinstance(users, list)
@@ -360,7 +360,7 @@ class TestUserRepository:
 
         user_repository = UserRepository()
 
-        user_repository.create(
+        user_repository.put(
             {
                 "user_id": "test_user_id",
                 "user_name": "永和　太郎",
@@ -389,7 +389,7 @@ class TestUserRepository:
     def test_ユーザー情報を上書きできること(self):
         user_repository = UserRepository()
 
-        user_repository.create(
+        user_repository.put(
             {
                 "user_id": "test_user_id",
                 "user_name": "永和 花子",
@@ -415,7 +415,7 @@ class TestUserRepository:
         assert actual["updated_at"] == "2022-04-15T09:20:12+09:00"
         assert actual["post_review_count"] == 0
 
-        user_repository.create(
+        user_repository.put(
             {
                 "user_id": "test_user_id",
                 "user_name": "上書き次郎",
@@ -444,7 +444,7 @@ class TestUserRepository:
     def test_２件目以降のユーザー情報を作成できること(self):
         user_repository = UserRepository()
 
-        user_repository.create(
+        user_repository.put(
             {
                 "user_id": "test_user_id",
                 "user_name": "永和 花子",
@@ -470,7 +470,7 @@ class TestUserRepository:
         assert actual["updated_at"] == "2022-04-15T09:20:12+09:00"
         assert actual["post_review_count"] == 0
 
-        user_repository.create(
+        user_repository.put(
             {
                 "user_id": "test_user_id_1",
                 "user_name": "追加　小次郎",
@@ -499,7 +499,7 @@ class TestUserRepository:
     def test_キー以外が同じ情報を追加で作成できること(self):
         user_repository = UserRepository()
 
-        user_repository.create(
+        user_repository.put(
             {
                 "user_id": "test_user_id",
                 "user_name": "永和 花子",
@@ -525,7 +525,7 @@ class TestUserRepository:
         assert actual["updated_at"] == "2022-04-15T09:20:12+09:00"
         assert actual["post_review_count"] == 0
 
-        user_repository.create(
+        user_repository.put(
             {
                 "user_id": "test_user_id_1",
                 "user_name": "永和 花子",

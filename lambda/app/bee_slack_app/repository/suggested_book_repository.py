@@ -16,7 +16,9 @@ class SuggestedBookRepository:
     def __init__(self):
         self.table = database.get_table()
 
-    def get(self, *, user_id: str, isbn: str, ml_model: str) -> Optional[SuggestedBook]:
+    def fetch(
+        self, *, user_id: str, isbn: str, ml_model: str
+    ) -> Optional[SuggestedBook]:
         """
         おすすめされた本を取得する
 
@@ -36,7 +38,7 @@ class SuggestedBookRepository:
             }
         ).get("Item")
 
-    def create(self, suggested_book: SuggestedBook) -> None:
+    def put(self, suggested_book: SuggestedBook) -> None:
         """
         データを追加および上書きします
         """

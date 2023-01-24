@@ -30,7 +30,7 @@ class ReviewRepository:
     def __init__(self):
         self.table = database.get_table()
 
-    def get(self, *, user_id: str, isbn: str) -> Optional[Review]:
+    def fetch(self, *, user_id: str, isbn: str) -> Optional[Review]:
         """
         本のレビューを取得する
 
@@ -43,7 +43,7 @@ class ReviewRepository:
         partition_key = _encode_partition_key(user_id=user_id, isbn=isbn)
         return self.table.get_item(Key={database.PK: partition_key}).get("Item")
 
-    def get_all(self) -> list[Review]:
+    def fetch_all(self) -> list[Review]:
         """
         本のレビューを全て取得する
 
@@ -72,7 +72,7 @@ class ReviewRepository:
 
         return items
 
-    def get_by_isbn(self, *, isbn: str) -> list[Review]:
+    def fetch_by_isbn(self, *, isbn: str) -> list[Review]:
         """
         ISBNから、本のレビューを取得する
 
@@ -87,7 +87,7 @@ class ReviewRepository:
             & Key(database.GSI_2_SK).eq(isbn),
         )["Items"]
 
-    def get_by_user_id(self, *, user_id: str) -> list[Review]:
+    def fetch_by_user_id(self, *, user_id: str) -> list[Review]:
         """
         ユーザIDから、本のレビューを取得する
 
@@ -102,7 +102,7 @@ class ReviewRepository:
             & Key(database.GSI_1_SK).eq(user_id),
         )["Items"]
 
-    def get_limited_by_user_id(
+    def fetch_limited_by_user_id(
         self,
         *,
         user_id: str,
@@ -145,7 +145,7 @@ class ReviewRepository:
 
         return {"items": items, "last_key": last_key}
 
-    def create(self, review):
+    def put(self, review):
         partition_key = _encode_partition_key(
             user_id=review["user_id"], isbn=review["isbn"]
         )
