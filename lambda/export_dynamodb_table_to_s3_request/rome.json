@@ -1,0 +1,4 @@
+{
+  "formatter": { "indentStyle": "space", "ignore": ["dist"] },
+  "linter": { "ignore": ["dist"] }
+}
