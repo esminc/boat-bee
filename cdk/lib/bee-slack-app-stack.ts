@@ -19,6 +19,15 @@ import * as cloudfront_origins from "aws-cdk-lib/aws-cloudfront-origins";
 import { PolicyStatement, CanonicalUserPrincipal } from "aws-cdk-lib/aws-iam";
 import { Rule, Schedule } from "aws-cdk-lib/aws-events";
 import { LambdaFunction } from "aws-cdk-lib/aws-events-targets";
+import {
+  Choice,
+  StateMachine,
+  Condition,
+  Wait,
+  WaitTime,
+  Succeed,
+} from "aws-cdk-lib/aws-stepfunctions";
+import { LambdaInvoke } from "aws-cdk-lib/aws-stepfunctions-tasks";
 
 interface Props extends StackProps {
   isProduction: boolean;
@@ -42,7 +51,7 @@ export class BeeSlackAppStack extends Stack {
       readCapacity: 1,
       writeCapacity: 1,
       removalPolicy,
-      pointInTimeRecovery: isProduction,
+      pointInTimeRecovery: true,
     });
 
     dynamoTable.addGlobalSecondaryIndex({
@@ -89,6 +98,99 @@ export class BeeSlackAppStack extends Stack {
         type: AttributeType.NUMBER,
       },
     });
+
+    const targetBucketOfDynamoDBExport = new s3.Bucket(
+      this,
+      "TargetBucketOfDynamoDBExport",
+      {
+        removalPolicy,
+        autoDeleteObjects: !isProduction,
+      }
+    );
+
+    const exportDynamoDBTableToS3RequestFunction = new Function(
+      this,
+      "ExportDynamoDBTableToS3RequestLambda",
+      {
+        description: "ExportDynamoDBTableToS3RequestLambda",
+        runtime: Runtime.FROM_IMAGE,
+        handler: Handler.FROM_IMAGE,
+        code: Code.fromAssetImage(
+          join(__dirname, "../../lambda/export_dynamodb_table_to_s3_request")
+        ),
+        environment: {
+          DYNAMODB_TABLE_ARN: dynamoTable.tableArn,
+          S3_BUCKET_NAME: targetBucketOfDynamoDBExport.bucketName,
+        },
+      }
+    );
+
+    exportDynamoDBTableToS3RequestFunction.addToRolePolicy(
+      new PolicyStatement({
+        actions: ["dynamodb:exportTableToPointInTime"],
+        resources: [dynamoTable.tableArn],
+      })
+    );
+
+    targetBucketOfDynamoDBExport.grantWrite(
+      exportDynamoDBTableToS3RequestFunction
+    );
+
+    const exportDynamoDBTableToS3RequestLambdaTask = new LambdaInvoke(
+      this,
+      "ExportDynamoDBTableToS3RequestLambdaTask",
+      { lambdaFunction: exportDynamoDBTableToS3RequestFunction }
+    );
+
+    const exportDynamoDBTableToS3CheckStatusFunction = new Function(
+      this,
+      "ExportDynamoDBTableToS3CheckStatusLambda",
+      {
+        description: "ExportDynamoDBTableToS3CheckStatusLambda",
+        runtime: Runtime.FROM_IMAGE,
+        handler: Handler.FROM_IMAGE,
+        code: Code.fromAssetImage(
+          join(
+            __dirname,
+            "../../lambda/export_dynamodb_table_to_s3_check_status"
+          )
+        ),
+      }
+    );
+
+    exportDynamoDBTableToS3CheckStatusFunction.addToRolePolicy(
+      new PolicyStatement({
+        actions: ["dynamodb:DescribeExport"],
+        resources: ["*"],
+      })
+    );
+
+    const exportDynamoDBTableToS3CheckStatusLambdaTask = new LambdaInvoke(
+      this,
+      "ExportDynamoDBTableToS3CheckStatusLambdaTask",
+      {
+        lambdaFunction: exportDynamoDBTableToS3CheckStatusFunction,
+        outputPath: "$.Payload",
+      }
+    );
+
+    const exportDynamoDBWait = new Wait(this, "Wait for export", {
+      time: WaitTime.duration(Duration.minutes(10)),
+    });
+
+    const exportDynamoDBChoice = new Choice(this, "Export complete?")
+      .when(
+        Condition.not(Condition.stringEquals("$.exportStatus", "IN_PROGRESS")),
+        new Succeed(this, "Export succeed")
+      )
+      .otherwise(exportDynamoDBWait);
+
+    const definition = exportDynamoDBTableToS3RequestLambdaTask
+      .next(exportDynamoDBWait)
+      .next(exportDynamoDBTableToS3CheckStatusLambdaTask)
+      .next(exportDynamoDBChoice);
+
+    new StateMachine(this, "StateMachine", { definition });
 
     const secret = new Secret(this, "Secret", {
       removalPolicy,

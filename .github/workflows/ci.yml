@@ -86,6 +86,40 @@ jobs:
       - run: make init
       - run: make format-check
 
+  export_dynamodb_table_to_s3_request:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: lambda/export_dynamodb_table_to_s3_request
+    steps:
+      - uses: actions/checkout@v2.4.0
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: "npm"
+          cache-dependency-path: lambda/export_dynamodb_table_to_s3_request/package-lock.json
+      - run: npm install
+      - run: npm run fmt
+      - run: npm run lint
+      - run: npm run build
+
+  export_dynamodb_table_to_s3_check_status:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: lambda/export_dynamodb_table_to_s3_check_status
+    steps:
+      - uses: actions/checkout@v2.4.0
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: "npm"
+          cache-dependency-path: lambda/export_dynamodb_table_to_s3_check_status/package-lock.json
+      - run: npm install
+      - run: npm run fmt
+      - run: npm run lint
+      - run: npm run build
+
   cdk:
     runs-on: ubuntu-latest
     defaults:
@@ -113,6 +147,8 @@ jobs:
         book_recommendation,
         report,
         report_review_graph,
+        export_dynamodb_table_to_s3_request,
+        export_dynamodb_table_to_s3_check_status,
       ]
     if: failure()
     steps:
@@ -146,6 +182,8 @@ jobs:
         book_recommendation,
         report,
         report_review_graph,
+        export_dynamodb_table_to_s3_request,
+        export_dynamodb_table_to_s3_check_status,
       ]
     if: contains(github.event_name, 'push')
     permissions:
