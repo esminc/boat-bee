@@ -422,13 +422,13 @@ export class BeeSlackAppStack extends Stack {
       code: Code.fromAssetImage(join(__dirname, "../../lambda/report")),
       environment: {
         SLACK_CREDENTIALS_SECRET_ID: secret.secretName,
-        DYNAMODB_TABLE: dynamoTable.tableName,
+        CONVERTED_DYNAMODB_JSON_BUCKET: convertedDynamoDBJsonBucket.bucketName,
       },
       timeout: Duration.minutes(3),
       memorySize: 1024,
     });
 
-    dynamoTable.grantReadData(reportFunction);
+    convertedDynamoDBJsonBucket.grantRead(reportFunction);
     secret.grantRead(reportFunction);
 
     new Rule(this, "ReportRule", {
@@ -455,14 +455,15 @@ export class BeeSlackAppStack extends Stack {
         ),
         environment: {
           SLACK_CREDENTIALS_SECRET_ID: secret.secretName,
-          DYNAMODB_TABLE: dynamoTable.tableName,
+          CONVERTED_DYNAMODB_JSON_BUCKET:
+            convertedDynamoDBJsonBucket.bucketName,
         },
         timeout: Duration.minutes(3),
         memorySize: 1024,
       }
     );
 
-    dynamoTable.grantReadData(reportReviewGraphFunction);
+    convertedDynamoDBJsonBucket.grantRead(reportReviewGraphFunction);
     secret.grantRead(reportReviewGraphFunction);
 
     new Rule(this, "ReportReviewGraphRule", {

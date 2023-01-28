@@ -1,7 +1,6 @@
 import json
 import logging
 import os
-from typing import Any
 
 import boto3
 import pandas as pd
@@ -16,9 +15,8 @@ SLACK_WEBHOOK_URL = secret["BEE_OPERATION_BOT_SLACK_WEBHOOK_URL"]
 
 
 def lambda_handler(event, context):
-    suggested_books = load_items_from_dynamodb("suggested_book")
 
-    df = pd.DataFrame(suggested_books)
+    df = load_items_from_dynamodb("suggested_book")
 
     df_interested = df[df["interested"] == True]
 
@@ -44,34 +42,26 @@ def lambda_handler(event, context):
     logger.info("Webhook Response: " + str(response))
 
 
-def load_items_from_dynamodb(item_id: str) -> list[Any]:
+def load_items_from_dynamodb(item_id: str) -> pd.DataFrame:
     """
     DynamoDBからアイテムを取得する
 
     Args:
         item_id: アイテムの種別を表すキー。review、user、bookなど。
     """
-    dynamodb = boto3.resource("dynamodb")
+    dynamodb_json_file = "/tmp/dynamodb_table.json"
 
-    def query(exclusive_start_key=None):
-        option = {}
-        if exclusive_start_key:
-            option["ExclusiveStartKey"] = exclusive_start_key
+    s3 = boto3.client("s3")
 
-        response = dynamodb.Table(os.environ["DYNAMODB_TABLE"]).query(
-            IndexName="GSI_0",
-            KeyConditionExpression=boto3.dynamodb.conditions.Key("GSI_PK").eq(item_id),
-            **option,
-        )
+    s3.download_file(
+        os.environ["CONVERTED_DYNAMODB_JSON_BUCKET"],
+        "dynamodb_table.json",
+        dynamodb_json_file,
+    )
 
-        return response["Items"], response.get("LastEvaluatedKey")
+    df = None
 
-    items, last_key = query()
+    with open(dynamodb_json_file, "rt") as f:
+        df = pd.read_json(f)
 
-    # レスポンスに LastEvaluatedKey が含まれなくなるまでループ処理を実行する
-    # see https://dev.classmethod.jp/articles/hot-to-get-more-than-1mb-of-data-from-dynamodb-when-using-scan/
-    while last_key is not None:
-        new_items, last_key = query(exclusive_start_key=last_key)
-        items.extend(new_items)
-
-    return items
+    return df[df["GSI_PK"] == item_id].reset_index()
