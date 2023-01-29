@@ -136,6 +136,7 @@ jobs:
       - run: npm run fmt:check
       - run: npm run build
       - run: npm test
+      - run: npm run cdk synth
 
   notify-if-failure:
     runs-on: ubuntu-latest
