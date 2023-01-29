@@ -16,9 +16,14 @@ export async function handler(event: any, context: Context) {
 
   const { ExportDescription } = await client.send(command);
 
+  const exportId = ExportDescription?.ExportArn?.split("/").pop();
   const exportStatus = ExportDescription?.ExportStatus;
 
-  console.log({ exportStatus });
+  console.log({ exportId, exportStatus });
 
-  return { exportStatus, DynamoDBExportArn: exportArn };
+  return {
+    exportStatus,
+    DynamoDBExportId: exportId,
+    DynamoDBExportArn: exportArn,
+  };
 }

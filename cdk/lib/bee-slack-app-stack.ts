@@ -28,7 +28,6 @@ import {
   Condition,
   Wait,
   WaitTime,
-  Succeed,
 } from "aws-cdk-lib/aws-stepfunctions";
 import { LambdaInvoke } from "aws-cdk-lib/aws-stepfunctions-tasks";
 
@@ -184,6 +183,53 @@ export class BeeSlackAppStack extends Stack {
       }
     );
 
+    const convertedDynamoDBJsonBucket = new s3.Bucket(
+      this,
+      "ConvertedDynamoDBJsonBucket",
+      {
+        removalPolicy,
+        autoDeleteObjects: !isProduction,
+      }
+    );
+
+    const exportDynamoDBTableToS3ConvertFunction = new Function(
+      this,
+      "ExportDynamoDBTableToS3ConvertLambda",
+      {
+        description: buildResourceDescription({
+          resourceName: "ExportDynamoDBTableToS3ConvertLambda",
+          stage,
+        }),
+        runtime: Runtime.FROM_IMAGE,
+        handler: Handler.FROM_IMAGE,
+        environment: {
+          DYNAMODB_EXPORT_BUCKET: targetBucketOfDynamoDBExport.bucketName,
+          CONVERTED_DYNAMODB_JSON_BUCKET:
+            convertedDynamoDBJsonBucket.bucketName,
+        },
+        code: Code.fromAssetImage(
+          join(__dirname, "../../lambda/export_dynamodb_table_to_s3_convert")
+        ),
+        timeout: Duration.minutes(3),
+        memorySize: 1024,
+      }
+    );
+
+    targetBucketOfDynamoDBExport.grantRead(
+      exportDynamoDBTableToS3ConvertFunction
+    );
+    convertedDynamoDBJsonBucket.grantWrite(
+      exportDynamoDBTableToS3ConvertFunction
+    );
+
+    const exportDynamoDBTableToS3ConvertLambdaTask = new LambdaInvoke(
+      this,
+      "ExportDynamoDBTableToS3ConvertLambdaTask",
+      {
+        lambdaFunction: exportDynamoDBTableToS3ConvertFunction,
+      }
+    );
+
     const exportDynamoDBWait = new Wait(this, "Wait for export", {
       time: WaitTime.duration(Duration.minutes(10)),
     });
@@ -191,7 +237,7 @@ export class BeeSlackAppStack extends Stack {
     const exportDynamoDBChoice = new Choice(this, "Export complete?")
       .when(
         Condition.not(Condition.stringEquals("$.exportStatus", "IN_PROGRESS")),
-        new Succeed(this, "Export succeed")
+        exportDynamoDBTableToS3ConvertLambdaTask
       )
       .otherwise(exportDynamoDBWait);
 
