@@ -1,7 +1,6 @@
 import json
 import logging
 import os
-from typing import Any
 
 import boto3
 import pandas as pd
@@ -22,11 +21,11 @@ def lambda_handler(event, context):
     logger = logging.getLogger()
 
     try:
-        items = load_items_from_dynamodb("review")
+        df = load_items_from_dynamodb("review")
 
         file_path = "/tmp/review_graph.png"
 
-        generate_review_graph(items, file_path)
+        generate_review_graph(df, file_path)
 
         upload_file_to_slack(
             SLACK_BOT_TOKEN, SLACK_CHANNEL, file_path, "レビュー投稿数のグラフを更新しました"
@@ -37,37 +36,29 @@ def lambda_handler(event, context):
         logger.error("Error updating review graph: {}".format(e))
 
 
-def load_items_from_dynamodb(item_id: str) -> list[Any]:
+def load_items_from_dynamodb(item_id: str) -> pd.DataFrame:
     """
     DynamoDBからアイテムを取得する
 
     Args:
         item_id: アイテムの種別を表すキー。review、user、bookなど。
     """
-    dynamodb = boto3.resource("dynamodb")
+    dynamodb_json_file = "/tmp/dynamodb_table.json"
 
-    def query(exclusive_start_key=None):
-        option = {}
-        if exclusive_start_key:
-            option["ExclusiveStartKey"] = exclusive_start_key
+    s3 = boto3.client("s3")
 
-        response = dynamodb.Table(os.environ["DYNAMODB_TABLE"]).query(
-            IndexName="GSI_0",
-            KeyConditionExpression=boto3.dynamodb.conditions.Key("GSI_PK").eq(item_id),
-            **option,
-        )
+    s3.download_file(
+        os.environ["CONVERTED_DYNAMODB_JSON_BUCKET"],
+        "dynamodb_table.json",
+        dynamodb_json_file,
+    )
 
-        return response["Items"], response.get("LastEvaluatedKey")
+    df = None
 
-    items, last_key = query()
+    with open(dynamodb_json_file, "rt") as f:
+        df = pd.read_json(f)
 
-    # レスポンスに LastEvaluatedKey が含まれなくなるまでループ処理を実行する
-    # see https://dev.classmethod.jp/articles/hot-to-get-more-than-1mb-of-data-from-dynamodb-when-using-scan/
-    while last_key is not None:
-        new_items, last_key = query(exclusive_start_key=last_key)
-        items.extend(new_items)
-
-    return items
+    return df[df["GSI_PK"] == item_id].reset_index()
 
 
 def upload_file_to_slack(
@@ -109,30 +100,30 @@ def post_message_to_slack(slack_token: str, channel: str, message: str) -> None:
         logger.error("Error post message: {}".format(e))
 
 
-def generate_review_graph(review_items: Any, png_file_name: str):
+def generate_review_graph(df_review: pd.DataFrame, png_file_name: str):
     """
     reviewの時系列グラフを作成し、画像ファイルとして保存する
     """
 
-    df = pd.DataFrame(review_items)
+    df_review["updated_at"] = df_review["updated_at"].map(lambda x: x[:10])
 
-    df["updated_at"] = df["updated_at"].map(lambda x: x[:10])
+    df_review = (
+        df_review["updated_at"].value_counts().sort_index().to_frame().reset_index()
+    )
 
-    df = df["updated_at"].value_counts().sort_index().to_frame().reset_index()
+    df_review["type"] = "review_count"
+    df_review = df_review.rename(columns={"updated_at": "count"})
 
-    df["type"] = "review_count"
-    df = df.rename(columns={"updated_at": "count"})
-
-    df_sum = df["count"].cumsum().to_frame()
-    df_sum["index"] = df["index"]
+    df_sum = df_review["count"].cumsum().to_frame()
+    df_sum["index"] = df_review["index"]
 
     df_sum["type"] = "review_count_sum"
 
-    df = pd.concat([df, df_sum]).reset_index()
+    df_review = pd.concat([df_review, df_sum]).reset_index()
 
     sns.set(rc={"figure.figsize": (30, 16)})
 
-    plot = sns.lineplot(data=df, x="index", y="count", hue="type")
+    plot = sns.lineplot(data=df_review, x="index", y="count", hue="type")
     plot.set_title("review count")
     plot.set_xlabel("date")
 
