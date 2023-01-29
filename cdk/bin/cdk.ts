@@ -12,5 +12,6 @@ if (stage !== "dev" && stage !== "prod") {
 const app = new cdk.App();
 
 new BeeSlackAppStack(app, `BeeSlackAppStack-${stage}`, {
+  stage,
   isProduction: stage === "prod",
 });
