@@ -86,6 +86,20 @@ jobs:
       - run: make init
       - run: make format-check
 
+  report_user_action_graph:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: lambda/report_user_action_graph
+    steps:
+      - uses: actions/checkout@v2.4.0
+      - uses: actions/setup-python@v3
+        with:
+          python-version: "3.9.16"
+      - run: pip install pipenv
+      - run: make init
+      - run: make format-check
+
   export_dynamodb_table_to_s3_request:
     runs-on: ubuntu-latest
     defaults:
@@ -148,6 +162,7 @@ jobs:
         book_recommendation,
         report,
         report_review_graph,
+        report_user_action_graph,
         export_dynamodb_table_to_s3_request,
         export_dynamodb_table_to_s3_check_status,
       ]
@@ -183,6 +198,7 @@ jobs:
         book_recommendation,
         report,
         report_review_graph,
+        report_user_action_graph,
         export_dynamodb_table_to_s3_request,
         export_dynamodb_table_to_s3_check_status,
       ]
