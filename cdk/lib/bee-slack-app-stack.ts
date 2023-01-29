@@ -18,7 +18,10 @@ import * as s3deploy from "aws-cdk-lib/aws-s3-deployment";
 import * as cloudfront_origins from "aws-cdk-lib/aws-cloudfront-origins";
 import { PolicyStatement, CanonicalUserPrincipal } from "aws-cdk-lib/aws-iam";
 import { Rule, Schedule } from "aws-cdk-lib/aws-events";
-import { LambdaFunction } from "aws-cdk-lib/aws-events-targets";
+import {
+  LambdaFunction,
+  SfnStateMachine,
+} from "aws-cdk-lib/aws-events-targets";
 import {
   Choice,
   StateMachine,
@@ -190,7 +193,16 @@ export class BeeSlackAppStack extends Stack {
       .next(exportDynamoDBTableToS3CheckStatusLambdaTask)
       .next(exportDynamoDBChoice);
 
-    new StateMachine(this, "StateMachine", { definition });
+    const dynamoDBTableExportStateMachine = new StateMachine(
+      this,
+      "DynamoDBTableExportStateMachine",
+      { definition }
+    );
+
+    new Rule(this, "DynamoDBTableExportRule", {
+      schedule: Schedule.cron({ hour: "23", minute: "0" }), // 毎日08:00(JST)に実行
+      targets: [new SfnStateMachine(dynamoDBTableExportStateMachine)],
+    });
 
     const secret = new Secret(this, "Secret", {
       removalPolicy,
