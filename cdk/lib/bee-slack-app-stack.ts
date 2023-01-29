@@ -33,6 +33,7 @@ import {
 import { LambdaInvoke } from "aws-cdk-lib/aws-stepfunctions-tasks";
 
 interface Props extends StackProps {
+  stage: string;
   isProduction: boolean;
 }
 
@@ -40,7 +41,7 @@ export class BeeSlackAppStack extends Stack {
   constructor(scope: Construct, id: string, props: Props) {
     super(scope, id, props);
 
-    const isProduction = props.isProduction;
+    const { stage, isProduction } = props;
 
     const removalPolicy = isProduction
       ? RemovalPolicy.RETAIN
@@ -115,7 +116,10 @@ export class BeeSlackAppStack extends Stack {
       this,
       "ExportDynamoDBTableToS3RequestLambda",
       {
-        description: "ExportDynamoDBTableToS3RequestLambda",
+        description: buildResourceDescription({
+          resourceName: "ExportDynamoDBTableToS3RequestLambda",
+          stage,
+        }),
         runtime: Runtime.FROM_IMAGE,
         handler: Handler.FROM_IMAGE,
         code: Code.fromAssetImage(
@@ -149,7 +153,10 @@ export class BeeSlackAppStack extends Stack {
       this,
       "ExportDynamoDBTableToS3CheckStatusLambda",
       {
-        description: "ExportDynamoDBTableToS3CheckStatusLambda",
+        description: buildResourceDescription({
+          resourceName: "ExportDynamoDBTableToS3CheckStatusLambda",
+          stage,
+        }),
         runtime: Runtime.FROM_IMAGE,
         handler: Handler.FROM_IMAGE,
         code: Code.fromAssetImage(
@@ -200,11 +207,19 @@ export class BeeSlackAppStack extends Stack {
     );
 
     new Rule(this, "DynamoDBTableExportRule", {
+      description: buildResourceDescription({
+        resourceName: "DynamoDBTableExportRule",
+        stage,
+      }),
       schedule: Schedule.cron({ hour: "23", minute: "0" }), // 毎日08:00(JST)に実行
       targets: [new SfnStateMachine(dynamoDBTableExportStateMachine)],
     });
 
     const secret = new Secret(this, "Secret", {
+      description: buildResourceDescription({
+        resourceName: "Secret",
+        stage,
+      }),
       removalPolicy,
       // デプロイ後に実際の値を手動で設定すること
       secretObjectValue: {
@@ -266,6 +281,10 @@ export class BeeSlackAppStack extends Stack {
     });
 
     const appFunction = new Function(this, "AppLambda", {
+      description: buildResourceDescription({
+        resourceName: "AppLambda",
+        stage,
+      }),
       runtime: Runtime.FROM_IMAGE,
       handler: Handler.FROM_IMAGE,
       code: Code.fromAssetImage(join(__dirname, "../../lambda/app")),
@@ -281,7 +300,12 @@ export class BeeSlackAppStack extends Stack {
     dynamoTable.grantReadWriteData(appFunction);
     secret.grantRead(appFunction);
 
-    const api = new RestApi(this, "RestAPI");
+    const api = new RestApi(this, "RestAPI", {
+      description: buildResourceDescription({
+        resourceName: "RestAPI",
+        stage,
+      }),
+    });
 
     api.root
       .addResource("slack")
@@ -289,6 +313,10 @@ export class BeeSlackAppStack extends Stack {
       .addMethod("POST", new LambdaIntegration(appFunction));
 
     const errorHandlerFunction = new Function(this, "ErrorHandlerLambda", {
+      description: buildResourceDescription({
+        resourceName: "ErrorHandlerLambda",
+        stage,
+      }),
       runtime: Runtime.FROM_IMAGE,
       handler: Handler.FROM_IMAGE,
       code: Code.fromAssetImage(join(__dirname, "../../lambda/error_handler")),
@@ -310,6 +338,10 @@ export class BeeSlackAppStack extends Stack {
       this,
       "BookRecommendationLambda",
       {
+        description: buildResourceDescription({
+          resourceName: "BookRecommendationLambda",
+          stage,
+        }),
         runtime: Runtime.FROM_IMAGE,
         handler: Handler.FROM_IMAGE,
         code: Code.fromAssetImage(
@@ -326,11 +358,19 @@ export class BeeSlackAppStack extends Stack {
     dynamoTable.grantReadWriteData(bookRecommendationFunction);
 
     new Rule(this, "BookRecommendationRule", {
+      description: buildResourceDescription({
+        resourceName: "BookRecommendationRule",
+        stage,
+      }),
       schedule: Schedule.cron({ hour: "0", minute: "0" }), // 毎日09:00(JST)に実行
       targets: [new LambdaFunction(bookRecommendationFunction)],
     });
 
     const reportFunction = new Function(this, "ReportLambda", {
+      description: buildResourceDescription({
+        resourceName: "ReportLambda",
+        stage,
+      }),
       runtime: Runtime.FROM_IMAGE,
       handler: Handler.FROM_IMAGE,
       code: Code.fromAssetImage(join(__dirname, "../../lambda/report")),
@@ -346,6 +386,10 @@ export class BeeSlackAppStack extends Stack {
     secret.grantRead(reportFunction);
 
     new Rule(this, "ReportRule", {
+      description: buildResourceDescription({
+        resourceName: "ReportRule",
+        stage,
+      }),
       schedule: Schedule.cron({ weekDay: "MON", hour: "0", minute: "0" }), // 毎週月曜日09:00(JST)に実行
       targets: [new LambdaFunction(reportFunction)],
     });
@@ -354,6 +398,10 @@ export class BeeSlackAppStack extends Stack {
       this,
       "ReportReviewGraphLambda",
       {
+        description: buildResourceDescription({
+          resourceName: "ReportReviewGraphLambda",
+          stage,
+        }),
         runtime: Runtime.FROM_IMAGE,
         handler: Handler.FROM_IMAGE,
         code: Code.fromAssetImage(
@@ -372,8 +420,19 @@ export class BeeSlackAppStack extends Stack {
     secret.grantRead(reportReviewGraphFunction);
 
     new Rule(this, "ReportReviewGraphRule", {
+      description: buildResourceDescription({
+        resourceName: "ReportReviewGraphRule",
+        stage,
+      }),
       schedule: Schedule.cron({ weekDay: "MON", hour: "0", minute: "0" }), // 毎週月曜日09:00(JST)に実行
       targets: [new LambdaFunction(reportReviewGraphFunction)],
     });
   }
 }
+
+const buildResourceDescription = (props: {
+  resourceName: string;
+  stage: string;
+}) => {
+  return `${props.resourceName} : ${props.stage}`;
+};
