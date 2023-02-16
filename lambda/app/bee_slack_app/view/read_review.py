@@ -148,7 +148,7 @@ def review_of_user_modal(
         ]
 
     if bool(move_buttons["elements"]):
-        review_blocks.append(move_buttons)  # type: ignore
+        review_blocks.append(move_buttons)
 
     view["blocks"].extend(review_blocks)  # type: ignore
 
@@ -210,16 +210,16 @@ def _review_sections(
                 {
                     "type": "mrkdwn",
                     "text": f"*投稿者*\n{user_name}",
-                },  # type:ignore
+                },
                 {
                     "type": "mrkdwn",
                     "text": f"*投稿日時*\n{update_datetime}",
-                },  # type:ignore
-                {  # type:ignore
+                },
+                {
                     "type": "mrkdwn",
                     "text": f"*自分にとっての評価*\n{score_for_me}",
                 },
-                {  # type:ignore
+                {
                     "type": "mrkdwn",
                     "text": f"*永和社員へのおすすめ度*\n{score_for_others}",
                 },
@@ -227,7 +227,7 @@ def _review_sections(
         },
         {
             "type": "section",
-            "text": {  # type:ignore
+            "text": {
                 "type": "mrkdwn",
                 "text": f"*レビューコメント*\n\n{review_comment or '-'}",
             },
@@ -244,7 +244,7 @@ def _review_detail_button(*, user_id: str, isbn: str):
     return {
         "type": "actions",
         "elements": [
-            {  # type: ignore
+            {
                 "type": "button",
                 "text": {
                     "type": "plain_text",

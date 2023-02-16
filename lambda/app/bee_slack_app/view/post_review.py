@@ -200,16 +200,16 @@ def notify_review_post_message_blocks(review_contents: Review):
                 {
                     "type": "mrkdwn",
                     "text": f"*投稿者*\n{review_contents['user_name']}",
-                },  # type:ignore
+                },
                 {
                     "type": "mrkdwn",
                     "text": f"*投稿日時*\n{update_datetime}",
-                },  # type:ignore
-                {  # type:ignore
+                },
+                {
                     "type": "mrkdwn",
                     "text": f"*自分にとっての評価*\n{review_contents['score_for_me']}",
                 },
-                {  # type:ignore
+                {
                     "type": "mrkdwn",
                     "text": f"*永和社員へのおすすめ度*\n{review_contents['score_for_others']}",
                 },

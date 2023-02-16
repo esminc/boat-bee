@@ -127,7 +127,7 @@ def home(  # pylint: disable=too-many-locals
                 {
                     "type": "mrkdwn",
                     "text": f"*現在のレビュー投稿数 {total_review_count}件*",
-                },  # type:ignore
+                },
             ],
         },
         {
@@ -210,7 +210,7 @@ def home(  # pylint: disable=too-many-locals
                 {
                     "type": "actions",
                     "elements": [
-                        {  # type: ignore
+                        {
                             "type": "button",
                             "text": {
                                 "type": "plain_text",
@@ -243,7 +243,7 @@ def home(  # pylint: disable=too-many-locals
             ]
 
         if bool(move_buttons["elements"]):
-            book_sections.append(move_buttons)  # type: ignore
+            book_sections.append(move_buttons)
     else:
         book_sections.append(
             {
@@ -276,7 +276,7 @@ def create_button(suggested_book_value: dict[str, Any]) -> dict[str, Any]:
                 "value": f'{suggested_book_value["isbn"]}#{suggested_book_value["ml_model"]}',
                 "action_id": "button_switch_action",
             },
-            {  # type: ignore
+            {
                 "type": "button",
                 "text": {
                     "type": "plain_text",
