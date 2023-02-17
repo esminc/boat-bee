@@ -3,7 +3,7 @@ import "source-map-support/register";
 import * as cdk from "aws-cdk-lib";
 import { BeeSlackAppStack } from "../lib/bee-slack-app-stack";
 
-const stage = process.env.STAGE || "dev";
+const stage = process.env.STAGE ?? "dev";
 
 if (stage !== "dev" && stage !== "prod") {
   throw new Error("stage value is not supported.");
@@ -11,6 +11,7 @@ if (stage !== "dev" && stage !== "prod") {
 
 const app = new cdk.App();
 
+// eslint-disable-line no-new
 new BeeSlackAppStack(app, `BeeSlackAppStack-${stage}`, {
   stage,
   isProduction: stage === "prod",
