@@ -1,6 +1,6 @@
 from .book_search import book_search_result_modal, book_search_result_selected_modal
 from .common import DUMMY_IMAGE_URL, book_section, google_graphic, simple_modal
-from .home import home
+from .home import BooksParam, home
 from .post_review import (
     notify_review_post_message_blocks,
     post_review_modal,

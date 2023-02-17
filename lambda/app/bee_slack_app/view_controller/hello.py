@@ -37,13 +37,13 @@ def hello_controller(app: App) -> None:
             )
             return
 
-        myreviews = "\n・".join(myreviews)
-        myreviews = f"・{myreviews}"
+        myreviews_str = "\n・".join(myreviews)
+        myreviews_str = f"・{myreviews_str}"
 
         client.chat_postEphemeral(
             channel=os.environ["NOTIFY_POST_REVIEW_CHANNEL"],
             user=user_id,
-            text=f"<@{user_id}>さんがレビューを投稿した本の一覧です（{num_reviews}冊）\n\n {myreviews}",
+            text=f"<@{user_id}>さんがレビューを投稿した本の一覧です（{num_reviews}冊）\n\n {myreviews_str}",
         )
 
     @app.command("/bee")
@@ -75,10 +75,12 @@ def hello_controller(app: App) -> None:
                 respond(f"<@{user_id}>さんはまだレビューを投稿していませんね")
                 return
 
-            myreviews = "\n・".join(myreviews)
-            myreviews = f"・{myreviews}"
+            myreviews_str = "\n・".join(myreviews)
+            myreviews_str = f"・{myreviews_str}"
 
-            respond(f"<@{user_id}>さんがレビューを投稿した本の一覧です（{num_reviews}冊）\n\n {myreviews}")
+            respond(
+                f"<@{user_id}>さんがレビューを投稿した本の一覧です（{num_reviews}冊）\n\n {myreviews_str}"
+            )
             return
 
         respond(

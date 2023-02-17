@@ -1,6 +1,6 @@
 import json
 from logging import getLogger
-from typing import Any, TypedDict
+from typing import Any, Optional, TypedDict
 
 from slack_bolt import App
 
@@ -13,7 +13,7 @@ from bee_slack_app.service import (
     user_service,
 )
 from bee_slack_app.utils.datetime import parse
-from bee_slack_app.view import home
+from bee_slack_app.view import BooksParam, home
 
 BOOK_NUMBER_PER_PAGE = 20
 
@@ -41,7 +41,7 @@ def home_controller(app: App) -> None:  # pylint: disable=too-many-statements
 
         recommended_result = recommend_service.recommend(user)
 
-        books_params = None
+        books_params: Optional[BooksParam] = None
         metadata_str = ""
 
         books = book_service.get_books(limit=BOOK_NUMBER_PER_PAGE, keys=[])
@@ -67,7 +67,9 @@ def home_controller(app: App) -> None:  # pylint: disable=too-many-statements
                 user_info_action_id="user_info_action",
                 total_review_count=total_review_count,
                 user_name=user_name,
-                recommend_timestamp=parse(recommended_result["created_at"]),
+                recommend_timestamp=parse(recommended_result["created_at"])
+                if recommended_result
+                else None,
                 books_params=books_params,
                 private_metadata=metadata_str,
             ),
@@ -99,7 +101,7 @@ def home_controller(app: App) -> None:  # pylint: disable=too-many-statements
 
         recommended_result = recommend_service.recommend(user)
 
-        books_params = None
+        books_params: Optional[BooksParam] = None
         metadata_str = ""
 
         books = book_service.get_books(
@@ -128,7 +130,9 @@ def home_controller(app: App) -> None:  # pylint: disable=too-many-statements
                 user_info_action_id="user_info_action",
                 total_review_count=total_review_count,
                 user_name=user_name,
-                recommend_timestamp=parse(recommended_result["created_at"]),
+                recommend_timestamp=parse(recommended_result["created_at"])
+                if recommended_result
+                else None,
                 books_params=books_params,
                 private_metadata=metadata_str,
             ),
@@ -160,7 +164,7 @@ def home_controller(app: App) -> None:  # pylint: disable=too-many-statements
             private_metadata=private_metadata
         )
 
-        books_params = None
+        books_params: Optional[BooksParam] = None
         metadata_str = ""
 
         books = book_service.get_books_before(
@@ -184,12 +188,15 @@ def home_controller(app: App) -> None:  # pylint: disable=too-many-statements
             user_id=user_id,
             view=home(
                 post_review_action_id="post_review_action",
-                recommended_books=recommended_result["recommended_books"],
+                recommended_books=recommended_result
+                and recommended_result["recommended_books"],
                 list_user_posted_review_action_id="list_user_posted_review_action",
                 user_info_action_id="user_info_action",
                 total_review_count=total_review_count,
                 user_name=user_name,
-                recommend_timestamp=parse(recommended_result["created_at"]),
+                recommend_timestamp=parse(recommended_result["created_at"])
+                if recommended_result
+                else None,
                 books_params=books_params,
                 private_metadata=metadata_str,
             ),
@@ -215,7 +222,7 @@ def home_controller(app: App) -> None:  # pylint: disable=too-many-statements
         recommended_result = recommend_service.recommend(user)
         recommended_books = recommended_result["recommended_books"]
 
-        books_params = None
+        books_params: Optional[BooksParam] = None
         metadata_str = ""
 
         books = book_service.get_books(limit=BOOK_NUMBER_PER_PAGE, keys=[])
@@ -271,7 +278,9 @@ def home_controller(app: App) -> None:  # pylint: disable=too-many-statements
             user_info_action_id="user_info_action",
             total_review_count=total_review_count,
             user_name=user_name,
-            recommend_timestamp=parse(recommended_result["created_at"]),
+            recommend_timestamp=parse(recommended_result["created_at"])
+            if recommended_result
+            else None,
             books_params=books_params,
             private_metadata=metadata_str,
         )

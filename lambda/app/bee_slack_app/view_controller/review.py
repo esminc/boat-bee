@@ -1,6 +1,6 @@
 import json
 import os
-from typing import Any, TypedDict
+from typing import Any, Optional, TypedDict
 
 from slack_bolt import App
 
@@ -85,11 +85,13 @@ def review_controller(app: App) -> None:  # pylint: disable=too-many-statements
 
         reviews = []
 
+        reviews_param: Optional[ReviewPagination] = None
+
         if review_items:
             reviews = review_items["items"]
             reviews = _make_review_contents_list_comment_short(reviews)
 
-            reviews_param: ReviewPagination = {
+            reviews_param = {
                 "reviews": reviews,
                 "show_move_to_back": False,
                 "show_move_to_next": review_items["has_next"],
@@ -140,7 +142,7 @@ def review_controller(app: App) -> None:  # pylint: disable=too-many-statements
         )
         user_id_of_review = metadata_dict["user_id_of_review"]
 
-        reviews_param = None
+        reviews_param: Optional[ReviewPagination] = None
         metadata_str = ""
 
         review_items = review_service.get_next_reviews_by_user_id(
@@ -155,7 +157,7 @@ def review_controller(app: App) -> None:  # pylint: disable=too-many-statements
             reviews = review_items["items"]
             reviews = _make_review_contents_list_comment_short(reviews)
 
-            reviews_param: ReviewPagination = {
+            reviews_param = {
                 "reviews": review_items["items"],
                 "show_move_to_back": True,
                 "show_move_to_next": review_items["has_next"],
@@ -199,7 +201,7 @@ def review_controller(app: App) -> None:  # pylint: disable=too-many-statements
         )
         user_id_of_review = metadata_dict["user_id_of_review"]
 
-        reviews_param = None
+        reviews_param: Optional[ReviewPagination] = None
         metadata_str = ""
 
         review_items = review_service.get_before_reviews_by_user_id(
@@ -214,7 +216,7 @@ def review_controller(app: App) -> None:  # pylint: disable=too-many-statements
             reviews = review_items["items"]
             reviews = _make_review_contents_list_comment_short(reviews)
 
-            reviews_param: ReviewPagination = {
+            reviews_param = {
                 "reviews": review_items["items"],
                 "show_move_to_back": not review_items["is_move_to_first"],
                 "show_move_to_next": True,
@@ -356,6 +358,10 @@ def review_controller(app: App) -> None:  # pylint: disable=too-many-statements
         )
 
         if notify:
+            if not review:
+                # TODO: エラーログ出力
+                return
+
             user = user_service.get_user(review["user_id"])
             review["user_name"] = (
                 _make_detailed_user_name(user) if user else review["user_id"]
