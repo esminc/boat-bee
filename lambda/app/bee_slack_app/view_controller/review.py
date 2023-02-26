@@ -1,6 +1,6 @@
 import json
 import os
-from typing import Any, TypedDict
+from typing import Any, Optional, TypedDict
 
 from slack_bolt import App
 
@@ -119,6 +119,8 @@ def review_controller(app: App) -> None:  # pylint: disable=too-many-statements
                 callback_id="review_of_user_modal",
                 reviews_param=reviews_param,
                 private_metadata=metadata_str,
+                review_move_to_back_action="review_move_to_back_action",
+                review_move_to_next_action="review_move_to_next_action",
             ),
         )
 
@@ -178,6 +180,8 @@ def review_controller(app: App) -> None:  # pylint: disable=too-many-statements
                 callback_id="review_of_user_modal",
                 reviews_param=reviews_param,
                 private_metadata=metadata_str,
+                review_move_to_back_action="review_move_to_back_action",
+                review_move_to_next_action="review_move_to_next_action",
             ),
         )
 
@@ -237,6 +241,8 @@ def review_controller(app: App) -> None:  # pylint: disable=too-many-statements
                 callback_id="review_of_user_modal",
                 reviews_param=reviews_param,
                 private_metadata=metadata_str,
+                review_move_to_back_action="review_move_to_back_action",
+                review_move_to_next_action="review_move_to_next_action",
             ),
         )
 
@@ -405,6 +411,177 @@ def review_controller(app: App) -> None:  # pylint: disable=too-many-statements
             trigger_id=body["trigger_id"], view=review_detail_modal(review)
         )
 
+    @app.action("list_posted_review_action")
+    def list_posted_review_action(ack, body, client):
+        """
+        投稿したレビューを一覧で表示する
+        """
+
+        ack()
+        user_id = body["user"]["id"]
+
+        review_items = review_service.get_next_reviews_by_user_id(
+            user_id=user_id, limit=BOOK_NUMBER_PER_PAGE, keys=[]
+        )
+
+        reviews = []
+
+        if review_items:
+            reviews = review_items["items"]
+            reviews = _make_review_contents_list_comment_short(reviews)
+
+            reviews_param: ReviewPagination = {
+                "reviews": reviews,
+                "show_move_to_back": False,
+                "show_move_to_next": review_items["has_next"],
+            }
+            # メタデータに変換する
+            metadata_str = _PrivateMetadataConvertor.to_private_metadata(
+                keys=review_items["keys"],
+            )
+
+        user_action_service.record_user_action(
+            user_id=user_id,
+            action_name="list_posted_review_action",
+            payload={"reviews": reviews},
+        )
+
+        if not reviews:
+            client.views_open(
+                trigger_id=body["trigger_id"],
+                view=simple_modal(title="エラー", text="レビュー取得でエラーが発生しました"),
+            )
+            return
+
+        client.views_open(
+            trigger_id=body["trigger_id"],
+            view=review_of_user_modal(
+                callback_id="review_of_user_modal",
+                reviews_param=reviews_param,
+                private_metadata=metadata_str,
+                review_move_to_back_action="list_posted_review_view_move_to_back_action",
+                review_move_to_next_action="list_posted_review_view_move_to_next_action",
+            ),
+        )
+
+    @app.action("list_posted_review_view_move_to_next_action")
+    def list_posted_review_view_move_to_next_action(
+        ack, client, body
+    ):  # pylint: disable=too-many-locals
+        """
+        レビューリストで「次へ」を押下されたときの処理
+        """
+        ack()
+
+        user_id = body["user"]["id"]
+
+        # メタデータから取り出す
+        private_metadata = body["view"]["private_metadata"]
+        metadata_dict = _PrivateMetadataConvertor.to_dict(
+            private_metadata=private_metadata
+        )
+
+        reviews_param = None
+        metadata_str = ""
+
+        review_items = review_service.get_next_reviews_by_user_id(
+            user_id=user_id,
+            limit=BOOK_NUMBER_PER_PAGE,
+            keys=metadata_dict["keys"],
+        )
+
+        reviews = []
+
+        if review_items:
+            reviews = review_items["items"]
+            reviews = _make_review_contents_list_comment_short(reviews)
+
+            reviews_param: ReviewPagination = {
+                "reviews": review_items["items"],
+                "show_move_to_back": True,
+                "show_move_to_next": review_items["has_next"],
+            }
+            # メタデータに変換する
+            metadata_str = _PrivateMetadataConvertor.to_private_metadata(
+                keys=review_items["keys"],
+            )
+
+        user_action_service.record_user_action(
+            user_id=user_id,
+            action_name="list_posted_review_view_move_to_next_action",
+            payload={"reviews": reviews},
+        )
+
+        client.views_update(
+            view_id=body["view"]["id"],
+            view=review_of_user_modal(
+                callback_id="review_of_user_modal",
+                reviews_param=reviews_param,
+                private_metadata=metadata_str,
+                review_move_to_back_action="list_posted_review_view_move_to_back_action",
+                review_move_to_next_action="list_posted_review_view_move_to_next_action",
+            ),
+        )
+
+    @app.action("list_posted_review_view_move_to_back_action")
+    def list_posted_review_view_move_to_back_action(
+        ack, client, body
+    ):  # pylint: disable=too-many-locals
+        """
+        レビューリストで「前へ」を押下されたときの処理
+        """
+        ack()
+
+        user_id = body["user"]["id"]
+
+        # メタデータから取り出す
+        private_metadata = body["view"]["private_metadata"]
+        metadata_dict = _PrivateMetadataConvertor.to_dict(
+            private_metadata=private_metadata
+        )
+
+        reviews_param = None
+        metadata_str = ""
+
+        review_items = review_service.get_before_reviews_by_user_id(
+            user_id=user_id,
+            limit=BOOK_NUMBER_PER_PAGE,
+            keys=metadata_dict["keys"],
+        )
+
+        reviews = []
+
+        if review_items:
+            reviews = review_items["items"]
+            reviews = _make_review_contents_list_comment_short(reviews)
+
+            reviews_param: ReviewPagination = {
+                "reviews": review_items["items"],
+                "show_move_to_back": not review_items["is_move_to_first"],
+                "show_move_to_next": True,
+            }
+            # メタデータに変換する
+            metadata_str = _PrivateMetadataConvertor.to_private_metadata(
+                keys=review_items["keys"]
+            )
+
+        user_action_service.record_user_action(
+            user_id=user_id,
+            action_name="read_review_of_user_action",
+            payload={"reviews": reviews},
+        )
+
+        client.views_update(
+            view_id=body["view"]["id"],
+            view=review_of_user_modal(
+                callback_id="review_of_user_modal",
+                reviews_param=reviews_param,
+                private_metadata=metadata_str,
+                review_move_to_back_action="list_posted_review_view_move_to_back_action",
+                review_move_to_next_action="list_posted_review_view_move_to_next_action",
+            ),
+        )
+
 
 def _make_review_contents_list_comment_short(
     review_contents_list: list[Review],
@@ -435,7 +612,9 @@ class _PrivateMetadataConvertor:
 
     @staticmethod
     # メタデータへの変換
-    def to_private_metadata(*, keys: Any, user_id_of_review: str) -> str:
+    def to_private_metadata(
+        *, keys: Any, user_id_of_review: Optional[str] = None
+    ) -> str:
         return json.dumps({"keys": keys, "user_id_of_review": user_id_of_review})
 
     @staticmethod
