@@ -18,7 +18,7 @@ def home(  # pylint: disable=too-many-locals
     user_info_action_id: str,
     total_review_count: int,
     user_name: str,
-    recommend_timestamp: str,
+    recommend_timestamp: Optional[str],
     books_params: Optional[BooksParam] = None,
     private_metadata: str = "",
 ):  # pylint: disable=too-many-locals
@@ -108,7 +108,7 @@ def home(  # pylint: disable=too-many-locals
                 "type": "section",
                 "text": {
                     "type": "mrkdwn",
-                    "text": f"*最新の推薦データ* : {recommend_timestamp}",
+                    "text": f"*最新の推薦データ* : {recommend_timestamp or '--'}",
                 },
             },
         ],
