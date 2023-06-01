@@ -2,13 +2,8 @@ import { LambdaIntegration, RestApi } from "aws-cdk-lib/aws-apigateway";
 import { AttributeType, Table } from "aws-cdk-lib/aws-dynamodb";
 import { Runtime, Function, Code, Handler } from "aws-cdk-lib/aws-lambda";
 import { LambdaDestination } from "aws-cdk-lib/aws-logs-destinations";
-import {
-  StackProps,
-  Stack,
-  RemovalPolicy,
-  SecretValue,
-  Duration,
-} from "aws-cdk-lib";
+import { type StackProps } from "aws-cdk-lib";
+import { Stack, RemovalPolicy, SecretValue, Duration } from "aws-cdk-lib";
 import { Secret } from "aws-cdk-lib/aws-secretsmanager";
 import { Construct } from "constructs";
 import { join } from "path";
