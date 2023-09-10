@@ -474,6 +474,41 @@ export class BeeSlackAppStack extends Stack {
       schedule: Schedule.cron({ weekDay: "MON", hour: "0", minute: "0" }), // 毎週月曜日09:00(JST)に実行
       targets: [new LambdaFunction(reportReviewGraphFunction)],
     });
+
+    const reportUserActionGraphFunction = new Function(
+      this,
+      "ReportUserActionGraphLambda",
+      {
+        description: buildResourceDescription({
+          resourceName: "ReportUserActionGraphLambda",
+          stage,
+        }),
+        runtime: Runtime.FROM_IMAGE,
+        handler: Handler.FROM_IMAGE,
+        code: Code.fromAssetImage(
+          join(__dirname, "../../lambda/report_user_action_graph")
+        ),
+        environment: {
+          SLACK_CREDENTIALS_SECRET_ID: secret.secretName,
+          CONVERTED_DYNAMODB_JSON_BUCKET:
+            convertedDynamoDBJsonBucket.bucketName,
+        },
+        timeout: Duration.minutes(3),
+        memorySize: 1024,
+      }
+    );
+
+    convertedDynamoDBJsonBucket.grantRead(reportUserActionGraphFunction);
+    secret.grantRead(reportUserActionGraphFunction);
+
+    new Rule(this, "ReportUserActionGraphRule", {
+      description: buildResourceDescription({
+        resourceName: "ReportUserActionGraphRule",
+        stage,
+      }),
+      schedule: Schedule.cron({ weekDay: "MON", hour: "0", minute: "0" }), // 毎週月曜日09:00(JST)に実行
+      targets: [new LambdaFunction(reportUserActionGraphFunction)],
+    });
   }
 }
 
